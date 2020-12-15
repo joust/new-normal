@@ -7,7 +7,7 @@
 
 @font-face {
   font-family: 'HVD Crocodile';
-  font-style: bold;
+  font-style: normal;
   font-weight: 600;
   src: url('./fonts/HVDCrocodileWeb-Bold.woff2') format('woff2');
 }

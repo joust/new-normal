@@ -183,7 +183,6 @@ button.menu, span.menu {
 
 #menu .content, .detail .content {
   padding: 4vw;
-  overscroll-behavior-block: none;
 }
 
 #menu .content {

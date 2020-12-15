@@ -1,0 +1,466 @@
+body {
+  font-family: 'Open Sans', Helvetica;
+  text-align: center;
+  user-select: none;
+}
+
+body, html, #game, #menu, #pyro {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+q {
+  display: block;
+  background: #666;
+  border-radius: 0.5vw;
+  padding: 1vw;
+}
+
+q + span {
+  display: block;
+  font-style: italic;
+}
+
+#game {
+  display: flex;
+  background-color: #fff;
+}
+
+.hidden {
+  visibility: collapse;
+}
+
+#menu {
+  text-align: left;
+  overflow-y: auto;
+  background: #fff;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#menu.intro {
+  overflow-y: hidden;
+}
+
+.game-logo {
+  position: fixed;
+  top: 0;
+  background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, #fff 10%);
+  width: 100%;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  text-align: center;
+  letter-spacing: -0.6vw;
+}
+
+.logo {
+  font-family: 'HVD Crocodile';
+  font-weight: 600;
+}
+
+.logo .virus {
+  position: relative;
+  display: inline-block;
+  background: url(images/virus.png);
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 14vw;
+  height: 14vw;
+  margin-left: -3vw;
+  margin-right: -3vw;
+}
+
+.game-logo.menu {
+  font-size: 16vw;
+  padding-bottom: 2vw;
+}
+
+.game-icon {
+  display: inline-block;
+  background: url(images/nn-icon.svg);
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 14vw;
+  height: 14vw;
+}
+
+#menu .intro {
+  cursor: pointer;
+}
+
+.skip {
+  display: inline-block;
+  color: #ccc;
+  padding: 1vw;
+  cursor: pointer;
+  float: right;
+}
+
+p.frame {
+  position: absolute;
+  visibility: collapse;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+}
+
+p.frame.show {
+  position: relative;
+  visibility: visible;
+  min-width: 100%;
+  opacity: 1;
+}
+
+button, button.menu, span.menu {
+  font-family: 'HVD Crocodile';
+  font-weight: 300;
+  color: #777;
+}
+
+#menu h1, #menu h2, #menu h3 {
+  font-family: 'HVD Crocodile';
+  font-weight: 600;
+}
+
+button, button.menu {
+  cursor: pointer;
+  font-size: 2vw;
+}
+
+button.menu {
+  margin: 0.3vw;
+  padding: 1vw;
+}
+
+button.menu, span.menu {
+  font-size: 7vw;
+  margin: 1vw;
+  padding: 3vw;
+}
+
+.ss, .i, .s, .si, .is, .ii {
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 12vw;
+  height: 12vw;
+}
+
+.is {
+  background-image: url(images/is.svg);
+}
+.si {
+  background-image: url(images/si.svg);
+}
+.ss {
+  background-image: url(images/ss.svg);
+}
+.ii {
+  background-image: url(images/ii.svg);
+}
+.s {
+  background-image: url(images/s.svg);
+}
+.i {
+  background-image: url(images/i.svg);
+}
+
+.detail {
+  background: #eee;
+  overflow-y: auto;
+  text-align: left;
+  cursor: pointer;
+  user-select: text;
+}
+
+#menu .content, .detail .content {
+  padding: 4vw;
+  overscroll-behavior-block: none;
+}
+
+#menu .content {
+  padding-top: 20vw;
+  max-height: calc(100% - 20vw);
+}
+
+#menu.intro .content {
+  padding-top: 0;
+  max-height: 100%;
+}
+
+#menu .content a {
+  color: #aaa;
+}
+
+#menu .content img {
+  height: 15vh;
+  width: auto;
+  float: left;
+  margin-right: 3vw;
+}
+
+#menu .content .intro img {
+  display: block;
+  width: 70%;
+  height: auto;
+  float: none;
+}
+
+.detail.single {
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+
+.detail.single a[name], .detail.single a[name] + p {
+  display: none;
+}
+
+.detail.single a.single, .detail.single a.single + p {
+  display: block;
+}
+
+.detail.single h1 {
+  display: none;
+}
+
+.detail .content > h2 {
+  display: none;
+}
+
+.detail.single .content > h2 {
+  display: block;
+}
+
+.detail a[name] span {
+  float: right;
+  color: #fff;
+  background: #aaa;
+  padding: 0.5vw;
+}
+
+@media (orientation: landscape) {
+  body {
+    font-size: 1.5vw;
+  }
+  
+  #menu {
+      font-size: 3vw;
+  }
+  
+  #game {
+    flex-direction: row;
+  }
+  
+  .card-wrapper {
+    width: 50%;
+    height: calc(100% - 5vw);
+    margin: 1vw;
+  }
+ 
+  .detail {
+    height: 45vw;
+    width: 45vw;
+  }
+  
+  tr {
+    height: 10vh;
+  }  
+  
+  .detail .logo {
+    font-size: 7vw;
+    opacity: .4;
+    letter-spacing: -0.3vw;
+    text-align: center;
+  }
+
+  .detail .logo .virus {
+    width: 7vw;
+    height: 7vw;
+    margin-left: -1.5vw;
+    margin-right: -1.5vw;
+  }
+
+  .detail button {
+    font-size: 5vw;
+  }
+}
+
+@media (orientation: portrait) {
+  body {
+    font-size: 1.5vh;
+  }
+
+  #menu {
+    font-size: 3vh;
+  }
+  
+  #game {
+    flex-direction: column;
+  }
+  
+  .card-wrapper {
+    height: calc(50% - 5vw);
+    margin: 4vw;
+  }
+  
+  .detail {
+    height: 45vh;
+    width: 45vh;
+  }
+
+  tr {
+    height: 7vh;
+  }
+  
+  .detail .logo {
+    font-size: 7vh;
+    opacity: .4;
+    letter-spacing: -0.3vh;
+    text-align: center;
+  }
+
+  .detail .logo .virus {
+    width: 7vh;
+    height: 7vh;
+    margin-left: -1.5vh;
+    margin-right: -1.5vh;
+  }
+}
+
+.detail button {
+  font-size: 5vh;
+}
+
+.card-title {
+  font-family: 'HVD Crocodile';
+  height: 4vw;
+  color: white;
+  font-size: 3vw;
+  padding: 0.8vw;
+}
+
+#location, #stop, .reload {
+  position: absolute;
+  right: 0.2vw;
+  top: 0.2vw;
+  border: none;
+  font-size: 3vw;
+  background: transparent;
+  color: #ccc;
+  outline: none;
+  cursor: pointer;
+}
+
+#stop {
+  z-index: 2;
+}
+
+.reload:hover, #stop:hover {
+  background: rgba(255, 255, 255, 0.6);
+  color: black;
+}
+
+.red {
+  color: #f72d5d;
+}
+
+.redbg {
+  background: #f72d5d;
+}
+
+.blue {
+  color: #2d60f6;
+}
+
+.bluebg {
+  background: #2d60f6;
+}
+
+.card-wrapper table {
+  border: 2vw solid transparent;
+  border-top: none;
+}
+
+table {
+  border-collapse: separate;
+  user-select: none;
+  table-layout: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+tr {
+  min-height: 20%;
+}
+
+td {
+  width: 20%;
+  background: rgba(255, 255, 255, 0.6);
+  text-align: center;
+  cursor: pointer;
+  padding: 0.5vw;
+}
+
+td.set {
+  background: transparent;
+  color: white;
+}
+
+td.center {
+  background: transparent;
+  color: white;
+  font-size: 4vw;
+}
+
+td.complete {
+  background: yellow;
+  color: black;
+}
+
+.card-wrapper .title select {
+  font-family: 'HVD Crocodile';
+  font-weight: 600;
+  border: none;
+  font-size: 2.5vw;
+  background: transparent;
+  color: #fff;
+  outline: none;
+  text-align: center;
+  text-align-last:center;
+  appearance: none;
+  cursor: pointer;
+}
+
+option {
+  font-family: 'Open Sans', Helvetica;  
+}
+
+button {
+  border: solid .5vw #777;
+}
+
+button {
+  outline: none;
+  box-shadow: 3vw 6vw 5vw -4vw rgba(0,0,0,.2);
+}
+
+button:nth-child(2n) {
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+}
+
+button:nth-child(2n+1) {
+  border-radius: 15px 225px 15px 255px/255px 15px 255px 15px;
+}
+
+button:hover {
+   box-shadow: 1vw 1vw 1vw -1vw rgba(0,0,0,.3);
+}

@@ -1,0 +1,15 @@
+{
+  "background_color": "white",
+  "description": "Corona argument BINGO",
+  "display": "fullscreen",
+  "icons": [
+    {
+      "src": "images/nn-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "name": "New Normal - Corona argument BINGO",
+  "short_name": "New Normal",
+  "start_url": "index.html"
+}

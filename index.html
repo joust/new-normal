@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <link rel="apple-touch-icon" sizes="180x180" href="nn-icon.png">
+    <link rel="icon" type="image/png" sizes="180x180" href="nn-icon.png">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="opensans.css">
+    <link rel="stylesheet" href="crocodile.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="flipside.css">
+    <link rel="stylesheet" href="pyro.css">
+    <title>New Normal</title>
+    <script src="bingo.js" type="text/javascript"></script>
+    <script src="flipside.js" type="text/javascript"></script>
+    <script src="fastclick.js" type="application/javascript"></script>
+  </head>
+  <body onload="load()">
+    <button id="stop" class="hidden" onclick="stop()">&#x274c;</button>
+    <div id="menu">
+      <div class="game-logo menu">
+        <select id="location" onchange="load(event.target.value)">
+          <option alt="Deutschland" value="de-de">🇩🇪</option>
+          <option alt="Österreich" value="de-at">🇦🇹</option>
+          <option alt="Schweiz" value="de-ch">🇨🇭</option>
+          <option alt="United States" disabled value="en-us">🇺🇸</option>
+          <option alt="United Kingdom" disabled value="en-gb">🇬🇧</option>
+          <option alt="Australia" disabled value="en-au">🇦🇺</option>
+          <option alt="New Zealand" disabled value="en-nz">🇳🇿</option>
+          <option alt="Polska" disabled value="pl-pl">🇵🇱</option>
+          <option alt="España" value="es-es" disabled>🇪🇸</option>
+          <option alt="France" value="fr-fr" disabled>🇫🇷</option>
+        </select>
+        <div class="logo">
+          <span class="red">New N</span><span class="virus"></span><span class="blue">rmal</span>
+        </div>
+      </div>
+      <div class="content"></div>
+    </div>
+    <div id="game" class="flip-wrapper hidden">
+      <div id="wrapper-1" class="flip card-wrapper">
+        <div class="card flip-front">
+          <button class="reload">&#x21bb;</button>
+          <div class="title"></div>
+          <div class="bingo"></div>
+        </div>
+        <div class="detail flip-back" onclick="closeDetail(event)">
+          <div class="content"></div>
+        </div>
+      </div>
+      <div id="wrapper-2" class="flip card-wrapper">
+        <div class="card flip-front">
+          <button class="reload">&#x21bb;</button>
+          <div class="title"></div>
+          <div class="bingo"></div>
+        </div>
+        <div class="detail flip-back" onclick="closeDetail(event)">
+          <div class="content"></div>
+        </div>
+      </div>
+    </div>
+    <div id="pyro" class="hidden" onclick="stopPyro()">
+      <div class="before"></div>
+      <div class="after"></div>
+    </div>
+    <script>
+      if (!('fetch' in window)) alert('Please user a modern Browser to play New Normal!')
+      let lang, terr
+ 
+      function load(locale) {
+        FastClick.attach(document.body)
+        const [language, territory] = [lang, terr] = locale ? locale.split('-') : browserLocale()
+        document.querySelector('#location').value = lang + '-' + terr
+        runIntro()
+      }
+ 
+      async function show(page) {
+        document.querySelector('.logo').style.display = page == 'intro' ? 'none' : 'block'
+        const content = await (await fetch(lang +'/'+page+'.html')).text()
+        document.querySelector('#menu .content').innerHTML = content
+        document.querySelector('#menu').scrollTop = 0
+      }
+      let timer = null
+      async function runIntro() {
+        await show('intro')
+        document.querySelector('#menu').classList.add('intro')
+        let frame = document.querySelector('#menu .frame')
+        const nextFrame = () => {
+          frame.classList.toggle('show')
+          frame = frame.nextElementSibling
+          if (frame) {
+            frame.classList.toggle('show')
+            timer = setTimeout(nextFrame, 60 * frame.textContent.length)          
+          } else {
+            timer = null
+            document.querySelector('#menu').classList.remove('intro')
+            show('start')
+          }
+        }
+        frame.classList.toggle('show')
+        timer = setTimeout(nextFrame, 60 * frame.textContent.length)          
+      }
+      function skipIntro() {
+        if (timer) clearTimeout(timer)
+        document.querySelector('#menu').classList.remove('intro')
+        show('start')
+      }
+      
+      function stopPyro() {
+        document.querySelector('#pyro').classList.add('hidden')
+      }
+      
+      function play(one, two) {
+        loadCard('#wrapper-1', one)
+        if (two != undefined) {
+          document.querySelector('#wrapper-2').classList.remove('hidden')
+          document.querySelector('#game').classList.remove('one')
+          loadCard('#wrapper-2', two)
+        } else {
+          document.querySelector('#wrapper-2').classList.add('hidden')
+          document.querySelector('#game').classList.add('one')
+        }
+        
+        document.querySelector('#stop').classList.remove('hidden')
+        document.querySelector('#game').classList.remove('hidden')
+        document.querySelector('#menu').classList.add('hidden')
+      }
+      async function loadCard(wrapper, idiot) {
+        const langfile = lang + (idiot ? '/idiot.html' : '/sheep.html') 
+        const langcontent = await (await fetch(langfile)).text()
+        const terrfile = terr + (idiot ? '/idiot-local.html' : '/sheep-local.html') 
+        const terrcontent = await (await fetch(terrfile)).text()
+        wrapper = document.querySelector(wrapper)
+        wrapper.querySelector('.content').innerHTML = langcontent + terrcontent
+        wrapper.querySelector('.content').prepend(
+          document.querySelector('.logo').cloneNode(true))
+        wrapper.querySelectorAll('a[name]').forEach(a => 
+          a.prepend(elementWithKids('span', a.name))
+        )
+        const set = getArguments(wrapper.querySelector('.detail'))
+        if (!set.length) alert('No arguments found!')
+        makeCard(wrapper, set, 5, idiot ? '🤪,👻' : '🐑,😷')
+        wrapper.querySelector('.card').classList.toggle('redbg', idiot)
+        wrapper.querySelector('.card').classList.toggle('bluebg', !idiot)
+        wrapper.querySelector('.reload').onclick = () => makeCard(wrapper, set, 5, idiot ? '🤪,👻' : '🐑,😷')
+        const title = wrapper.querySelector('.title')
+        if (title.firstChild) title.removeChild(title.firstChild)
+        title.appendChild(wrapper.querySelector('.detail select'))
+      }
+      
+      function stop() {
+        document.querySelector('#stop').classList.add('hidden')
+        document.querySelector('#game').classList.add('hidden')
+        document.querySelector('#menu').classList.remove('hidden')
+      }
+
+      function closeDetail(event) {
+        flipClose(event)
+        const detail = event.target.closest('.card-wrapper').querySelector('.detail')
+        detail.classList.remove('single')
+        detail.querySelectorAll('a').forEach(e => e.classList.remove('single'))
+      }
+
+      function getArguments(detail) {
+        return Array.from(detail.querySelectorAll('a[name]')).map(a => ({id: a.name, word: a.querySelector('h2').innerHTML}))
+      }
+
+      function browserLocale() {
+        let [language, territory] = navigator.language.split('-')
+        territory = territory ? territory.toLowerCase() : language
+        return [language, territory]
+      }
+    </script>
+  </body>
+</html>

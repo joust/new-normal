@@ -1,0 +1,67 @@
+.flip-wrapper {
+  perspective: 3000px;
+}
+
+.flip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  transition: width 0.8s cubic-bezier(0.23, 1, 0.32, 1), height 0.8s cubic-bezier(0.23, 1, 0.32, 1), transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+  transform-origin: 50% 50%;
+  text-align: center;
+}
+
+.flip-front {
+  position: absolute;
+  display: block;
+  z-index: 1;
+  backface-visibility: hidden;
+  transition: background 0.15s ease, line-height 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 1vw 3vw rgba(0, 0, 0, 0.4);
+  transition: box-shadow 0.8s ease;
+  transition: opacity 0.2s ease;
+}
+
+.flip-back {
+  position: absolute;
+  display: block;
+  transform: translateZ(-2px) rotateX(180deg);
+  backface-visibility: hidden;
+}
+
+.flip[data-direction="left"] .flip-back,
+.flip[data-direction="right"] .flip-back {
+  transform: translateZ(-2px) rotateY(180deg);
+}
+
+.flip.is-open .flip-front {
+  pointer-events: none;
+  box-shadow: none;
+  opacity: 0;
+}
+
+.flip .flip-back {
+  opacity: 0;
+}
+
+.flip.is-open .flip-back {
+  opacity: 1;
+}
+
+.flip[data-direction="top"].is-open {
+  transform: rotateX(180deg);
+}
+
+.flip[data-direction="right"].is-open {
+  transform: rotateY(180deg);
+}
+
+.flip[data-direction="bottom"].is-open {
+  transform: rotateX(-180deg);
+}
+
+.flip[data-direction="left"].is-open {
+  transform: rotateY(-180deg);
+}

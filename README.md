@@ -6,23 +6,35 @@ The app is inter&shy;nationa&shy;lized and contains a common core of universal, 
 </p>
 <h1>Content</h1>
 <p>
-All argu&shy;ments are stored in HTML format in language- and terri&shy;tory-Direc&shy;tories:
+All internationalized application content is stored in HTML format in language-directories:
+</p>
+<ul>
+<li><code>&lt;language code&gt;/intro.html</code>: the application intro</li>
+<li><code>&lt;language code&gt;/start.html</code>: main application menu</li>
+<li><code>&lt;language code&gt;/gameplay.html</code>: gameplay instructions</li>
+<li><code>&lt;language code&gt;/install.html</code>: PWA installation instructions</li>
+<li><code>&lt;language code&gt;/support.html</code>: Support instructions</li>
+<li><code>&lt;language code&gt;/credits.html</code>: the credits</li>
+<li><code>&lt;language code&gt;/imprint.html</code>: the imprint</li>
+</ul>
+<p>
+All internationalized argu&shy;ments are stored in HTML format in language- and terri&shy;tory-direc&shy;tories:
 </p>
 <ul>
 <li><code>&lt;language code&gt;/sheep.html</code>: Common core <b>Idiot</b> argu&shy;ments</li>
 <li><code>&lt;language code&gt;/idiot.html</code>: Common core <b>Sheep</b> argu&shy;ments</li>
-<li><code>&lt;territory code&gt;</code>/sheep-local.html: Local <b>Sheep</b> argu&shy;ments</li>
-<li><code>&lt;territory code&gt;</code>/idiot-local.html: Local <b>Idiot</b> argu&shy;ments</li>
+<li><code>&lt;territory code&gt;/sheep-local.html</code>: Local <b>Sheep</b> argu&shy;ments</li>
+<li><code>&lt;territory code&gt;/idiot-local.html</code>: Local <b>Idiot</b> argu&shy;ments</li>
 </ul>
 <p>The arguments of the Common core have a unique id across all languagues:</p>
 <ul>
-<li><code>I&lt;n&gt;</code> for the <b>Idiot</b> arguments</li>
-<li><code>S&lt;n&gt;</code> for the <b>Sheep</b> arguments</li>
+<li>"<code>I&lt;n&gt;</code>" for the <b>Idiot</b> arguments</li>
+<li>"<code>S&lt;n&gt;</code>" for the <b>Sheep</b> arguments</li>
 </ul>
 <p>The local arguments have a unique id with the territory code in it:</p>
 <ul>
-<li><code>I&lt;territory code&gt;&lt;n&gt;</code> for the <b>Idiot</b> arguments</li>
-<li><code>S&lt;territory code&gt;&lt;n&gt;</code> for the <b>Sheep</b> arguments</li>
+<li>"<code>I&lt;territory code&gt;&lt;n&gt;</code>" for the <b>Idiot</b> arguments</li>
+<li>"<code>S&lt;territory code&gt;&lt;n&gt;</code>" for the <b>Sheep</b> arguments</li>
 </ul>
 
 <h1>Roadmap</h1>

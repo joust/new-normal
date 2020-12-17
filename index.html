@@ -165,8 +165,6 @@
         const terrcontent = await (await fetch(terrfile)).text()
         wrapper = document.querySelector(wrapper)
         wrapper.querySelector('.content').innerHTML = langcontent + terrcontent
-        wrapper.querySelector('.content').prepend(
-          document.querySelector('.logo').cloneNode(true))
         wrapper.querySelectorAll('a[name]').forEach(a =>
           a.prepend(elementWithKids('span', a.name))
         )
@@ -179,6 +177,9 @@
         const title = wrapper.querySelector('.title')
         if (title.firstChild) title.removeChild(title.firstChild)
         title.appendChild(wrapper.querySelector('.detail select'))
+        wrapper.querySelector('.content').prepend(
+          document.querySelector('.logo').cloneNode(true))
+        wrapper.querySelector('.logo').removeChild(wrapper.querySelector('.logo select'))
       }
 
       /**

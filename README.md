@@ -9,10 +9,20 @@ The app is inter&shy;nationa&shy;lized and contains a common core of universal, 
 All argu&shy;ments are stored in HTML format in language- and terri&shy;tory-Direc&shy;tories:
 </p>
 <ul>
-<li><i>[language-code]</i>/sheep.html: Language indepen&shy;dent "Idiot" argu&shy;ments</li>
-<li><i>[language-code]</i>/idiot.html: Language indepen&shy;dent "Sheep" argu&shy;ments</li>
-<li><i>[language- or territory-code]</i>/sheep-local.html: Local "Sheep" argu&shy;ments</li>
-<li><i>[language- or territory-code]</i>/idiot-local.html: Local "Idiot" argu&shy;ments</li>
+<li><code>&lt;language code&gt;/sheep.html</code>: Common core <b>Idiot</b> argu&shy;ments</li>
+<li><code>&lt;language code&gt;/idiot.html</code>: Common core <b>Sheep</b> argu&shy;ments</li>
+<li><code>&lt;territory code&gt;</code>/sheep-local.html: Local <b>Sheep</b> argu&shy;ments</li>
+<li><code>&lt;territory code&gt;</code>/idiot-local.html: Local <b>Idiot</b> argu&shy;ments</li>
+</ul>
+<p>The arguments of the Common core have a unique id across all languagues:</p>
+<ul>
+<li><code>I&lt;n&gt;</code> for the <b>Idiot</b> arguments</li>
+<li><code>S&lt;n&gt;</code> for the <b>Sheep</b> arguments</li>
+</ul>
+<p>The local arguments have a unique id with the territory code in it:</p>
+<ul>
+<li><code>I&lt;territory code&gt;&lt;n&gt;</code> for the <b>Idiot</b> arguments</li>
+<li><code>S&lt;territory code&gt;&lt;n&gt;</code> for the <b>Sheep</b> arguments</li>
 </ul>
 
 <h1>Roadmap</h1>
@@ -21,7 +31,8 @@ The following features are in development or planned:
 </p>
 <ul>
 <li>Extend the argument/claim cards with sources for anyone to check</li>
-<li>Extend the Number of available Localizations by translating the common core and gather the arguments only used locally</li>
+<li>Visualize the counter arguments of an argument/claim cards</li>
+<li>Extend the number of available Localizations by translating the common core and gather the local arguments used</li>
 </ul>
 <h1>Support</h1>
 <p>

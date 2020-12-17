@@ -1,9 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html lang="en">
   <head>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-    <link rel="apple-touch-icon" href="nn-icon.png">
-    <link rel="icon" type="image/png" href="nn-icon.png">
+    <link rel="apple-touch-icon" href="images/nn-icon.png">
+    <link rel="icon" type="image/png" href="images/nn-icon.png">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="opensans.css">
     <link rel="stylesheet" href="crocodile.css">
@@ -66,21 +66,34 @@
     <script type="text/javascript">
       if (!('fetch' in window)) alert('Please user a modern Browser to play New Normal!')
       let lang, terr
- 
+
+      /**
+       * start the app with the given locale and start the matching intro
+       *
+       * @param {?string} locale optional locale string like 'de-de'. if not present, browser locale is used
+       */
       function load(locale) {
         FastClick.attach(document.body)
         const [language, territory] = [lang, terr] = locale ? locale.split('-') : browserLocale()
         document.querySelector('#location').value = lang + '-' + terr
         runIntro()
       }
- 
+
+      /**
+       * load and show the given page by patching innerHTML of element '#menu content'
+       *
+       * @param {string} page name of the page to load
+       */
       async function show(page) {
-        document.querySelector('.logo').style.display = page == 'intro' ? 'none' : 'block'
-        const content = await (await fetch(lang +'/'+page+'.html')).text()
-        document.querySelector('#menu .content').innerHTML = content
+        document.querySelector('.logo').style.display = page === 'intro' ? 'none' : 'block'
+        document.querySelector('#menu .content').innerHTML = await (await fetch(lang +'/'+page+'.html')).text()
         document.querySelector('#menu').scrollTop = 0
       }
       let timer = null
+
+      /**
+       * run intro by a timed display of its frames. can be skipped with skipIntro()
+       */
       async function runIntro() {
         await show('intro')
         document.querySelector('#menu').classList.add('intro')
@@ -90,7 +103,7 @@
           frame = frame.nextElementSibling
           if (frame) {
             frame.classList.toggle('show')
-            timer = setTimeout(nextFrame, 60 * frame.textContent.length)          
+            timer = setTimeout(nextFrame, 60 * frame.textContent.length)
           } else {
             timer = null
             document.querySelector('#menu').classList.remove('intro')
@@ -98,21 +111,34 @@
           }
         }
         frame.classList.toggle('show')
-        timer = setTimeout(nextFrame, 60 * frame.textContent.length)          
+        timer = setTimeout(nextFrame, 60 * frame.textContent.length)
       }
+
+      /**
+       * skip intro by stopping its timer and show the start menu
+       */
       function skipIntro() {
         if (timer) clearTimeout(timer)
         document.querySelector('#menu').classList.remove('intro')
         show('start')
       }
-      
+
+      /**
+       * stop the pyro effect by setting CSS 'hidden' class
+       */
       function stopPyro() {
         document.querySelector('#pyro').classList.add('hidden')
       }
-      
+
+      /**
+       * create one or two idiot or sheep cards and start the game
+       *
+       * @param {boolean} one create a idiot card if true, otherwise a sheep card
+       * @param {?boolean} two create a second card, idiot if true, sheep if false
+       */
       function play(one, two) {
         loadCard('#wrapper-1', one)
-        if (two != undefined) {
+        if (two !== undefined) {
           document.querySelector('#wrapper-2').classList.remove('hidden')
           document.querySelector('#game').classList.remove('one')
           loadCard('#wrapper-2', two)
@@ -120,21 +146,28 @@
           document.querySelector('#wrapper-2').classList.add('hidden')
           document.querySelector('#game').classList.add('one')
         }
-        
+
         document.querySelector('#stop').classList.remove('hidden')
         document.querySelector('#game').classList.remove('hidden')
         document.querySelector('#menu').classList.add('hidden')
       }
+
+      /**
+       * load a card by fetching the needed content (idiot/sheep + local) from the server
+       *
+       * @param {HTMLElement} wrapper wrapper element to load the card into
+       * @param {boolean} idiot load idiot content if true, otherwise sheep content
+       */
       async function loadCard(wrapper, idiot) {
-        const langfile = lang + (idiot ? '/idiot.html' : '/sheep.html') 
+        const langfile = lang + (idiot ? '/idiot.html' : '/sheep.html')
         const langcontent = await (await fetch(langfile)).text()
-        const terrfile = terr + (idiot ? '/idiot-local.html' : '/sheep-local.html') 
+        const terrfile = terr + (idiot ? '/idiot-local.html' : '/sheep-local.html')
         const terrcontent = await (await fetch(terrfile)).text()
         wrapper = document.querySelector(wrapper)
         wrapper.querySelector('.content').innerHTML = langcontent + terrcontent
         wrapper.querySelector('.content').prepend(
           document.querySelector('.logo').cloneNode(true))
-        wrapper.querySelectorAll('a[name]').forEach(a => 
+        wrapper.querySelectorAll('a[name]').forEach(a =>
           a.prepend(elementWithKids('span', a.name))
         )
         const set = getArguments(wrapper.querySelector('.detail'))
@@ -147,13 +180,20 @@
         if (title.firstChild) title.removeChild(title.firstChild)
         title.appendChild(wrapper.querySelector('.detail select'))
       }
-      
+
+      /**
+       * stop the game, hiding the #game element and showing the #menu element
+       */
       function stop() {
         document.querySelector('#stop').classList.add('hidden')
         document.querySelector('#game').classList.add('hidden')
         document.querySelector('#menu').classList.remove('hidden')
       }
 
+      /**
+       * close the detail window, removing the CSS 'single' classes
+       * @param {Event} event the event that triggered the close action
+       */
       function closeDetail(event) {
         flipClose(event)
         const detail = event.target.closest('.card-wrapper').querySelector('.detail')
@@ -161,10 +201,21 @@
         detail.querySelectorAll('a').forEach(e => e.classList.remove('single'))
       }
 
+      /**
+       * extract the argument ids and texts from HTML content
+       *
+       * @param {HTMLElement} detail content DOM node containing the arguments
+       * @return {{id: string, word: string}[]} the extracted arguments
+       */
       function getArguments(detail) {
         return Array.from(detail.querySelectorAll('a[name]')).map(a => ({id: a.name, word: a.querySelector('h2').innerHTML}))
       }
 
+      /**
+       * get browser two-character-codes for language and territory in lower case
+       *
+       * @return {string[]} an 2-entry-array with the browser language and territory
+       */
       function browserLocale() {
         let [language, territory] = navigator.language.split('-')
         territory = territory ? territory.toLowerCase() : language

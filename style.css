@@ -93,6 +93,14 @@ q + span {
   height: 14vw;
 }
 
+#location {
+  border: none;
+  outline: none;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 13vw;
+}
+
 #menu .intro {
   cursor: pointer;
 }
@@ -347,7 +355,7 @@ button.menu, span.menu {
   padding: 0.8vw;
 }
 
-#location, #stop, .reload {
+#stop, .reload {
   position: absolute;
   right: 0.2vw;
   top: 0.2vw;

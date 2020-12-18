@@ -2,6 +2,7 @@ body {
   font-family: 'Open Sans', Helvetica;
   text-align: center;
   user-select: none;
+  hyphens: auto;
 }
 
 body, html, #game, #menu, #pyro {
@@ -433,7 +434,7 @@ table {
 }
 
 tr {
-  max-height: 20%;
+  height: 20%;
 }
 
 td {

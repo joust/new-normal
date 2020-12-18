@@ -276,10 +276,14 @@ button.menu, span.menu {
 }
 
 @media (orientation: landscape) {
-  body {
+  #game {
     font-size: 1.5vw;
   }
-  
+
+  #game.one {
+    font-size: 3vh;
+  }
+
   #menu {
       font-size: 3vw;
   }
@@ -321,12 +325,16 @@ button.menu, span.menu {
 }
 
 @media (orientation: portrait) {
-  body {
+  #game {
     font-size: 1.5vh;
   }
 
+  #game.one {
+    font-size: 3vw;
+  }
+  
   #menu {
-    font-size: 3vh;
+    font-size: 3vw;
   }
   
   #game {
@@ -361,7 +369,7 @@ button.menu, span.menu {
 }
 
 @media (orientation: portrait) and (min-aspect-ratio: 1/2) {
-  .card-wrapper {
+  #game:not(.one) .card-wrapper {
     width: 50vh;
   }
 }

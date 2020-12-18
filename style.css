@@ -265,12 +265,15 @@ button.menu, span.menu {
   width: 100vmin;
 }
 
+.card-wrapper.hidden {
+  display: none;
+}
+
 .card-wrapper:after {
   content: '';
   display: block;
   padding-bottom: 100%;
 }
-
 
 @media (orientation: landscape) {
   body {

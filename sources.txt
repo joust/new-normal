@@ -72,6 +72,10 @@ https://www.tagesschau.de/faktenfinder/corona-test-117.html
 I64 Hunderte andere Viren
 https://www.spiegel.de/spiegel/print/d-66133688.html
 
+I70 Grippewelle jedes Jahr
+https://www.faz.net/aktuell/gesellschaft/gesundheit/notaufnahmen-sind-wegen-grippewelle-ueberlaufen-13454864.html
+https://www.youtube.com/watch?v=BwSrEXYQfJE
+
 I72 ct-Wert nicht standardisiert
 https://www.rnd.de/gesundheit/corona-test-positiv-aber-nicht-ansteckend-was-bedeutet-der-ct-wert-T24MONDJMNHSDGF5HNQYGVL2LU.html
 https://www.tagesschau.de/investigativ/ndr-wdr/gesundheitsaemter-corona-tests-101.html
@@ -84,10 +88,6 @@ https://amp.usatoday.com/amp/3000638001
 
 I81 Dark Winter
 https://www.nytimes.com/2020/11/30/health/coronavirus-vaccines-treatments.html
-
-I86 Grippewelle jedes Jahr
-https://www.faz.net/aktuell/gesellschaft/gesundheit/notaufnahmen-sind-wegen-grippewelle-ueberlaufen-13454864.html
-https://www.youtube.com/watch?v=BwSrEXYQfJE
 
 I87 Verschobene OPs
 https://www.aerzteblatt.de/nachrichten/112862/28-Millionen-chirurgische-Eingriffe-weltweit-aufgrund-von-COVID-19-verschoben

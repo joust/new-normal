@@ -54,6 +54,7 @@ I44 Beatmung falsch
 https://www.tagesspiegel.de/wissen/zu-viel-der-gut-gemeinten-beatmung-experten-streiten-ab-wann-covid-19-kranke-beatmet-werden-sollen/25754018.html
 
 I49 Event 201
+https://www.westendverlag.de/buch/chronik-einer-angekuendigten-krise
 https://www.centerforhealthsecurity.org/event201/scenario.html
 
 I50 Intensivbetten normal
@@ -87,6 +88,7 @@ I78 Finanzielle Anzreize
 https://amp.usatoday.com/amp/3000638001
 
 I81 Dark Winter
+https://www.westendverlag.de/buch/chronik-einer-angekuendigten-krise
 https://www.nytimes.com/2020/11/30/health/coronavirus-vaccines-treatments.html
 
 I87 Verschobene OPs

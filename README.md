@@ -1,4 +1,5 @@
 <h1>New Normal</h1>
+<center><img src="https://github.com/joust/new-normal/raw/master/images/new-normal.jpg"></center>
 <p>
 This is a plain HTML/CSS/ES6 implementation of a Buzzword BINGO PWA. Instead of Buzz&shy;words it is played with arguments used during a Corona related discussion. The two sides of the discussion are referenced as <b>Idiots</b> and <b>Sheeps</b>.
 </p><p>
@@ -42,7 +43,7 @@ All internationalized argu&shy;ments are stored in HTML format in language- and 
 The following features are in development or planned:
 </p>
 <ul>
-<li>Extend the argument/claim cards with <a href="https://github.com/joust/new-normal/blob/master/sources.txt">sources</a>a> for anyone to check</li>
+<li>Extend the argument/claim cards with <a href="https://github.com/joust/new-normal/blob/master/sources.txt">sources</a> for anyone to check</li>
 <li>Visualize the counter arguments of an argument/claim cards</li>
 <li>Extend the number of available Localizations by translating the common core and gather the local arguments used</li>
 </ul>
@@ -72,6 +73,27 @@ The contents of this game - like our reality - are in con&shy;stant flux. New ar
   <li>Make a pull request</li>
   <li>Send an email to kolja [at] new-normal.app</li>
 </ol>
+
+<h1>Credits</h1>
+
+<p>I would like to thank all friends and family members who fearlessly got into discussions and ultimately provided the inspiration and content for this game. As well as
+</p>
+<ul>
+<li>all scientists, who are fully committed to reason and the scientific approach,</li>
+<li>all journalists, who see themselves as a real corrective and as the "fourth power",</li>
+<li>all artists, who, despite the new normal, do not shy away from critical art and</li>
+<li>all philosophers, who currently help us to make sense of whats happening through critical thinking.</li>
+</ul>
+<p>
+And finally these nerds who invented this internet.</p>
+<p>Font: <a target="_blank" href="https://www.hvdfonts.com/fonts/hvd-crocodile">HVD Crocodile</a>
+</p><p>
+Flip Effect: <a taget="_blank" href="https://lab.hakim.se/flipside">Flipside</a>
+</p><p>
+Pyro Effect: <a target="_blank" href="https://jsfiddle.net/elin/7m3bL">Eddie Lin</a>
+</p><p>
+<img width="100" style="float:left" src="https://github.com/joust/new-normal/raw/master/images/berlin.png">PROUDLY MADE IN BERLIN CHARLOTTENGRAD.
+</p>
 
 <h1>License</h1>
 <p>

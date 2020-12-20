@@ -42,7 +42,7 @@ All internationalized argu&shy;ments are stored in HTML format in language- and 
 The following features are in development or planned:
 </p>
 <ul>
-<li>Extend the argument/claim cards with sources for anyone to check</li>
+<li>Extend the argument/claim cards with <a href="https://github.com/joust/new-normal/blob/master/sources.txt">sources</a>a> for anyone to check</li>
 <li>Visualize the counter arguments of an argument/claim cards</li>
 <li>Extend the number of available Localizations by translating the common core and gather the local arguments used</li>
 </ul>
@@ -70,11 +70,7 @@ The contents of this game - like our reality - are in con&shy;stant flux. New ar
 <h2>Which ways can I support?</h2>
 <ol>
   <li>Make a pull request</li>
-  <li>Send an email to kolja [at] new-normal.app, with a</li>
-    <ul>
-      <li>helpful, clear subject</li>
-      <li>a reference to an argument id - if available</li>.
-    </ul>
+  <li>Send an email to kolja [at] new-normal.app</li>
 </ol>
 
 <h1>License</h1>

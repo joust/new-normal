@@ -18,6 +18,9 @@ I8 Masken nützen nichts
 https://www.xn--rzte-fr-aufklrung-pqbn68b.de/masken
 https://www.spiegel.de/wissenschaft/medizin/karl-lauterbach-fordert-aerztekammer-praesident-klaus-reinhardt-zum-ruecktritt-auf-a-6a846ac7-ed4e-465a-90ae-fab9340d4fc1
 https://www.merkur.de/bayern/corona-bayern-soeder-kritik-puerner-friedrich-gesundheitsamt-strategie-strafe-maske-zr-13922061.html
+https://www.youtube.com/watch?v=J7Ic_bbRkXQ
+https://taz.de/Baumwollmasken-machen-Sinn/!5670920
+https://www1.wdr.de/nachrichten/coronavirus-atemschutzmasken-tipps-100.html
 
 I9 Maske gesundheitsschädlich
 
@@ -37,6 +40,9 @@ https://www.zeit.de/wirtschaft/2020-09/corona-kapitalismus-rezession-wef-neolibe
 https://www.weforum.org/agenda/2020/10/sesame-and-the-muppets-the-great-reset-podcast/
 https://time.com/collection/great-reset
 https://norberthaering.de/die-regenten-der-welt/grosser-neustart
+
+I32 Medien verbreiten Angst
+https://www.corodok.de/studie-panikmache-ard
 
 I33 Keine Übersterblichkeit
 https://www.destatis.de/DE/Themen/Querschnitt/Corona/_Grafik/_Interaktiv/woechentliche-sterbefallzahlen-jahre.html?nn=209016
@@ -69,6 +75,7 @@ https://www.ebm-netzwerk.de/de/veroeffentlichungen/covid-19
 
 I54 Falsch-Positiv-Rate hoch
 https://www.tagesschau.de/faktenfinder/corona-test-117.html
+https://www.corodok.de/spahn-viel-testen-schlecht
 
 I64 Hunderte andere Viren
 https://www.spiegel.de/spiegel/print/d-66133688.html
@@ -110,7 +117,11 @@ https://influenza.rki.de/Wochenberichte/2019_2020/2020-39.pdf
 S35 John Snow Memorandum
 https://www.johnsnowmemo.com
 
+S53 Schwangere gefährdet
+https://www.aerzteblatt.de/nachrichten/117999/SARS-CoV-2-Studie-sieht-erhoehtes-Erkrankungsrisiko-bei-Schwangeren-und-Neugeborenen
+
 S61 Masken schützen
+https://taz.de/Baumwollmasken-machen-Sinn/!5670920
 https://www.cesifo.org/DocDL/cesifo1_wp8479.pdf
 
 S65 Ärzte sind nicht blöd

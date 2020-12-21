@@ -3,12 +3,14 @@ I1 Immunsystem?
 I2 PCR-Test nicht validiert
 
 I3 PCR-Test nur bei Kranken
+https://www.weltwoche.ch/ausgaben/2020-42/diese-woche/testen-bis-man-krank-ist-die-weltwoche-ausgabe-42-2020.html
 
 I4 100te verschiedene PCR-Tests
 
 I5 Grundrechte unantastbar
 https://www.vfgh.gv.at/medien/Entscheidungen_Oktober-Session.php
 https://www.faz.net/aktuell/politik/inland/sind-die-corona-massnahmen-verfassungsmaessig-bedenklich-16996984.html
+https://www.vfgh.gv.at/medien/Entscheidungen_Oktober-Session.php
 
 I6 So wie in den 1930ern
 
@@ -40,6 +42,10 @@ https://www.zeit.de/wirtschaft/2020-09/corona-kapitalismus-rezession-wef-neolibe
 https://www.weforum.org/agenda/2020/10/sesame-and-the-muppets-the-great-reset-podcast/
 https://time.com/collection/great-reset
 https://norberthaering.de/die-regenten-der-welt/grosser-neustart
+https://www.domradio.de/themen/corona/2020-10-31/globaler-plan-namens-great-reset-erzbischof-vigano-sorgt-mit-schreiben-erneut-fuer-aufsehen
+
+I18 Parlament
+https://www.juraforum.de/lexikon/parlamentsvorbehalt
 
 I32 Medien verbreiten Angst
 https://www.corodok.de/studie-panikmache-ard
@@ -87,6 +93,7 @@ https://www.youtube.com/watch?v=BwSrEXYQfJE
 I72 ct-Wert nicht standardisiert
 https://www.rnd.de/gesundheit/corona-test-positiv-aber-nicht-ansteckend-was-bedeutet-der-ct-wert-T24MONDJMNHSDGF5HNQYGVL2LU.html
 https://www.tagesschau.de/investigativ/ndr-wdr/gesundheitsaemter-corona-tests-101.html
+https://www.weltwoche.ch/ausgaben/2020-42/diese-woche/testen-bis-man-krank-ist-die-weltwoche-ausgabe-42-2020.html
 
 I75 Herdenimmunität
 https://twitter.com/unherd/status/1313139482183503872

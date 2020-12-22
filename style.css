@@ -13,6 +13,11 @@ body, html, #game, #menu, #pyro {
   overflow: hidden;
 }
 
+input[type="checkbox"] {
+  transform: scale(2.5);
+  margin-right: 2.5vw;
+}
+
 q {
   display: block;
   background: #fff;

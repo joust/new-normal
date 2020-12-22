@@ -44,7 +44,7 @@
           <div class="title"></div>
           <div class="bingo"></div>
         </div>
-        <div class="detail flip-back" onclick="closeDetail(event)">
+        <div class="detail flip-back" onclick="handleClick(event)">
           <div class="content"></div>
         </div>
       </div>
@@ -54,7 +54,7 @@
           <div class="title"></div>
           <div class="bingo"></div>
         </div>
-        <div class="detail flip-back" onclick="closeDetail(event)">
+        <div class="detail flip-back" onclick="handleClick(event)">
           <div class="content"></div>
         </div>
       </div>
@@ -65,8 +65,9 @@
     </div>
     <script type="text/javascript">
       if (!('fetch' in window)) alert('Please user a modern Browser to play New Normal!')
+      const settings = { curious: true, open: false, fair: false, friendly: false }
       let lang, terr
-
+      
       /**
        * start the app with the given locale and start the matching intro
        *
@@ -74,6 +75,7 @@
        */
       function load(locale) {
         FastClick.attach(document.body)
+        loadSettings()
         const [language, territory] = [lang, terr] = locale ? locale.split('-') : browserLocale()
         document.querySelector('#location').value = lang + '-' + terr
         runIntro()
@@ -86,8 +88,11 @@
        */
       async function show(page) {
         document.querySelector('.logo').style.display = page === 'intro' ? 'none' : 'block'
+        document.querySelector('#menu').classList.add('hidden')
         document.querySelector('#menu .content').innerHTML = await (await fetch(lang +'/'+page+'.html')).text()
         document.querySelector('#menu').scrollTop = 0
+        if (page==='settings') initSettings()
+        setTimeout(() => document.querySelector('#menu').classList.remove('hidden'), 50)
       }
       let timer = null
 
@@ -129,6 +134,32 @@
       function stopPyro() {
         document.querySelector('#pyro').classList.add('hidden')
       }
+      
+      /**
+       * transfer the current settings to the settings page for editing
+       */
+      function initSettings() {
+        for (let setting in settings)
+          document.querySelector(`#menu #${setting}`).checked = settings[setting]
+      }
+
+      /**
+       * save a single setting locally and to local storage if available
+       */
+      function saveSetting(setting, value) {
+        settings[setting] = value
+        if (localStorage)
+          localStorage.setItem(setting, settings[setting] ? 'true' : 'false')
+      }
+
+      /**
+       * load all settings from local storage if available
+       */
+      function loadSettings() {
+        if (localStorage)
+          for (let setting in settings)
+            settings[setting] = localStorage.getItem(setting)==='true'
+      }
 
       /**
        * create one or two idiot or sheep cards and start the game
@@ -165,18 +196,27 @@
         const terrcontent = await (await fetch(terrfile)).text()
         wrapper = document.querySelector(wrapper)
         wrapper.querySelector('.content').innerHTML = langcontent + terrcontent
-        wrapper.querySelectorAll('a[name]').forEach(a =>
-          a.prepend(elementWithKids('span', a.name))
+        wrapper.querySelectorAll('a[id]').forEach(a =>
+          a.prepend(elementWithKids('span', a.id))
         )
+        const sources = elementWithKids('div')
+        sources.innerHTML = await (await fetch('sources.html')).text()
+        addSources(wrapper, sources)
         const set = getArguments(wrapper.querySelector('.detail'))
         if (!set.length) alert('No arguments found!')
         makeCard(wrapper, set, 5, idiot ? '🤪,👻' : '🐑,😷')
         wrapper.querySelector('.card').classList.toggle('redbg', idiot)
         wrapper.querySelector('.card').classList.toggle('bluebg', !idiot)
         wrapper.querySelector('.reload').onclick = () => makeCard(wrapper, set, 5, idiot ? '🤪,👻' : '🐑,😷')
+        // prepare card title
         const title = wrapper.querySelector('.title')
         if (title.firstChild) title.removeChild(title.firstChild)
-        title.appendChild(wrapper.querySelector('.detail select'))
+        const select = wrapper.querySelector('.detail select')
+        if (!settings.fair)
+          randomElement(select.querySelectorAll('option'), 1).selected = true
+        title.appendChild(select)
+        
+        // copy logo
         wrapper.querySelector('.content').prepend(
           document.querySelector('.logo').cloneNode(true))
         wrapper.querySelector('.logo').removeChild(wrapper.querySelector('.logo select'))
@@ -192,10 +232,23 @@
       }
 
       /**
+       * handle a click on the details window
+       * @param {Event} event the click event
+       */
+      function handleClick(event) {
+        if (event.target.tagName.toLowerCase() === 'a') {
+          showSources(event)
+        } else {
+          showSources(event, false)
+          closeDetails(event)
+        }
+      }
+      
+      /**
        * close the detail window, removing the CSS 'single' classes
        * @param {Event} event the event that triggered the close action
        */
-      function closeDetail(event) {
+      function closeDetails(event) {
         flipClose(event)
         const detail = event.target.closest('.card-wrapper').querySelector('.detail')
         detail.classList.remove('single')
@@ -209,7 +262,37 @@
        * @return {{id: string, word: string}[]} the extracted arguments
        */
       function getArguments(detail) {
-        return Array.from(detail.querySelectorAll('a[name]')).map(a => ({id: a.name, word: a.querySelector('h2').innerHTML}))
+        return Array.from(detail.querySelectorAll('a[id]')).map(a => ({id: a.id, word: a.querySelector('h2').innerHTML}))
+      }
+      
+      /**
+       * show/hide all sources boxes if available
+       *
+       * @param {Event} event the Event triggering the action
+       * @param {boolean} show true if the sources should be made visible false otherwise
+       */
+      function showSources(event, show = true) {
+        const detail = event.target.closest('.card-wrapper').querySelector('.detail')
+        detail.querySelectorAll('q').forEach(q => q.classList.toggle('hidden', !show))
+      }
+      
+      /**
+       * extend the arguments in detail with sources from sources if available
+       *
+       * @param {HTMLElement} detail content DOM node containing the arguments
+       * @param {HTMLElement} sources content DOM node containing the sources
+       */
+      function addSources(detail, sources) {
+        Array.from(detail.querySelectorAll('a[id]')).forEach(a => {
+          const links = sources.querySelectorAll(`a.${a.id}`)
+          links.forEach(link => link.target = '_blank')
+          if (links.length > 0) {
+            const q = elementWithKids('q', elementWithKids('ul', Array.from(links).map(
+              s => elementWithKids('li',s.cloneNode(true)))))
+            q.classList.add('hidden')
+            a.nextElementSibling.appendChild(q)
+          }
+        })
       }
 
       /**

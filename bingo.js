@@ -31,6 +31,17 @@ function uniqueWord(wordset) {
 }
 
 /**
+ * return a random element from an array, starting from element start
+ *
+ * @param {Array} array - Array to choose a random element from
+ * @param {number} start - Element to start with (default 0)
+ * @return {any} The random element selected
+ */
+function randomElement(array, start = 0) {
+  return array[start + Math.floor((Math.random() * (array.length-start)))]
+}
+
+/**
  * generate a BINGO card as an HTML table with the given parent and size size
  *
  * @param {HTMLElement} wrapper - parent element to generate the table into
@@ -49,7 +60,7 @@ function makeCard(wrapper, wordset, size, center) {
     for (let x = 0; x < size; x++) {
       const wordnode = elementWithKids('td')
       if (Math.floor(size / 2) === x && Math.floor(size / 2) === y) {
-        wordnode.innerHTML = center[Math.floor(Math.random() * center.length)]
+        wordnode.innerHTML = randomElement(center)
         wordnode.classList.add('center')
         wordnode.classList.add('set')
         wordnode.onclick = event => flipOpen(event)
@@ -61,10 +72,10 @@ function makeCard(wrapper, wordset, size, center) {
           const set = event.target.closest('td').classList.toggle('set')
           document.querySelector('#pyro').classList.toggle('hidden',
             !checkCard(event.target.closest('table'), size))
-          if (set) {
+          if (set && settings.curious) {
             const detail = event.target.closest('.card-wrapper').querySelector('.detail')
             detail.classList.add('single')
-            detail.querySelector('a[name='+ event.target.id + ']').classList.add('single')
+            detail.querySelector(`a[id=${event.target.id}]`).classList.add('single')
             flipOpen(event)
           }
         }
@@ -93,10 +104,10 @@ function makeCard(wrapper, wordset, size, center) {
 function checkCard(table, size) {
   const base = Array.from({length: size}, (_, i) => i+1)
   const allSet = nodes => nodes.reduce((set, node) => set && node.classList.contains('set'), true)
-  const rows = base.map(n => Array.from(table.querySelectorAll('tr:nth-of-type('+n+') td')))
-  const columns = base.map(n => Array.from(table.querySelectorAll('td:nth-of-type('+n+')')))
+  const rows = base.map(n => Array.from(table.querySelectorAll(`tr:nth-of-type(${n}) td`)))
+  const columns = base.map(n => Array.from(table.querySelectorAll(`td:nth-of-type(${n})`)))
   const diagonals = [
-    base.map(n => table.querySelector('tr:nth-of-type('+n+') td:nth-of-type('+n+')')), base.map(n => table.querySelector('tr:nth-of-type('+n+') td:nth-of-type('+(size-n+1)+')'))
+    base.map(n => table.querySelector(`tr:nth-of-type(${n}) td:nth-of-type(${n})`)), base.map(n => table.querySelector(`tr:nth-of-type(${n}) td:nth-of-type(${size-n+1})`))
   ]
   const complete = rows.concat(columns, diagonals).filter(allSet)
   table.querySelectorAll('td').forEach(node => node.classList.remove('complete'))

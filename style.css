@@ -15,14 +15,34 @@ body, html, #game, #menu, #pyro {
 
 q {
   display: block;
-  background: #666;
+  background: #fff;
   border-radius: 0.5vw;
-  padding: 1vw;
+  padding: 0.5vw;
+  padding-left: 4vw;
+  padding-right: 1vw;
+  margin-top: 0.5vw;
+}
+
+q.hidden {
+  display: none;
 }
 
 q + span {
   display: block;
   font-style: italic;
+}
+
+q::before {
+  position: absolute;
+  font-size: 10vw;
+  color: #ccc;
+  left: 6vw;
+  font-family: 'HVD Crocodile';
+  font-weight: 600;
+}
+
+q::after {
+  visibility:collapse;
 }
 
 #game, #menu {
@@ -40,6 +60,11 @@ q + span {
   text-align: left;
   overflow-y: auto;
   color: #333;
+  transition: margin ease 0.5s;
+}
+
+#menu.hidden {
+  margin-top: 100%;
 }
 
 #menu.intro {
@@ -57,6 +82,11 @@ q + span {
   user-select: none;
   text-align: center;
   letter-spacing: -0.6vw;
+  transition: margin ease 0.5s;
+}
+
+#menu.hidden .game-logo {
+  margin-top: -100%;
 }
 
 .logo {
@@ -139,12 +169,15 @@ button, button.menu, span.menu {
   font-weight: 600;
 }
 
-button, button.menu {
+button {
   cursor: pointer;
-  font-size: 2vw;
+  font-size: 1.2vw;
+  margin-right: 2vw;
+  padding: 0.5vw;
 }
 
 button.menu {
+  font-size: 2vw;
   margin: 0.3vw;
   padding: 1vw;
 }
@@ -234,12 +267,13 @@ button.menu, span.menu {
   user-select: none;
 }
 
-.detail.single a[name], .detail.single a[name] + p {
+.detail.single a[id], .detail.single a[id] + p {
   display: none;
 }
 
 .detail.single a.single, .detail.single a.single + p {
   display: block;
+  transition: height 0.5s ease;
 }
 
 .detail.single h1 {
@@ -254,7 +288,7 @@ button.menu, span.menu {
   display: block;
 }
 
-.detail a[name] span {
+.detail a[id] span {
   float: right;
   color: #fff;
   background: #aaa;
@@ -285,6 +319,15 @@ button.menu, span.menu {
   #game.one {
     font-size: 3vh;
   }
+
+  #game.hidden .card-wrapper:nth-child(1) {
+    margin-top: -150%;
+  }
+
+  #game.hidden .card-wrapper:nth-child(2) {
+    margin-bottom: -150%;
+  }
+  
 
   #menu {
       font-size: 3vw;
@@ -330,6 +373,14 @@ button.menu, span.menu {
 
   #game.one {
     font-size: 3vw;
+  }
+  
+  #game.hidden .card-wrapper:nth-child(1) {
+    margin-left: -150%;
+  }
+
+  #game.hidden .card-wrapper:nth-child(2) {
+    margin-right: -150%;
   }
   
   #menu {

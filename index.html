@@ -65,7 +65,7 @@
     </div>
     <script type="text/javascript">
       if (!('fetch' in window)) alert('Please user a modern Browser to play New Normal!')
-      const settings = { curious: true, open: false, fair: false, friendly: false }
+      const attitude = { hasty: false, curious: true, open: false, fair: false, friendly: false }
       let lang, terr
       
       /**
@@ -75,10 +75,10 @@
        */
       function load(locale) {
         FastClick.attach(document.body)
-        loadSettings()
+        loadAttitude()
         const [language, territory] = [lang, terr] = locale ? locale.split('-') : browserLocale()
         document.querySelector('#location').value = lang + '-' + terr
-        runIntro()
+        if (attitude.hasty) show('start'); else runIntro()
       }
 
       /**
@@ -91,7 +91,7 @@
         document.querySelector('#menu').classList.add('hidden')
         document.querySelector('#menu .content').innerHTML = await (await fetch(lang +'/'+page+'.html')).text()
         document.querySelector('#menu').scrollTop = 0
-        if (page==='settings') initSettings()
+        if (page==='attitude') initAttitude()
         setTimeout(() => document.querySelector('#menu').classList.remove('hidden'), 50)
       }
       let timer = null
@@ -124,6 +124,7 @@
        */
       function skipIntro() {
         if (timer) clearTimeout(timer)
+        saveAttitude('hasty', true)
         document.querySelector('#menu').classList.remove('intro')
         show('start')
       }
@@ -136,29 +137,30 @@
       }
       
       /**
-       * transfer the current settings to the settings page for editing
+       * transfer the current attitude to the attitude page for editing
        */
-      function initSettings() {
-        for (let setting in settings)
-          document.querySelector(`#menu #${setting}`).checked = settings[setting]
+      function initAttitude() {
+        for (let a in attitude)
+          document.querySelector(`#menu #${a}`).checked = attitude[a]
       }
 
       /**
-       * save a single setting locally and to local storage if available
+       * save a single attitude locally and to local storage if available
        */
-      function saveSetting(setting, value) {
-        settings[setting] = value
+      function saveAttitude(a, value) {
+        attitude[a] = value
         if (localStorage)
-          localStorage.setItem(setting, settings[setting] ? 'true' : 'false')
+          localStorage.setItem(a, attitude[a] ? 'true' : 'false')
       }
 
       /**
-       * load all settings from local storage if available
+       * load all attitudes from local storage if available
        */
-      function loadSettings() {
+      function loadAttitude() {
         if (localStorage)
-          for (let setting in settings)
-            settings[setting] = localStorage.getItem(setting)==='true'
+          for (let a in attitude)
+            if (localStorage.getItem(a) !== undefined)
+              attitude[a] = localStorage.getItem(a)==='true'
       }
 
       /**
@@ -212,7 +214,7 @@
         const title = wrapper.querySelector('.title')
         if (title.firstChild) title.removeChild(title.firstChild)
         const select = wrapper.querySelector('.detail select')
-        if (!settings.fair)
+        if (!attitude.fair)
           randomElement(select.querySelectorAll('option'), 1).selected = true
         title.appendChild(select)
         

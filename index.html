@@ -199,11 +199,15 @@
         wrapper = document.querySelector(wrapper)
         wrapper.querySelector('.content').innerHTML = langcontent + terrcontent
         wrapper.querySelectorAll('a[id]').forEach(a =>
-          a.prepend(elementWithKids('span', a.id))
+          a.prepend(elementWithKids('span', a.id)) // add id tags
         )
+        wrapper.querySelector('button').classList.toggle('hidden', attitude.friendly)
         const sources = elementWithKids('div')
         sources.innerHTML = await (await fetch('sources.html')).text()
         addSources(wrapper, sources)
+        if (attitude.open) {
+          wrapper.querySelectorAll('button, button + a').forEach(e => e.classList.add('hidden'))
+        }
         const set = getArguments(wrapper.querySelector('.detail'))
         if (!set.length) alert('No arguments found!')
         makeCard(wrapper, set, 5, idiot ? '🤪,👻' : '🐑,😷')
@@ -247,6 +251,19 @@
       }
       
       /**
+       * open the detail window, adding the CSS 'single' classes to the given id details
+       * @param {Event} event the event that triggered the open action
+       */
+      function openDetails(event) {
+        const detail = event.target.closest('.card-wrapper').querySelector('.detail')
+        const anchor = detail.querySelector(`a[id=${event.target.id}]`)
+        detail.classList.add('single'), anchor.classList.add('single')
+        detail.querySelectorAll('button, button + a').forEach(e => e.classList.toggle('hidden',
+          attitude.open || !anchor.nextElementSibling.querySelector('q')))
+        flipOpen(event)
+      }
+      
+      /**
        * close the detail window, removing the CSS 'single' classes
        * @param {Event} event the event that triggered the close action
        */
@@ -254,7 +271,7 @@
         flipClose(event)
         const detail = event.target.closest('.card-wrapper').querySelector('.detail')
         detail.classList.remove('single')
-        detail.querySelectorAll('a').forEach(e => e.classList.remove('single'))
+        detail.querySelectorAll('a[id]').forEach(e => e.classList.remove('single'))
       }
 
       /**
@@ -264,7 +281,8 @@
        * @return {{id: string, word: string}[]} the extracted arguments
        */
       function getArguments(detail) {
-        return Array.from(detail.querySelectorAll('a[id]')).map(a => ({id: a.id, word: a.querySelector('h2').innerHTML}))
+        return Array.from(detail.querySelectorAll('a[id]')).map(
+          a => ({id: a.id, word: a.querySelector('h2').innerHTML}))
       }
       
       /**
@@ -275,7 +293,9 @@
        */
       function showSources(event, show = true) {
         const detail = event.target.closest('.card-wrapper').querySelector('.detail')
-        detail.querySelectorAll('q').forEach(q => q.classList.toggle('hidden', !show))
+        if (!attitude.open)
+          detail.querySelectorAll('q').forEach(q => q.classList.toggle('hidden', !show))
+        detail.querySelectorAll('button, button + a').forEach(e => e.classList.add('hidden'))
       }
       
       /**
@@ -291,7 +311,7 @@
           if (links.length > 0) {
             const q = elementWithKids('q', elementWithKids('ul', Array.from(links).map(
               s => elementWithKids('li',s.cloneNode(true)))))
-            q.classList.add('hidden')
+            if (!attitude.open) q.classList.add('hidden')
             a.nextElementSibling.appendChild(q)
           }
         })

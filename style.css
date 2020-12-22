@@ -18,7 +18,7 @@ q {
   background: #fff;
   border-radius: 0.5vw;
   padding: 0.5vw;
-  padding-left: 4vw;
+  padding-left: 6vw;
   padding-right: 1vw;
   margin-top: 0.5vw;
 }
@@ -42,7 +42,7 @@ q::before {
 }
 
 q::after {
-  visibility:collapse;
+  visibility: collapse;
 }
 
 #game, #menu {
@@ -186,6 +186,10 @@ button.menu, span.menu {
   font-size: 7vw;
   margin: 1vw;
   padding: 3vw;
+}
+
+button.hidden, q.hidden:after {
+  display: none;
 }
 
 .ss, .i, .s, .si, .is, .ii {

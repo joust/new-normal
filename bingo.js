@@ -72,12 +72,7 @@ function makeCard(wrapper, wordset, size, center) {
           const set = event.target.closest('td').classList.toggle('set')
           document.querySelector('#pyro').classList.toggle('hidden',
             !checkCard(event.target.closest('table'), size))
-          if (set && attitude.curious) {
-            const detail = event.target.closest('.card-wrapper').querySelector('.detail')
-            detail.classList.add('single')
-            detail.querySelector(`a[id=${event.target.id}]`).classList.add('single')
-            flipOpen(event)
-          }
+          if (set && attitude.curious) openDetails(event)
         }
       }
       cells.push(wordnode)

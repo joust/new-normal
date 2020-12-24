@@ -201,14 +201,14 @@
         wrapper.querySelectorAll('a[id]').forEach(a =>
           a.prepend(elementWithKids('span', a.id)) // add id tags
         )
-        if (attitude.friendly) wrapper.querySelectorAll('i, .content button').forEach(e => e.remove())
-      
         const sources = elementWithKids('div')
         sources.innerHTML = await (await fetch('sources.html')).text()
         addSources(wrapper, sources)
-        if (attitude.open) {
-          wrapper.querySelectorAll('button, button + a').forEach(e => e.classList.add('hidden'))
-        }
+        if (attitude.open)
+         wrapper.querySelectorAll('.content button, .content button + a').forEach(e => e.remove())
+        if (attitude.friendly)
+          wrapper.querySelectorAll('i, .content button').forEach(e => e.remove())
+      
         const set = getArguments(wrapper.querySelector('.detail'))
         if (!set.length) alert('No arguments found!')
         makeCard(wrapper, set, 5, idiot ? '🤪,👻' : '🐑,😷')

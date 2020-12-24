@@ -1,7 +1,7 @@
 <h1>New Normal</h1>
 <center><img src="https://github.com/joust/new-normal/raw/master/images/new-normal.jpg"></center>
 <p>
-This is a plain HTML/CSS/ES6 implementation of a Buzzword BINGO PWA. Instead of Buzz&shy;words it is played with arguments used during a Corona related discussion. The two sides of the discussion are referenced as <b>Idiots</b> and <b>Sheeps</b>.
+This is a plain HTML/CSS/ES6 implementation of a Buzzword BINGO PWA. Instead of Buzz&shy;words it is played with arguments used during a Corona related discussion. The two sides of the discussion are (technically) referenced as <b>Idiots</b> and <b>Sheeps</b>.
 </p><p>
 The app is inter&shy;nationa&shy;lized and contains a common core of universal, language inde&shy;pen&shy;dent argu&shy;ments and sets of argu&shy;ments only used and under&shy;stood locally.
 </p>
@@ -16,6 +16,7 @@ All internationalized application content is stored in HTML format in language-d
 <li><code>&lt;language code&gt;/install.html</code>: PWA installation instructions</li>
 <li><code>&lt;language code&gt;/support.html</code>: Support instructions</li>
 <li><code>&lt;language code&gt;/credits.html</code>: the credits</li>
+<li><code>&lt;language code&gt;/attitude.html</code>: the attitude (see next chapter)</li>
 <li><code>&lt;language code&gt;/imprint.html</code>: the imprint</li>
 </ul>
 <p>
@@ -29,23 +30,47 @@ All internationalized argu&shy;ments are stored in HTML format in language- and 
 </ul>
 <p>The arguments of the Common core have a unique id across all languagues:</p>
 <ul>
-<li>"<code>I&lt;n&gt;</code>" for the <b>Idiot</b> arguments</li>
-<li>"<code>S&lt;n&gt;</code>" for the <b>Sheep</b> arguments</li>
+<li><code>I&lt;n&gt;</code> for the <b>Idiot</b> arguments</li>
+<li><code>S&lt;n&gt;</code> for the <b>Sheep</b> arguments</li>
 </ul>
 <p>The local arguments have a unique id with the territory code in it:</p>
 <ul>
-<li>"<code>I&lt;territory code&gt;&lt;n&gt;</code>" for the <b>Idiot</b> arguments</li>
-<li>"<code>S&lt;territory code&gt;&lt;n&gt;</code>" for the <b>Sheep</b> arguments</li>
+<li><code>I&lt;territory code&gt;&lt;n&gt;</code> for the <b>Idiot</b> arguments</li>
+<li><code>S&lt;territory code&gt;&lt;n&gt;</code> for the <b>Sheep</b> arguments</li>
 </ul>
+
+<p>All pejorative / judgmental wording in the arguments should be set in italics so it can be removed according to the users attitude (see chapter Attitude). Example:</p>
+<code>
+  <p>They say<i> in all seriousness</i> that ...</p>
+</code>
+
+<h1>Attitude</h1>
+
+<p>The App allows to configure your attitude:</p>
+
+<h2>hasty</h2>
+<p>Skip the intro sequence.</p>
+
+<h2>curious</h2>
+<p>Auto-Flip to the details for selected arguments.</p>
+ 
+<h2>open</h2>
+<p>Show the sources to the arguments immediately.</p>
+
+<h2>fair</h2>
+<p>Do not randomly choose from pejorative labels for card titles.</p>
+
+<h2>friendly</h2>
+<p>Remove all pejorative argument wording (the text blocks set in italics).</p>
 
 <h1>Roadmap</h1>
 <p>
 The following features are in development or planned:
 </p>
 <ul>
-<li>Extend the argument/claim cards with <a href="https://github.com/joust/new-normal/blob/master/sources.txt">sources</a> for anyone to check</li>
+<li>Add more <a href="https://github.com/joust/new-normal/blob/master/sources.html">sources</a> to all arguments for anyone to check</li>
 <li>Visualize the counter arguments of an argument/claim cards</li>
-<li>Extend the number of available Localizations by translating the common core and gather the local arguments used</li>
+<li>Extend the number of available localizations by translating the common core and gather the local arguments used</li>
 </ul>
 <h1>Support</h1>
 <p>

@@ -201,7 +201,8 @@
         wrapper.querySelectorAll('a[id]').forEach(a =>
           a.prepend(elementWithKids('span', a.id)) // add id tags
         )
-        wrapper.querySelector('button').classList.toggle('hidden', attitude.friendly)
+        if (attitude.friendly) wrapper.querySelectorAll('i, .content button').forEach(e => e.remove())
+      
         const sources = elementWithKids('div')
         sources.innerHTML = await (await fetch('sources.html')).text()
         addSources(wrapper, sources)

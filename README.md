@@ -41,7 +41,7 @@ All internationalized argu&shy;ments are stored in HTML format in language- and 
 
 <p>All pejorative / judgmental wording in the arguments should be set in italics so it can be removed according to the users attitude (see chapter Attitude). Example:</p>
 <code>
-  <p>They say<i> in all seriousness</i> that ...</p>
+  &lt;p&gt;They say&lt;i&gt; in all seriousness&lt;/i&gt; that ...&lt;/p&gt;
 </code>
 
 <h1>Attitude</h1>

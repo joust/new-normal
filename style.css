@@ -370,7 +370,7 @@ button.hidden, q.hidden:after {
   }
 
   .detail button {
-    font-size: 5vw;
+    font-size: 3vw;
   }
 }
 
@@ -430,7 +430,7 @@ button.hidden, q.hidden:after {
 }
 
 .detail button {
-  font-size: 5vh;
+  font-size: 3vh;
 }
 
 .card-title {

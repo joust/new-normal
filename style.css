@@ -393,6 +393,10 @@ table {
     flex-direction: column;
   }
 
+  .detail {
+    font-size: 1.5vmin;
+  }
+  
   #game.hidden .card-wrapper:nth-child(1) {
     margin-left: -150%;
   }

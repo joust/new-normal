@@ -275,6 +275,10 @@ button.hidden, q.hidden:after {
   font-size: 1.5vmax;
 }
 
+#game.one {
+  font-size: 3vmin;
+}
+
 .title {
   height: 4vmax;
 }
@@ -375,10 +379,6 @@ table {
     flex-direction: row;
   }
 
-  #game.one {
-    font-size: 3vmin;
-  }
-
   #game.hidden .card-wrapper:nth-child(1) {
     margin-top: -150%;
   }
@@ -391,10 +391,6 @@ table {
 @media (orientation: portrait) {
   #game {
     flex-direction: column;
-  }
-
-  .detail {
-    font-size: 1.5vmin;
   }
 
   #game.hidden .card-wrapper:nth-child(1) {

@@ -64,7 +64,21 @@
       <div class="after"></div>
     </div>
     <script type="text/javascript">
+      // New Normal needs a browser with at least fetch support
       if (!('fetch' in window)) alert('Please user a modern Browser to play New Normal!')
+
+      // ServiceWorker is a progressive technology. Ignore unsupported browsers
+      if ('serviceWorker' in navigator) {
+        console.log('CLIENT: service worker registration in progress.');
+        navigator.serviceWorker.register('sw.js').then(() => {
+          console.log('CLIENT: service worker registration complete.');
+        }, () => {
+          console.log('CLIENT: service worker registration failure.');
+        });
+      } else {
+        console.log('CLIENT: service worker is not supported.');
+      }
+      
       const attitude = { hasty: false, curious: true, open: false, fair: false, friendly: false }
       let lang, terr
       

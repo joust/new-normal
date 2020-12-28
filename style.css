@@ -26,6 +26,8 @@ q {
   padding-left: 6vmax;
   padding-right: 1vmax;
   margin-top: 0.5vmax;
+  max-height: 15vmax;
+  overflow: auto;
 }
 
 q.hidden {
@@ -295,6 +297,7 @@ table {
   display: flex;
   align-items: center;
   user-select: none;
+  overflow-y: hidden;
 }
 
 .detail.single a[id], .detail.single a[id] + p {

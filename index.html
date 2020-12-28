@@ -244,9 +244,12 @@
       }
 
       /**
-       * stop the game, hiding the #game element and showing the #menu element
+       * stop the game: flipping cards, hiding the #game element and showing the #menu element
        */
       function stop() {
+        closeDetails({target: document.querySelector('#wrapper-1 .content')})
+        closeDetails({target: document.querySelector('#wrapper-2 .content')})
+
         document.querySelector('#stop').classList.add('hidden')
         document.querySelector('#game').classList.add('hidden')
         document.querySelector('#menu').classList.remove('hidden')

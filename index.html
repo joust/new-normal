@@ -79,7 +79,7 @@
         console.log('CLIENT: service worker is not supported.');
       }
       
-      const attitude = { hasty: false, curious: true, open: false, fair: false, friendly: false }
+      const attitude = { hasty: false, curious: true, open: false, fair: false, correct: true, friendly: false }
       let lang, terr
       
       /**
@@ -231,11 +231,13 @@
         wrapper.querySelector('.reload').onclick = () => makeCard(wrapper, set, 5, idiot ? '🤪,👻' : '🐑,😷')
         // prepare card title
         const title = wrapper.querySelector('.title')
-        if (title.firstChild) title.removeChild(title.firstChild)
+        while (title.firstChild) title.removeChild(title.firstChild)
         const select = wrapper.querySelector('.detail select')
         if (!attitude.fair)
           randomElement(select.querySelectorAll('option'), 1).selected = true
         title.appendChild(select)
+        title.appendChild(wrapper.querySelector('.detail label'))
+        title.querySelector('label').classList.toggle('hidden', !attitude.correct)
         
         // copy logo
         wrapper.querySelector('.content').prepend(

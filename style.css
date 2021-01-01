@@ -283,6 +283,14 @@ button.hidden, q.hidden:after {
 
 .title {
   height: 4vmax;
+  font-size: 2vmax;
+  font-family: 'HVD Crocodile';
+  color: white;
+  width: calc(100% - 3vmax);
+}
+
+.title label.hidden {
+  display: none;
 }
 
 .title select {

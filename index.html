@@ -332,11 +332,23 @@
           links.forEach(link => link.target = '_blank')
           if (links.length > 0) {
             const q = elementWithKids('q', elementWithKids('ul', Array.from(links).map(
-              s => elementWithKids('li',s.cloneNode(true)))))
+              s => elementWithKids('li', [s.cloneNode(true), ' (', mirrorNode(s), ')']))))
             if (!attitude.open) q.classList.add('hidden')
             a.nextElementSibling.appendChild(q)
           }
         })
+      }
+      
+      /**
+       * generates an archive.is mirror anchor node for the given node 
+       *
+       * @param {HTMLElement} a the anchor node to mirror
+       */
+      function mirrorNode(a) {
+        const mirror = a.cloneNode(true)
+        mirror.href = `https://archive.is/${a.href}` 
+        mirror.firstChild.textContent = 'Mirror'
+        return mirror
       }
 
       /**

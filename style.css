@@ -26,8 +26,11 @@ q {
   padding-left: 6vmax;
   padding-right: 1vmax;
   margin-top: 0.5vmax;
-  max-height: 15vmax;
   overflow: auto;
+}
+
+.detail.single q {
+  max-height: 15vmax;
 }
 
 q.hidden {

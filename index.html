@@ -279,8 +279,9 @@
         const anchor = detail.querySelector(`a[id=${event.target.id}]`)
         detail.classList.add('single'), anchor.classList.add('single')
         detail.querySelectorAll('button').forEach(e => e.classList.toggle('hidden', attitude.open))
-        detail.querySelectorAll('button + a').forEach(e => e.classList.toggle('hidden',
-          attitude.open || !anchor.nextElementSibling.querySelector('q')))
+        console.log(anchor.nextElementSibling.querySelector('q'))
+        detail.querySelectorAll('a[href=""]').forEach(e => e.classList.toggle('hidden',
+          !anchor.nextElementSibling.querySelector('q')))
         flipOpen(event)
       }
       
@@ -316,7 +317,7 @@
         const detail = event.target.closest('.card-wrapper').querySelector('.detail')
         if (!attitude.open)
           detail.querySelectorAll('q').forEach(q => q.classList.toggle('hidden', !show))
-        detail.querySelectorAll('button, button + a').forEach(e => e.classList.add('hidden'))
+        detail.querySelectorAll('button, a[href=""]').forEach(e => e.classList.add('hidden'))
       }
       
       /**

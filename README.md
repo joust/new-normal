@@ -52,7 +52,7 @@ All internationalized argu&shy;ments are stored in HTML format in language- and 
 
 <h2>FastClick</h2>
 
-<p>FastClick is (still) included to supress click delays on mobile platforms. I am aware that it is long deprecated &amp; unsupported and that there are viewport settings und platform specific css <code>touch-action: manipulation</code> to fix most issues in modern OS versions.</p>
+<p>FastClick is (still) included to supress click delays on mobile platforms. I am aware that it is long deprecated &amp; unsupported and that there are viewport settings and platform specific css <code>touch-action: manipulation</code> to fix most issues in modern OS versions.</p>
 
 <h1>Attitude</h1>
 
@@ -129,6 +129,8 @@ And finally these nerds who invented this internet.</p>
 Flip Effect: <a taget="_blank" href="https://lab.hakim.se/flipside">Flipside</a>
 </p><p>
 Pyro Effect: <a target="_blank" href="https://jsfiddle.net/elin/7m3bL">Eddie Lin</a>
+</p><p>
+Jumping Virus Effect: Kuba Koischwitz 🐿️
 </p><p>
 <img width="100" style="float:left" src="https://github.com/joust/new-normal/raw/master/images/berlin.png">PROUDLY MADE IN BERLIN CHARLOTTENGRAD.
 </p>

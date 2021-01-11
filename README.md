@@ -1,7 +1,7 @@
 <h1>New Normal</h1>
 <center><img src="https://github.com/joust/new-normal/raw/master/images/new-normal.jpg"></center>
 <p>
-This is a plain HTML/CSS/ES6 implementation of a Buzzword BINGO PWA. Instead of Buzz&shy;words it is played with arguments used during a Corona related discussion. The two sides of the discussion are (technically) referenced as <b>Idiots</b> and <b>Sheeps</b>.
+This is a plain HTML/CSS/ES6 implementation of a Buzzword BINGO PWA. Instead of Buzz&shy;words it is played with arguments used during a (Corona related) discussion. The two sides of the discussion are (technically) referenced as <b>Idiots</b> and <b>Sheeps</b>.
 </p><p>
 The app is inter&shy;nationa&shy;lized and contains a common core of universal, language inde&shy;pen&shy;dent argu&shy;ments and sets of argu&shy;ments only used and under&shy;stood locally.
 </p>
@@ -44,6 +44,16 @@ All internationalized argu&shy;ments are stored in HTML format in language- and 
   &lt;p&gt;They say&lt;i&gt; in all seriousness&lt;/i&gt; that ...&lt;/p&gt;
 </code>
 
+<h1>Technical</h1>
+
+<h2>Modern Browsers</h2>
+
+<p>The app will only work on modern browsers as it relies on things like css animations, fetch and native es6 features like async/await, arrow functions, template strings and deconstruction. When Service Workers are available, it will also offline its content.</p>
+
+<h2>FastClick</h2>
+
+<p>FastClick is (still) included to supress click delays on mobile platforms. I am aware that it is long deprecated &amp; unsupported and that there are viewport settings und platform specific css <code>touch-action: manipulation</code> to fix most issues in modern OS versions.</p>
+
 <h1>Attitude</h1>
 
 <p>The App allows to configure your attitude:</p>
@@ -59,6 +69,9 @@ All internationalized argu&shy;ments are stored in HTML format in language- and 
 
 <h2>fair</h2>
 <p>Do not randomly choose from pejorative labels for card titles.</p>
+
+<h2>correct</h2>
+<p>Follow the label with a gender identity rights conformant extension.</p>
 
 <h2>friendly</h2>
 <p>Remove all pejorative argument wording (the text blocks set in italics).</p>

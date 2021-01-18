@@ -1,7 +1,7 @@
 <h1>New Normal</h1>
 <center><img src="https://github.com/joust/new-normal/raw/master/images/new-normal.jpg"></center>
 <p>
-This is a plain HTML/CSS/ES6 implementation of a Buzzword BINGO PWA. Instead of Buzz&shy;words it is played with arguments used during a (Corona related) discussion. The two sides of the discussion are (technically) referenced as <b>Idiots</b> and <b>Sheeps</b>.
+This is a plain HTML/CSS/ES6 implementation of a Buzzword BINGO PWA. Instead of Buzz&shy;words it is played with arguments used during a (Corona related) discussion. The two sides of the discussion are (technically) referenced as <b>Idiots</b> and <b>Sheeple</b>.
 </p><p>
 The app is inter&shy;nationa&shy;lized and contains a common core of universal, language inde&shy;pen&shy;dent argu&shy;ments and sets of argu&shy;ments only used and under&shy;stood locally.
 </p>

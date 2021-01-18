@@ -173,9 +173,10 @@
        */
       function loadAttitude() {
         if (localStorage)
-          for (let a in attitude)
-            if (localStorage.getItem(a) !== undefined)
+          for (let a in attitude) {
+            if (localStorage.getItem(a) !== null)
               attitude[a] = localStorage.getItem(a)==='true'
+          }
       }
 
       /**

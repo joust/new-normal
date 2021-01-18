@@ -70,14 +70,7 @@
 
       // ServiceWorker is a progressive technology. Ignore unsupported browsers
       if ('serviceWorker' in navigator) {
-        console.log('CLIENT: service worker registration in progress.');
-        navigator.serviceWorker.register('sw.js').then(() => {
-          console.log('CLIENT: service worker registration complete.');
-        }, () => {
-          console.log('CLIENT: service worker registration failure.');
-        });
-      } else {
-        console.log('CLIENT: service worker is not supported.');
+        navigator.serviceWorker.register('sw.js')
       }
       
       const attitude = { hasty: false, curious: true, open: false, fair: false, correct: true, friendly: false }
@@ -306,7 +299,9 @@
        */
       function getArguments(detail) {
         return Array.from(detail.querySelectorAll('a[id]')).map(
-          a => ({id: a.id, word: a.querySelector('h2').innerHTML}))
+          a => ({id: a.id, 
+                 word: a.querySelector('h2').innerHTML, 
+                 content: a.nextElementSibling.innerText}))
       }
       
       /**

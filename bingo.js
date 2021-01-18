@@ -68,6 +68,7 @@ function makeCard(wrapper, wordset, size, center) {
         const set = uniqueWord(wordset)
         wordnode.id = set.id
         wordnode.innerHTML = set.word
+        wordnode.title = set.content
         wordnode.onclick = event => {
           const set = event.target.closest('td').classList.toggle('set')
           document.querySelector('#pyro').classList.toggle('hidden',

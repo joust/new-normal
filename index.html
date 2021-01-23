@@ -31,6 +31,7 @@
             <option title="New Zealand" value="en-nz">🇳🇿</option>
             <option title="Canada" value="en-ca">🇨🇦</option>
             <option title="Polska" value="pl-pl">🇵🇱</option>
+            <option title="Danmark" value="da-da" disabled>🇩🇰</option>
             <option title="España" value="es-es" disabled>🇪🇸</option>
             <option title="France" value="fr-fr" disabled>🇫🇷</option>
           </select>
@@ -73,7 +74,7 @@
         navigator.serviceWorker.register('sw.js')
       }
       
-      const attitude = { hasty: false, curious: true, open: false, fair: false, correct: true, friendly: false }
+      const attitude = { hasty: false, curious: true, open: false, fair: false, correct: false, friendly: false, exclusions: '' }
       let lang, terr
       
       /**
@@ -84,7 +85,8 @@
       function load(locale) {
         FastClick.attach(document.body)
         loadAttitude()
-        const [language, territory] = [lang, terr] = locale ? locale.split('-') : browserLocale()
+        if (locale) [lang, terr] = locale.split('-'); else [lang, terr] = browserLocale()
+        if (!['de', 'en', 'pl'].includes(lang)) [lang, terr] = ['en', 'us']
         document.querySelector('#location').value = lang + '-' + terr
         if (attitude.hasty) show('start'); else runIntro()
       }
@@ -158,7 +160,7 @@
       function saveAttitude(a, value) {
         attitude[a] = value
         if (localStorage)
-          localStorage.setItem(a, attitude[a] ? 'true' : 'false')
+          localStorage.setItem(a, a==='exclusions' ? value : value ? 'true' : 'false')
       }
 
       /**
@@ -168,7 +170,7 @@
         if (localStorage)
           for (let a in attitude) {
             if (localStorage.getItem(a) !== null)
-              attitude[a] = localStorage.getItem(a)==='true'
+              attitude[a] = a === 'exclusions' ? localStorage.getItem(a) : localStorage.getItem(a)==='true'
           }
       }
 
@@ -207,22 +209,25 @@
         const terrcontent = await (await fetch(terrfile)).text()
         wrapper = document.querySelector(wrapper)
         wrapper.querySelector('.content').innerHTML = langcontent + terrcontent
-        wrapper.querySelectorAll('a[id]').forEach(a =>
-          a.prepend(elementWithKids('span', a.id)) // add id tags
-        )
+        wrapper.querySelectorAll('a[id]').forEach(a => { // add id tags
+          const idtag = elementWithKids('span', a.id)
+          idtag.onclick = event => toggleExclusions(a.id, event);
+          a.prepend(idtag)
+        })
         const sources = elementWithKids('div')
         sources.innerHTML = await (await fetch('sources.html')).text()
         addSources(wrapper, sources)
         if (attitude.open)
-         wrapper.querySelectorAll('.content button, .content button + a').forEach(e => e.remove())
+          wrapper.querySelectorAll('.content button, .content button + a').forEach(e => e.remove())
         if (attitude.friendly)
           wrapper.querySelectorAll('i, .content button').forEach(e => e.remove())
-      
+
+        applyExclusions(wrapper)
         const set = getArguments(wrapper.querySelector('.detail'))
         if (!set.length) alert('No arguments found!')
         makeCard(wrapper, set, 5, idiot ? '🤪,👻' : '🐑,😷')
-        wrapper.querySelector('.card').classList.toggle('redbg', idiot)
-        wrapper.querySelector('.card').classList.toggle('bluebg', !idiot)
+        wrapper.classList.toggle('idiot', idiot)
+        wrapper.classList.toggle('sheep', !idiot)
         wrapper.querySelector('.reload').onclick = () => makeCard(wrapper, set, 5, idiot ? '🤪,👻' : '🐑,😷')
         // prepare card title
         const title = wrapper.querySelector('.title')
@@ -257,7 +262,9 @@
        * @param {Event} event the click event
        */
       function handleClick(event) {
-        if (event.target.tagName.toLowerCase() === 'a') {
+        if (event.target.tagName.toLowerCase() === 'span') {
+        }
+        else if (event.target.tagName.toLowerCase() === 'a') {
           showSources(event)
         } else {
           showSources(event, false)
@@ -298,12 +305,36 @@
        * @return {{id: string, word: string}[]} the extracted arguments
        */
       function getArguments(detail) {
-        return Array.from(detail.querySelectorAll('a[id]')).map(
+        return Array.from(detail.querySelectorAll('a[id]:not(.excluded)')).map(
           a => ({id: a.id, 
                  word: a.querySelector('h2').innerHTML, 
                  content: a.nextElementSibling.innerText}))
       }
-      
+
+      /**
+       * apply the exclusions stored in the attitudes of the user to all arguments
+       *
+       * @param {HTMLElement} detail content DOM node containing the arguments
+       */
+      function applyExclusions(detail) {
+        attitude.exclusions.split(',').forEach(e => 
+          detail.querySelector(`a[id="${e}"]`) && detail.querySelector(`a[id="${e}"]`).classList.add('excluded'))
+      }
+
+      /**
+       * toggle the exclusions stored in the attitudes of the user to all arguments
+       *
+       * @param {string} id id to toggle inside the exclusions list in attitude
+       * @param {Event} event event that triggered the toggleExclusions
+       */
+      function toggleExclusions(id, event) {
+        const exclude = !event.target.parentElement.classList.contains('excluded')
+        event.target.parentElement.classList.toggle('excluded', exclude)
+        const set = new Set(attitude.exclusions.split(','))
+        if (exclude) set.add(id); else set.remove(id)
+        saveAttitude('exclusions', Array.from(set).join(','))
+      }
+     
       /**
        * show/hide all sources boxes if available
        *

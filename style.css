@@ -311,6 +311,10 @@ table {
   overflow-y: hidden;
 }
 
+.detail a[id].excluded, .detail a[id].excluded + p {
+  color: #aaa;
+}
+
 .detail.single a[id], .detail.single a[id] + p {
   display: none;
 }
@@ -335,9 +339,22 @@ table {
 .detail a[id] span {
   float: right;
   color: #fff;
-  background: #aaa;
   padding: 0.5vmax;
+  user-select: none;
 }
+
+.idiot .detail a[id] span {
+  background: #f72d5d;
+}
+
+.sheep .detail a[id] span {
+  background: #2d60f6;
+}
+
+.detail a[id].excluded span {
+  background: #aaa;
+}
+
 
 .detail .logo {
   font-size: 6vmax;
@@ -451,7 +468,7 @@ table {
   color: #f72d5d;
 }
 
-.redbg {
+.idiot .card {
   background: #f72d5d;
 }
 
@@ -459,7 +476,7 @@ table {
   color: #2d60f6;
 }
 
-.bluebg {
+.sheep .card {
   background: #2d60f6;
 }
 

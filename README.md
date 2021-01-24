@@ -56,7 +56,7 @@ All internationalized argu&shy;ments are stored in HTML format in language- and 
 
 <h1>Attitude</h1>
 
-<p>The App allows to configure your attitude:</p>
+<p>The App allows to configure your attitude. It will be stored in the local storage of your browser:</p>
 
 <h2>hasty</h2>
 <p>Skip the intro sequence.</p>
@@ -75,6 +75,13 @@ All internationalized argu&shy;ments are stored in HTML format in language- and 
 
 <h2>friendly</h2>
 <p>Remove all pejorative argument wording (the text blocks set in italics).</p>
+
+<h1>Exclusion of Arguments</h1>
+<p>
+The app allows to exclude arguments from being used in the generation of game cards. This helps to deprecate old arguments that are not common in discussions any more - or simply to exclude arguments that you do not expect getting used.</p>
+<p>
+Behind every argument title you find the colored argument id. By clicking on it, you can toggle the exclusion of this argument. If its grey, an arguments will not be used during the next card generation. Your choice will be stored in the local storage of your browser.
+</p>
 
 <h1>Roadmap</h1>
 <p>

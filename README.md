@@ -17,7 +17,7 @@ All internationalized application content is stored in HTML format in language-d
 <li><code>&lt;language code&gt;/support.html</code>: Support instructions</li>
 <li><code>&lt;language code&gt;/credits.html</code>: the credits</li>
 <li><code>&lt;language code&gt;/attitude.html</code>: the attitude (see next chapter)</li>
-<li><code>&lt;language code&gt;/imprint.html</code>: the imprint</li>
+<li><code>&lt;language code&gt;/legal.html</code>: the legal notice</li>
 </ul>
 <p>
 All internationalized argu&shy;ments are stored in HTML format in language- and terri&shy;tory-direc&shy;tories:

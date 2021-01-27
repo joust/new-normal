@@ -83,6 +83,19 @@ The app allows to exclude arguments from being used in the generation of game ca
 Behind every argument title you find the colored argument id. By clicking on it, you can toggle the exclusion of this argument. If its grey, an arguments will not be used during the next card generation. Your choice will be stored in the local storage of your browser.
 </p>
 
+<h1>Permalinks</h1>
+<p>The app allows to deep link directy to arguments, e.g. to transmit them to others. This can be achieved just by specifying the argument ids in the url's hash. Some examples:</p>
+<ul>
+<li><code>https://new-normal.app#I17</code>: Show <b>idiot</b> argument with id <code>I17</code></li>
+<li><code>https://new-normal.app#I1&amp;I2&amp;I3</code>: Show <b>idiot</b> arguments with ids <code>I1</code>, <code>I2</code>, <code>I3</code></li>
+<li><code>https://new-normal.app#S69</code>: Show <b>sheep</b> argument with id <code>S69</code></li>
+<li><code>https://new-normal.app#I17&amp;S69</code>: Show both arguments with id <code>I17</code> and <code>S69</code></li>
+<li><code>https://new-normal.app#I</code>: Show all <b>idiot</b> arguments</li>
+<li><code>https://new-normal.app#S</code>: Show all <b>sheep</b> arguments</li>
+<li><code>https://new-normal.app#S&amp;I</code>: Show all arguments of both sides, first the <b>sheep</b></li>
+<li><code>https://new-normal.app#I&amp;S</code>: Show all arguments of both sides, first the <b>idiots</b></li>
+</ul>
+
 <h1>Roadmap</h1>
 <p>
 The following features are in development or planned:

@@ -88,7 +88,8 @@
         if (locale) [lang, terr] = locale.split('-'); else [lang, terr] = browserLocale()
         if (!['de', 'en', 'pl'].includes(lang)) [lang, terr] = ['en', 'us']
         document.querySelector('#location').value = lang + '-' + terr
-        if (attitude.hasty) show('start'); else runIntro()
+        if (!window.location.hash || !displayHash(window.location.hash.substring(1)))
+          if (attitude.hasty) show('start'); else runIntro()
       }
 
       /**
@@ -104,11 +105,11 @@
         if (page==='attitude') initAttitude()
         setTimeout(() => document.querySelector('#menu').classList.remove('hidden'), 50)
       }
-      let timer = null
 
       /**
        * run intro by a timed display of its frames. can be skipped with skipIntro()
        */
+      let timer = null
       async function runIntro() {
         await show('intro')
         document.querySelector('#menu').classList.add('intro')
@@ -175,6 +176,30 @@
       }
 
       /**
+       * show idiot and/or sheep cards corresponding to the id(s) given in the hash
+       *
+       * @param {string} hash with ids of argument(s) to show
+       * @return {boolean} true if success false otherwise
+       */
+      function displayHash(hash) {
+        hash = hash.toUpperCase().split('&').map(v => v.split('=')[0])
+        const idiot = hash.filter(v => v.startsWith('I'))
+        const sheep = hash.filter(v => v.startsWith('S'))
+        if (!idiot.length && !sheep.length) return false // nothing to evaluate
+        const one = idiot.length
+        const two = (one ? sheep : idiot).length ? !one : undefined
+        loadCard('#wrapper-1', one, one ? idiot : sheep)
+        if (two !== undefined) {
+          showWrapperTwo()
+          loadCard('#wrapper-2', two, two ? idiot : sheep)
+        } else
+          hideWrapperTwo()
+        
+        showGame()
+        return true
+      }
+ 
+      /**
        * create one or two idiot or sheep cards and start the game
        *
        * @param {boolean} one create a idiot card if true, otherwise a sheep card
@@ -183,17 +208,28 @@
       function play(one, two) {
         loadCard('#wrapper-1', one)
         if (two !== undefined) {
-          document.querySelector('#wrapper-2').classList.remove('hidden')
-          document.querySelector('#game').classList.remove('one')
+          showWrapperTwo()
           loadCard('#wrapper-2', two)
-        } else {
-          document.querySelector('#wrapper-2').classList.add('hidden')
-          document.querySelector('#game').classList.add('one')
-        }
+        } else
+          hideWrapperTwo()
 
-        document.querySelector('#stop').classList.remove('hidden')
-        document.querySelector('#game').classList.remove('hidden')
-        document.querySelector('#menu').classList.add('hidden')
+        showGame()
+      }
+      
+      /**
+       * Hide second card wrapper to play with only one
+       */
+      function hideWrapperTwo() {
+        document.querySelector('#wrapper-2').classList.add('hidden')
+        document.querySelector('#game').classList.add('one')
+      }
+      
+      /**
+       * Show second card wrapper to play with two
+       */
+      function showWrapperTwo() {
+        document.querySelector('#wrapper-2').classList.remove('hidden')
+        document.querySelector('#game').classList.remove('one')
       }
 
       /**
@@ -201,34 +237,69 @@
        *
        * @param {HTMLElement} wrapper wrapper element to load the card into
        * @param {boolean} idiot load idiot content if true, otherwise sheep content
+       * @param {string[]} show list of ids to show instead of initializing a game
        */
-      async function loadCard(wrapper, idiot) {
+      async function loadCard(wrapper, idiot, show) {
         const langfile = lang + (idiot ? '/idiot.html' : '/sheep.html')
         const langcontent = await (await fetch(langfile)).text()
         const terrfile = terr + (idiot ? '/idiot-local.html' : '/sheep-local.html')
         const terrcontent = await (await fetch(terrfile)).text()
         wrapper = document.querySelector(wrapper)
         wrapper.querySelector('.content').innerHTML = langcontent + terrcontent
-        wrapper.querySelectorAll('a[id]').forEach(a => { // add id tags
-          const idtag = elementWithKids('span', a.id)
-          idtag.onclick = event => toggleExclusions(a.id, event);
-          a.prepend(idtag)
-        })
-        const sources = elementWithKids('div')
-        sources.innerHTML = await (await fetch('sources.html')).text()
-        addSources(wrapper, sources)
+        addIdTags(wrapper)
+        await addSources(wrapper)
         if (attitude.open)
           wrapper.querySelectorAll('.content button, .content button + a').forEach(e => e.remove())
         if (attitude.friendly)
           wrapper.querySelectorAll('i, .content button').forEach(e => e.remove())
 
         applyExclusions(wrapper)
+        if (show) {
+          if (show.length > 1 || show[0].length > 1) singleDetails(wrapper, show)
+          open(wrapper)
+        }
+        prepareCard(wrapper, idiot)
+        prepareCardTitle(wrapper)
+        copyLogoToCard(wrapper)
+      }
+      
+      /**
+       * add id tags to the details side of the card wrapper
+       *
+       * @param {HTMLElement} wrapper wrapper element to load the card into
+       */
+      function addIdTags(wrapper) {
+        wrapper.querySelectorAll('a[id]').forEach(a => { // add id tags
+          const idtag = elementWithKids('span', a.id)
+          idtag.onclick = event => toggleExclusions(a.id, event)
+          a.prepend(idtag)
+        })
+      }
+      
+      /**
+       * prepare a random argument card on the front side of the card wrapper
+       *
+       * @param {HTMLElement} wrapper wrapper element to load the card into
+       */
+      function prepareCard(wrapper, idiot) {
+        const emojis = idiot ? '🤪,👻' : '🐑,😷' 
         const set = getArguments(wrapper.querySelector('.detail'))
-        if (!set.length) alert('No arguments found!')
-        makeCard(wrapper, set, 5, idiot ? '🤪,👻' : '🐑,😷')
-        wrapper.classList.toggle('idiot', idiot)
-        wrapper.classList.toggle('sheep', !idiot)
-        wrapper.querySelector('.reload').onclick = () => makeCard(wrapper, set, 5, idiot ? '🤪,👻' : '🐑,😷')
+        if (!set.length) 
+          alert('No arguments found!');
+        else {   
+          makeCard(wrapper, set, 5, emojis)
+          wrapper.classList.toggle('idiot', idiot)
+          wrapper.classList.toggle('sheep', !idiot)
+          wrapper.querySelector('.reload').onclick = () => makeCard(wrapper, set, 5, emojis)
+        }
+      }
+      
+      /**
+       * prepare the card title for the front side of the card wrapper
+       *
+       * @param {HTMLElement} wrapper wrapper element to load the card into
+       */
+      function prepareCardTitle(wrapper) {
         // prepare card title
         const title = wrapper.querySelector('.title')
         while (title.firstChild) title.removeChild(title.firstChild)
@@ -238,8 +309,14 @@
         title.appendChild(select)
         title.appendChild(wrapper.querySelector('.detail label'))
         title.querySelector('label').classList.toggle('hidden', !attitude.correct)
-        
-        // copy logo
+      }
+      
+      /**
+       * copy the logo to the top of the details side of the card wrapper
+       *
+       * @param {HTMLElement} wrapper wrapper element to load the card into
+       */
+      function copyLogoToCard(wrapper) {
         wrapper.querySelector('.content').prepend(
           document.querySelector('.logo').cloneNode(true))
         wrapper.querySelector('.logo').removeChild(wrapper.querySelector('.logo select'))
@@ -249,14 +326,30 @@
        * stop the game: flipping cards, hiding the #game element and showing the #menu element
        */
       function stop() {
-        closeDetails({target: document.querySelector('#wrapper-1 .content')})
-        closeDetails({target: document.querySelector('#wrapper-2 .content')})
+        close(document.querySelector('#wrapper-1'))
+        close(document.querySelector('#wrapper-2'))
 
-        document.querySelector('#stop').classList.add('hidden')
-        document.querySelector('#game').classList.add('hidden')
-        document.querySelector('#menu').classList.remove('hidden')
+        hideGame()
+        show('start')
       }
 
+      /**
+       * Show the game panel and stop button, hide the menu
+       */
+      function showGame() {
+        document.querySelector('#stop').classList.remove('hidden')
+        document.querySelector('#game').classList.remove('hidden')
+        document.querySelector('#menu').classList.add('hidden')
+      }
+      
+      /**
+       * Hide the game panel and stop button
+       */
+      function hideGame() {
+        document.querySelector('#stop').classList.add('hidden')
+        document.querySelector('#game').classList.add('hidden')
+      }
+      
       /**
        * handle a click on the details window
        * @param {Event} event the click event
@@ -277,14 +370,28 @@
        * @param {Event} event the event that triggered the open action
        */
       function openDetails(event) {
-        const detail = event.target.closest('.card-wrapper').querySelector('.detail')
-        const anchor = detail.querySelector(`a[id=${event.target.id}]`)
-        detail.classList.add('single'), anchor.classList.add('single')
-        detail.querySelectorAll('button').forEach(e => e.classList.toggle('hidden', attitude.open))
-        console.log(anchor.nextElementSibling.querySelector('q'))
-        detail.querySelectorAll('a[href=""]').forEach(e => e.classList.toggle('hidden',
-          !anchor.nextElementSibling.querySelector('q')))
+        const wrapper = event.target.closest('.card-wrapper')
+        singleDetails(wrapper, [event.target.id])
         flipOpen(event)
+      }
+
+      /**
+       * show selected details, add the CSS 'single' classes if only one is shown
+       * @param {HTMLElement} wrapper the event that triggered the open action
+       * @param {string[]} ids list of ids to show
+       */
+      function singleDetails(wrapper, ids) {
+        const detail = wrapper.querySelector('.detail')
+        if (ids.length === 1) detail.classList.add('single')
+        ids.forEach(id => {
+          const anchor = wrapper.querySelector(`a[id=${id}]`)
+          if (anchor) {
+            anchor.classList.add('single')
+            detail.querySelectorAll('a[href=""]').forEach(e => e.classList.toggle('hidden',
+              !anchor.nextElementSibling.querySelector('q')))
+          }
+        })
+        detail.querySelectorAll('button').forEach(e => e.classList.toggle('hidden', attitude.open))
       }
       
       /**
@@ -352,9 +459,10 @@
        * extend the arguments in detail with sources from sources if available
        *
        * @param {HTMLElement} detail content DOM node containing the arguments
-       * @param {HTMLElement} sources content DOM node containing the sources
        */
-      function addSources(detail, sources) {
+      async function addSources(detail) {
+        const sources = elementWithKids('div')
+        sources.innerHTML = await (await fetch('sources.html')).text()
         Array.from(detail.querySelectorAll('a[id]')).forEach(a => {
           const links = sources.querySelectorAll(`a.${a.id}`)
           links.forEach(link => link.target = '_blank')

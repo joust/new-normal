@@ -3,11 +3,22 @@
 /**
  * flip open the closest element with CSS class 'flip' set
  *
- * @param {Event} event - event that triggered the open action
+ * @param {Event} event event that triggered the open action
  */
 function flipOpen(event) {
-  const flip = event.target.closest('.flip')
-  const mx = event.clientX - flip.offsetLeft, my = event.clientY - flip.offsetTop
+  open(event.target, event.clientX, event.clientY)
+}
+
+/**
+ * open the closest element with CSS class 'flip' set
+ *
+ * @param {HTMLElement} wrapper wrapper to open
+ * @param {number} x mouse position x
+ * @param {number} y mouse position y
+ */
+function open(wrapper, x = 0, y = 0) {
+  const flip = wrapper.closest('.flip')
+  const mx = x - flip.offsetLeft, my = y - flip.offsetTop
   const w = flip.offsetWidth, h = flip.offsetHeight
 
   const directions = [
@@ -22,16 +33,27 @@ function flipOpen(event) {
   })
 
   flip.setAttribute('data-direction', directions.shift().id)
+  
   flip.classList.add('is-open')
 }
 
 /**
  * flip close the closest element with CSS class 'flip' set
  *
- * @param {Event} event - event that triggered the close action
+ * @param {Event} event event that triggered the close action
  */
 function flipClose(event) {
   const flip = event.target.closest('.flip')
+  flip.classList.remove('is-open')
+}
+
+/**
+ * close the closest element with CSS class 'flip' set
+ *
+ * @param {HTMLElement} wrapper wrapper to close
+ */
+function close(wrapper) {
+  const flip = wrapper.closest('.flip')
   flip.classList.remove('is-open')
 }
 

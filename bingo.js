@@ -1,3 +1,435 @@
+// New Normal needs a browser with at least fetch support
+if (!('fetch' in window)) alert('Please user a modern Browser to play New Normal!')
+
+// ServiceWorker is a progressive technology. Ignore unsupported browsers
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js')
+}
+
+const attitude = { hasty: false, curious: true, open: false, fair: false, correct: false, friendly: false, exclusions: '' }
+let lang, terr
+
+/**
+ * start the app with the given locale and start the matching intro
+ *
+ * @param {?string} locale optional locale string like 'de-de'. if not present, browser locale is used
+ */
+function load(locale) {
+  FastClick.attach(document.body)
+  loadAttitude()
+  if (locale) [lang, terr] = locale.split('-'); else [lang, terr] = browserLocale()
+  if (!['de', 'en', 'pl'].includes(lang)) [lang, terr] = ['en', 'us']
+  document.querySelector('#location').value = lang + '-' + terr
+  if (!window.location.hash || !displayHash(window.location.hash.substring(1)))
+    if (attitude.hasty) show('start'); else runIntro()
+}
+
+/**
+ * load and show the given page by patching innerHTML of element '#menu content'
+ *
+ * @param {string} page name of the page to load
+ */
+async function show(page) {
+  document.querySelector('.logo').style.display = page === 'intro' ? 'none' : 'block'
+  document.querySelector('#menu').classList.add('hidden')
+  document.querySelector('#menu .content').innerHTML = await (await fetch(lang +'/'+page+'.html')).text()
+  document.querySelector('#menu').scrollTop = 0
+  if (page==='attitude') initAttitude()
+  setTimeout(() => document.querySelector('#menu').classList.remove('hidden'), 50)
+}
+
+/**
+ * run intro by a timed display of its frames. can be skipped with skipIntro()
+ */
+let timer = null
+async function runIntro() {
+  await show('intro')
+  document.querySelector('#menu').classList.add('intro')
+  let frame = document.querySelector('#menu .frame')
+  const nextFrame = () => {
+    frame.classList.toggle('show')
+    frame = frame.nextElementSibling
+    if (frame) {
+      frame.classList.toggle('show')
+      timer = setTimeout(nextFrame, 60 * frame.textContent.length)
+    } else {
+      timer = null
+      document.querySelector('#menu').classList.remove('intro')
+      show('start')
+    }
+  }
+  frame.classList.toggle('show')
+  timer = setTimeout(nextFrame, 60 * frame.textContent.length)
+}
+
+/**
+ * skip intro by stopping its timer and show the start menu
+ */
+function skipIntro() {
+  if (timer) clearTimeout(timer)
+  saveAttitude('hasty', true)
+  document.querySelector('#menu').classList.remove('intro')
+  show('start')
+}
+
+/**
+ * stop the pyro effect by setting CSS 'hidden' class
+ */
+function stopPyro() {
+  document.querySelector('#pyro').classList.add('hidden')
+}
+
+/**
+ * transfer the current attitude to the attitude page for editing
+ */
+function initAttitude() {
+  for (let a in attitude)
+    document.querySelector(`#menu #${a}`).checked = attitude[a]
+}
+
+/**
+ * save a single attitude locally and to local storage if available
+ */
+function saveAttitude(a, value) {
+  attitude[a] = value
+  if (localStorage)
+    localStorage.setItem(a, a==='exclusions' ? value : value ? 'true' : 'false')
+}
+
+/**
+ * load all attitudes from local storage if available
+ */
+function loadAttitude() {
+  if (localStorage)
+    for (let a in attitude) {
+      if (localStorage.getItem(a) !== null)
+        attitude[a] = a === 'exclusions' ? localStorage.getItem(a) : localStorage.getItem(a)==='true'
+    }
+}
+
+/**
+ * show idiot and/or sheep cards corresponding to the id(s) given in the hash
+ *
+ * @param {string} hash with ids of argument(s) to show
+ * @return {boolean} true if success false otherwise
+ */
+function displayHash(hash) {
+  hash = hash.toUpperCase().split('&').map(v => v.split('=')[0])
+  const idiot = hash.filter(v => v.startsWith('I'))
+  const sheep = hash.filter(v => v.startsWith('S'))
+  if (!idiot.length && !sheep.length) return false // nothing to evaluate
+  const one = idiot.length
+  const two = (one ? sheep : idiot).length ? !one : undefined
+  loadCard('#wrapper-1', one, one ? idiot : sheep)
+  if (two !== undefined) {
+    showWrapperTwo()
+    loadCard('#wrapper-2', two, two ? idiot : sheep)
+  } else
+    hideWrapperTwo()
+
+  showGame()
+  return true
+}
+
+/**
+ * create one or two idiot or sheep cards and start the game
+ *
+ * @param {boolean} one create a idiot card if true, otherwise a sheep card
+ * @param {?boolean} two create a second card, idiot if true, sheep if false
+ */
+function play(one, two) {
+  loadCard('#wrapper-1', one)
+  if (two !== undefined) {
+    showWrapperTwo()
+    loadCard('#wrapper-2', two)
+  } else
+    hideWrapperTwo()
+
+  showGame()
+}
+
+/**
+ * Hide second card wrapper to play with only one
+ */
+function hideWrapperTwo() {
+  document.querySelector('#wrapper-2').classList.add('hidden')
+  document.querySelector('#game').classList.add('one')
+}
+
+/**
+ * Show second card wrapper to play with two
+ */
+function showWrapperTwo() {
+  document.querySelector('#wrapper-2').classList.remove('hidden')
+  document.querySelector('#game').classList.remove('one')
+}
+
+/**
+ * load a card by fetching the needed content (idiot/sheep + local) from the server
+ *
+ * @param {HTMLElement} wrapper wrapper element to load the card into
+ * @param {boolean} idiot load idiot content if true, otherwise sheep content
+ * @param {string[]} show list of ids to show instead of initializing a game
+ */
+async function loadCard(wrapper, idiot, show) {
+  const langfile = lang + (idiot ? '/idiot.html' : '/sheep.html')
+  const langcontent = await (await fetch(langfile)).text()
+  const terrfile = terr + (idiot ? '/idiot-local.html' : '/sheep-local.html')
+  const terrcontent = await (await fetch(terrfile)).text()
+  wrapper = document.querySelector(wrapper)
+  wrapper.querySelector('.content').innerHTML = langcontent + terrcontent
+  addIdTags(wrapper)
+  await addSources(wrapper)
+  if (attitude.open)
+    wrapper.querySelectorAll('.content button, .content button + a').forEach(e => e.remove())
+  if (attitude.friendly)
+    wrapper.querySelectorAll('i, .content button').forEach(e => e.remove())
+
+  applyExclusions(wrapper)
+  if (show) {
+    if (show.length > 1 || show[0].length > 1) singleDetails(wrapper, show)
+    open(wrapper)
+  }
+  prepareCard(wrapper, idiot)
+  prepareCardTitle(wrapper)
+  copyLogoToCard(wrapper)
+}
+
+/**
+ * add id tags to the details side of the card wrapper
+ *
+ * @param {HTMLElement} wrapper wrapper element to load the card into
+ */
+function addIdTags(wrapper) {
+  wrapper.querySelectorAll('a[id]').forEach(a => { // add id tags
+    const idtag = elementWithKids('span', a.id)
+    idtag.onclick = event => toggleExclusions(a.id, event)
+    a.prepend(idtag)
+  })
+}
+
+/**
+ * prepare a random argument card on the front side of the card wrapper
+ *
+ * @param {HTMLElement} wrapper wrapper element to load the card into
+ */
+function prepareCard(wrapper, idiot) {
+  const emojis = idiot ? '🤪,👻' : '🐑,😷' 
+  const set = getArguments(wrapper.querySelector('.detail'))
+  if (!set.length) 
+    alert('No arguments found!');
+  else {   
+    makeCard(wrapper, set, 5, emojis)
+    wrapper.classList.toggle('idiot', idiot)
+    wrapper.classList.toggle('sheep', !idiot)
+    wrapper.querySelector('.reload').onclick = () => makeCard(wrapper, set, 5, emojis)
+  }
+}
+
+/**
+ * prepare the card title for the front side of the card wrapper
+ *
+ * @param {HTMLElement} wrapper wrapper element to load the card into
+ */
+function prepareCardTitle(wrapper) {
+  // prepare card title
+  const title = wrapper.querySelector('.title')
+  while (title.firstChild) title.removeChild(title.firstChild)
+  const select = wrapper.querySelector('.detail select')
+  if (!attitude.fair)
+    randomElement(select.querySelectorAll('option'), 1).selected = true
+  title.appendChild(select)
+  title.appendChild(wrapper.querySelector('.detail label'))
+  title.querySelector('label').classList.toggle('hidden', !attitude.correct)
+}
+
+/**
+ * copy the logo to the top of the details side of the card wrapper
+ *
+ * @param {HTMLElement} wrapper wrapper element to load the card into
+ */
+function copyLogoToCard(wrapper) {
+  wrapper.querySelector('.content').prepend(
+    document.querySelector('.logo').cloneNode(true))
+  wrapper.querySelector('.logo').removeChild(wrapper.querySelector('.logo select'))
+}
+
+/**
+ * stop the game: flipping cards, hiding the #game element and showing the #menu element
+ */
+function stop() {
+  close(document.querySelector('#wrapper-1'))
+  close(document.querySelector('#wrapper-2'))
+
+  hideGame()
+  show('start')
+}
+
+/**
+ * Show the game panel and stop button, hide the menu
+ */
+function showGame() {
+  document.querySelector('#stop').classList.remove('hidden')
+  document.querySelector('#game').classList.remove('hidden')
+  document.querySelector('#menu').classList.add('hidden')
+}
+
+/**
+ * Hide the game panel and stop button
+ */
+function hideGame() {
+  document.querySelector('#stop').classList.add('hidden')
+  document.querySelector('#game').classList.add('hidden')
+}
+
+/**
+ * handle a click on the details window
+ * @param {Event} event the click event
+ */
+function handleClick(event) {
+  if (event.target.tagName.toLowerCase() === 'span') {
+  }
+  else if (event.target.tagName.toLowerCase() === 'a') {
+    showSources(event)
+  } else {
+    showSources(event, false)
+    closeDetails(event)
+  }
+}
+
+/**
+ * open the detail window, adding the CSS 'single' classes to the given id details
+ * @param {Event} event the event that triggered the open action
+ */
+function openDetails(event) {
+  const wrapper = event.target.closest('.card-wrapper')
+  singleDetails(wrapper, [event.target.id])
+  flipOpen(event)
+}
+
+/**
+ * show selected details, add the CSS 'single' classes if only one is shown
+ * @param {HTMLElement} wrapper the event that triggered the open action
+ * @param {string[]} ids list of ids to show
+ */
+function singleDetails(wrapper, ids) {
+  const detail = wrapper.querySelector('.detail')
+  if (ids.length === 1) detail.classList.add('single')
+  ids.forEach(id => {
+    const anchor = wrapper.querySelector(`a[id=${id}]`)
+    if (anchor) {
+      anchor.classList.add('single')
+      detail.querySelectorAll('a[href=""]').forEach(e => e.classList.toggle('hidden',
+        !anchor.nextElementSibling.querySelector('q')))
+    }
+  })
+  detail.querySelectorAll('button').forEach(e => e.classList.toggle('hidden', attitude.open))
+}
+
+/**
+ * close the detail window, removing the CSS 'single' classes
+ * @param {Event} event the event that triggered the close action
+ */
+function closeDetails(event) {
+  flipClose(event)
+  const detail = event.target.closest('.card-wrapper').querySelector('.detail')
+  detail.classList.remove('single')
+  detail.querySelectorAll('a[id]').forEach(e => e.classList.remove('single'))
+}
+
+/**
+ * extract the argument ids and texts from HTML content
+ *
+ * @param {HTMLElement} detail content DOM node containing the arguments
+ * @return {{id: string, word: string}[]} the extracted arguments
+ */
+function getArguments(detail) {
+  return Array.from(detail.querySelectorAll('a[id]:not(.excluded)')).map(
+    a => ({id: a.id, 
+           word: a.querySelector('h2').innerHTML, 
+           content: a.nextElementSibling.innerText}))
+}
+
+/**
+ * apply the exclusions stored in the attitudes of the user to all arguments
+ *
+ * @param {HTMLElement} detail content DOM node containing the arguments
+ */
+function applyExclusions(detail) {
+  attitude.exclusions.split(',').forEach(e => 
+    detail.querySelector(`a[id="${e}"]`) && detail.querySelector(`a[id="${e}"]`).classList.add('excluded'))
+}
+
+/**
+ * toggle the exclusions stored in the attitudes of the user to all arguments
+ *
+ * @param {string} id id to toggle inside the exclusions list in attitude
+ * @param {Event} event event that triggered the toggleExclusions
+ */
+function toggleExclusions(id, event) {
+  const exclude = !event.target.parentElement.classList.contains('excluded')
+  event.target.parentElement.classList.toggle('excluded', exclude)
+  const set = new Set(attitude.exclusions.split(','))
+  if (exclude) set.add(id); else set.remove(id)
+  saveAttitude('exclusions', Array.from(set).join(','))
+}
+
+/**
+ * show/hide all sources boxes if available
+ *
+ * @param {Event} event the Event triggering the action
+ * @param {boolean} show true if the sources should be made visible false otherwise
+ */
+function showSources(event, show = true) {
+  const detail = event.target.closest('.card-wrapper').querySelector('.detail')
+  if (!attitude.open)
+    detail.querySelectorAll('q').forEach(q => q.classList.toggle('hidden', !show))
+  detail.querySelectorAll('button, a[href=""]').forEach(e => e.classList.add('hidden'))
+}
+
+/**
+ * extend the arguments in detail with sources from sources if available
+ *
+ * @param {HTMLElement} detail content DOM node containing the arguments
+ */
+async function addSources(detail) {
+  const sources = elementWithKids('div')
+  sources.innerHTML = await (await fetch('sources.html')).text()
+  Array.from(detail.querySelectorAll('a[id]')).forEach(a => {
+    const links = sources.querySelectorAll(`a.${a.id}`)
+    links.forEach(link => link.target = '_blank')
+    if (links.length > 0) {
+      const q = elementWithKids('q', elementWithKids('ul', Array.from(links).map(
+        s => elementWithKids('li', [s.cloneNode(true), ' (', mirrorNode(s), ')']))))
+      if (!attitude.open) q.classList.add('hidden')
+      a.nextElementSibling.appendChild(q)
+    }
+  })
+}
+
+/**
+ * generates an archive.is mirror anchor node for the given node 
+ *
+ * @param {HTMLElement} a the anchor node to mirror
+ */
+function mirrorNode(a) {
+  const mirror = a.cloneNode(true)
+  mirror.href = `https://archive.is/${a.href}` 
+  mirror.firstChild.textContent = 'Mirror'
+  return mirror
+}
+
+/**
+ * get browser two-character-codes for language and territory in lower case
+ *
+ * @return {string[]} an 2-entry-array with the browser language and territory
+ */
+function browserLocale() {
+  let [language, territory] = navigator.language.split('-')
+  territory = territory ? territory.toLowerCase() : language
+  return [language, territory]
+}
+
 /**
  * create a DOM Element, optionally with children.
  * Any string given as kids will be converted in a HTML text node

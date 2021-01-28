@@ -365,7 +365,7 @@ table {
 
 #game.one .detail .logo {
   font-size: 12vmin;
-  letter-spacing: -0.6vmin;
+  letter-spacing: -0.6vmax;
 }
 
 .detail .logo .virus {

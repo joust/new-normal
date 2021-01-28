@@ -443,7 +443,7 @@ table {
   }
 }
 
-#stop, .reload {
+#stop, .reload, .permalink {
   position: absolute;
   right: 0.2vmax;
   top: 0.2vmax;
@@ -453,13 +453,14 @@ table {
   color: #ccc;
   outline: none;
   cursor: pointer;
+  text-decoration: none;
 }
 
 #stop {
   z-index: 2;
 }
 
-.reload:hover, #stop:hover {
+.reload:hover, .permalink:hover, #stop:hover {
   background: rgba(255, 255, 255, 0.6);
   color: black;
 }

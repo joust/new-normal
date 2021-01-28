@@ -189,7 +189,9 @@ async function loadCard(wrapper, idiot, show) {
   if (show) {
     if (show.length > 1 || show[0].length > 1) singleDetails(wrapper, show)
     open(wrapper)
-  }
+    setPermalink(wrapper, show)
+  } else
+    setPermalink(wrapper, [idiot? 'I' : 'S'])
   prepareCard(wrapper, idiot)
   prepareCardTitle(wrapper)
   copyLogoToCard(wrapper)
@@ -308,6 +310,16 @@ function openDetails(event) {
 }
 
 /**
+ * Set the permalink for the details side of the given card wrapper
+ *
+ * @param {HTMLElement} wrapper the card wrapper
+ * @param {string[]} ids list of ids to include in the permalink
+ */
+function setPermalink(wrapper, ids) {
+  wrapper.querySelector('.permalink').href = `${window.location.origin}/#${ids.join('&')}` 
+}
+
+/**
  * show selected details, add the CSS 'single' classes if only one is shown
  * @param {HTMLElement} wrapper the event that triggered the open action
  * @param {string[]} ids list of ids to show
@@ -324,6 +336,7 @@ function singleDetails(wrapper, ids) {
     }
   })
   detail.querySelectorAll('button').forEach(e => e.classList.toggle('hidden', attitude.open))
+  setPermalink(wrapper, ids)
 }
 
 /**
@@ -332,9 +345,11 @@ function singleDetails(wrapper, ids) {
  */
 function closeDetails(event) {
   flipClose(event)
-  const detail = event.target.closest('.card-wrapper').querySelector('.detail')
+  const wrapper = event.target.closest('.card-wrapper') 
+  const detail = wrapper.querySelector('.detail')
   detail.classList.remove('single')
   detail.querySelectorAll('a[id]').forEach(e => e.classList.remove('single'))
+  setPermalink(wrapper, [wrapper.classList.contains('idiot') ? 'I' : 'S'])
 }
 
 /**

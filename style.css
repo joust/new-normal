@@ -23,7 +23,7 @@ q {
   background: #fff;
   border-radius: 0.5vmax;
   padding: 0.5vmax;
-  padding-left: 6vmax;
+  padding-left: 10vmax;
   padding-right: 1vmax;
   margin-top: 0.5vmax;
   overflow: auto;
@@ -40,6 +40,7 @@ q.hidden {
 q + span {
   display: block;
   font-style: italic;
+  text-align: right;
 }
 
 q::before {

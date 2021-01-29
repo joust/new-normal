@@ -18,7 +18,7 @@ function load(locale) {
   FastClick.attach(document.body)
   loadAttitude()
   if (locale) [lang, terr] = locale.split('-'); else [lang, terr] = browserLocale()
-  if (!['de', 'en', 'pl'].includes(lang)) [lang, terr] = ['en', 'us']
+  if (!['de', 'en', 'es', 'pl'].includes(lang)) [lang, terr] = ['en', 'us']
   document.querySelector('#location').value = lang + '-' + terr
   if (!window.location.hash || !displayHash(window.location.hash.substring(1)))
     if (attitude.hasty) show('start'); else runIntro()
@@ -176,7 +176,8 @@ async function loadCard(wrapper, idiot, show) {
   const langfile = lang + (idiot ? '/idiot.html' : '/sheep.html')
   const langcontent = await (await fetch(langfile)).text()
   const terrfile = terr + (idiot ? '/idiot-local.html' : '/sheep-local.html')
-  const terrcontent = await (await fetch(terrfile)).text()
+  let terrcontent = await (await fetch(terrfile)).text()
+  if (terrcontent.length < 50) terrcontent = '' // error
   wrapper = document.querySelector(wrapper)
   wrapper.querySelector('.content').innerHTML = langcontent + terrcontent
   addIdTags(wrapper)

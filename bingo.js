@@ -84,7 +84,8 @@ function stopPyro() {
  */
 function initAttitude() {
   for (let a in attitude)
-    document.querySelector(`#menu #${a}`).checked = attitude[a]
+    if (a !== 'exclusions')
+      document.querySelector(`#menu #${a}`).checked = attitude[a]
 }
 
 /**

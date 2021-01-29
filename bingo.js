@@ -177,7 +177,7 @@ async function loadCard(wrapper, idiot, show) {
   const langcontent = await (await fetch(langfile)).text()
   const terrfile = terr + (idiot ? '/idiot-local.html' : '/sheep-local.html')
   let terrcontent = await (await fetch(terrfile)).text()
-  if (terrcontent.length < 50) terrcontent = '' // error
+  if (terrcontent.length < 100) terrcontent = '' // error
   wrapper = document.querySelector(wrapper)
   wrapper.querySelector('.content').innerHTML = langcontent + terrcontent
   addIdTags(wrapper)

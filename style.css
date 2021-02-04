@@ -138,7 +138,7 @@ q::after {
   height: 14vmin;
 }
 
-#location {
+.location {
   background: transparent;
   padding: 0;
   border: none;
@@ -146,6 +146,10 @@ q::after {
   color: #ccc;
   cursor: pointer;
   font-size: 13vmin;
+}
+
+.detail .location {
+  font-size: 7vmin;
 }
 
 #menu .intro {

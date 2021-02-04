@@ -19,7 +19,8 @@ function load(locale) {
   loadAttitude()
   if (locale) [lang, terr] = locale.split('-'); else [lang, terr] = browserLocale()
   if (!['de', 'en', 'es', 'pl'].includes(lang)) [lang, terr] = ['en', 'us']
-  document.querySelector('#location').value = lang + '-' + terr
+  document.querySelector('.location').value = `${lang}-${terr}`
+
   if (!window.location.hash || !displayHash(window.location.hash.substring(1)))
     if (attitude.hasty) show('start'); else runIntro()
 }
@@ -171,14 +172,15 @@ function showWrapperTwo() {
  * @param {HTMLElement} wrapper wrapper element to load the card into
  * @param {boolean} idiot load idiot content if true, otherwise sheep content
  * @param {string[]} show list of ids to show instead of initializing a game
+ * @param {boolean} update true if to update the card with a different locale
  */
-async function loadCard(wrapper, idiot, show) {
+async function loadCard(wrapper, idiot, show, update) {
   const langfile = lang + (idiot ? '/idiot.html' : '/sheep.html')
   const langcontent = await (await fetch(langfile)).text()
   const terrfile = terr + (idiot ? '/idiot-local.html' : '/sheep-local.html')
   let terrcontent = await (await fetch(terrfile)).text()
   if (terrcontent.length < 100) terrcontent = '' // error
-  wrapper = document.querySelector(wrapper)
+  if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
   wrapper.querySelector('.content').innerHTML = langcontent + terrcontent
   addIdTags(wrapper)
   await addSources(wrapper)
@@ -194,9 +196,9 @@ async function loadCard(wrapper, idiot, show) {
     setPermalink(wrapper, show)
   } else
     setPermalink(wrapper, [idiot? 'I' : 'S'])
-  prepareCard(wrapper, idiot)
+  if (update) updateCard(wrapper); else prepareCard(wrapper, idiot)
   prepareCardTitle(wrapper)
-  copyLogoToCard(wrapper)
+  copyLogoToCard(wrapper, idiot)
 }
 
 /**
@@ -231,6 +233,36 @@ function prepareCard(wrapper, idiot) {
 }
 
 /**
+ * update an argument card with a different language
+ *
+ * @param {HTMLElement} wrapper wrapper element of the card
+ */
+async function update(wrapper, idiot, locale) {
+  [lang, terr] = locale.split('-')
+  const ids = Array.from(wrapper.querySelectorAll('a.single')).map(a => a.id)
+  await loadCard(wrapper, idiot, null, true)
+  if (ids.length) singleDetails(wrapper, ids)
+  wrapper.querySelector('.location').value = `${lang}-${terr}`
+  document.querySelector('.location').value = `${lang}-${terr}`
+}
+
+/**
+ * update an argument card with a different language
+ *
+ * @param {HTMLElement} wrapper wrapper element of the card
+ */
+function updateCard(wrapper) {
+  const set = getArguments(wrapper.querySelector('.detail'))
+  wrapper.querySelectorAll('td[id]').forEach(td => {
+    const argument = set.find(arg => arg.id === td.id)
+    if (argument) {
+      td.innerHTML = argument.word
+      td.title = argument.content
+    }
+  })
+}
+
+/**
  * prepare the card title for the front side of the card wrapper
  *
  * @param {HTMLElement} wrapper wrapper element to load the card into
@@ -252,10 +284,12 @@ function prepareCardTitle(wrapper) {
  *
  * @param {HTMLElement} wrapper wrapper element to load the card into
  */
-function copyLogoToCard(wrapper) {
+function copyLogoToCard(wrapper, idiot) {
   wrapper.querySelector('.content').prepend(
     document.querySelector('.logo').cloneNode(true))
-  wrapper.querySelector('.logo').removeChild(wrapper.querySelector('.logo select'))
+  wrapper.querySelector('.logo select').value = `${lang}-${terr}`
+  wrapper.querySelector('.logo select').onchange = 
+    event => update(wrapper, idiot, event.target.value)
 }
 
 /**
@@ -291,13 +325,16 @@ function hideGame() {
  * @param {Event} event the click event
  */
 function handleClick(event) {
-  if (event.target.tagName.toLowerCase() === 'span') {
-  }
-  else if (event.target.tagName.toLowerCase() === 'a') {
-    showSources(event)
-  } else {
-    showSources(event, false)
-    closeDetails(event)
+  switch (event.target.tagName.toLowerCase()) {
+    case 'span':
+    case 'select':
+      break;
+    case 'a':
+      showSources(event)
+      break;
+    default:
+      showSources(event, false)
+      closeDetails(event)
   }
 }
 

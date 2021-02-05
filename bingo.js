@@ -33,7 +33,7 @@ function load(locale) {
 async function show(page) {
   document.querySelector('.logo').style.display = page === 'intro' ? 'none' : 'block'
   document.querySelector('#menu').classList.add('hidden')
-  document.querySelector('#menu .content').innerHTML = await (await fetch(lang +'/'+page+'.html')).text()
+  document.querySelector('#menu .content').innerHTML = await fetchHandleError(lang +'/'+page+'.html')
   document.querySelector('#menu').scrollTop = 0
   if (page==='attitude') initAttitude()
   setTimeout(() => document.querySelector('#menu').classList.remove('hidden'), 50)
@@ -176,9 +176,9 @@ function showWrapperTwo() {
  */
 async function loadCard(wrapper, idiot, show, update) {
   const langfile = lang + (idiot ? '/idiot.html' : '/sheep.html')
-  const langcontent = await (await fetch(langfile)).text()
+  const langcontent =  await fetchHandleError(langfile)
   const terrfile = terr + (idiot ? '/idiot-local.html' : '/sheep-local.html')
-  let terrcontent = await (await fetch(terrfile)).text()
+  let terrcontent = await fetchHandleError(terrfile)
   if (terrcontent.length < 100) terrcontent = '' // error
   if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
   wrapper.querySelector('.content').innerHTML = langcontent + terrcontent
@@ -448,7 +448,7 @@ function showSources(event, show = true) {
  */
 async function addSources(detail) {
   const sources = elementWithKids('div')
-  sources.innerHTML = await (await fetch('sources.html')).text()
+  sources.innerHTML =  await fetchHandleError('sources.html')
   Array.from(detail.querySelectorAll('a[id]')).forEach(a => {
     const links = sources.querySelectorAll(`a.${a.id}`)
     links.forEach(link => link.target = '_blank')
@@ -595,4 +595,8 @@ function checkCard(table, size) {
   table.querySelectorAll('td').forEach(node => node.classList.remove('complete'))
   complete.forEach(row => row.forEach(node => node.classList.add('complete')))
   return complete.length > 0
+}
+
+function fetchHandleError(url) {
+  return fetch(url).then(async response => response.status >= 400 && response.status < 600 ? '' : await response.text()).catch(error => '')  
 }

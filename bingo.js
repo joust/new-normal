@@ -33,7 +33,7 @@ function load(locale) {
 async function show(page) {
   document.querySelector('.logo').style.display = page === 'intro' ? 'none' : 'block'
   document.querySelector('#menu').classList.add('hidden')
-  document.querySelector('#menu .content').innerHTML = await fetchHandleError(lang +'/'+page+'.html')
+  document.querySelector('#menu .content').innerHTML = await fetchSilent(lang +'/'+page+'.html')
   document.querySelector('#menu').scrollTop = 0
   if (page==='attitude') initAttitude()
   setTimeout(() => document.querySelector('#menu').classList.remove('hidden'), 50)
@@ -175,13 +175,12 @@ function showWrapperTwo() {
  * @param {boolean} update true if to update the card with a different locale
  */
 async function loadCard(wrapper, idiot, show, update) {
-  const langfile = lang + (idiot ? '/idiot.html' : '/sheep.html')
-  const langcontent =  await fetchHandleError(langfile)
-  const terrfile = terr + (idiot ? '/idiot-local.html' : '/sheep-local.html')
-  let terrcontent = await fetchHandleError(terrfile)
-  if (terrcontent.length < 100) terrcontent = '' // error
+  const content = await fetchSilent(lang + (idiot ? '/idiot.html' : '/sheep.html'))
+  let local = await fetchSilent(terr + (idiot ? '/idiot-local.html' : '/sheep-local.html'))
+  if (!local.length)
+    local = await fetchSilent(lang + (idiot ? '/idiot-local.html' : '/sheep-local.html'))
   if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
-  wrapper.querySelector('.content').innerHTML = langcontent + terrcontent
+  wrapper.querySelector('.content').innerHTML = content + local
   addIdTags(wrapper)
   await addSources(wrapper)
   if (attitude.open)
@@ -448,7 +447,7 @@ function showSources(event, show = true) {
  */
 async function addSources(detail) {
   const sources = elementWithKids('div')
-  sources.innerHTML =  await fetchHandleError('sources.html')
+  sources.innerHTML =  await fetchSilent('sources.html')
   Array.from(detail.querySelectorAll('a[id]')).forEach(a => {
     const links = sources.querySelectorAll(`a.${a.id}`)
     links.forEach(link => link.target = '_blank')
@@ -597,6 +596,12 @@ function checkCard(table, size) {
   return complete.length > 0
 }
 
-function fetchHandleError(url) {
+/**
+ * fetch a file from server, suppressing all errors
+ *
+ * @param {string} url - the url to fetch
+ * @return {Promise<string>} the files content or '' on error
+ */
+function fetchSilent(url) {
   return fetch(url).then(async response => response.status >= 400 && response.status < 600 ? '' : await response.text()).catch(error => '')  
 }

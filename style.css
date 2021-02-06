@@ -457,6 +457,7 @@ table {
   top: 0.2vmax;
   border: none;
   font-size: 3vmax;
+  line-height: 3vmax;
   background: transparent;
   color: #ccc;
   outline: none;

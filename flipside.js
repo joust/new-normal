@@ -18,21 +18,26 @@ function flipOpen(event) {
  */
 function open(wrapper, x = 0, y = 0) {
   const flip = wrapper.closest('.flip')
-  const mx = x - flip.offsetLeft, my = y - flip.offsetTop
   const w = flip.offsetWidth, h = flip.offsetHeight
 
-  const directions = [
+  let directions = [
     { id: 'top', x: w/2, y: 0 },
     { id: 'right', x: w, y: h/2 },
     { id: 'bottom', x: w/2, y: h },
     { id: 'left', x: 0, y: h/2 }
   ]
 
-  directions.sort((a, b) => {
-      return distance(mx, my, a.x, a.y) - distance(mx, my, b.x, b.y)
-  })
-
-  flip.setAttribute('data-direction', directions.shift().id)
+  if (x || y) {
+    const mx = x - flip.offsetLeft, my = y - flip.offsetTop
+    directions.sort((a, b) => {
+        return distance(mx, my, a.x, a.y) - distance(mx, my, b.x, b.y)
+    })
+    flip.setAttribute('data-direction', directions.shift().id)
+  } else {
+    const current = flip.getAttribute('data-direction')
+    direction = directions.filter(d => d.id !== current)
+    flip.setAttribute('data-direction', directions[Math.floor(Math.random() * directions.length)].id)
+  }
   
   flip.classList.add('is-open')
 }

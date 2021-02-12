@@ -18,7 +18,7 @@ function load(locale) {
   FastClick.attach(document.body)
   loadAttitude()
   if (locale) [lang, terr] = locale.split('-'); else [lang, terr] = browserLocale()
-  if (!['de', 'en', 'es', 'pl'].includes(lang)) [lang, terr] = ['en', 'us']
+  if (!['de', 'da', 'en', 'es', 'pl'].includes(lang)) [lang, terr] = ['en', 'us']
   document.querySelector('.location').value = `${lang}-${terr}`
 
   if (!window.location.hash || !displayHash(window.location.hash.substring(1)))
@@ -274,8 +274,11 @@ function prepareCardTitle(wrapper) {
   if (!attitude.fair)
     randomElement(select.querySelectorAll('option'), 1).selected = true
   title.appendChild(select)
-  title.appendChild(wrapper.querySelector('.detail label'))
-  title.querySelector('label').classList.toggle('hidden', !attitude.correct)
+  const label = wrapper.querySelector('.detail label')
+  if (label) {
+    title.appendChild(label)
+    title.querySelector('label').classList.toggle('hidden', !attitude.correct)
+  }
 }
 
 /**
@@ -365,6 +368,7 @@ function setPermalink(wrapper, ids) {
 function singleDetails(wrapper, ids) {
   const detail = wrapper.querySelector('.detail')
   if (ids.length === 1) detail.classList.add('single')
+  detail.querySelectorAll('a[id]').forEach(e => e.classList.remove('single'))
   ids.forEach(id => {
     const anchor = wrapper.querySelector(`a[id=${id}]`)
     if (anchor) {
@@ -379,7 +383,7 @@ function singleDetails(wrapper, ids) {
 
 /**
  * close the detail window, removing the CSS 'single' classes
- * @param {Event} event the event that triggered the close action
+ * @param {Event} event - the event that triggered the close action
  */
 function closeDetails(event) {
   flipClose(event)
@@ -391,9 +395,29 @@ function closeDetails(event) {
 }
 
 /**
+ * open another detail window showing the listed counter arguments
+ * @param {string[]} ids - the ids to show
+ * @param {Event} event - the event that triggered the show action
+ */
+function showCounterArguments(ids) {
+  const idiot = ids[0].startsWith('I')
+  const type = idiot ? 'idiot' : 'sheep'
+  const wrapper = document.querySelector(`.card-wrapper.${type}`) || document.querySelector('.card-wrapper.hidden')
+  if (wrapper) {
+    if (wrapper.classList.contains('hidden')) {
+      showWrapperTwo()
+      loadCard('#wrapper-2', idiot, ids)
+    } else {
+      singleDetails(wrapper, ids)
+      open(wrapper)
+    }
+  }
+}
+
+/**
  * extract the argument ids and texts from HTML content
  *
- * @param {HTMLElement} detail content DOM node containing the arguments
+ * @param {HTMLElement} detail - content DOM node containing the arguments
  * @return {{id: string, word: string}[]} the extracted arguments
  */
 function getArguments(detail) {
@@ -423,7 +447,7 @@ function toggleExclusions(id, event) {
   const exclude = !event.target.parentElement.classList.contains('excluded')
   event.target.parentElement.classList.toggle('excluded', exclude)
   const set = new Set(attitude.exclusions.split(','))
-  if (exclude) set.add(id); else set.remove(id)
+  if (exclude) set.add(id); else set.delete(id)
   saveAttitude('exclusions', Array.from(set).join(','))
 }
 
@@ -450,12 +474,22 @@ async function addSources(detail) {
   sources.innerHTML =  await fetchSilent('sources.html')
   Array.from(detail.querySelectorAll('a[id]')).forEach(a => {
     const links = sources.querySelectorAll(`a.${a.id}`)
+    const counter = Array.from(sources.querySelectorAll(`q.${a.id}`)).map(q => q.innerText)
     links.forEach(link => link.target = '_blank')
     if (links.length > 0) {
       const q = elementWithKids('q', elementWithKids('ul', Array.from(links).map(
         s => elementWithKids('li', [s.cloneNode(true), ' (', mirrorNode(s), ')']))))
       if (!attitude.open) q.classList.add('hidden')
       a.nextElementSibling.appendChild(q)
+    }
+    if (counter.length > 0) {
+      const c = elementWithKids('p', [ '⇔ ', ...counter.map(counterid => {
+        const idtag = elementWithKids('span', counterid)
+        idtag.onclick = () => showCounterArguments([counterid])
+        return idtag
+      })])
+      c.classList.add('counter')
+      a.nextElementSibling.appendChild(c)
     }
   })
 }

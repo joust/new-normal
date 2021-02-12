@@ -87,7 +87,6 @@ Behind every argument title you find the colored argument id. By clicking on it,
 <p>The app allows to deep link directy to arguments, e.g. to transmit them to others. This can be achieved just by specifying the argument ids in the url's hash. Some examples:</p>
 <ul>
 <li><code>https://new-normal.app#I17</code>: Show <b>idiot</b> argument with id <code>I17</code></li>
-<li><code>https://new-normal.app#I1&amp;I2&amp;I3</code>: Show <b>idiot</b> arguments with ids <code>I1</code>, <code>I2</code>, <code>I3</code></li>
 <li><code>https://new-normal.app#S69</code>: Show <b>sheep</b> argument with id <code>S69</code></li>
 <li><code>https://new-normal.app#I17&amp;S69</code>: Show both arguments with id <code>I17</code> and <code>S69</code></li>
 <li><code>https://new-normal.app#I</code>: Show all <b>idiot</b> arguments</li>

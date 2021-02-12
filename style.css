@@ -41,7 +41,7 @@ q.hidden {
   display: none;
 }
 
-q + span {
+#menu q + span {
   display: block;
   font-style: italic;
   text-align: right;
@@ -345,18 +345,22 @@ table {
   display: block;
 }
 
-.detail a[id] span {
-  float: right;
+.detail a[id] span, .detail p span {
   color: #fff;
   padding: 0.5vmax;
   user-select: none;
+  margin-left: 0.5vmax;
 }
 
-.idiot .detail a[id] span {
+.detail a[id] span {
+  float: right;
+}
+
+.idiot .detail a[id] span, .sheep .detail p span {
   background: #f72d5d;
 }
 
-.sheep .detail a[id] span {
+.sheep .detail a[id] span, .idiot .detail p span {
   background: #2d60f6;
 }
 

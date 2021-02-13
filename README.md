@@ -6,6 +6,7 @@ This is a plain HTML/CSS/ES6 implementation of a Buzzword BINGO PWA. Instead of 
 The app is inter&shy;nationa&shy;lized and contains a common core of universal, language inde&shy;pen&shy;dent argu&shy;ments and sets of argu&shy;ments only used and under&shy;stood locally.
 </p>
 <h1>Content</h1>
+<h2>Menus and Arguments</h2>
 <p>
 All internationalized application content is stored in HTML format in language-directories:
 </p>
@@ -43,6 +44,19 @@ All internationalized argu&shy;ments are stored in HTML format in language- and 
 <code>
   &lt;p&gt;They say&lt;i&gt; in all seriousness&lt;/i&gt; that ...&lt;/p&gt;
 </code>
+
+<h2>Sources and Counter Arguments</h2>
+<p>
+The Sources for all Arguments are stored language-mixed in the top-level file <code>sources.html</code>, together with the cross references to counter arguments.  
+</p>
+<p>A source is represented by an anchor with language, reference to the argument, and url and the link text as text:</p>
+<ul>
+<li><code>&lt;a lang="en" class="I99" href="https://...."&gt;link text&lt;/a&gt;</code></li>
+</ul>
+<p>A reference to a counter argument is represented by a quote with reference to the argument, containing the id of the counter argument as text:</p>
+<ul>
+<li><code>&lt;a lang="en" class="I99" href="https://...."&gt;link text&lt;/a&gt;</code></li>
+</ul>
 
 <h1>Technical</h1>
 
@@ -97,11 +111,10 @@ Behind every argument title you find the colored argument id. By clicking on it,
 
 <h1>Roadmap</h1>
 <p>
-The following features are in development or planned:
+The following is in development or planned:
 </p>
 <ul>
 <li>Add more <a href="https://github.com/joust/new-normal/blob/master/sources.html">sources</a> to all arguments for anyone to check</li>
-<li>Visualize the counter arguments of an argument/claim cards</li>
 <li>Extend the number of available localizations by translating the common core and gather the local arguments used</li>
 </ul>
 <h1>Support</h1>

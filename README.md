@@ -49,13 +49,13 @@ All internationalized argu&shy;ments are stored in HTML format in language- and 
 <p>
 The Sources for all Arguments are stored language-mixed in the top-level file <code>sources.html</code>, together with the cross references to counter arguments.  
 </p>
-<p>A source is represented by an anchor with language, reference to the argument, and url and the link text as text:</p>
+<p>A source is represented by an anchor with language, reference to the argument, the link url and the link text as text:</p>
 <ul>
 <li><code>&lt;a lang="en" class="I99" href="https://...."&gt;link text&lt;/a&gt;</code></li>
 </ul>
 <p>A reference to a counter argument is represented by a quote with reference to the argument, containing the id of the counter argument as text:</p>
 <ul>
-<li><code>&lt;a lang="en" class="I99" href="https://...."&gt;link text&lt;/a&gt;</code></li>
+<li><code>&lt;q class="counter I99"&gt;S77&lt;/q&gt;</code></li>
 </ul>
 
 <h1>Technical</h1>

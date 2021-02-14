@@ -313,6 +313,10 @@ table {
   height: calc(100% - 4vmax);
 }
   
+.detail .counter {
+  line-height: 4vh;
+}
+
 .detail.single {
   display: flex;
   align-items: center;

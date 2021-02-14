@@ -483,10 +483,10 @@ async function addSources(detail) {
       a.nextElementSibling.appendChild(q)
     }
     if (counter.length > 0) {
-      const c = elementWithKids('p', [ '⇔ ', ...counter.map(counterid => {
+      const c = elementWithKids('p', [ '⇔', ...counter.flatMap(counterid => {
         const idtag = elementWithKids('span', counterid)
         idtag.onclick = () => showCounterArguments([counterid])
-        return idtag
+        return ['\u00ad', idtag]
       })])
       c.classList.add('counter')
       a.nextElementSibling.appendChild(c)

@@ -312,10 +312,6 @@ button.hidden, q.hidden:after {
 table {
   height: calc(100% - 4vmax);
 }
-  
-.detail .counter {
-  line-height: 4vh;
-}
 
 .detail.single {
   display: flex;
@@ -354,6 +350,8 @@ table {
   padding: 0.5vmax;
   user-select: none;
   margin-left: 0.5vmax;
+  margin-bottom: 0.5vmax;
+  display: inline-block;
 }
 
 .detail a[id] span {

@@ -295,6 +295,19 @@ function copyLogoToCard(wrapper, idiot) {
 }
 
 /**
+ * handle change of the search input text
+ * @param {Event} event - the input event
+ */
+function search(event) {
+  const wrapper = event.target.closest('.card-wrapper')
+  const input = event.target.value.toLowerCase()
+  const args = Array.from(wrapper.querySelectorAll('a[id]'))
+  args.forEach(a => a.classList.remove('not-matching'))
+  const notMatching = input.length ? args.filter(a => !a.textContent.replace(/\u00ad/gi, '').toLowerCase().includes(input) && !a.nextElementSibling.textContent.replace(/\u00ad/gi, '').toLowerCase().includes(input)) : []
+  notMatching.forEach(a => a.classList.add('not-matching'))  
+}
+
+/**
  * stop the game: flipping cards, hiding the #game element and showing the #menu element
  */
 function stop() {
@@ -329,6 +342,7 @@ function hideGame() {
 function handleClick(event) {
   switch (event.target.tagName.toLowerCase()) {
     case 'span':
+    case 'input':
     case 'select':
       break;
     case 'a':

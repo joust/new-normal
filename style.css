@@ -320,11 +320,16 @@ table {
   overflow-y: hidden;
 }
 
+.search {
+  width: 100%;
+}
+
 .detail a[id].excluded, .detail a[id].excluded + p {
   color: #aaa;
 }
 
-.detail.single a[id], .detail.single a[id] + p {
+.detail.single a[id], .detail.single a[id] + p, .detail.single .search,
+.detail a[id].not-matching, .detail a[id].not-matching + p {
   display: none;
 }
 

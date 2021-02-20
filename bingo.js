@@ -169,7 +169,7 @@ function showWrapperTwo() {
 /**
  * load a card by fetching the needed content (idiot/sheep + local) from the server
  *
- * @param {HTMLElement} wrapper wrapper element to load the card into
+ * @param {HTMLElement|string} wrapper wrapper element to load the card into
  * @param {boolean} idiot load idiot content if true, otherwise sheep content
  * @param {string[]} show list of ids to show instead of initializing a game
  * @param {boolean} update true if to update the card with a different locale
@@ -311,8 +311,8 @@ function search(event) {
  * stop the game: flipping cards, hiding the #game element and showing the #menu element
  */
 function stop() {
-  close(document.querySelector('#wrapper-1'))
-  close(document.querySelector('#wrapper-2'))
+  closeDetails('#wrapper-1')
+  closeDetails('#wrapper-2')
 
   hideGame()
   show('start')
@@ -350,7 +350,7 @@ function handleClick(event) {
       break;
     default:
       showSources(event, false)
-      closeDetails(event)
+      flipCloseDetails(event)
   }
 }
 
@@ -396,12 +396,21 @@ function singleDetails(wrapper, ids) {
 }
 
 /**
- * close the detail window, removing the CSS 'single' classes
+ * flip close the detail window, removing the CSS 'single' classes
  * @param {Event} event - the event that triggered the close action
  */
-function closeDetails(event) {
+function flipCloseDetails(event) {
   flipClose(event)
-  const wrapper = event.target.closest('.card-wrapper') 
+  closeDetails(event.target.closest('.card-wrapper'))
+}
+
+/**
+ * close the detail window, removing the CSS 'single' classes
+ * @param {HTMLElement|string} wrapper - the wrapper to close (string or element)
+ */
+function closeDetails(wrapper) {
+  if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
+  close(wrapper)
   const detail = wrapper.querySelector('.detail')
   detail.classList.remove('single')
   detail.querySelectorAll('a[id]').forEach(e => e.classList.remove('single'))

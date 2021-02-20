@@ -189,6 +189,7 @@ async function loadCard(wrapper, idiot, show, update) {
     wrapper.querySelectorAll('i, .content button').forEach(e => e.remove())
 
   applyExclusions(wrapper)
+  addCheckboxes(wrapper)
   if (show) {
     if (show.length > 1 || show[0].length > 1) singleDetails(wrapper, show)
     open(wrapper)
@@ -206,10 +207,25 @@ async function loadCard(wrapper, idiot, show, update) {
  * @param {HTMLElement} wrapper wrapper element to load the card into
  */
 function addIdTags(wrapper) {
-  wrapper.querySelectorAll('a[id]').forEach(a => { // add id tags
+  wrapper.querySelectorAll('a[id]').forEach(a => {
     const idtag = elementWithKids('span', a.id)
-    idtag.onclick = event => toggleExclusions(a.id, event)
+    idtag.onclick = event => toggleDetails(wrapper, event, [a.id])
     a.prepend(idtag)
+  })
+}
+
+/**
+ * add exclusion checkboxes to the details side of the card wrapper
+ *
+ * @param {HTMLElement} wrapper wrapper element to load the card into
+ */
+function addCheckboxes(wrapper) {
+  wrapper.querySelectorAll('a[id]').forEach(a => {
+    const checkbox = elementWithKids('input')
+    checkbox.checked = !a.classList.contains('excluded')
+    checkbox.type = 'checkbox'
+    checkbox.onclick = event => toggleExclusions(a.id, event)
+    a.prepend(checkbox)
   })
 }
 
@@ -311,8 +327,8 @@ function search(event) {
  * stop the game: flipping cards, hiding the #game element and showing the #menu element
  */
 function stop() {
-  closeDetails('#wrapper-1')
-  closeDetails('#wrapper-2')
+  closeDetails('#wrapper-1', true)
+  closeDetails('#wrapper-2', true)
 
   hideGame()
   show('start')
@@ -407,10 +423,11 @@ function flipCloseDetails(event) {
 /**
  * close the detail window, removing the CSS 'single' classes
  * @param {HTMLElement|string} wrapper - the wrapper to close (string or element)
+ * @param {boolean} flip - also flip the card
  */
-function closeDetails(wrapper) {
+function closeDetails(wrapper, flip = false) {
   if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
-  close(wrapper)
+  if (flip) close(wrapper)
   const detail = wrapper.querySelector('.detail')
   detail.classList.remove('single')
   detail.querySelectorAll('a[id]').forEach(e => e.classList.remove('single'))
@@ -420,7 +437,6 @@ function closeDetails(wrapper) {
 /**
  * open another detail window showing the listed counter arguments
  * @param {string[]} ids - the ids to show
- * @param {Event} event - the event that triggered the show action
  */
 function showCounterArguments(ids) {
   const idiot = ids[0].startsWith('I')
@@ -472,6 +488,22 @@ function toggleExclusions(id, event) {
   const set = new Set(attitude.exclusions.split(','))
   if (exclude) set.add(id); else set.delete(id)
   saveAttitude('exclusions', Array.from(set).join(','))
+}
+
+/**
+ * toggle the argument details / all arguments views
+ *
+ * @param {HTMLElement|string} wrapper - the wrapper to close (string or element)
+ * @param {Event} event - event that triggered the toggleDetails
+ * @param {string[]} ids - ids 
+ */
+function toggleDetails(wrapper, event, ids) {
+  const single = event.target.parentElement.classList.contains('single')
+  if (single) {
+    closeDetails(wrapper)
+    wrapper.querySelector(`a[id=${ids[0]}]`).scrollIntoView()
+  } else
+    singleDetails(wrapper, ids)
 }
 
 /**

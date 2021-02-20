@@ -14,8 +14,18 @@ body, html, #game, #menu, #pyro {
 }
 
 input[type="checkbox"] {
-  transform: scale(2.5);
-  margin-right: 2.5vmax;
+  margin-right: 1vmax;
+}
+
+@supports (zoom:2) {
+  input[type="checkbox"] {
+	zoom: 2;
+  }
+}
+@supports not (zoom:2) {
+  input[type="checkbox"] {
+	transform: scale(2);
+  }
 }
 
 q {
@@ -322,6 +332,12 @@ table {
 
 .search {
   width: 100%;
+  font-size: 2vmax;
+  padding: 0.5vmax;
+}
+
+.detail a[id] input {
+  float: left;
 }
 
 .detail a[id].excluded, .detail a[id].excluded + p {

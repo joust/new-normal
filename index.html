@@ -13,9 +13,16 @@
     <title>New Normal</title>
     <script src="flipside.js" type="text/javascript"></script>
     <script src="bingo.js" type="text/javascript"></script>
-    <script src="fastclick.js" type="application/javascript"></script>
+    <script src="fastclick.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      function flagcheck() {
+        console.log(navigator.userAgent);
+        if (navigator.userAgent.indexOf('Windows') > 0)
+          document.head.innerHTML += '<link rel="stylesheet" href="noto.css">'
+      }
+    </script>
   </head>
-  <body onload="load()">
+  <body onload="flagcheck(); load()">
     <div><button id="stop" class="hidden" onclick="stop()">&#x274c;</button></div>
     <div id="menu">
       <div class="game-logo menu">

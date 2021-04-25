@@ -131,6 +131,7 @@ function prepareCard(wrapper, idiot) {
     alert('No arguments found!');
   else {   
     makeCard(wrapper, set, 5, emojis)
+    wrapper.classList.remove('test')
     wrapper.classList.toggle('idiot', idiot)
     wrapper.classList.toggle('sheep', !idiot)
     wrapper.querySelector('.reload').onclick = () => makeCard(wrapper, set, 5, emojis)

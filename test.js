@@ -83,6 +83,7 @@ async function prepareTestCard(wrapper, size) {
     label: q.innerHTML
   }))
   makeTestCard(wrapper, testset, size)
+  wrapper.classList.add('test')
   wrapper.classList.remove('idiot', 'sheep')
   wrapper.querySelector('.reload').onclick = () => clearTest()
 }
@@ -190,7 +191,8 @@ function markTestChoice(event) {
   node.classList.add('set')
   node.classList.toggle('idiot', idiot)
   node.classList.toggle('sheep', !idiot)
-  wrapper.classList.toggle('done', checkTestCard(table))
+  const done = checkTestCard(table)
+  wrapper.classList.toggle('done', done)
 }
 
 /**
@@ -228,5 +230,24 @@ function checkTestCard(table) {
   const set = node => node.classList.contains('set')
   const allNodes = Array.from(table.querySelectorAll('td'))
   return allNodes.filter(set).length === allNodes.length
+}
+
+/**
+ * get the stats for a test card table
+ *
+ * @param {HTMLElement} table - table element representing the card
+ *
+ * @return {Object} stats for the test questions
+ */
+function getTestStats(table) {
+  const id = node => node.id
+  const set = node => node.classList.contains('set')
+  const idiot = node => node.classList.contains('idiot')
+  const sheep = node => node.classList.contains('sheep')
+  const allNodes = Array.from(table.querySelectorAll('td'))
+  return {
+    idiot: allNodes.filter(idiot).length,
+    sheep: allNodes.filter(sheep).length
+  }
 }
 

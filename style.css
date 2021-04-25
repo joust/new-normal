@@ -188,7 +188,7 @@ p.frame.show {
   opacity: 1;
 }
 
-button, button.menu, span.menu {
+button, button.menu, span.menu, select.menu {
   font-family: 'HVD Crocodile';
   font-weight: 300;
   color: #777;
@@ -206,19 +206,19 @@ button {
   padding: 0.5vmin;
 }
 
-button.menu {
+button.menu, select.menu {
   font-size: 2vmin;
   margin: 0.3vmin;
   padding: 1vmin;
 }
 
-button.menu, span.menu {
+button.menu, span.menu, select.menu {
   font-size: 7vmin;
   margin: 1vmin;
   padding: 3vmin;
 }
 
-button.hidden, q.hidden:after {
+button.hidden, q.hidden:after, a.hidden {
   display: none;
 }
 
@@ -501,6 +501,10 @@ table {
   color: black;
 }
 
+.card {
+  background: #999;
+}
+
 .red {
   color: #f72d5d;
 }
@@ -542,6 +546,17 @@ td.set {
   background: transparent;
   color: white;
 }
+
+.done td.idiot {
+  background: #f72d5d;
+  opacity: 0.7;
+}
+
+.done td.sheep {
+  background: #2d60f6;
+  opacity: 0.7;
+}
+
 
 td.center {
   background: transparent;

@@ -1,112 +1,19 @@
-// New Normal needs a browser with at least fetch support
-if (!('fetch' in window)) alert('Please user a modern Browser to play New Normal!')
-
-// ServiceWorker is a progressive technology. Ignore unsupported browsers
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js')
-}
-
-const attitude = { hasty: false, curious: true, open: false, fair: false, correct: false, friendly: false, exclusions: '' }
-let lang, terr
 
 /**
- * start the app with the given locale and start the matching intro
+ * create one or two idiot or sheep cards and start the game
  *
- * @param {?string} locale optional locale string like 'de-de'. if not present, browser locale is used
+ * @param {boolean} one create a idiot card if true, otherwise a sheep card
+ * @param {?boolean} two create a second card, idiot if true, sheep if false
  */
-function load(locale) {
-  FastClick.attach(document.body)
-  loadAttitude()
-  if (locale) [lang, terr] = locale.split('-'); else [lang, terr] = browserLocale()
-  if (!['de', 'da', 'en', 'es', 'pl'].includes(lang)) [lang, terr] = ['en', 'us']
-  document.querySelector('.location').value = `${lang}-${terr}`
+function play(one, two) {
+  loadCard('#wrapper-1', one)
+  if (two !== undefined) {
+    showWrapperTwo()
+    loadCard('#wrapper-2', two)
+  } else
+    hideWrapperTwo()
 
-  if (!window.location.hash || !displayHash(window.location.hash.substring(1)))
-    if (attitude.hasty) show('start'); else runIntro()
-}
-
-/**
- * load and show the given page by patching innerHTML of element '#menu content'
- *
- * @param {string} page name of the page to load
- */
-async function show(page) {
-  document.querySelector('.logo').style.display = page === 'intro' ? 'none' : 'block'
-  document.querySelector('#menu').classList.add('hidden')
-  document.querySelector('#menu .content').innerHTML = await fetchSilent(lang +'/'+page+'.html')
-  document.querySelector('#menu').scrollTop = 0
-  if (page==='attitude') initAttitude()
-  setTimeout(() => document.querySelector('#menu').classList.remove('hidden'), 50)
-}
-
-/**
- * run intro by a timed display of its frames. can be skipped with skipIntro()
- */
-let timer = null
-async function runIntro() {
-  await show('intro')
-  document.querySelector('#menu').classList.add('intro')
-  let frame = document.querySelector('#menu .frame')
-  const nextFrame = () => {
-    frame.classList.toggle('show')
-    frame = frame.nextElementSibling
-    if (frame) {
-      frame.classList.toggle('show')
-      timer = setTimeout(nextFrame, 60 * frame.textContent.length)
-    } else {
-      timer = null
-      document.querySelector('#menu').classList.remove('intro')
-      show('start')
-    }
-  }
-  frame.classList.toggle('show')
-  timer = setTimeout(nextFrame, 60 * frame.textContent.length)
-}
-
-/**
- * skip intro by stopping its timer and show the start menu
- */
-function skipIntro() {
-  if (timer) clearTimeout(timer)
-  saveAttitude('hasty', true)
-  document.querySelector('#menu').classList.remove('intro')
-  show('start')
-}
-
-/**
- * stop the pyro effect by setting CSS 'hidden' class
- */
-function stopPyro() {
-  document.querySelector('#pyro').classList.add('hidden')
-}
-
-/**
- * transfer the current attitude to the attitude page for editing
- */
-function initAttitude() {
-  for (let a in attitude)
-    if (a !== 'exclusions')
-      document.querySelector(`#menu #${a}`).checked = attitude[a]
-}
-
-/**
- * save a single attitude locally and to local storage if available
- */
-function saveAttitude(a, value) {
-  attitude[a] = value
-  if (localStorage)
-    localStorage.setItem(a, a==='exclusions' ? value : value ? 'true' : 'false')
-}
-
-/**
- * load all attitudes from local storage if available
- */
-function loadAttitude() {
-  if (localStorage)
-    for (let a in attitude) {
-      if (localStorage.getItem(a) !== null)
-        attitude[a] = a === 'exclusions' ? localStorage.getItem(a) : localStorage.getItem(a)==='true'
-    }
+  showGame()
 }
 
 /**
@@ -134,39 +41,6 @@ function displayHash(hash) {
 }
 
 /**
- * create one or two idiot or sheep cards and start the game
- *
- * @param {boolean} one create a idiot card if true, otherwise a sheep card
- * @param {?boolean} two create a second card, idiot if true, sheep if false
- */
-function play(one, two) {
-  loadCard('#wrapper-1', one)
-  if (two !== undefined) {
-    showWrapperTwo()
-    loadCard('#wrapper-2', two)
-  } else
-    hideWrapperTwo()
-
-  showGame()
-}
-
-/**
- * Hide second card wrapper to play with only one
- */
-function hideWrapperTwo() {
-  document.querySelector('#wrapper-2').classList.add('hidden')
-  document.querySelector('#game').classList.add('one')
-}
-
-/**
- * Show second card wrapper to play with two
- */
-function showWrapperTwo() {
-  document.querySelector('#wrapper-2').classList.remove('hidden')
-  document.querySelector('#game').classList.remove('one')
-}
-
-/**
  * load a card by fetching the needed content (idiot/sheep + local) from the server
  *
  * @param {HTMLElement|string} wrapper wrapper element to load the card into
@@ -181,12 +55,15 @@ async function loadCard(wrapper, idiot, show, update) {
     local = await fetchSilent(lang + (idiot ? '/idiot-local.html' : '/sheep-local.html'))
   if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
   wrapper.querySelector('.content').innerHTML = content + local
+  wrapper.querySelector('.detail').onclick = event => handleClick(event)
   addIdTags(wrapper)
   await addSources(wrapper)
   if (attitude.open)
     wrapper.querySelectorAll('.content button, .content button + a').forEach(e => e.remove())
   if (attitude.friendly)
     wrapper.querySelectorAll('i, .content button').forEach(e => e.remove())
+
+  wrapper.querySelector('.buttons.test').remove()
 
   applyExclusions(wrapper)
   addCheckboxes(wrapper)
@@ -230,6 +107,19 @@ function addCheckboxes(wrapper) {
 }
 
 /**
+ * copy the logo to the top of the details side of the card wrapper
+ *
+ * @param {HTMLElement} wrapper wrapper element to load the card into
+ */
+function copyLogoToCard(wrapper, idiot) {
+  wrapper.querySelector('.content').prepend(
+    document.querySelector('.logo').cloneNode(true))
+  wrapper.querySelector('.logo select').value = `${lang}-${terr}`
+  wrapper.querySelector('.logo select').onchange = 
+    event => update(wrapper, idiot, event.target.value)
+}
+
+/**
  * prepare a random argument card on the front side of the card wrapper
  *
  * @param {HTMLElement} wrapper wrapper element to load the card into
@@ -262,22 +152,6 @@ async function update(wrapper, idiot, locale) {
 }
 
 /**
- * update an argument card with a different language
- *
- * @param {HTMLElement} wrapper wrapper element of the card
- */
-function updateCard(wrapper) {
-  const set = getArguments(wrapper.querySelector('.detail'))
-  wrapper.querySelectorAll('td[id]').forEach(td => {
-    const argument = set.find(arg => arg.id === td.id)
-    if (argument) {
-      td.innerHTML = argument.word
-      td.title = argument.content
-    }
-  })
-}
-
-/**
  * prepare the card title for the front side of the card wrapper
  *
  * @param {HTMLElement} wrapper wrapper element to load the card into
@@ -295,60 +169,6 @@ function prepareCardTitle(wrapper) {
     title.appendChild(label)
     title.querySelector('label').classList.toggle('hidden', !attitude.correct)
   }
-}
-
-/**
- * copy the logo to the top of the details side of the card wrapper
- *
- * @param {HTMLElement} wrapper wrapper element to load the card into
- */
-function copyLogoToCard(wrapper, idiot) {
-  wrapper.querySelector('.content').prepend(
-    document.querySelector('.logo').cloneNode(true))
-  wrapper.querySelector('.logo select').value = `${lang}-${terr}`
-  wrapper.querySelector('.logo select').onchange = 
-    event => update(wrapper, idiot, event.target.value)
-}
-
-/**
- * handle change of the search input text
- * @param {Event} event - the input event
- */
-function search(event) {
-  const wrapper = event.target.closest('.card-wrapper')
-  const input = event.target.value.toLowerCase()
-  const args = Array.from(wrapper.querySelectorAll('a[id]'))
-  args.forEach(a => a.classList.remove('not-matching'))
-  const notMatching = input.length ? args.filter(a => !a.textContent.replace(/\u00ad/gi, '').toLowerCase().includes(input) && !a.nextElementSibling.textContent.replace(/\u00ad/gi, '').toLowerCase().includes(input)) : []
-  notMatching.forEach(a => a.classList.add('not-matching'))  
-}
-
-/**
- * stop the game: flipping cards, hiding the #game element and showing the #menu element
- */
-function stop() {
-  closeDetails('#wrapper-1', true)
-  closeDetails('#wrapper-2', true)
-
-  hideGame()
-  show('start')
-}
-
-/**
- * Show the game panel and stop button, hide the menu
- */
-function showGame() {
-  document.querySelector('#stop').classList.remove('hidden')
-  document.querySelector('#game').classList.remove('hidden')
-  document.querySelector('#menu').classList.add('hidden')
-}
-
-/**
- * Hide the game panel and stop button
- */
-function hideGame() {
-  document.querySelector('#stop').classList.add('hidden')
-  document.querySelector('#game').classList.add('hidden')
 }
 
 /**
@@ -378,37 +198,6 @@ function openDetails(event) {
   const wrapper = event.target.closest('.card-wrapper')
   singleDetails(wrapper, [event.target.id])
   flipOpen(event)
-}
-
-/**
- * Set the permalink for the details side of the given card wrapper
- *
- * @param {HTMLElement} wrapper the card wrapper
- * @param {string[]} ids list of ids to include in the permalink
- */
-function setPermalink(wrapper, ids) {
-  wrapper.querySelector('.permalink').href = `${window.location.origin}/#${ids.join('&')}` 
-}
-
-/**
- * show selected details, add the CSS 'single' classes if only one is shown
- * @param {HTMLElement} wrapper the event that triggered the open action
- * @param {string[]} ids list of ids to show
- */
-function singleDetails(wrapper, ids) {
-  const detail = wrapper.querySelector('.detail')
-  if (ids.length === 1) detail.classList.add('single')
-  detail.querySelectorAll('a[id]').forEach(e => e.classList.remove('single'))
-  ids.forEach(id => {
-    const anchor = wrapper.querySelector(`a[id=${id}]`)
-    if (anchor) {
-      anchor.classList.add('single')
-      detail.querySelectorAll('a[href=""]').forEach(e => e.classList.toggle('hidden',
-        !anchor.nextElementSibling.querySelector('q')))
-    }
-  })
-  detail.querySelectorAll('button').forEach(e => e.classList.toggle('hidden', attitude.open))
-  setPermalink(wrapper, ids)
 }
 
 /**
@@ -451,19 +240,6 @@ function showCounterArguments(ids) {
       open(wrapper)
     }
   }
-}
-
-/**
- * extract the argument ids and texts from HTML content
- *
- * @param {HTMLElement} detail - content DOM node containing the arguments
- * @return {{id: string, word: string}[]} the extracted arguments
- */
-function getArguments(detail) {
-  return Array.from(detail.querySelectorAll('a[id]:not(.excluded)')).map(
-    a => ({id: a.id, 
-           word: a.querySelector('h2').innerHTML, 
-           content: a.nextElementSibling.innerText}))
 }
 
 /**
@@ -520,102 +296,6 @@ function showSources(event, show = true) {
 }
 
 /**
- * extend the arguments in detail with sources from sources if available
- *
- * @param {HTMLElement} detail content DOM node containing the arguments
- */
-async function addSources(detail) {
-  const sources = elementWithKids('div')
-  sources.innerHTML =  await fetchSilent('sources.html')
-  Array.from(detail.querySelectorAll('a[id]')).forEach(a => {
-    const links = sources.querySelectorAll(`a.${a.id}`)
-    const counter = Array.from(sources.querySelectorAll(`q.${a.id}`)).map(q => q.innerText)
-    links.forEach(link => link.target = '_blank')
-    if (links.length > 0) {
-      const q = elementWithKids('q', elementWithKids('ul', Array.from(links).map(
-        s => elementWithKids('li', [s.cloneNode(true), ' (', mirrorNode(s), ')']))))
-      if (!attitude.open) q.classList.add('hidden')
-      a.nextElementSibling.appendChild(q)
-    }
-    if (counter.length > 0) {
-      const c = elementWithKids('p', [ '⇔', ...counter.flatMap(counterid => {
-        const idtag = elementWithKids('span', counterid)
-        idtag.onclick = () => showCounterArguments([counterid])
-        return ['\u00ad', idtag]
-      })])
-      c.classList.add('counter')
-      a.nextElementSibling.appendChild(c)
-    }
-  })
-}
-
-/**
- * generates an archive.is mirror anchor node for the given node 
- *
- * @param {HTMLElement} a the anchor node to mirror
- */
-function mirrorNode(a) {
-  const mirror = a.cloneNode(true)
-  mirror.href = `https://archive.is/${a.href}` 
-  mirror.firstChild.textContent = 'Mirror'
-  return mirror
-}
-
-/**
- * get browser two-character-codes for language and territory in lower case
- *
- * @return {string[]} an 2-entry-array with the browser language and territory
- */
-function browserLocale() {
-  let [language, territory] = navigator.language.split('-')
-  territory = territory ? territory.toLowerCase() : language
-  return [language, territory]
-}
-
-/**
- * create a DOM Element, optionally with children.
- * Any string given as kids will be converted in a HTML text node
- *
- * @param {string} tag - tag name for the element to create
- * @param {(string|HTMLElement)|(string|HTMLElement)[]} kids - a element or string, or an array of elements or strings
- * @return {HTMLElement} The created element
- */
-function elementWithKids(tag, kids) {
-  const node = document.createElement(tag)
-  if (kids) {
-    if (!(kids instanceof Array)) kids = [kids]
-    kids.forEach(kid => {
-      if (!(kid instanceof HTMLElement)) kid = document.createTextNode(kid)
-      node.appendChild(kid)
-    })
-  }
-  return node
-}
-
-/**
- * select an unique random element from an array
- * side effect: The element is removed from from the array to achieve the uniqueness!
- *
- * @param {Array} wordset - Array to choose a random element from
- * @return {any} The random element selected
- */
-function uniqueWord(wordset) {
-  const index = Math.floor((Math.random() * wordset.length))
-  return wordset.splice(index, 1)[0]
-}
-
-/**
- * return a random element from an array, starting from element start
- *
- * @param {Array} array - Array to choose a random element from
- * @param {number} start - Element to start with (default 0)
- * @return {any} The random element selected
- */
-function randomElement(array, start = 0) {
-  return array[start + Math.floor((Math.random() * (array.length-start)))]
-}
-
-/**
  * generate a BINGO card as an HTML table with the given parent and size size
  *
  * @param {HTMLElement} wrapper - parent element to generate the table into
@@ -656,10 +336,7 @@ function makeCard(wrapper, wordset, size, center) {
   }
   const table = elementWithKids('table', elementWithKids('tbody', rows))
   div.appendChild(table)
-  // safari fix to force flex relayout
-  div.parentElement.style.display = 'none'
-  div.parentElement.offsetHeight
-  div.parentElement.style.display = ''
+  safariFix(div)
 }
 
 /**
@@ -685,12 +362,3 @@ function checkCard(table, size) {
   return complete.length > 0
 }
 
-/**
- * fetch a file from server, suppressing all errors
- *
- * @param {string} url - the url to fetch
- * @return {Promise<string>} the files content or '' on error
- */
-function fetchSilent(url) {
-  return fetch(url).then(async response => response.status >= 400 && response.status < 600 ? '' : await response.text()).catch(error => '')  
-}

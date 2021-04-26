@@ -206,17 +206,16 @@ button {
   padding: 0.5vmin;
 }
 
-button.menu, select.menu {
-  font-size: 2vmin;
-  margin: 0.3vmin;
-  padding: 1vmin;
-}
-
 button.menu, span.menu, select.menu {
   font-size: 7vmin;
   margin: 1vmin;
   padding: 3vmin;
 }
+
+button.menu.t {
+  padding: 1.8vmin;
+}
+
 
 button.hidden, q.hidden:after, a.hidden {
   display: none;

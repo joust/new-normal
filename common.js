@@ -165,6 +165,8 @@ function showGame() {
 function hideGame() {
   document.querySelector('#stop').classList.add('hidden')
   document.querySelector('#game').classList.add('hidden')
+  document.querySelector('#result').classList.add('hidden')
+  document.querySelector('#pyro').classList.add('hidden')
 }
 
 /**
@@ -242,7 +244,6 @@ function singleDetails(wrapper, ids, permalink = true) {
         !anchor.nextElementSibling.querySelector('q')))
     }
   })
-  detail.querySelectorAll('button').forEach(e => e.classList.toggle('hidden', attitude.open))
   setPermalink(wrapper, permalink ? ids : false)
 }
 

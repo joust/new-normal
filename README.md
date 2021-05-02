@@ -1,9 +1,13 @@
 <h1>New Normal</h1>
 <center><img src="https://github.com/joust/new-normal/raw/master/images/new-normal.jpg"></center>
 <p>
-This is a plain HTML/CSS/ES6 implementation of a Buzzword BINGO PWA. Instead of Buzz&shy;words it is played with arguments used during a (Corona related) discussion. The two sides of the discussion are (technically) referenced as <b>Idiots</b> and <b>Sheep</b>.
+This browser app is build around a huge collection of arguments used during a (Corona related) discussion. The imaginary two sides are (technically) referred to as <b>Idiots</b> and <b>Sheep</b>. The two usages currently implemented are:
+<ul>
+  <li>A Corona Test, which allows you to find out which "side" you are on. Choose your "cycles" and after that number of decisions on contradicting arguments you know if you're an <b>Idiot</b> or a <b>Sheep</b>.</li>
+  <li>A Buzzword BINGO game, played with arguments used in a discussion. Use it to have more fun in either your own discussions on the topic or that of others.</li>
+</ul>
 </p><p>
-The app is inter&shy;nationa&shy;lized and contains a common core of universal, language inde&shy;pen&shy;dent argu&shy;ments and sets of argu&shy;ments only used and under&shy;stood locally.
+Technically its a plain HTML/CSS/ES6 PWA app. The app is inter&shy;nationa&shy;lized and localized and contains a common core of universal, language inde&shy;pen&shy;dent argu&shy;ments and sets of argu&shy;ments only used and under&shy;stood locally.
 </p>
 <h1>Content</h1>
 <h2>Menus and Arguments</h2>
@@ -16,6 +20,8 @@ All internationalized application content is stored in HTML format in language-d
 <li><code>&lt;language code&gt;/gameplay.html</code>: gameplay instructions</li>
 <li><code>&lt;language code&gt;/install.html</code>: PWA installation instructions</li>
 <li><code>&lt;language code&gt;/support.html</code>: Support instructions</li>
+<li><code>&lt;language code&gt;/test.html</code>: the test categories and questions</li>
+<li><code>&lt;language code&gt;/result.html</code>: the test result template</li>
 <li><code>&lt;language code&gt;/credits.html</code>: the credits</li>
 <li><code>&lt;language code&gt;/attitude.html</code>: the attitude (see next chapter)</li>
 <li><code>&lt;language code&gt;/legal.html</code>: the legal notice</li>
@@ -94,7 +100,7 @@ The Sources for all Arguments are stored language-mixed in the top-level file <c
 <p>
 The app allows to exclude arguments from being used in the generation of game cards. This helps to deprecate old arguments that are not common in discussions any more - or simply to exclude arguments that you do not expect getting used.</p>
 <p>
-Behind every argument title you find the colored argument id. By clicking on it, you can toggle the exclusion of this argument. If its grey, an arguments will not be used during the next card generation. Your choice will be stored in the local storage of your browser.
+In front of every argument title in the list you find a checkbox to toggle it's exclusion. If its grey, an arguments will not be used during the next card generation. Your choice will be stored in the local storage of your browser.
 </p>
 
 <h1>Permalinks</h1>
@@ -119,9 +125,9 @@ The following is in development or planned:
 </ul>
 <h1>Support</h1>
 <p>
-This little game has big plans: It wants to build bridges, create awareness and knowledge. It is for people who really want to deal with the arguments of the other side of the discourse. It wants to make sure that people approach each other again. It wants to be a valuable source and enable an open and well-founded exchange.
+Aside from making sound fun of the either/or division that many people think is real these days, this little app has big things in store: It wants to build bridges, create awareness and knowledge. It is for people who really want to deal with the arguments of the other side of the discourse. It wants to make sure that people approach each other again. It wants to be a valuable source and enable an open and well-founded exchange.
 </p><p>
-The contents of this game - like our reality - are in con&shy;stant flux. New argu&shy;ments are added regu&shy;larly and others become irrele&shy;vant. In addition, there are argu&shy;ments that are used worldwide (the common core) and argu&shy;ments only used and under&shy;stood locally. For keeping this up to date, your support is very welcome!
+The contents of this app - like our reality - are in con&shy;stant flux. New argu&shy;ments are added regu&shy;larly and others become irrele&shy;vant. In addition, there are argu&shy;ments that are used worldwide (the common core) and argu&shy;ments only used and under&shy;stood locally. For keeping this up to date, your support is very welcome!
 </p>
 <h2>How can I support?</h2>
 

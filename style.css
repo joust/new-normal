@@ -3,6 +3,10 @@ body {
   text-align: center;
   user-select: none;
   hyphens: auto;
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 body, html, #game, #menu, #pyro {
@@ -217,7 +221,7 @@ button.menu.t {
 }
 
 
-button.hidden, q.hidden:after, a.hidden {
+button.hidden, q.hidden:after, a.hidden, span.hidden {
   display: none;
 }
 
@@ -391,7 +395,7 @@ table {
 }
 
 
-.detail .logo {
+.detail .logo, #result .logo {
   font-size: 6vmax;
   letter-spacing: -0.3vmax;
   text-align: center;
@@ -402,7 +406,7 @@ table {
   letter-spacing: -0.6vmax;
 }
 
-.detail .logo .virus {
+.detail .logo .virus, #result .logo .virus {
   width: 6vmax;
   height: 6vmax;
   margin-left: -1.3vmax;
@@ -520,7 +524,7 @@ table {
   background: #2d60f6;
 }
 
-table {
+#game table {
   border: 2vmax solid transparent;
   border-top: none;
   border-collapse: separate;
@@ -529,11 +533,11 @@ table {
   width: 100%;
 }
 
-tr {
+#game table tr {
   height: 20%;
 }
 
-td {
+#game table td {
   width: 20%;
   background: rgba(255, 255, 255, 0.6);
   text-align: center;
@@ -542,10 +546,10 @@ td {
 }
 
 .test .card td {
-  border-radius: 50%;a
+  border-radius: 50%;
 }
 
-td.set {
+#game table td.set {
   background: transparent;
   color: white;
 }
@@ -560,13 +564,13 @@ td.set {
   opacity: 0.7;
 }
 
-td.center {
+#game table td.center {
   background: transparent;
   color: white;
   font-size: 4vmax;
 }
 
-td.complete {
+#game table td.complete {
   background: yellow;
   color: black;
 }
@@ -618,4 +622,23 @@ button:hover {
 .jump {
   transform-origin: 50% 50%;
   animation: jump 0.5s linear alternate infinite;
+}
+
+#result {
+  width: 80vw;
+  padding: 1vmax;
+  background-color: #fff;
+  opacity: .8;
+  border: 1px solid #aaa;
+  box-shadow: 3vmax 6vmax 5vmax -4vmax rgba(0, 0, 0, 0.2);
+}
+
+#result table {
+  border: 1px solid #aaa;
+  width: 90%;
+  text-align: center;
+}
+
+#result h2.result {
+  text-align: center;
 }

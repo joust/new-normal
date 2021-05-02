@@ -1,3 +1,5 @@
+let stats // test stats
+
 /**
  * create one idiot and one sheep and start the test with one of them visible
  */
@@ -83,6 +85,7 @@ async function prepareTestCard(wrapper, size) {
     label: q.innerHTML
   }))
   makeTestCard(wrapper, testset, size)
+  initTestStats(wrapper, testset)
   wrapper.classList.add('test')
   wrapper.classList.remove('idiot', 'sheep')
   wrapper.querySelector('.reload').onclick = () => clearTest()
@@ -103,15 +106,15 @@ function makeTestCard(wrapper, testset, size) {
   if (div.firstChild) div.removeChild(div.firstChild)
   for (let y = 0; y < size; y++) {
     const cells = []
-    for (let x = 0; x < size; x++) {
+    for (let x = 0; x < size; x++,index++) {
       const node = elementWithKids('td')
-      const set = testset[index++]
+      const set = testset[index]
       node.id = set.id
       node.innerHTML = node.title = set.label
       if (set.idiot.length) node.classList.add(set.idiot)
       if (set.sheep.length) node.classList.add(set.sheep)
       node.onclick = event => {
-        openTestDetails(event, set.idiot, set.sheep)
+        openTestDetails(event, index, set.idiot, set.sheep)
       }
       cells.push(node)
     }
@@ -126,10 +129,10 @@ function makeTestCard(wrapper, testset, size) {
  * open both detail window, adding the CSS 'single' classes to the given id details
  * @param {Event} event the event that triggered the open action
  */
-function openTestDetails(event, idiot, sheep) {
-  console.log(idiot, sheep)
+function openTestDetails(event, index, idiot, sheep) {
   const wrapper1 = document.querySelector('#wrapper-1')
   const wrapper2 = document.querySelector('#wrapper-2')
+  stats.start[index] = Date.now()
   singleDetails(wrapper1, [idiot], false)
   singleDetails(wrapper2, [sheep], false)
   flipOpen(event)
@@ -191,8 +194,14 @@ function markTestChoice(event) {
   node.classList.add('set')
   node.classList.toggle('idiot', idiot)
   node.classList.toggle('sheep', !idiot)
+  updateTestStats(table)
   const done = checkTestCard(table)
   wrapper.classList.toggle('done', done)
+  if (done) {
+    loadTestResult()
+    showResult()
+  } else
+    hideResult()
 }
 
 /**
@@ -233,21 +242,110 @@ function checkTestCard(table) {
 }
 
 /**
- * get the stats for a test card table
+ * init the stats for a test card table
+ */
+function initTestStats(table, testset) {
+  const allNodes = Array.from(table.querySelectorAll('td'))
+  stats = {
+    testset: testset,
+    nodes: allNodes,
+    begin: Date.now(),
+    duration: 0,
+    cycles: allNodes.length,
+    choice: new Array(allNodes.length),
+    start: new Array(allNodes.length),
+    times: new Array(allNodes.length),
+    idiot: {
+      count: 0,
+      duration: 0
+    },
+    sheep: {
+      count: 0,
+      duration: 0
+    }
+  }
+}
+
+/**
+ * update the stats for a test card table
  *
  * @param {HTMLElement} table - table element representing the card
  *
  * @return {Object} stats for the test questions
  */
-function getTestStats(table) {
-  const id = node => node.id
+function updateTestStats(table) {
   const set = node => node.classList.contains('set')
   const idiot = node => node.classList.contains('idiot')
   const sheep = node => node.classList.contains('sheep')
-  const allNodes = Array.from(table.querySelectorAll('td'))
-  return {
-    idiot: allNodes.filter(idiot).length,
-    sheep: allNodes.filter(sheep).length
-  }
+  stats.duration = Date.now() - stats.begin
+  stats.nodes = Array.from(table.querySelectorAll('td'))
+  stats.idiot.count = stats.nodes.filter(idiot).length
+  stats.sheep.count = stats.nodes.filter(sheep).length
 }
 
+/**
+ * load and fill test result template
+ */
+async function loadTestResult() {
+  const start = new Date(stats.begin)
+  const locale = `${lang}-${terr}`
+  const template = await fetchSilent(lang + '/result.html')
+  const result = document.querySelector('#result')
+  result.innerHTML = template
+  result.querySelector('.date-time').innerHTML = `Berlin, ${start.toLocaleDateString(locale)} ${start.toLocaleTimeString(locale)}`
+  result.querySelector('.cycles').innerHTML = stats.cycles
+  result.querySelector('.duration').innerHTML = `${Math.round(stats.duration/1000)}s`
+  for (const type of ['idiot', 'sheep']) {
+    const info = stats[type]
+    const row = result.querySelector(`table tbody tr.${type}`)
+    row.childNodes[1].innerHTML = info.count
+    row.childNodes[2].innerHTML = `${Math.round(info.count * 100 / stats.cycles)} %`
+    row.childNodes[3].innerHTML = info.duration
+  }
+  
+  result.querySelector('.result .idiot').classList.toggle('hidden', 
+    stats.idiot.count <= stats.sheep.count)
+  result.querySelector('.result .sheep').classList.toggle('hidden', 
+    stats.idiot.count >= stats.sheep.count)
+  result.querySelector('.result .none').classList.toggle('hidden', 
+    stats.idiot.count != stats.sheep.count)
+  
+  const select = document.querySelector(`#wrapper-${stats.idiot.count > stats.sheep.count ? 1 : 2} select`).cloneNode(true)
+  select.removeChild(select.children[1])
+  select.removeChild(select.children[0])
+  result.querySelector('.labels').appendChild(select)
+  
+  copyLogoToTestResult()
+}
+
+/**
+ * copy the logo to the top of the test result
+ */
+function copyLogoToTestResult() {
+  const logo = document.querySelector('.logo').cloneNode(true)
+  logo.removeChild(logo.querySelector('select'))
+  document.querySelector('#result').prepend(logo)
+}
+
+/**
+ * handle a click on the results div
+ * @param {Event} event the click event
+ */
+function handleResultClick(event) {
+  if (event.target.tagName.toLowerCase() !== 'select')
+      hideResult()
+}
+
+/**
+ * Show the test result panel
+ */
+function showResult() {
+  document.querySelector('#result').classList.remove('hidden')
+}
+
+/**
+ * Hide the test result panel
+ */
+function hideResult() {
+  document.querySelector('#result').classList.add('hidden')
+}

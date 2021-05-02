@@ -569,12 +569,12 @@ table {
   color: white;
 }
 
-.done .idiot {
+#game .done table td.idiot {
   background: #f72d5d;
   opacity: 0.7;
 }
 
-.done .sheep {
+#game .done table td.sheep {
   background: #2d60f6;
   opacity: 0.7;
 }

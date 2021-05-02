@@ -195,9 +195,14 @@ async function addSources(detail, counters = true) {
     const counter = Array.from(sources.querySelectorAll(`q.${a.id}`)).map(q => q.innerText)
     links.forEach(link => link.target = '_blank')
     if (links.length > 0) {
-      const q = elementWithKids('q', elementWithKids('ul', Array.from(links).map(
-        s => elementWithKids('li', [s.cloneNode(true), ' (', mirrorNode(s), ')']))))
-      if (!attitude.open) q.classList.add('hidden')
+      const q = elementWithKids('q', [
+        a.querySelector('h2').cloneNode(true),
+        elementWithKids('ul', Array.from(links).map(
+        s => elementWithKids('li', [
+          s.cloneNode(true), ' (', mirrorNode(s), ')'
+        ])))
+      ])
+      q.classList.add('hidden')
       a.nextElementSibling.appendChild(q)
     }
     if (counters && counter.length > 0) {
@@ -247,6 +252,16 @@ function singleDetails(wrapper, ids, permalink = true) {
   setPermalink(wrapper, permalink ? ids : false)
 }
 
+/**
+ * show/hide all sources boxes if available
+ *
+ * @param {Event} event the Event triggering the action
+ * @param {boolean} show true if the sources should be made visible false otherwise
+ */
+function showSources(event, show = true) {
+  const wrapper = event.target.closest('.card-wrapper')
+  wrapper.querySelectorAll('q').forEach(q => q.classList.toggle('hidden', !show))
+}
 
 /**
  * update an argument card with a different language

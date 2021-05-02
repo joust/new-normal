@@ -58,8 +58,6 @@ async function loadCard(wrapper, idiot, show, update) {
   wrapper.querySelector('.detail').onclick = event => handleClick(event)
   addIdTags(wrapper)
   await addSources(wrapper)
-  if (attitude.open)
-    wrapper.querySelectorAll('.content button, .content button + a').forEach(e => e.remove())
   if (attitude.friendly)
     wrapper.querySelectorAll('i, .content button').forEach(e => e.remove())
 
@@ -182,6 +180,9 @@ function handleClick(event) {
     case 'input':
     case 'select':
       break;
+    case 'q':
+      showSources(event, false)
+      break;
     case 'a':
       showSources(event)
       break;
@@ -281,19 +282,6 @@ function toggleDetails(wrapper, event, ids) {
     wrapper.querySelector(`a[id=${ids[0]}]`).scrollIntoView()
   } else
     singleDetails(wrapper, ids)
-}
-
-/**
- * show/hide all sources boxes if available
- *
- * @param {Event} event the Event triggering the action
- * @param {boolean} show true if the sources should be made visible false otherwise
- */
-function showSources(event, show = true) {
-  const detail = event.target.closest('.card-wrapper').querySelector('.detail')
-  if (!attitude.open)
-    detail.querySelectorAll('q').forEach(q => q.classList.toggle('hidden', !show))
-  detail.querySelectorAll('button, a[href=""]').forEach(e => e.classList.add('hidden'))
 }
 
 /**

@@ -43,12 +43,27 @@ q {
   overflow: auto;
 }
 
-#menu q {
-  padding-left: 9vmax;
+q h2 {
+  margin-left: 3vmax;
+  color: #999;
 }
 
-.detail.single q {
-  max-height: 15vmax;
+.single q h2 {
+  margin-left: 9vmax;
+}
+
+.single q {
+  position: absolute;
+  top: 2vmax;
+  left: 2vmax;
+  right: 2vmax;
+  bottom: 2vmax;
+  margin: 0;
+  padding: 2vmax;
+}
+
+#menu q {
+  padding-left: 9vmax;
 }
 
 q.hidden {
@@ -463,7 +478,7 @@ table {
   }
 
   .detail {
-    font-size: 1.5vmin;
+    font-size: 1.5vmax;
   }
   
   #game.hidden .card-wrapper:nth-child(1) {

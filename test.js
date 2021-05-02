@@ -3,10 +3,11 @@ let stats // test stats
 /**
  * create one idiot and one sheep and start the test with one of them visible
  */
-function test(size) {
-  loadTestCard('#wrapper-1', true, size)
-  loadTestCard('#wrapper-2', false, size)
-  hideWrapperTwo()
+function test(size1, size2 = 0) {
+  loadTestCard('#wrapper-1', true, 0, size1)
+  loadTestCard('#wrapper-2', false, size1*size1, size2)
+  initTestStats(size1, size2)
+  if (size2) showWrapperTwo(); else hideWrapperTwo() 
   showGame()
 }
 
@@ -15,10 +16,10 @@ function test(size) {
  *
  * @param {HTMLElement|string} wrapper wrapper element to load the card into
  * @param {boolean} idiot load idiot content if true, otherwise sheep content
- * @param {number} size size of test card (2,3,4,5,6)
- * @param {boolean} update true if to update the card with a different locale
+ * @param {number} start start category for the test card to generate
+ * @param {number} size size of test card (2,3,4,5,6) - >6 too large for mobile
  */
-async function loadTestCard(wrapper, idiot, size, update = false) {
+async function loadTestCard(wrapper, idiot, start, size) {
   const content = await fetchSilent(lang + (idiot ? '/idiot.html' : '/sheep.html'))
   let local = await fetchSilent(terr + (idiot ? '/idiot-local.html' : '/sheep-local.html'))
   if (!local.length)
@@ -31,7 +32,7 @@ async function loadTestCard(wrapper, idiot, size, update = false) {
   wrapper.querySelectorAll('i').forEach(e => e.remove())
   setPermalink(wrapper)
 
-  if (update) updateCard(wrapper); else prepareTestCard(wrapper, size)
+  prepareTestCard(wrapper, start, size)
   prepareTestCardTitle(wrapper)
   copyLogoToTestCard(wrapper, idiot)
 }
@@ -75,7 +76,7 @@ function copyLogoToTestCard(wrapper, idiot) {
  * @param {HTMLElement} wrapper wrapper element to load the card into
  * @param {number} size the size of the test card
  */
-async function prepareTestCard(wrapper, size) {
+async function prepareTestCard(wrapper, start, size) {
   const tests = elementWithKids('div')
   tests.innerHTML = await fetchSilent(lang +'/test.html')
   const testset = Array.from(tests.querySelectorAll('q')).map((q, index) => ({
@@ -84,8 +85,7 @@ async function prepareTestCard(wrapper, size) {
     sheep: q.dataset.sheep,
     label: q.innerHTML
   }))
-  makeTestCard(wrapper, testset, size)
-  initTestStats(wrapper, testset)
+  makeTestCard(wrapper, testset, start, size)
   wrapper.classList.add('test')
   wrapper.classList.remove('idiot', 'sheep')
   wrapper.querySelector('.reload').onclick = () => clearTest()
@@ -96,13 +96,13 @@ async function prepareTestCard(wrapper, size) {
  *
  * @param {HTMLElement} wrapper - parent element to generate the table into
  * @param {{id: string, word: string}[]} testset - Array of (id, word) tuples with data for the card
- * @param {number} size - side length for the card to generate.
+ * @param {number} index - starting index for the selection
+ * @param {number} size - side length for the card to generate
      Implies nr of questions, e.g. 3 => 9, 4 => 16, 5 => 25, 6 => 36
  */
-function makeTestCard(wrapper, testset, size) {
+function makeTestCard(wrapper, testset, index, size) {
   const div = wrapper.querySelector('.bingo')
   const rows = []
-  let index = 0
   if (div.firstChild) div.removeChild(div.firstChild)
   for (let y = 0; y < size; y++) {
     const cells = []
@@ -130,14 +130,15 @@ function makeTestCard(wrapper, testset, size) {
  * @param {Event} event the event that triggered the open action
  */
 function openTestDetails(event, index, idiot, sheep) {
+  const wrapper = event.target.closest('.card-wrapper')
   const wrapper1 = document.querySelector('#wrapper-1')
   const wrapper2 = document.querySelector('#wrapper-2')
   stats.start[index] = Date.now()
   singleDetails(wrapper1, [idiot], false)
   singleDetails(wrapper2, [sheep], false)
   flipOpen(event)
+  open(wrapper.id === 'wrapper-1' ? wrapper2 : wrapper1)
   showWrapperTwo()
-  open(wrapper2)
 }
 
 /**
@@ -152,51 +153,39 @@ function handleTestClick(event) {
     case 'input':
     case 'select':
       break;
-    case 'a':
-      showTestSources(event)
+    case 'q':
+      showSources(event, false)
       break;
-    case 'button':
-      markTestChoice(event)
+    case 'a':
+      showSources(event)
+      break;
     default:
-      showTestSources(event, false)
-      hideWrapperTwo()
+      markTestChoice(event)
+      showSources(event, false)
+      if (!stats.size2) hideWrapperTwo()
       close(wrapper2)
       close(wrapper1)
   }
 }
 
 /**
- * show/hide all sources boxes if available
- *
- * @param {Event} event the Event triggering the action
- * @param {boolean} show true if the sources should be made visible false otherwise
- */
-function showTestSources(event, show = true) {
-  const detail = event.target.closest('.card-wrapper').querySelector('.detail')
-  if (!attitude.open)
-    detail.querySelectorAll('q').forEach(q => q.classList.toggle('hidden', !show))
-  detail.querySelectorAll('a[href=""]').forEach(e => e.classList.toggle('hidden', show))
-}
-
-/**
- * mark test choice in wrapper1 table
+ * mark test choice in table
  *
  * @param {Event} event the Event triggering the action
  */
 function markTestChoice(event) {
-  const wrapper1 = document.querySelector('#wrapper-1')
   const wrapper = event.target.closest('.card-wrapper')
   const detail = wrapper.querySelector('.detail')
   const id = detail.querySelector('a.single').id
   const idiot = wrapper.id === 'wrapper-1'
-  const table = wrapper1.querySelector('table')
-  const node = table.querySelector(`td.${id}`)
+  const node = document.querySelector(`.card td.${id}`)
   node.classList.add('set')
   node.classList.toggle('idiot', idiot)
   node.classList.toggle('sheep', !idiot)
-  updateTestStats(table)
-  const done = checkTestCard(table)
-  wrapper.classList.toggle('done', done)
+  updateTestStats()
+  const done = checkTestCard()
+  document.querySelector('#wrapper-1').classList.toggle('done', done)
+  document.querySelector('#wrapper-2').classList.toggle('done', done)
   if (done) {
     loadTestResult()
     showResult()
@@ -223,9 +212,7 @@ async function testUpdate(wrapper, idiot, locale) {
  * clear test choices in wrapper1 table
  */
 function clearTest() {
-  const wrapper1 = document.querySelector('#wrapper-1')
-  const table = wrapper1.querySelector('table')
-  table.querySelectorAll('td').forEach(node => node.classList.remove('set', 'idiot', 'sheep'))
+  document.querySelectorAll('.card td').forEach(node => node.classList.remove('set', 'idiot', 'sheep'))
 }
 
 /**
@@ -235,22 +222,23 @@ function clearTest() {
  *
  * @return {boolean} True if all test questions are answered
  */
-function checkTestCard(table) {
+function checkTestCard() {
   const set = node => node.classList.contains('set')
-  const allNodes = Array.from(table.querySelectorAll('td'))
+  const allNodes = Array.from(document.querySelectorAll('.card td'))
   return allNodes.filter(set).length === allNodes.length
 }
 
 /**
  * init the stats for a test card table
  */
-function initTestStats(table, testset) {
-  const allNodes = Array.from(table.querySelectorAll('td'))
+function initTestStats(size1, size2) {
+  const allNodes = Array.from(document.querySelectorAll('.card td'))
   stats = {
-    testset: testset,
     nodes: allNodes,
     begin: Date.now(),
     duration: 0,
+    size1: size1,
+    size2: size2,
     cycles: allNodes.length,
     choice: new Array(allNodes.length),
     start: new Array(allNodes.length),
@@ -273,12 +261,12 @@ function initTestStats(table, testset) {
  *
  * @return {Object} stats for the test questions
  */
-function updateTestStats(table) {
+function updateTestStats() {
   const set = node => node.classList.contains('set')
   const idiot = node => node.classList.contains('idiot')
   const sheep = node => node.classList.contains('sheep')
   stats.duration = Date.now() - stats.begin
-  stats.nodes = Array.from(table.querySelectorAll('td'))
+  stats.nodes = Array.from(document.querySelectorAll('.card td'))
   stats.idiot.count = stats.nodes.filter(idiot).length
   stats.sheep.count = stats.nodes.filter(sheep).length
 }

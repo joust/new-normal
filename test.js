@@ -3,9 +3,9 @@ let stats // test stats
 /**
  * create one idiot and one sheep and start the test with one of them visible
  */
-function test(size1, size2 = 0) {
-  loadTestCard('#wrapper-1', true, 0, size1)
-  loadTestCard('#wrapper-2', false, size1*size1, size2)
+async function test(size1, size2 = 0) {
+  await loadTestCard('#wrapper-1', true, 0, size1)
+  await loadTestCard('#wrapper-2', false, size1*size1, size2)
   initTestStats(size1, size2)
   if (size2) showWrapperTwo(); else hideWrapperTwo() 
   showGame()
@@ -32,7 +32,7 @@ async function loadTestCard(wrapper, idiot, start, size) {
   wrapper.querySelectorAll('i').forEach(e => e.remove())
   setPermalink(wrapper)
 
-  prepareTestCard(wrapper, start, size)
+  await prepareTestCard(wrapper, start, size)
   prepareTestCardTitle(wrapper)
   copyLogoToTestCard(wrapper, idiot)
 }

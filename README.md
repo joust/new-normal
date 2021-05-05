@@ -113,6 +113,7 @@ In front of every argument title in the list you find a checkbox to toggle it's 
 <li><code>https://new-normal.app#S</code>: Show all <b>sheep</b> arguments</li>
 <li><code>https://new-normal.app#S&amp;I</code>: Show all arguments of both sides, first the <b>sheep</b></li>
 <li><code>https://new-normal.app#I&amp;S</code>: Show all arguments of both sides, first the <b>idiots</b></li>
+<li><code>https://new-normal.app#T17</code>: Show both the <b>idiot</b> and the <b>sheep</b> argument belonging to corona test topic <code>T17</code></li>
 </ul>
 
 <h1>Roadmap</h1>

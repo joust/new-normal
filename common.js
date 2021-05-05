@@ -81,6 +81,38 @@ function stopPyro() {
 }
 
 /**
+ * show idiot, sheep or test cards corresponding to the id(s) given in the hash
+ *
+ * @param {string} hash with ids of argument(s) to show
+ * @return {boolean} true if success false otherwise
+ */
+async function displayHash(hash) {
+  hash = hash.toUpperCase().split('&').map(v => v.split('=')[0])
+  const idiot = hash.filter(v => v.startsWith('I'))
+  const sheep = hash.filter(v => v.startsWith('S'))
+  const test = hash.filter(v => v.startsWith('T'))
+  if (test.length) {
+    await loadTestCard('#wrapper-1', true, 0, 5)
+    await loadTestCard('#wrapper-2', false, 25, 5)
+    initTestStats(5, 5)
+    const td = document.querySelector(`td[id="${test[0]}"]`)
+    if (td) td.click(); else console.error('no element', test[0])
+  } else {
+  if (!idiot.length && !sheep.length) return false // nothing to evaluate
+    const one = idiot.length
+    const two = (one ? sheep : idiot).length ? !one : undefined
+    await loadCard('#wrapper-1', one, one ? idiot : sheep)
+    if (two !== undefined) {
+      await loadCard('#wrapper-2', two, two ? idiot : sheep)
+      showWrapperTwo()
+    } else
+      hideWrapperTwo()
+  }
+  showGame()
+  return true
+}
+
+/**
  * transfer the current attitude to the attitude page for editing
  */
 function initAttitude() {
@@ -354,12 +386,25 @@ function safariFix(div) {
   div.parentElement.style.display = ''
 }
 
+
 /**
- * fetch a file from server, suppressing all errors
+ * fetch a file from server, suppressing all errors, showing a spinner
  *
  * @param {string} url - the url to fetch
  * @return {Promise<string>} the files content or '' on error
  */
 function fetchSilent(url) {
+  document.querySelector('#loader').classList.remove('hidden')
+  return fetchSilentNoSpinner(url).finally(() =>  document.querySelector('#loader').classList.add('hidden'))
+}
+
+
+/**
+ * fetch a file from server, suppressing all errors, no spinner
+ *
+ * @param {string} url - the url to fetch
+ * @return {Promise<string>} the files content or '' on error
+ */
+function fetchSilentNoSpinner(url) {
   return fetch(url).then(async response => response.status >= 400 && response.status < 600 ? '' : await response.text()).catch(error => '')  
 }

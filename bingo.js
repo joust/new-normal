@@ -5,39 +5,15 @@
  * @param {boolean} one create a idiot card if true, otherwise a sheep card
  * @param {?boolean} two create a second card, idiot if true, sheep if false
  */
-function play(one, two) {
-  loadCard('#wrapper-1', one)
+async function play(one, two) {
+  await loadCard('#wrapper-1', one)
   if (two !== undefined) {
     showWrapperTwo()
-    loadCard('#wrapper-2', two)
+    await loadCard('#wrapper-2', two)
   } else
     hideWrapperTwo()
 
   showGame()
-}
-
-/**
- * show idiot and/or sheep cards corresponding to the id(s) given in the hash
- *
- * @param {string} hash with ids of argument(s) to show
- * @return {boolean} true if success false otherwise
- */
-function displayHash(hash) {
-  hash = hash.toUpperCase().split('&').map(v => v.split('=')[0])
-  const idiot = hash.filter(v => v.startsWith('I'))
-  const sheep = hash.filter(v => v.startsWith('S'))
-  if (!idiot.length && !sheep.length) return false // nothing to evaluate
-  const one = idiot.length
-  const two = (one ? sheep : idiot).length ? !one : undefined
-  loadCard('#wrapper-1', one, one ? idiot : sheep)
-  if (two !== undefined) {
-    showWrapperTwo()
-    loadCard('#wrapper-2', two, two ? idiot : sheep)
-  } else
-    hideWrapperTwo()
-
-  showGame()
-  return true
 }
 
 /**

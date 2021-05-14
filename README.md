@@ -1,10 +1,10 @@
 <h1>New Normal</h1>
 <center><img src="https://github.com/joust/new-normal/raw/master/images/new-normal.jpg"></center>
 <p>
-This browser app is build around a huge collection of arguments used during a (Corona related) discussion. The imaginary two sides are (technically) referred to as <b>Idiots</b> and <b>Sheep</b>. The two usages currently implemented are:
+This browser app is a playground build around a huge collection of arguments used during (Corona related) discussions. The imaginary two sides are (technically) referred to as <b>Idiots</b> and <b>Sheep</b>. The two usages currently implemented are:
 <ul>
-  <li>A Corona Test, which allows you to find out which "side" you are on. Choose your "cycles" and after that number of decisions on contradicting arguments you know if you're an <b>Idiot</b> or a <b>Sheep</b>.</li>
-  <li>A Buzzword BINGO game, played with arguments used in a discussion. Use it to have more fun in either your own discussions on the topic or that of others.</li>
+  <li>A <b>Corona Test</b>, which allows you to find out which "side" you are on. Choose your "cycles" and after that number of decisions on contradicting arguments you know if you're an <b>Idiot</b> or a <b>Sheep</b>.</li>
+  <li>A <b>Buzzword BINGO game</b>, played with arguments used in a discussion. Use it to have more fun in either your own discussions on the topic or that of others.</li>
 </ul>
 </p><p>
 Technically its a plain HTML/CSS/ES6 PWA app. The app is inter&shy;nationa&shy;lized and localized and contains a common core of universal, language inde&shy;pen&shy;dent argu&shy;ments and sets of argu&shy;ments only used and under&shy;stood locally.

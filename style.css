@@ -337,7 +337,7 @@ div.bingo, .detail, .card {
   font-size: 3vmax;
 }
 
-table {
+#game table {
   height: calc(100% - 4vmax);
 }
 
@@ -657,20 +657,58 @@ button:hover {
 }
 
 #result {
-  width: 80vw;
-  padding: 1vmax;
+  height: 100vmin;
+  width: 100vmin;
+  font-size: 2.5vmin;
   background-color: #fff;
   opacity: .8;
-  border: 1px solid #aaa;
-  box-shadow: 3vmax 6vmax 5vmax -4vmax rgba(0, 0, 0, 0.2);
+  padding-top: 2vmin;
+}
+
+#result .logo::after {
+  content: '🎖️';
+}
+
+#result > * {
+  padding-left: 2vmin;
+  padding-right: 2vmin;
 }
 
 #result table {
-  border: 1px solid #aaa;
-  width: 90%;
-  text-align: center;
+  border: 0.25vmax solid #aaa;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
 }
 
-#result h2.result {
-  text-align: center;
+#result .drawer, #result .result {
+  border: 0.5vmax solid #000;
+  margin-left: 3vmin;
+  margin-right: 3vmin;
+}
+
+#result .drawer {
+  border-bottom: none;
+  margin-top: 0;
+  margin-bottom: 0;
+  transform: perspective(20vmax) rotateX(40deg); 
+  transform-origin: bottom;
+  padding: 1vmax;
+  height: 5vmax;
+}
+
+#result .arrow {
+  display: block;
+  margin-top: -3vmax;
+  margin-bottom: -8vmax;
+}
+
+#result .arrow::before {
+  content: '⬇';
+  display: block;
+  font-size: 6vmax;
+}
+
+#result .result {
+  margin-top: 0;
 }

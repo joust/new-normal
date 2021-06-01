@@ -8,6 +8,37 @@
     <link rel="stylesheet" href="flipside.css">
     <title>New Normal</title>
     <script src="flipside.js" type="text/javascript"></script>
+    <script src="common.js" type="text/javascript"></script>
+    <script>
+    async function findUnusedArgs() {
+      const topics = elementWithKids('div')
+      topics.innerHTML = await fetchSilentNoSpinner('topics.html')
+      const idiot = elementWithKids('div')
+      idiot.innerHTML = await fetchSilentNoSpinner('de/idiot.html')
+      const sheep = elementWithKids('div')
+      sheep.innerHTML = await fetchSilentNoSpinner('de/sheep.html')
+      const tops = Array.from(topics.querySelectorAll('q')).map(q => ({
+        id: q.id,
+        idiot: q.dataset.idiot.split(' '),
+        sheep: q.dataset.sheep.split(' '),
+        label: q.innerHTML
+      }))
+      const iargs = Array.from(idiot.querySelectorAll('a')).map(a => ({
+        id: a.id,
+        title: a.firstChild.innerHTML
+      }))
+      const sargs = Array.from(sheep.querySelectorAll('a')).map(a => ({
+        id: a.id,
+        title: a.firstChild.innerHTML
+      }))
+      const usedargs = tops.reduce((args, top) => args = args.concat(top.idiot.concat(top.sheep)), [])
+      const unusediargs = iargs.filter(arg => !usedargs.includes(arg.id))
+      const unusedsargs = sargs.filter(arg => !usedargs.includes(arg.id))
+      document.querySelector('.idiot').innerHTML = unusediargs.reduce((html, arg) => html += arg.id + ' ' + arg.title + '<br>', '')
+      document.querySelector('.sheep').innerHTML = unusedsargs.reduce((html, arg) => html += arg.id + ' ' + arg.title + '<br>', '')
+    }
+    findUnusedArgs()
+    </script>
     <style>
       body {
         font-family: 'Open Sans', Helvetica;
@@ -116,7 +147,7 @@
         <div class="card flip-front">
           <div class="title">Title</div>
           <div class="bingo bluebg">
-            <table>
+            <table onclick="flipOpen(event)">
               <tr><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
               <tr><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
               <tr><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
@@ -125,14 +156,14 @@
           </div>
         </div>
         <div class="detail flip-back" onclick="closeDetail(event)">
-          <div class="content" onclick="flipOpen(event)"></div>
+          <div class="content idiot" onclick="flipOpen(event)"></div>
         </div>
       </div>
       <div id="wrapper-2" class="flip card-wrapper">
         <div class="card flip-front">
           <div class="title">Title</div>
           <div class="bingo redbg">
-            <table>
+            <table onclick="flipOpen(event)">
               <tr><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
               <tr><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
               <tr><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
@@ -141,7 +172,7 @@
           </div>
         </div>
         <div class="detail flip-back" onclick="closeDetail(event)">
-          <div class="content" onclick="flipOpen(event)"></div>
+          <div class="content sheep" onclick="flipOpen(event)"></div>
         </div>
       </div>
     </div>

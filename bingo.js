@@ -1,4 +1,3 @@
-
 /**
  * create one or two idiot or sheep cards and start the game
  *
@@ -25,12 +24,8 @@ async function play(one, two) {
  * @param {boolean} update true if to update the card with a different locale
  */
 async function loadCard(wrapper, idiot, show, update) {
-  const content = await fetchSilent(lang + (idiot ? '/idiot.html' : '/sheep.html'))
-  let local = await fetchSilent(terr + (idiot ? '/idiot-local.html' : '/sheep-local.html'))
-  if (!local.length)
-    local = await fetchSilent(lang + (idiot ? '/idiot-local.html' : '/sheep-local.html'))
   if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
-  wrapper.querySelector('.content').innerHTML = content + local
+  wrapper.querySelector('.content').innerHTML = await getLocalizedArguments(idiot)
   wrapper.querySelector('.detail').onclick = event => handleClick(event)
   addIdTags(wrapper)
   await addSources(wrapper)
@@ -41,13 +36,15 @@ async function loadCard(wrapper, idiot, show, update) {
 
   applyExclusions(wrapper)
   addCheckboxes(wrapper)
+  addNavigationToCard(wrapper)
   if (show) {
     if (show.length > 1 || show[0].length > 1) singleDetails(wrapper, show)
     open(wrapper)
     setPermalink(wrapper, show)
   } else
     setPermalink(wrapper, [idiot? 'I' : 'S'])
-  if (update) updateCard(wrapper); else prepareCard(wrapper, idiot)
+  const topics = await getLocalizedTopics()
+  await (update ? updateCard : prepareCard)(wrapper, topics, idiot)
   prepareCardTitle(wrapper)
   copyLogoToCard(wrapper, idiot)
 }
@@ -98,18 +95,12 @@ function copyLogoToCard(wrapper, idiot) {
  *
  * @param {HTMLElement} wrapper wrapper element to load the card into
  */
-function prepareCard(wrapper, idiot) {
-  const emojis = idiot ? '🤪,👻' : '🐑,😷' 
-  const set = getArguments(wrapper.querySelector('.detail'))
-  if (!set.length) 
-    alert('No arguments found!');
-  else {   
-    makeCard(wrapper, set, 5, emojis)
-    wrapper.classList.remove('test')
-    wrapper.classList.toggle('idiot', idiot)
-    wrapper.classList.toggle('sheep', !idiot)
-    wrapper.querySelector('.reload').onclick = () => makeCard(wrapper, set, 5, emojis)
-  }
+function prepareCard(wrapper, topics, idiot) {
+  makeCard(wrapper, topics, 5, idiot)
+  wrapper.classList.remove('test')
+  wrapper.classList.toggle('idiot', idiot)
+  wrapper.classList.toggle('sheep', !idiot)
+  wrapper.querySelector('.reload').onclick = () => makeCard(wrapper, topics, 5, idiot)
 }
 
 /**
@@ -172,9 +163,9 @@ function handleClick(event) {
  * open the detail window, adding the CSS 'single' classes to the given id details
  * @param {Event} event the event that triggered the open action
  */
-function openDetails(event) {
+function openDetails(event, arguments) {
   const wrapper = event.target.closest('.card-wrapper')
-  singleDetails(wrapper, [event.target.id])
+  singleDetails(wrapper, arguments, arguments[0])
   flipOpen(event)
 }
 
@@ -264,16 +255,16 @@ function toggleDetails(wrapper, event, ids) {
  * generate a BINGO card as an HTML table with the given parent and size size
  *
  * @param {HTMLElement} wrapper - parent element to generate the table into
- * @param {{id: string, word: string}[]} wordset - Array of (id, word) tuples with data for the card
+ * @param {Array} topics - Array of topics with data for the card
  * @param {number} size - side length for the card to generate (e.g. 3, 5, 7...)
  * @param {string} center - string with comma seperated text alternatives for the center
  */
-function makeCard(wrapper, wordset, size, center) {
+function makeCard(wrapper, topics, size, idiot) {
   const div = wrapper.querySelector('.bingo')
+  const center = idiot ? ['🤪', '👻'] : ['🐑', '😷'] 
   const rows = []
   if (div.firstChild) div.removeChild(div.firstChild)
-  wordset = wordset.slice()
-  center = center.split(',')
+  topics = topics.slice()
   for (let y = 0; y < size; y++) {
     const cells = []
     for (let x = 0; x < size; x++) {
@@ -284,15 +275,16 @@ function makeCard(wrapper, wordset, size, center) {
         wordnode.classList.add('set')
         wordnode.onclick = event => flipOpen(event)
       } else {
-        const set = uniqueWord(wordset)
-        wordnode.id = set.id
-        wordnode.innerHTML = set.word
-        wordnode.title = set.content
+        const topic = uniqueWord(topics)
+        wordnode.id = topic.id
+        wordnode.innerHTML = idiot ? topic.idiotTitle : topic.sheepTitle
+        // wordnode.title = set.content
         wordnode.onclick = event => {
+          const arguments = idiot ? topic.idiot : topic.sheep
           const set = event.target.closest('td').classList.toggle('set')
           document.querySelector('#pyro').classList.toggle('hidden',
             !checkCard(event.target.closest('table'), size))
-          if (set && attitude.curious) openDetails(event)
+          if (set && attitude.curious) openDetails(event, arguments)
         }
       }
       cells.push(wordnode)

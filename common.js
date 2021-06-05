@@ -80,6 +80,34 @@ function stopPyro() {
   document.querySelector('#pyro').classList.add('hidden')
 }
 
+async function getLocalizedArguments(idiot) {
+  const content = await fetchSilent(lang + (idiot ? '/idiot.html' : '/sheep.html'))
+  let local = await fetchSilent(terr + (idiot ? '/idiot-local.html' : '/sheep-local.html'))
+  if (!local.length)
+    local = await fetchSilent(lang + (idiot ? '/idiot-local.html' : '/sheep-local.html'))
+  return content + local
+}
+
+async function getLocalizedTopics() {
+  const topics = elementWithKids('div')
+  const localTopics = elementWithKids('div')
+  topics.innerHTML = await fetchSilent('topics.html')
+  localTopics.innerHTML = await fetchSilent(lang +'/topics.html')
+  return Array.from(localTopics.querySelectorAll('q')).map((lq, index) => {
+    const q = topics.querySelector(`#${lq.id}`) || lq
+    return {
+      id: q.id,
+      idiot: q.dataset.idiot.split(' '),
+      sheep: q.dataset.sheep.split(' '),
+      idiotLabel: lq.dataset.idiotLabel,
+      sheepLabel: lq.dataset.sheepLabel,
+      idiotTitle: lq.dataset.idiotTitle,
+      sheepTitle: lq.dataset.sheepTitle,
+      title: lq.innerHTML
+    }
+  })
+}
+
 /**
  * show idiot, sheep or test cards corresponding to the id(s) given in the hash
  *
@@ -219,7 +247,7 @@ function getArguments(detail) {
  *
  * @param {HTMLElement} detail content DOM node containing the arguments
  */
-async function addSources(detail, counters = true) {
+async function addSources(detail) {
   const sources = elementWithKids('div')
   sources.innerHTML =  await fetchSilent('sources.html')
   Array.from(detail.querySelectorAll('a[id]')).forEach(a => {
@@ -236,15 +264,6 @@ async function addSources(detail, counters = true) {
       ])
       q.classList.add('hidden')
       a.nextElementSibling.appendChild(q)
-    }
-    if (counters && counter.length > 0) {
-      const c = elementWithKids('p', [ '⇔', ...counter.flatMap(counterid => {
-        const idtag = elementWithKids('span', counterid)
-        idtag.onclick = () => showCounterArguments([counterid])
-        return ['\u00ad', idtag]
-      })])
-      c.classList.add('counter')
-      a.nextElementSibling.appendChild(c)
     }
   })
 }
@@ -265,22 +284,56 @@ function setPermalink(wrapper, ids) {
 }
 
 /**
+ * add an empty navigation element to the card
+ *
+ * @param {HTMLElement} wrapper wrapper element to load the card into
+ */
+function addNavigationToCard(wrapper) {
+  const navigation = elementWithKids('p')
+  navigation.classList.add('navigation')
+  wrapper.querySelector('.content').prepend(navigation)
+}
+
+/**
+ * Setup argument navigation by id and selected
+ *
+ * @param {HTMLElement} wrapper the card wrapper
+ * @param {string[]} ids list of ids to include in the navigation
+ * @param {string} selected the id to select
+ * @param {boolean} permalink if to show a permalink
+ */
+function setNavigation(wrapper, ids, selected, permalink) {
+  const content = wrapper.querySelector('.content')
+  const navigation = elementWithKids('p', ids.flatMap(id => {
+    const idtag = elementWithKids('span', id)
+    idtag.onclick = () => singleDetails(wrapper, ids, id, permalink)
+    if (id == selected) idtag.classList.add('selected')
+    return ['\u00ad', idtag]
+  }))
+  navigation.id = content.querySelector('.navigation').id
+  navigation.classList.add('navigation')
+  content.replaceChild(navigation, content.querySelector('.navigation'))
+}
+
+/**
  * show selected details, add the CSS 'single' classes if only one is shown
  * @param {HTMLElement} wrapper the event that triggered the open action
  * @param {string[]} ids list of ids to show
+ * @param {string} selected id to select
+ * @param {boolean} permalink if to show a permalink
  */
-function singleDetails(wrapper, ids, permalink = true) {
+function singleDetails(wrapper, ids, selected = undefined, permalink = true) {
+  selected = selected || ids[0]
+  setNavigation(wrapper, ids, selected, permalink)
   const detail = wrapper.querySelector('.detail')
-  if (ids.length === 1) detail.classList.add('single')
+  detail.classList.add('single')
   detail.querySelectorAll('a[id]').forEach(e => e.classList.remove('single'))
-  ids.forEach(id => {
-    const anchor = wrapper.querySelector(`a[id=${id}]`)
-    if (anchor) {
-      anchor.classList.add('single')
-      detail.querySelectorAll('a[href=""]').forEach(e => e.classList.toggle('hidden',
-        !anchor.nextElementSibling.querySelector('q')))
-    }
-  })
+  const anchor = wrapper.querySelector(`a[id=${selected}]`)
+  if (anchor) {
+    anchor.classList.add('single')
+    detail.querySelectorAll('a[href=""]').forEach(e => e.classList.toggle('hidden',
+      !anchor.nextElementSibling.querySelector('q')))
+  }
   setPermalink(wrapper, permalink ? ids : false)
 }
 
@@ -296,18 +349,15 @@ function showSources(event, show = true) {
 }
 
 /**
- * update an argument card with a different language
+ * update an topics based (test/bingo) card with a different language
  *
  * @param {HTMLElement} wrapper wrapper element of the card
  */
-function updateCard(wrapper) {
-  const set = getArguments(wrapper.querySelector('.detail'))
+function updateCard(wrapper, topics, idiot = undefined) {
   wrapper.querySelectorAll('td[id]').forEach(td => {
-    const argument = set.find(arg => arg.id === td.id)
-    if (argument) {
-      td.innerHTML = argument.word
-      td.title = argument.content
-    }
+    const topic = topics.find(t => t.id === td.id)
+    td.innerHTML = idiot === true ? topic.idiotLabel : idiot === false ? topic.sheepLabel : topic.label
+    // td.title = argument.content
   })
 }
 

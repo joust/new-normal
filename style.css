@@ -314,7 +314,7 @@ div.bingo, .detail, .card {
 }
 
 #game {
-  font-size: 1.5vmax;
+  font-size: 1.7vmax;
 }
 
 #game.one {
@@ -362,8 +362,13 @@ div.bingo, .detail, .card {
   color: #aaa;
 }
 
-.detail.single a[id], .detail.single a[id] + p, .detail.single .search,
-.detail a[id].not-matching, .detail a[id].not-matching + p {
+.detail.single a[id], 
+.detail.single a[id] + p, 
+.detail.single a[id] span,
+.detail.single .search,
+.detail.single input[type="checkbox"],
+.detail a[id].not-matching, 
+.detail a[id].not-matching + p {
   display: none;
 }
 
@@ -393,15 +398,11 @@ div.bingo, .detail, .card {
   display: inline-block;
 }
 
-.detail a[id] span {
-  float: right;
-}
-
-.idiot .detail a[id] span, .sheep .detail p span {
+.idiot .detail a[id] span, .idiot .navigation span {
   background: #f72d5d;
 }
 
-.sheep .detail a[id] span, .idiot .detail p span {
+.sheep .detail a[id] span, .sheep .navigation span {
   background: #2d60f6;
 }
 
@@ -409,6 +410,26 @@ div.bingo, .detail, .card {
   background: #aaa;
 }
 
+.detail a[id] span {
+  float: right;
+}
+
+.detail .navigation {
+  display: none;
+}
+
+.detail.single .navigation {
+  display: block;
+}
+
+.navigation span {
+  opacity: 0.5;
+}
+
+.navigation span.selected {
+  opacity: 1;
+  transform: scale(1.1);
+}
 
 .detail .logo, #result .logo {
   font-size: 6vmax;
@@ -478,7 +499,7 @@ div.bingo, .detail, .card {
   }
 
   .detail {
-    font-size: 1.5vmax;
+    font-size: 1.7vmax;
   }
   
   #game.hidden .card-wrapper:nth-child(1) {
@@ -528,7 +549,7 @@ div.bingo, .detail, .card {
   color: #f72d5d;
 }
 
-.idiot .card {
+:not(.test).idiot .card {
   background: #f72d5d;
 }
 
@@ -536,7 +557,7 @@ div.bingo, .detail, .card {
   color: #2d60f6;
 }
 
-.sheep .card {
+:not(.test).sheep .card {
   background: #2d60f6;
 }
 

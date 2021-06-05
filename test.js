@@ -20,13 +20,11 @@ async function test(size1, size2 = 0) {
  * @param {number} size size of test card (2,3,4,5,6) - >6 too large for mobile
  */
 async function loadTestCard(wrapper, idiot, start, size) {
-  const content = await fetchSilent(lang + (idiot ? '/idiot.html' : '/sheep.html'))
-  let local = await fetchSilent(terr + (idiot ? '/idiot-local.html' : '/sheep-local.html'))
-  if (!local.length)
-    local = await fetchSilent(lang + (idiot ? '/idiot-local.html' : '/sheep-local.html'))
   if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
-  wrapper.querySelector('.content').innerHTML = content + local
+  wrapper.querySelector('.content').innerHTML = await getLocalizedArguments(idiot)
   wrapper.querySelector('.detail').onclick = event => handleTestClick(event)
+  wrapper.classList.toggle('idiot', idiot)
+  wrapper.classList.toggle('sheep', !idiot)
   await addSources(wrapper, false)
   wrapper.querySelector('.buttons.bingo').remove()
   wrapper.querySelectorAll('i').forEach(e => e.remove())
@@ -34,6 +32,7 @@ async function loadTestCard(wrapper, idiot, start, size) {
 
   await prepareTestCard(wrapper, start, size)
   prepareTestCardTitle(wrapper)
+  addNavigationToCard(wrapper)
   copyLogoToTestCard(wrapper, idiot)
 }
 
@@ -60,6 +59,7 @@ function prepareTestCardTitle(wrapper) {
  * copy the logo to the top of the details side of the test card wrapper
  *
  * @param {HTMLElement} wrapper wrapper element to load the card into
+ * @param {boolean} idiot true if an idiot card
  */
 function copyLogoToTestCard(wrapper, idiot) {
   wrapper.querySelector('.content').prepend(
@@ -77,17 +77,9 @@ function copyLogoToTestCard(wrapper, idiot) {
  * @param {number} size the size of the test card
  */
 async function prepareTestCard(wrapper, start, size) {
-  const tests = elementWithKids('div')
-  tests.innerHTML = await fetchSilent(lang +'/test.html')
-  const testset = Array.from(tests.querySelectorAll('q')).map((q, index) => ({
-    id: 'T'+index,
-    idiot: q.dataset.idiot,
-    sheep: q.dataset.sheep,
-    label: q.innerHTML
-  }))
+  const testset = await getLocalizedTopics()
   makeTestCard(wrapper, testset, start, size)
   wrapper.classList.add('test')
-  wrapper.classList.remove('idiot', 'sheep')
   wrapper.querySelector('.reload').onclick = () => clearTest()
 }
 
@@ -95,12 +87,12 @@ async function prepareTestCard(wrapper, start, size) {
  * generate a test card as an HTML table with the given parent and size size
  *
  * @param {HTMLElement} wrapper - parent element to generate the table into
- * @param {{id: string, word: string}[]} testset - Array of (id, word) tuples with data for the card
+ * @param {Array} topics - Array of topics with data for the card
  * @param {number} index - starting index for the selection
  * @param {number} size - side length for the card to generate
      Implies nr of questions, e.g. 3 => 9, 4 => 16, 5 => 25, 6 => 36
  */
-function makeTestCard(wrapper, testset, index, size) {
+function makeTestCard(wrapper, topics, index, size) {
   const div = wrapper.querySelector('.bingo')
   const rows = []
   if (div.firstChild) div.removeChild(div.firstChild)
@@ -108,13 +100,11 @@ function makeTestCard(wrapper, testset, index, size) {
     const cells = []
     for (let x = 0; x < size; x++,index++) {
       const node = elementWithKids('td')
-      const set = testset[index]
-      node.id = set.id
-      node.innerHTML = node.title = set.label
-      if (set.idiot.length) node.classList.add(set.idiot)
-      if (set.sheep.length) node.classList.add(set.sheep)
+      const topic = topics[index]
+      node.id = topic.id
+      node.innerHTML = node.title = topic.title
       node.onclick = event => {
-        openTestDetails(event, index, set.idiot, set.sheep)
+        openTestDetails(event, index, topic)
       }
       cells.push(node)
     }
@@ -129,13 +119,15 @@ function makeTestCard(wrapper, testset, index, size) {
  * open both detail window, adding the CSS 'single' classes to the given id details
  * @param {Event} event the event that triggered the open action
  */
-function openTestDetails(event, index, idiot, sheep) {
+function openTestDetails(event, index, set) {
   const wrapper = event.target.closest('.card-wrapper')
   const wrapper1 = document.querySelector('#wrapper-1')
   const wrapper2 = document.querySelector('#wrapper-2')
   stats.start[index] = Date.now()
-  singleDetails(wrapper1, [idiot], false)
-  singleDetails(wrapper2, [sheep], false)
+  singleDetails(wrapper1, set.idiot, set.idiot[0], false)
+  singleDetails(wrapper2, set.sheep, set.sheep[0], false)
+  wrapper1.querySelector('.navigation').id = set.id
+  wrapper2.querySelector('.navigation').id = set.id
   flipOpen(event)
   open(wrapper.id === 'wrapper-1' ? wrapper2 : wrapper1)
   showWrapperTwo()
@@ -176,9 +168,9 @@ function handleTestClick(event) {
 function markTestChoice(event) {
   const wrapper = event.target.closest('.card-wrapper')
   const detail = wrapper.querySelector('.detail')
-  const id = detail.querySelector('a.single').id
+  const id = wrapper.querySelector('.navigation').id
   const idiot = wrapper.id === 'wrapper-1'
-  const node = document.querySelector(`.card td.${id}`)
+  const node = document.querySelector(`.card td#${id}`)
   node.classList.add('set')
   node.classList.toggle('idiot', idiot)
   node.classList.toggle('sheep', !idiot)
@@ -201,9 +193,10 @@ function markTestChoice(event) {
 async function testUpdate(wrapper, idiot, locale) {
   [lang, terr] = locale.split('-')
   const size = Math.sqrt(wrapper.querySelectorAll('td').length)
-  const ids = Array.from(wrapper.querySelectorAll('a.single')).map(a => a.id)
+  const ids = Array.from(wrapper.querySelectorAll('.navigation span')).map(a => a.innerHTML)
+  const id = wrapper.querySelector('.navigation span.selected').innerHTML
   await loadTestCard(wrapper, idiot, size, true)
-  if (ids.length) singleDetails(wrapper, ids, false)
+  if (ids.length) singleDetails(wrapper, ids, id, false)
   wrapper.querySelector('.location').value = `${lang}-${terr}`
   document.querySelector('.location').value = `${lang}-${terr}`
 }

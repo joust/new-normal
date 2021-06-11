@@ -25,7 +25,7 @@ async function play(one, two) {
  */
 async function loadCard(wrapper, idiot, show, update) {
   if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
-  wrapper.querySelector('.content').innerHTML = await getLocalizedArguments(idiot)
+  wrapper.querySelector('.content').innerHTML = await getLocalizedContent(idiot)
   wrapper.querySelector('.detail').onclick = event => handleClick(event)
   addIdTags(wrapper)
   await addSources(wrapper)
@@ -38,12 +38,12 @@ async function loadCard(wrapper, idiot, show, update) {
   addCheckboxes(wrapper)
   addNavigationToCard(wrapper)
   if (show) {
-    if (show.length > 1 || show[0].length > 1) singleDetails(wrapper, show)
+    if (show.length > 1 || show[0].length > 1) singleDetails(wrapper, 'nav', show)
     open(wrapper)
     setPermalink(wrapper, show)
   } else
     setPermalink(wrapper, [idiot? 'I' : 'S'])
-  const topics = await getLocalizedTopics()
+  const topics = getTopics(wrapper)
   await (update ? updateCard : prepareCard)(wrapper, topics, idiot)
   prepareCardTitle(wrapper)
   copyLogoToCard(wrapper, idiot)
@@ -68,7 +68,7 @@ function addIdTags(wrapper) {
  * @param {HTMLElement} wrapper wrapper element to load the card into
  */
 function addCheckboxes(wrapper) {
-  wrapper.querySelectorAll('a[id]').forEach(a => {
+  wrapper.querySelectorAll('a[id^=T]').forEach(a => {
     const checkbox = elementWithKids('input')
     checkbox.checked = !a.classList.contains('excluded')
     checkbox.type = 'checkbox'
@@ -107,12 +107,16 @@ function prepareCard(wrapper, topics, idiot) {
  * update an argument card with a different language
  *
  * @param {HTMLElement} wrapper wrapper element of the card
+ * @param {boolean} idiot if idiot card
+ * @param {string} locale the new locale to switch to
  */
 async function update(wrapper, idiot, locale) {
   [lang, terr] = locale.split('-')
-  const ids = Array.from(wrapper.querySelectorAll('a.single')).map(a => a.id)
+  const nav = wrapper.querySelector('.navigation')
+  const ids = Array.from(nav.querySelectorAll('span')).map(span => span.innerHTML)
+  const id = nav.querySelector('span.selected').innerHTML 
   await loadCard(wrapper, idiot, null, true)
-  if (ids.length) singleDetails(wrapper, ids)
+  if (ids.length) singleDetails(wrapper, nav.id, ids, id)
   wrapper.querySelector('.location').value = `${lang}-${terr}`
   document.querySelector('.location').value = `${lang}-${terr}`
 }
@@ -162,10 +166,12 @@ function handleClick(event) {
 /**
  * open the detail window, adding the CSS 'single' classes to the given id details
  * @param {Event} event the event that triggered the open action
+ * @param {string} topicId id of the topic to open
+ * @param {string[]} arguments argument ids to show
  */
-function openDetails(event, arguments) {
+function openDetails(event, topicId, arguments) {
   const wrapper = event.target.closest('.card-wrapper')
-  singleDetails(wrapper, arguments, arguments[0])
+  singleDetails(wrapper, topicId, arguments, arguments[0])
   flipOpen(event)
 }
 
@@ -193,20 +199,22 @@ function closeDetails(wrapper, flip = false) {
 }
 
 /**
- * open another detail window showing the listed counter arguments
- * @param {string[]} ids - the ids to show
+ * open other wrapper showing the counter arguments to current topic
+ * @param {HTMLElement} wrapper the card wrapper to show the counter arguments for
  */
-function showCounterArguments(ids) {
-  const idiot = ids[0].startsWith('I')
+function showCounterArguments(wrapper) {
+  const nav = wrapper.querySelector('.navigation')
+  const counterIds = nav.dataset.counter
+  const idiot = counterIds[0].startsWith('I')
   const type = idiot ? 'idiot' : 'sheep'
-  const wrapper = document.querySelector(`.card-wrapper.${type}`) || document.querySelector('.card-wrapper.hidden')
-  if (wrapper) {
-    if (wrapper.classList.contains('hidden')) {
+  const otherWrapper = document.querySelector(`.card-wrapper.${type}`) || document.querySelector('.card-wrapper.hidden')
+  if (otherWrapper) {
+    if (otherWrapper.classList.contains('hidden')) {
       showWrapperTwo()
-      loadCard('#wrapper-2', idiot, ids)
+      loadCard('#wrapper-2', idiot, counterIds)
     } else {
-      singleDetails(wrapper, ids)
-      open(wrapper)
+      singleDetails(otherWrapper, nav.id, counterIds)
+      open(otherWrapper)
     }
   }
 }
@@ -248,7 +256,7 @@ function toggleDetails(wrapper, event, ids) {
     closeDetails(wrapper)
     wrapper.querySelector(`a[id=${ids[0]}]`).scrollIntoView()
   } else
-    singleDetails(wrapper, ids)
+    singleDetails(wrapper, 'nav', ids)
 }
 
 /**
@@ -284,7 +292,7 @@ function makeCard(wrapper, topics, size, idiot) {
           const set = event.target.closest('td').classList.toggle('set')
           document.querySelector('#pyro').classList.toggle('hidden',
             !checkCard(event.target.closest('table'), size))
-          if (set && attitude.curious) openDetails(event, arguments)
+          if (set && attitude.curious) openDetails(event, topic.id, arguments)
         }
       }
       cells.push(wordnode)

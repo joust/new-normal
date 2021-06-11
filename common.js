@@ -33,7 +33,9 @@ function load(locale) {
 async function show(page) {
   document.querySelector('.logo').style.display = page === 'intro' ? 'none' : 'block'
   document.querySelector('#menu').classList.add('hidden')
-  document.querySelector('#menu .content').innerHTML = await fetchSilent(lang +'/'+page+'.html')
+  let content = await fetchSilent(lang +'/'+page+'.html')
+  if (page === 'intro') content = content.replace('NN_YEAR', getNNYear())
+  document.querySelector('#menu .content').innerHTML = content
   document.querySelector('#menu').scrollTop = 0
   if (page==='attitude') initAttitude()
   setTimeout(() => document.querySelector('#menu').classList.remove('hidden'), 50)
@@ -80,32 +82,39 @@ function stopPyro() {
   document.querySelector('#pyro').classList.add('hidden')
 }
 
-async function getLocalizedArguments(idiot) {
+/**
+ * get localized content (topics + arguments)
+ *
+ * @param {boolean} idiot whether to load the idiot or sheep arguments
+ */
+async function getLocalizedContent(idiot) {
   const content = await fetchSilent(lang + (idiot ? '/idiot.html' : '/sheep.html'))
   let local = await fetchSilent(terr + (idiot ? '/idiot-local.html' : '/sheep-local.html'))
   if (!local.length)
     local = await fetchSilent(lang + (idiot ? '/idiot-local.html' : '/sheep-local.html'))
-  return content + local
+  return (await getLocalizedTopics()) + content + local
 }
 
+/**
+ * get topics data with localized topics, arguments, titles and labels
+ */
 async function getLocalizedTopics() {
   const topics = elementWithKids('div')
   const localTopics = elementWithKids('div')
   topics.innerHTML = await fetchSilent('topics.html')
   localTopics.innerHTML = await fetchSilent(lang +'/topics.html')
-  return Array.from(localTopics.querySelectorAll('q')).map((lq, index) => {
-    const q = topics.querySelector(`#${lq.id}`) || lq
-    return {
-      id: q.id,
-      idiot: q.dataset.idiot.split(' '),
-      sheep: q.dataset.sheep.split(' '),
-      idiotLabel: lq.dataset.idiotLabel,
-      sheepLabel: lq.dataset.sheepLabel,
-      idiotTitle: lq.dataset.idiotTitle,
-      sheepTitle: lq.dataset.sheepTitle,
-      title: lq.innerHTML
+  Array.from(localTopics.querySelectorAll('a')).forEach(la => {
+    const a = topics.querySelector(`#${la.id}`)
+    if (a) {
+      la.dataset.idiot = a.dataset.idiot + (la.dataset.idiot ? ` ${la.dataset.idiot}` : '')
+      la.dataset.sheep = a.dataset.sheep + (la.dataset.sheep ? ` ${la.dataset.sheep}` : '')
     }
   })
+  return localTopics.innerHTML
+}
+
+function getNNYear() {
+  return Math.ceil((Date.now() - new Date(2020, 2, 1).getTime()) / (365*24*60*60*1000))
 }
 
 /**
@@ -243,6 +252,26 @@ function getArguments(detail) {
 }
 
 /**
+ * extract topics from HTML content
+ *
+ * @param {HTMLElement} detail - content DOM node containing the arguments
+ * @return {Array} the extracted topics
+ */
+function getTopics(detail) {
+  return Array.from(detail.querySelectorAll('a[id^=T]:not(.excluded)')).map(a => ({
+    id: a.id,
+    idiot: a.dataset.idiot.split(' '),
+    sheep: a.dataset.sheep.split(' '),
+    idiotLabel: a.dataset.idiotLabel,
+    sheepLabel: a.dataset.sheepLabel,
+    idiotTitle: a.dataset.idiotTitle,
+    sheepTitle: a.dataset.sheepTitle,
+    title: a.firstChild.innerHTML
+    })
+  )
+}
+
+/**
  * extend the arguments in detail with sources from sources if available
  *
  * @param {HTMLElement} detail content DOM node containing the arguments
@@ -298,19 +327,20 @@ function addNavigationToCard(wrapper) {
  * Setup argument navigation by id and selected
  *
  * @param {HTMLElement} wrapper the card wrapper
+ * @param {string} topicId id of topic to save as navigation id
  * @param {string[]} ids list of ids to include in the navigation
  * @param {string} selected the id to select
  * @param {boolean} permalink if to show a permalink
  */
-function setNavigation(wrapper, ids, selected, permalink) {
+function setNavigation(wrapper, topicId, ids, selected, permalink) {
   const content = wrapper.querySelector('.content')
   const navigation = elementWithKids('p', ids.flatMap(id => {
     const idtag = elementWithKids('span', id)
-    idtag.onclick = () => singleDetails(wrapper, ids, id, permalink)
+    idtag.onclick = () => singleDetails(wrapper, topicId, ids, id, permalink)
     if (id == selected) idtag.classList.add('selected')
     return ['\u00ad', idtag]
   }))
-  navigation.id = content.querySelector('.navigation').id
+  navigation.id = topicId
   navigation.classList.add('navigation')
   content.replaceChild(navigation, content.querySelector('.navigation'))
 }
@@ -318,13 +348,14 @@ function setNavigation(wrapper, ids, selected, permalink) {
 /**
  * show selected details, add the CSS 'single' classes if only one is shown
  * @param {HTMLElement} wrapper the event that triggered the open action
+ * @param {string} topicId id of topic to save as navigation id
  * @param {string[]} ids list of ids to show
  * @param {string} selected id to select
  * @param {boolean} permalink if to show a permalink
  */
-function singleDetails(wrapper, ids, selected = undefined, permalink = true) {
+function singleDetails(wrapper, topicId, ids, selected = undefined, permalink = true) {
   selected = selected || ids[0]
-  setNavigation(wrapper, ids, selected, permalink)
+  setNavigation(wrapper, topicId, ids, selected, permalink)
   const detail = wrapper.querySelector('.detail')
   detail.classList.add('single')
   detail.querySelectorAll('a[id]').forEach(e => e.classList.remove('single'))
@@ -356,7 +387,7 @@ function showSources(event, show = true) {
 function updateCard(wrapper, topics, idiot = undefined) {
   wrapper.querySelectorAll('td[id]').forEach(td => {
     const topic = topics.find(t => t.id === td.id)
-    td.innerHTML = idiot === true ? topic.idiotLabel : idiot === false ? topic.sheepLabel : topic.label
+    td.innerHTML = idiot === true ? topic.idiotTitle : idiot === false ? topic.sheepTitle : topic.title
     // td.title = argument.content
   })
 }

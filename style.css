@@ -343,7 +343,7 @@ div.bingo, .detail, .card {
 
 .detail.single {
   display: flex;
-  align-items: center;
+  align-items: start;
   user-select: none;
   overflow-y: hidden;
 }
@@ -700,6 +700,7 @@ button:hover {
   margin-left: auto;
   margin-right: auto;
   width: 80%;
+  text-align: left;
 }
 
 #result .drawer, #result .result {

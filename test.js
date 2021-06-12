@@ -19,7 +19,7 @@ async function test(size1, size2 = 0) {
  * @param {number} start start category for the test card to generate
  * @param {number} size size of test card (2,3,4,5,6) - >6 too large for mobile
  */
-async function loadTestCard(wrapper, idiot, start, size) {
+async function loadTestCard(wrapper, idiot, start, size, update = false) {
   if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
   wrapper.querySelector('.content').innerHTML = await getLocalizedContent(idiot)
   wrapper.querySelector('.detail').onclick = event => handleTestClick(event)
@@ -30,7 +30,11 @@ async function loadTestCard(wrapper, idiot, start, size) {
   wrapper.querySelectorAll('i').forEach(e => e.remove())
   setPermalink(wrapper)
 
-  prepareTestCard(wrapper, start, size)
+  const topics = getTopics(wrapper)
+  if (update)
+    updateCard(wrapper, topics)
+  else  
+    prepareTestCard(wrapper, topics, start, size)
   prepareTestCardTitle(wrapper)
   addNavigationToCard(wrapper)
   copyLogoToTestCard(wrapper, idiot)
@@ -74,10 +78,11 @@ function copyLogoToTestCard(wrapper, idiot) {
  * prepare the test card on the front side of the card wrapper
  *
  * @param {HTMLElement} wrapper wrapper element to load the card into
+ * @param {Array} topics the topics to use
+ * @param {number} start the topics start item to begin with
  * @param {number} size the size of the test card
  */
-function prepareTestCard(wrapper, start, size) {
-  const topics = getTopics(wrapper)
+function prepareTestCard(wrapper, topics, start, size) {
   makeTestCard(wrapper, topics, start, size)
   wrapper.classList.add('test')
   wrapper.querySelector('.reload').onclick = () => clearTest()
@@ -198,7 +203,7 @@ async function testUpdate(wrapper, idiot, locale) {
   const nav = wrapper.querySelector('.navigation')
   const ids = Array.from(nav.querySelectorAll('span')).map(span => span.innerHTML)
   const id = nav.querySelector('span.selected').innerHTML 
-  await loadTestCard(wrapper, idiot, size, true)
+  await loadTestCard(wrapper, idiot, size, 0, true)
   if (ids.length) singleDetails(wrapper, nav.id, ids, id)
   wrapper.querySelector('.location').value = `${lang}-${terr}`
   document.querySelector('.location').value = `${lang}-${terr}`

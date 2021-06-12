@@ -63,7 +63,7 @@ function addIdTags(wrapper) {
 }
 
 /**
- * add exclusion checkboxes to the details side of the card wrapper
+ * add exclusion checkboxes to topics in the details side of the card wrapper
  *
  * @param {HTMLElement} wrapper wrapper element to load the card into
  */
@@ -286,7 +286,8 @@ function makeCard(wrapper, topics, size, idiot) {
         const topic = uniqueWord(topics)
         wordnode.id = topic.id
         wordnode.innerHTML = idiot ? topic.idiotTitle : topic.sheepTitle
-        // wordnode.title = set.content
+        wordnode.title = getArgumentsForTopic(wrapper, topic.id, idiot)
+
         wordnode.onclick = event => {
           const arguments = idiot ? topic.idiot : topic.sheep
           const set = event.target.closest('td').classList.toggle('set')

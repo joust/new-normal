@@ -92,7 +92,7 @@ async function getLocalizedContent(idiot) {
   let local = await fetchSilent(terr + (idiot ? '/idiot-local.html' : '/sheep-local.html'))
   if (!local.length)
     local = await fetchSilent(lang + (idiot ? '/idiot-local.html' : '/sheep-local.html'))
-  return (await getLocalizedTopics()) + content + local
+  return content + local + (await getLocalizedTopics())
 }
 
 /**
@@ -245,7 +245,7 @@ function hideGame() {
  * @return {{id: string, word: string}[]} the extracted arguments
  */
 function getArguments(detail) {
-  return Array.from(detail.querySelectorAll('a[id]:not(.excluded)')).map(
+  return Array.from(detail.querySelectorAll('a[id]')).map(
     a => ({id: a.id, 
            word: a.querySelector('h2').innerHTML, 
            content: a.nextElementSibling.innerText}))
@@ -269,6 +269,20 @@ function getTopics(detail) {
     title: a.firstChild.innerHTML
     })
   )
+}
+
+/**
+ * extract idiot/sheep arguments for a given topic for showing a tooltip
+ *
+ * @param {HTMLElement} detail - content DOM node containing the arguments
+ * @param {string} topicId - the topic id
+ * @param {boolean} idiot - idiot or sheep
+ * @return {string} the extracted arguments
+ */
+function getArgumentsForTopic(detail, topicId, idiot) {
+  const topic = detail.querySelector(`a[id="${topicId}"]`)
+  const args = topic ? topic.dataset[idiot ? 'idiot' : 'sheep'].split(' ') : []
+  return args.map(argId => detail.querySelector(`a[id="${argId}"] h2`).innerHTML).join('\n')
 }
 
 /**
@@ -387,8 +401,10 @@ function showSources(event, show = true) {
 function updateCard(wrapper, topics, idiot = undefined) {
   wrapper.querySelectorAll('td[id]').forEach(td => {
     const topic = topics.find(t => t.id === td.id)
-    td.innerHTML = idiot === true ? topic.idiotTitle : idiot === false ? topic.sheepTitle : topic.title
-    // td.title = argument.content
+    if (topic) {
+      td.innerHTML = idiot === true ? topic.idiotTitle : idiot === false ? topic.sheepTitle : topic.title
+      td.title = getArgumentsForTopic(wrapper, topic.id, idiot)
+    }
   })
 }
 

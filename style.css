@@ -377,7 +377,7 @@ div.bingo, .detail, .card {
   transition: height 0.5s ease;
 }
 
-.detail.single h1 {
+.detail.single h1, .detail.single h1 + p {
   display: none;
 }
 

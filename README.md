@@ -96,15 +96,15 @@ The Sources for all Arguments are stored language-mixed in the top-level file <c
 <h2>friendly</h2>
 <p>Remove all pejorative argument wording (the text blocks set in italics).</p>
 
-<h1>Exclusion of Arguments</h1>
+<h1>Exclusion of Topics</h1>
 <p>
-The app allows to exclude arguments from being used in the generation of game cards. This helps to deprecate old arguments that are not common in discussions any more - or simply to exclude arguments that you do not expect getting used.</p>
+The app allows to exclude topics from being used in the generation of game cards. This helps to deprecate old topics/arguments that are not common in discussions any more - or simply to exclude topics that you do not expect getting used.</p>
 <p>
-In front of every argument title in the list you find a checkbox to toggle it's exclusion. If its grey, an arguments will not be used during the next card generation. Your choice will be stored in the local storage of your browser.
+In front of every topic title in the list you find a checkbox to toggle it's exclusion. If its checked, it will be used during the next card generation, otherwise not. Your choice will be stored in the local storage of your browser.
 </p>
 
 <h1>Permalinks</h1>
-<p>The app allows to deep link directy to arguments, e.g. to transmit them to others. This can be achieved just by specifying the argument ids in the url's hash. Some examples:</p>
+<p>The app allows to deep link directy to arguments, e.g. to transmit them to others. This can be achieved just by specifying either the topic id or the argument ids in the url's hash. Some examples:</p>
 <ul>
 <li><code>https://new-normal.app#I17</code>: Show <b>idiot</b> argument with id <code>I17</code></li>
 <li><code>https://new-normal.app#S69</code>: Show <b>sheep</b> argument with id <code>S69</code></li>

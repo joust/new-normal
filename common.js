@@ -128,9 +128,11 @@ async function displayHash(hash) {
   const idiot = hash.filter(v => v.startsWith('I'))
   const sheep = hash.filter(v => v.startsWith('S'))
   const test = hash.filter(v => v.startsWith('T'))
+  const wrapper1 = document.querySelector('#wrapper-1')
+  const wrapper2 = document.querySelector('#wrapper-2')
   if (test.length) {
-    await loadTestCard('#wrapper-1', true, 0, 5)
-    await loadTestCard('#wrapper-2', false, 25, 5)
+    await loadTestCard(wrapper1, true, 0, 5)
+    await loadTestCard(wrapper2, false, 25, 5)
     initTestStats(5, 5)
     const td = document.querySelector(`td[id="${test[0]}"]`)
     if (td) td.click(); else console.error('no element', test[0])
@@ -138,9 +140,13 @@ async function displayHash(hash) {
   if (!idiot.length && !sheep.length) return false // nothing to evaluate
     const one = idiot.length
     const two = (one ? sheep : idiot).length ? !one : undefined
-    await loadCard('#wrapper-1', one, one ? idiot : sheep)
+    await loadCard(wrapper1, one)
+    singleDetails(wrapper1, null, one ? idiot : sheep)
+    open(wrapper1)
     if (two !== undefined) {
-      await loadCard('#wrapper-2', two, two ? idiot : sheep)
+      await loadCard(wrapper2, two)
+      singleDetails(wrapper2, null, two ? idiot : sheep)
+      open(wrapper2)
       showWrapperTwo()
     } else
       hideWrapperTwo()
@@ -282,7 +288,11 @@ function getTopics(detail) {
 function getArgumentsForTopic(detail, topicId, idiot) {
   const topic = detail.querySelector(`a[id="${topicId}"]`)
   const args = topic ? topic.dataset[idiot ? 'idiot' : 'sheep'].split(' ') : []
-  return args.map(argId => detail.querySelector(`a[id="${argId}"] h2`).innerHTML).join('\n')
+  return args.map(argId => {
+    const arg = detail.querySelector(`a[id="${argId}"] h2`)
+    if (!arg) console.log(`no arg for id ${argId}`)
+    return arg ? arg.innerHTML : ''
+  }).join('\n')
 }
 
 /**
@@ -295,7 +305,6 @@ async function addSources(detail) {
   sources.innerHTML =  await fetchSilent('sources.html')
   Array.from(detail.querySelectorAll('a[id]')).forEach(a => {
     const links = sources.querySelectorAll(`a.${a.id}`)
-    const counter = Array.from(sources.querySelectorAll(`q.${a.id}`)).map(q => q.innerText)
     links.forEach(link => link.target = '_blank')
     if (links.length > 0) {
       const q = elementWithKids('q', [
@@ -344,18 +353,24 @@ function addNavigationToCard(wrapper) {
  * @param {string} topicId id of topic to save as navigation id
  * @param {string[]} ids list of ids to include in the navigation
  * @param {string} selected the id to select
- * @param {boolean} permalink if to show a permalink
+ * @param {boolean} bingo if to show a permalink and counter navigation
  */
-function setNavigation(wrapper, topicId, ids, selected, permalink) {
+function setNavigation(wrapper, topicId, ids, selected, bingo) {
   const content = wrapper.querySelector('.content')
   const navigation = elementWithKids('p', ids.flatMap(id => {
     const idtag = elementWithKids('span', id)
-    idtag.onclick = () => singleDetails(wrapper, topicId, ids, id, permalink)
+    idtag.onclick = () => singleDetails(wrapper, topicId, ids, id, bingo)
     if (id == selected) idtag.classList.add('selected')
     return ['\u00ad', idtag]
   }))
-  navigation.id = topicId
+  navigation.id = topicId ? topicId : 'nav'
   navigation.classList.add('navigation')
+  if (bingo && topicId) {
+    const countertag = elementWithKids('span', '►')
+    countertag.classList.add('counter')
+    countertag.onclick = event => showCounterArguments(event)
+    navigation.appendChild(countertag)
+  }
   content.replaceChild(navigation, content.querySelector('.navigation'))
 }
 
@@ -368,6 +383,7 @@ function setNavigation(wrapper, topicId, ids, selected, permalink) {
  * @param {boolean} permalink if to show a permalink
  */
 function singleDetails(wrapper, topicId, ids, selected = undefined, permalink = true) {
+  if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
   selected = selected || ids[0]
   setNavigation(wrapper, topicId, ids, selected, permalink)
   const detail = wrapper.querySelector('.detail')

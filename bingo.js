@@ -20,10 +20,10 @@ async function play(one, two) {
  *
  * @param {HTMLElement|string} wrapper wrapper element to load the card into
  * @param {boolean} idiot load idiot content if true, otherwise sheep content
- * @param {string[]} show list of ids to show instead of initializing a game
+ * @param {flip} flip flip the game card open
  * @param {boolean} update true if to update the card with a different locale
  */
-async function loadCard(wrapper, idiot, show, update) {
+async function loadCard(wrapper, idiot, update = false) {
   if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
   wrapper.querySelector('.content').innerHTML = await getLocalizedContent(idiot)
   wrapper.querySelector('.detail').onclick = event => handleClick(event)
@@ -37,12 +37,6 @@ async function loadCard(wrapper, idiot, show, update) {
   applyExclusions(wrapper)
   addCheckboxes(wrapper)
   addNavigationToCard(wrapper)
-  if (show) {
-    if (show.length > 1 || show[0].length > 1) singleDetails(wrapper, 'nav', show)
-    open(wrapper)
-    setPermalink(wrapper, show)
-  } else
-    setPermalink(wrapper, [idiot? 'I' : 'S'])
   const topics = getTopics(wrapper)
   await (update ? updateCard : prepareCard)(wrapper, topics, idiot)
   prepareCardTitle(wrapper)
@@ -115,7 +109,7 @@ async function update(wrapper, idiot, locale) {
   const nav = wrapper.querySelector('.navigation')
   const ids = Array.from(nav.querySelectorAll('span')).map(span => span.innerHTML)
   const id = nav.querySelector('span.selected').innerHTML 
-  await loadCard(wrapper, idiot, null, true)
+  await loadCard(wrapper, idiot, true)
   if (ids.length) singleDetails(wrapper, nav.id, ids, id)
   wrapper.querySelector('.location').value = `${lang}-${terr}`
   document.querySelector('.location').value = `${lang}-${terr}`
@@ -200,19 +194,23 @@ function closeDetails(wrapper, flip = false) {
 
 /**
  * open other wrapper showing the counter arguments to current topic
- * @param {HTMLElement} wrapper the card wrapper to show the counter arguments for
+ * @param {Event} event - the triggering event to show counter arguments
  */
-function showCounterArguments(wrapper) {
+async function showCounterArguments(event) {
+  const wrapper = event.target.closest('.card-wrapper')
   const nav = wrapper.querySelector('.navigation')
-  const counterIds = nav.dataset.counter
-  const idiot = counterIds[0].startsWith('I')
+  const idiot = !wrapper.classList.contains('idiot')
   const type = idiot ? 'idiot' : 'sheep'
   const otherWrapper = document.querySelector(`.card-wrapper.${type}`) || document.querySelector('.card-wrapper.hidden')
   if (otherWrapper) {
     if (otherWrapper.classList.contains('hidden')) {
       showWrapperTwo()
-      loadCard('#wrapper-2', idiot, counterIds)
-    } else {
+      await loadCard('#wrapper-2', idiot)
+    }
+
+    if (otherWrapper.classList.contains(type)) {
+      const topic = otherWrapper.querySelector(`a[id="${nav.id}"]`)
+      const counterIds = topic ? topic.dataset[type].split(' ') : []
       singleDetails(otherWrapper, nav.id, counterIds)
       open(otherWrapper)
     }
@@ -256,7 +254,7 @@ function toggleDetails(wrapper, event, ids) {
     closeDetails(wrapper)
     wrapper.querySelector(`a[id=${ids[0]}]`).scrollIntoView()
   } else
-    singleDetails(wrapper, 'nav', ids)
+    singleDetails(wrapper, null, ids)
 }
 
 /**

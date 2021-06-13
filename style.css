@@ -398,11 +398,11 @@ div.bingo, .detail, .card {
   display: inline-block;
 }
 
-.idiot .detail a[id] span, .idiot .navigation span {
+.idiot .detail a[id] span, .idiot .navigation span, .sheep .navigation span.counter {
   background: #f72d5d;
 }
 
-.sheep .detail a[id] span, .sheep .navigation span {
+.sheep .detail a[id] span, .sheep .navigation span, .idiot .navigation span.counter {
   background: #2d60f6;
 }
 

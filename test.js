@@ -204,7 +204,7 @@ async function testUpdate(wrapper, idiot, locale) {
   const ids = Array.from(nav.querySelectorAll('span')).map(span => span.innerHTML)
   const id = nav.querySelector('span.selected').innerHTML 
   await loadTestCard(wrapper, idiot, size, 0, true)
-  if (ids.length) singleDetails(wrapper, nav.id, ids, id)
+  if (ids.length) singleDetails(wrapper, nav.id, ids, id, false)
   wrapper.querySelector('.location').value = `${lang}-${terr}`
   document.querySelector('.location').value = `${lang}-${terr}`
 }

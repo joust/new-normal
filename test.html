@@ -17,11 +17,11 @@
       idiot.innerHTML = await fetchSilentNoSpinner('de/idiot.html')
       const sheep = elementWithKids('div')
       sheep.innerHTML = await fetchSilentNoSpinner('de/sheep.html')
-      const tops = Array.from(topics.querySelectorAll('q')).map(q => ({
-        id: q.id,
-        idiot: q.dataset.idiot.split(' '),
-        sheep: q.dataset.sheep.split(' '),
-        label: q.innerHTML
+      const tops = Array.from(topics.querySelectorAll('a')).map(a => ({
+        id: a.id,
+        idiot: a.dataset.idiot.split(' '),
+        sheep: a.dataset.sheep.split(' '),
+        label: a.innerHTML
       }))
       const iargs = Array.from(idiot.querySelectorAll('a')).map(a => ({
         id: a.id,

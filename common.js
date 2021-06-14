@@ -210,7 +210,7 @@ function search(event) {
   const input = event.target.value.toLowerCase()
   const args = Array.from(wrapper.querySelectorAll('a[id]'))
   args.forEach(a => a.classList.remove('not-matching'))
-  const notMatching = input.length ? args.filter(a => !a.textContent.replace(/\u00ad/gi, '').toLowerCase().includes(input) && !a.nextElementSibling.textContent.replace(/\u00ad/gi, '').toLowerCase().includes(input)) : []
+  const notMatching = input.length ? args.filter(a => !a.textContent.replace(/\u00ad/gi, '').toLowerCase().includes(input) && (!a.nextElementSibling || !a.nextElementSibling.textContent.replace(/\u00ad/gi, '').toLowerCase().includes(input))) : []
   notMatching.forEach(a => a.classList.add('not-matching'))  
 }
 

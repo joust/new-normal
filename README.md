@@ -55,9 +55,9 @@ All internationalized argu&shy;ments are stored in HTML format in language- and 
 
 <h2>Topics</h2>
 <p>
-Arguments and topics are linked to each other. This can also be supplemented by local arguments and topics. The base links can be found in the top-level file <code>topics.html</code>, additions are in the respective topics.html within the localized folders. The entries each represent a topic in the following format
-
-<li><code>&lt;a id="T&lt;n&gt;" data-idiot="&lt;idiot argument ids&gt;" data-sheep="&lt;sheep argument ids&gt;" &lt;/a&gt;</code></li>
+Arguments and topics are linked to each other. This can also be supplemented by local arguments and topics. The base links can be found in the top-level file <code>topics.html</code>, additions are in the respective <code>topics.html</code> within the localized folders. The entries each represent a topic in the following format
+</p>
+<li><code>&lt;a id="T&lt;n&gt;" data-idiot="&lt;idiot argument ids&gt;" data-sheep="&lt;sheep argument ids&gt;&lt;/a&gt;</code></li>
 
 <h2>Sources</h2>
 <p>

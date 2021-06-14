@@ -7,6 +7,8 @@ This browser app is a playground build around a huge collection of arguments use
   <li>A <b>Buzzword BINGO game</b>, played with arguments used in a discussion. Use it to have more fun in either your own discussions on the topic or that of others.</li>
 </ul>
 </p><p>
+Aside from making sound fun of an imaginary either/or division that many people think is real these days, this little app has big things in store: It wants to build bridges, create awareness and knowledge. It is for people who really want to deal with the arguments of the other side of the discourse. It wants to make sure that people approach each other again. It wants to be a valuable source and enable an open and well-founded exchange about this ubiquitous topic.
+</p><p>
 Technically its a plain HTML/CSS/ES6 PWA app. The app is inter&shy;nationa&shy;lized and localized and contains a common core of universal, language inde&shy;pen&shy;dent argu&shy;ments and sets of argu&shy;ments only used and under&shy;stood locally.
 </p>
 <h1>Content</h1>
@@ -20,7 +22,7 @@ All internationalized application content is stored in HTML format in language-d
 <li><code>&lt;language code&gt;/gameplay.html</code>: gameplay instructions</li>
 <li><code>&lt;language code&gt;/install.html</code>: PWA installation instructions</li>
 <li><code>&lt;language code&gt;/support.html</code>: Support instructions</li>
-<li><code>&lt;language code&gt;/test.html</code>: the test categories and questions</li>
+<li><code>&lt;language code&gt;/topics.html</code>: the local topics</li>
 <li><code>&lt;language code&gt;/result.html</code>: the test result template</li>
 <li><code>&lt;language code&gt;/credits.html</code>: the credits</li>
 <li><code>&lt;language code&gt;/attitude.html</code>: the attitude (see next chapter)</li>
@@ -51,18 +53,19 @@ All internationalized argu&shy;ments are stored in HTML format in language- and 
   &lt;p&gt;They say&lt;i&gt; in all seriousness&lt;/i&gt; that ...&lt;/p&gt;
 </code>
 
-<h2>Sources and Counter Arguments</h2>
+<h2>Topics</h2>
+<p>
+Arguments and topics are linked to each other. This can also be supplemented by local arguments and topics. The base links can be found in the top-level file <code>topics.html</code>, additions are in the respective topics.html within the localized folders. The entries each represent a topic in the following format
+
+<li><code>&lt;a id="T&lt;n&gt;" data-idiot="&lt;idiot argument ids&gt;" data-sheep="&lt;sheep argument ids&gt;" &lt;/a&gt;</code></li>
+
+<h2>Sources</h2>
 <p>
 The Sources for all Arguments are stored language-mixed in the top-level file <code>sources.html</code>, together with the cross references to counter arguments.  
 </p>
 <p>A source is represented by an anchor with language, reference to the argument, the link url and the link text as text:</p>
 <ul>
 <li><code>&lt;a lang="en" class="I99" href="https://...."&gt;link text&lt;/a&gt;</code></li>
-</ul>
-<p>A reference to a counter argument is represented by a quote with reference to the argument, containing the id of the counter argument as text:</p>
-<ul>
-<li><code>&lt;q class="counter I99"&gt;S77&lt;/q&gt;</code></li>
-</ul>
 
 <h1>Technical</h1>
 
@@ -104,7 +107,7 @@ In front of every topic title in the list you find a checkbox to toggle it's exc
 </p>
 
 <h1>Permalinks</h1>
-<p>The app allows to deep link directy to arguments, e.g. to transmit them to others. This can be achieved just by specifying either the topic id or the argument ids in the url's hash. Some examples:</p>
+<p>The app allows to deep link directy to arguments or topics, e.g. to transmit them to others. This can be achieved just by specifying either the topic id or the argument ids in the url's hash. Some examples:</p>
 <ul>
 <li><code>https://new-normal.app#I17</code>: Show <b>idiot</b> argument with id <code>I17</code></li>
 <li><code>https://new-normal.app#S69</code>: Show <b>sheep</b> argument with id <code>S69</code></li>
@@ -126,9 +129,7 @@ The following is in development or planned:
 </ul>
 <h1>Support</h1>
 <p>
-Aside from making sound fun of the either/or division that many people think is real these days, this little app has big things in store: It wants to build bridges, create awareness and knowledge. It is for people who really want to deal with the arguments of the other side of the discourse. It wants to make sure that people approach each other again. It wants to be a valuable source and enable an open and well-founded exchange.
-</p><p>
-The contents of this app - like our reality - are in con&shy;stant flux. New argu&shy;ments are added regu&shy;larly and others become irrele&shy;vant. In addition, there are argu&shy;ments that are used worldwide (the common core) and argu&shy;ments only used and under&shy;stood locally. For keeping this up to date, your support is very welcome!
+The contents of this app - like our reality - are in con&shy;stant flux. New argu&shy;ments and topics are added regu&shy;larly and others become irrele&shy;vant. In addition, there are argu&shy;ments that are used worldwide (the common core) and argu&shy;ments only used and under&shy;stood locally. For keeping this up to date, your support is very welcome!
 </p>
 <h2>How can I support?</h2>
 

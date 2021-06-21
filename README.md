@@ -60,7 +60,7 @@ Arguments and topics are linked to each other. This can also be supplemented by 
 
 <h2>Sources</h2>
 <p>
-The Sources for all Arguments are stored language-mixed in the top-level file <code>sources.html</code>, together with the cross references to counter arguments. 
+The Sources for all Arguments are stored language-mixed in the top-level file <code>sources.html</code>. 
 </p>
 <p>A source is represented by an anchor with language, reference to the argument, the link url and the link text as text:</p>
 <ul>

@@ -210,7 +210,7 @@ async function testUpdate(wrapper, idiot, locale) {
 }
 
 /**
- * clear test choices in wrapper1 table
+ * clear test choices
  */
 function clearTest() {
   document.querySelectorAll('.card td').forEach(node => node.classList.remove('set', 'idiot', 'sheep'))

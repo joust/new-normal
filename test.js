@@ -290,7 +290,8 @@ async function loadTestResult() {
     row.childNodes[2].innerHTML = `${Math.round(info.count * 100 / stats.cycles)} %`
     row.childNodes[3].innerHTML = info.count >= stats.cycles/2 ? attributes : ''
     
-    result.querySelector(`.result .${type} .attribute`).innerHTML = info.attributes.length ? info.attributes[0][0] : ''
+    if (info.attributes.length)
+      result.querySelector(`.result .${type} .attribute`).innerHTML = info.attributes[0][0]
   }
   
   result.querySelector('.result .idiot').classList.toggle('hidden', 

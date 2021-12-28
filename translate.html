@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <title>New Normal - Deepl Translate arguments</title>
+  </head>
+  <body>
+    <button id="set" onclick="select()">Set project dir</button>
+    <button class="run" disabled onclick="run('da')">Run 'da' translation</button>
+    <button class="run" disabled onclick="run('en')">Run 'en' translation</button>
+    <button class="run" disabled onclick="run('es')">Run 'es' translation</button>
+    <button class="run" disabled onclick="run('pl')">Run 'pl' translation</button>
+    <button class="run" disabled onclick="run('da,en,es,pl')">Run all translations</button>
+    <div id="message"></div>
+    <script>
+      let dir = undefined
+      let content = {} 
+      const AUTH_KEY = '94782350-df74-3532-f47a-35e2058e2fcc:fx'
+
+      async function fetchJson(url) {
+        return fetch(url).then(async response => response.status >= 400 && response.status < 600 ? '' : await response.json()).catch(error => {})  
+      }
+
+      async function translate(text, targetLang) {
+        const result = await fetchJson(`https://api-free.deepl.com/v2/translate?auth_key=${AUTH_KEY}&text=${encodeURIComponent(text)}&target_lang=${targetLang.toUpperCase()}`)
+        return result.translations[0].text
+      }
+      
+      function log(msg = '') {
+        document.getElementById('message').innerHTML += msg + '<br>'
+      }
+
+      async function translateA(node, lang) {
+        node.firstChild.innerHTML = await translate(node.firstChild.innerHTML, lang)
+        return node
+      }
+      async function translateP(node, lang) {
+        const defaults = {
+          da: { s: 'De siger', q: 'De spørger', i: ' med al alvor' },
+          en: { s: 'They say', q: 'They ask', i: ' in all seriousness' },
+          es: { s: 'Dicen', q: 'Preguntan', i: ' con toda seriedad' },
+          pl: { s: 'Twierdzą', q: 'Pytają', i: ' z całą powagą' }
+        }
+        node.childNodes[0].nodeValue = defaults[lang][node.innerHTML.startsWith('Die sagen') ? 's' : 'q']
+        node.childNodes[1].innerHTML = defaults[lang].i
+        const p = await translate(node.childNodes[2].nodeValue, lang)
+        node.childNodes[2].nodeValue = p.startsWith(' ') || p.startsWith(',') ? p : ' '+p
+        return node
+      }
+      
+      async function update(src, target) {
+        let argstotranslate = src.args.filter(arg => !target.args.find(targ => targ.a.id === arg.a.id))
+        argstotranslate = [argstotranslate[0]] // check
+        let last = target.args[target.args.length-1].p
+        for (const arg of argstotranslate) {
+          log(`translating arg ${arg.a.id} to ${target.lang}`)
+          const a = await translateA(arg.a.cloneNode(true), target.lang)
+          const p = await translateP(arg.p.cloneNode(true), target.lang)
+          last.after(a)
+          a.after(p)
+          last.after('\n')
+          a.after('\n')
+          last = p
+        }
+      }
+      
+      async function updateLang(lang) {
+        await update(content.de.idiot, content[lang].idiot)
+        await update(content.de.sheep, content[lang].sheep)
+        const newi = content[lang].idiot.div.innerHTML.replace(/\xad/g, '&shy;')
+        const news = content[lang].sheep.div.innerHTML.replace(/\xad/g, '&shy;')
+        await save(content[lang].idiot.handle, newi)
+        await save(content[lang].sheep.handle, news)
+      }
+      
+      async function loadAndParse(dir, name, lang) {
+        const handle = await dir.getFileHandle(name)
+        const content = await load(handle)
+        const div = document.createElement('div')
+        div.innerHTML = content
+        const ps = Array.from(div.querySelectorAll('a + p'))
+        const args = ps.map(p => ({ a: p.previousElementSibling, p }))
+        return { handle, div, args, lang } 
+      }
+      
+      async function check(lang) {
+        const dir = await project.getDirectoryHandle(lang)
+        const idiot = await loadAndParse(dir, 'idiot.html', lang)
+        const sheep = await loadAndParse(dir, 'sheep.html', lang)
+        log(`${lang}/idiot.html: found ${idiot.args.length} arguments descriptions`)
+        log(`${lang}/sheep.html: found ${sheep.args.length} arguments descriptions`)
+        return { idiot, sheep }
+      }
+      
+      async function select() {
+        project = await window.showDirectoryPicker()
+        for (const lang of ['de', 'da', 'en', 'es', 'pl']) content[lang] = await check(lang)
+        document.querySelectorAll('.run').forEach(node => node.disabled = false)
+      }
+      
+      async function run(langs) {
+        langs.split(',').forEach(lang => updateLang(lang))
+      }
+      
+      async function verifyPermission(handle, rw) {
+        const options = {}
+        if (rw) options.mode = 'readwrite'
+        if ((await handle.queryPermission(options)) === 'granted') return true
+        if ((await handle.requestPermission(options)) === 'granted') return true
+        return false
+      }
+      
+      async function load(handle) {
+        if (await verifyPermission(handle)) {
+          const file = await handle.getFile()
+          return await file.text()
+        } else
+          return null
+      }
+      
+      async function save(handle, contents) {
+        if (await verifyPermission(handle, true)) {
+          log(`saving ${contents.length} bytes to '${handle.name}'`)
+          const writable = await handle.createWritable()
+          await writable.write(contents)
+          await writable.close()
+        } else 
+          log(`no permission to write to file '${handle.name}'`)
+
+      }
+    </script>
+  </body>
+</html>

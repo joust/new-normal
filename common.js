@@ -18,7 +18,7 @@ function load(locale) {
   FastClick.attach(document.body)
   loadAttitude()
   if (locale) [lang, terr] = locale.split('-'); else [lang, terr] = browserLocale()
-  if (!['de', 'da', 'en', 'es', 'pl'].includes(lang)) [lang, terr] = ['en', 'us']
+  if (!['de', 'da', 'en', 'es', 'pl', 'it'].includes(lang)) [lang, terr] = ['en', 'us']
   document.querySelector('.location').value = `${lang}-${terr}`
 
   if (!window.location.hash || !displayHash(window.location.hash.substring(1)))
@@ -92,13 +92,15 @@ async function getLocalizedContent(idiot) {
   let local = await fetchSilent(terr + (idiot ? '/idiot-local.html' : '/sheep-local.html'))
   if (!local.length)
     local = await fetchSilent(lang + (idiot ? '/idiot-local.html' : '/sheep-local.html'))
-  return content + local + (await getLocalizedTopics())
+  return content + local + (await getLocalizedTopics(content + local, idiot))
 }
 
 /**
  * get topics data with localized topics, arguments, titles and labels
  */
-async function getLocalizedTopics() {
+async function getLocalizedTopics(localizedArgs, idiot) {
+  const args = elementWithKids('div')
+  args.innerHTML = localizedArgs
   const topics = elementWithKids('div')
   const localTopics = elementWithKids('div')
   topics.innerHTML = await fetchSilent('topics.html')
@@ -109,6 +111,13 @@ async function getLocalizedTopics() {
       la.dataset.idiot = a.dataset.idiot + (la.dataset.idiot ? ` ${la.dataset.idiot}` : '')
       la.dataset.sheep = a.dataset.sheep + (la.dataset.sheep ? ` ${la.dataset.sheep}` : '')
     }
+    const ul = elementWithKids('ul')
+    const targs = idiot ? la.dataset.idiot : la.dataset.sheep
+    for (const targ of targs.split(' ')) if (targ.length) {
+      const title = args.querySelector(`#${targ}`)
+      title && ul.appendChild(elementWithKids('li', elementWithKids('a', [elementWithKids('span', targ), title.innerText], { href: `#${targ}`})))
+    }
+    la.after(ul)
   })
   return localTopics.innerHTML
 }
@@ -448,15 +457,17 @@ function browserLocale() {
 }
 
 /**
- * create a DOM Element, optionally with children.
+ * create a DOM Element, optionally with children and attributes.
  * Any string given as kids will be converted in a HTML text node
  *
  * @param {string} tag - tag name for the element to create
  * @param {(string|HTMLElement)|(string|HTMLElement)[]} kids - a element or string, or an array of elements or strings
+ * @param {Object} attrs - optional attributes to set
  * @return {HTMLElement} The created element
  */
-function elementWithKids(tag, kids) {
+function elementWithKids(tag, kids, attrs = undefined) {
   const node = document.createElement(tag)
+  if (attrs) for (attr in attrs) node.setAttribute(attr, attrs[attr])
   if (kids) {
     if (!(kids instanceof Array)) kids = [kids]
     kids.forEach(kid => {

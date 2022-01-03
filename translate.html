@@ -10,12 +10,16 @@
     <button class="run" disabled onclick="run('en')">Run 'en' translation</button>
     <button class="run" disabled onclick="run('es')">Run 'es' translation</button>
     <button class="run" disabled onclick="run('pl')">Run 'pl' translation</button>
-    <button class="run" disabled onclick="run('da,en,es,pl')">Run all translations</button>
+    <button class="run" disabled onclick="run('it')">Run 'it' translation</button>
+    <button class="run" disabled onclick="run('fr')">Run 'fr' translation</button>
+    <button class="run" disabled onclick="run('da,en,es,pl,it,fr')">Run all translations</button>
     <div id="message"></div>
+    <script src="keys.js"></script>
     <script>
       let dir = undefined
       let content = {} 
-      const AUTH_KEY = '94782350-df74-3532-f47a-35e2058e2fcc:fx'
+      const AUTH_KEY = AUTH_KEYS[0]
+      const LIMIT = 220
 
       async function fetchJson(url) {
         return fetch(url).then(async response => response.status >= 400 && response.status < 600 ? '' : await response.json()).catch(error => {})  
@@ -39,7 +43,9 @@
           da: { s: 'De siger', q: 'De spørger', i: ' med al alvor' },
           en: { s: 'They say', q: 'They ask', i: ' in all seriousness' },
           es: { s: 'Dicen', q: 'Preguntan', i: ' con toda seriedad' },
-          pl: { s: 'Twierdzą', q: 'Pytają', i: ' z całą powagą' }
+          pl: { s: 'Twierdzą', q: 'Pytają', i: ' z całą powagą' },
+          it: { s: 'Dicono', q: 'Chiedono', i: ' in tutta serietà' },
+          fr: { s: 'Ils disent', q: 'Ils demandent', i: ' sérieusement' }
         }
         node.childNodes[0].nodeValue = defaults[lang][node.innerHTML.startsWith('Die sagen') ? 's' : 'q']
         node.childNodes[1].innerHTML = defaults[lang].i
@@ -49,8 +55,7 @@
       }
       
       async function update(src, target) {
-        let argstotranslate = src.args.filter(arg => !target.args.find(targ => targ.a.id === arg.a.id))
-        argstotranslate = [argstotranslate[0]] // check
+        const argstotranslate = src.args.filter(arg => !target.args.find(targ => targ.a.id === arg.a.id)).slice(0, LIMIT)
         let last = target.args[target.args.length-1].p
         for (const arg of argstotranslate) {
           log(`translating arg ${arg.a.id} to ${target.lang}`)
@@ -65,16 +70,16 @@
       }
       
       async function updateLang(lang) {
+        const shyfix = s => s.replace(/\xad/g, '&shy;')
         await update(content.de.idiot, content[lang].idiot)
         await update(content.de.sheep, content[lang].sheep)
-        const newi = content[lang].idiot.div.innerHTML.replace(/\xad/g, '&shy;')
-        const news = content[lang].sheep.div.innerHTML.replace(/\xad/g, '&shy;')
-        await save(content[lang].idiot.handle, newi)
-        await save(content[lang].sheep.handle, news)
+        await save(content[lang].idiot.handle, shyfix(content[lang].idiot.div.innerHTML))
+        await save(content[lang].sheep.handle, shyfix(content[lang].sheep.div.innerHTML))
       }
       
       async function loadAndParse(dir, name, lang) {
         const handle = await dir.getFileHandle(name)
+        verifyPermission(handle, true) // to later write to same file w/o another user request
         const content = await load(handle)
         const div = document.createElement('div')
         div.innerHTML = content
@@ -94,7 +99,7 @@
       
       async function select() {
         project = await window.showDirectoryPicker()
-        for (const lang of ['de', 'da', 'en', 'es', 'pl']) content[lang] = await check(lang)
+        for (const lang of ['de', 'da', 'en', 'es', 'pl', 'it', 'fr']) content[lang] = await check(lang)
         document.querySelectorAll('.run').forEach(node => node.disabled = false)
       }
       

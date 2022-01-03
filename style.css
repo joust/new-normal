@@ -364,6 +364,7 @@ div.bingo, .detail, .card {
 
 .detail.single a[id], 
 .detail.single a[id] + p, 
+.detail.single a[id] + ul, 
 .detail.single a[id] span,
 .detail.single .search,
 .detail.single input[type="checkbox"],
@@ -389,7 +390,16 @@ div.bingo, .detail, .card {
   display: block;
 }
 
-.detail a[id] span, .detail p span {
+.detail ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.detail ul li span {
+  margin-right: 0.5em;
+}
+
+.detail a[id] span, .detail li span, .detail p span {
   color: #fff;
   padding: 0.5vmax;
   user-select: none;
@@ -398,11 +408,11 @@ div.bingo, .detail, .card {
   display: inline-block;
 }
 
-.idiot .detail a[id] span, .idiot .navigation span, .sheep .navigation span.counter {
+.idiot .detail a[id] span, .idiot .detail li span, .idiot .navigation span, .sheep .navigation span.counter {
   background: #f72d5d;
 }
 
-.sheep .detail a[id] span, .sheep .navigation span, .idiot .navigation span.counter {
+.sheep .detail a[id] span, .sheep .detail li   span, .sheep .navigation span, .idiot .navigation span.counter {
   background: #2d60f6;
 }
 

@@ -18,7 +18,7 @@ function load(locale) {
   FastClick.attach(document.body)
   loadAttitude()
   if (locale) [lang, terr] = locale.split('-'); else [lang, terr] = browserLocale()
-  if (!['de', 'da', 'en', 'es', 'pl', 'it'].includes(lang)) [lang, terr] = ['en', 'us']
+  if (!['de', 'da', 'en', 'es', 'pl', 'it', 'pt'].includes(lang)) [lang, terr] = ['en', 'us']
   document.querySelector('.location').value = `${lang}-${terr}`
 
   if (!window.location.hash || !displayHash(window.location.hash.substring(1)))

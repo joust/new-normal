@@ -12,14 +12,15 @@
     <button class="run" disabled onclick="run('pl')">Run 'pl' translation</button>
     <button class="run" disabled onclick="run('it')">Run 'it' translation</button>
     <button class="run" disabled onclick="run('fr')">Run 'fr' translation</button>
-    <button class="run" disabled onclick="run('da,en,es,pl,it,fr')">Run all translations</button>
+    <button class="run" disabled onclick="run('pt')">Run 'pt' translation</button>
+    <button class="run" disabled onclick="run('da,en,es,pl,it,fr,pt')">Run all translations</button>
     <div id="message"></div>
     <script src="keys.js"></script>
     <script>
       let dir = undefined
       let content = {} 
       const AUTH_KEY = AUTH_KEYS[0]
-      const LIMIT = 220
+      const LIMIT = 0
 
       async function fetchJson(url) {
         return fetch(url).then(async response => response.status >= 400 && response.status < 600 ? '' : await response.json()).catch(error => {})  
@@ -34,18 +35,26 @@
         document.getElementById('message').innerHTML += msg + '<br>'
       }
 
-      async function translateA(node, lang) {
+      async function translateTopicA(node, lang) {
+        node.firstChild.innerHTML = await translate(node.firstChild.innerHTML, lang)
+        Object.keys(node.dataset).forEach(key => delete someElement.dataset[key])
+        for (const attr of ['idiotLabel', 'sheepLabel', 'idiotTitle', 'sheepTitle'])
+          node.dataset[attr] = await translate(node.dataset[attr], lang)
+        return node
+      }
+      async function translateArgumentA(node, lang) {
         node.firstChild.innerHTML = await translate(node.firstChild.innerHTML, lang)
         return node
       }
-      async function translateP(node, lang) {
+      async function translateArgumentP(node, lang) {
         const defaults = {
           da: { s: 'De siger', q: 'De spørger', i: ' med al alvor' },
           en: { s: 'They say', q: 'They ask', i: ' in all seriousness' },
           es: { s: 'Dicen', q: 'Preguntan', i: ' con toda seriedad' },
           pl: { s: 'Twierdzą', q: 'Pytają', i: ' z całą powagą' },
           it: { s: 'Dicono', q: 'Chiedono', i: ' in tutta serietà' },
-          fr: { s: 'Ils disent', q: 'Ils demandent', i: ' sérieusement' }
+          fr: { s: 'Ils disent', q: 'Ils demandent', i: ' sérieusement' },
+          pt: { s: 'Sizem', q: 'Pergunta', i: ' seriamente' }
         }
         node.childNodes[0].nodeValue = defaults[lang][node.innerHTML.startsWith('Die sagen') ? 's' : 'q']
         node.childNodes[1].innerHTML = defaults[lang].i
@@ -54,13 +63,13 @@
         return node
       }
       
-      async function update(src, target) {
+      async function updateArguments(src, target) {
         const argstotranslate = src.args.filter(arg => !target.args.find(targ => targ.a.id === arg.a.id)).slice(0, LIMIT)
-        let last = target.args[target.args.length-1].p
+        let last = target.args.length > 0 ? target.args[target.args.length-1].p : target.div.querySelector('h1')
         for (const arg of argstotranslate) {
           log(`translating arg ${arg.a.id} to ${target.lang}`)
-          const a = await translateA(arg.a.cloneNode(true), target.lang)
-          const p = await translateP(arg.p.cloneNode(true), target.lang)
+          const a = await translateArgumentA(arg.a.cloneNode(true), target.lang)
+          const p = await translateArgumentP(arg.p.cloneNode(true), target.lang)
           last.after(a)
           a.after(p)
           last.after('\n')
@@ -69,15 +78,29 @@
         }
       }
       
-      async function updateLang(lang) {
-        const shyfix = s => s.replace(/\xad/g, '&shy;')
-        await update(content.de.idiot, content[lang].idiot)
-        await update(content.de.sheep, content[lang].sheep)
-        await save(content[lang].idiot.handle, shyfix(content[lang].idiot.div.innerHTML))
-        await save(content[lang].sheep.handle, shyfix(content[lang].sheep.div.innerHTML))
+      async function updateTopics(src, target) {
+        const topstotranslate = src.tops.filter(top => !target.tops.find(ttop => ttop.id === top.id))
+        let last = target.tops.length > 0 ? target.tops[target.tops.length-1] : target.div.querySelector('p')
+        for (const top of topstotranslate) {
+          log(`translating top ${top.id} to ${target.lang}`)
+          const a = await translateTopicA(top.cloneNode(true), target.lang)
+          last.after(a)
+          last.after('\n')
+          last = a
+        }
       }
       
-      async function loadAndParse(dir, name, lang) {
+      async function updateLang(lang) {
+        const shyfix = s => s.replace(/\xad/g, '&shy;')
+        await updateArguments(content.de.idiot, content[lang].idiot)
+        await save(content[lang].idiot.handle, shyfix(content[lang].idiot.div.innerHTML))
+        await updateArguments(content.de.sheep, content[lang].sheep)
+        await save(content[lang].sheep.handle, shyfix(content[lang].sheep.div.innerHTML))
+        await updateTopics(content.de.topics, content[lang].topics)
+        await save(content[lang].topics.handle, shyfix(content[lang].topics.div.innerHTML))
+      }
+      
+      async function loadAndParseArguments(dir, name, lang) {
         const handle = await dir.getFileHandle(name)
         verifyPermission(handle, true) // to later write to same file w/o another user request
         const content = await load(handle)
@@ -88,18 +111,30 @@
         return { handle, div, args, lang } 
       }
       
+      async function loadAndParseTopics(dir, lang) {
+        const handle = await dir.getFileHandle('topics.html')
+        verifyPermission(handle, true) // to later write to same file w/o another user request
+        const content = await load(handle)
+        const div = document.createElement('div')
+        div.innerHTML = content
+        const tops = Array.from(div.querySelectorAll('a:not([id*=DE])'))
+        return { handle, div, tops, lang } 
+      }
+      
       async function check(lang) {
         const dir = await project.getDirectoryHandle(lang)
-        const idiot = await loadAndParse(dir, 'idiot.html', lang)
-        const sheep = await loadAndParse(dir, 'sheep.html', lang)
-        log(`${lang}/idiot.html: found ${idiot.args.length} arguments descriptions`)
-        log(`${lang}/sheep.html: found ${sheep.args.length} arguments descriptions`)
-        return { idiot, sheep }
+        const idiot = await loadAndParseArguments(dir, 'idiot.html', lang)
+        const sheep = await loadAndParseArguments(dir, 'sheep.html', lang)
+        const topics = await loadAndParseTopics(dir, lang)
+        log(`${lang}/idiot.html: found ${idiot.args.length} arguments`)
+        log(`${lang}/sheep.html: found ${sheep.args.length} arguments`)
+        log(`${lang}/topics.html: found ${topics.tops.length} topics`)
+        return { idiot, sheep, topics }
       }
       
       async function select() {
         project = await window.showDirectoryPicker()
-        for (const lang of ['de', 'da', 'en', 'es', 'pl', 'it', 'fr']) content[lang] = await check(lang)
+        for (const lang of ['de', 'da', 'en', 'es', 'pl', 'it', 'fr', 'pt']) content[lang] = await check(lang)
         document.querySelectorAll('.run').forEach(node => node.disabled = false)
       }
       

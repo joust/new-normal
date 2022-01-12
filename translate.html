@@ -36,9 +36,10 @@
       }
 
       async function translateTopicA(node, lang) {
+        const labels = ['idiotLabel', 'sheepLabel', 'idiotTitle', 'sheepTitle']
         node.firstChild.innerHTML = await translate(node.firstChild.innerHTML, lang)
-        Object.keys(node.dataset).forEach(key => delete someElement.dataset[key])
-        for (const attr of ['idiotLabel', 'sheepLabel', 'idiotTitle', 'sheepTitle'])
+        Object.keys(node.dataset).forEach(key => !labels.includes(key) && delete node.dataset[key])
+        for (const attr of labels)
           node.dataset[attr] = await translate(node.dataset[attr], lang)
         return node
       }

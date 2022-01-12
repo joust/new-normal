@@ -100,12 +100,14 @@
     }
 
     function addToTopic(topicId, id) {
+      const re = /\D/g
+      const nummerical = (a, b) => parseInt(a.replace(re, ''), 10)-parseInt(b.replace(re, ''), 10)
       const topic = topics.querySelector(`a[id="${topicId}"]`)
       const idiot = id.startsWith('I')
       const args = idiot ? topic.dataset.idiot : topic.dataset.sheep
       const set = args=='' ? new Set() : new Set(args.split(' '))
       set.add(id)
-      const newArgs = Array.from(set).sort().join(' ')
+      const newArgs = Array.from(set).sort(nummerical).join(' ')
       if (idiot) topic.dataset.idiot = newArgs; else topic.dataset.sheep = newArgs 
       tops = extractTopics()
       findUnusedArgs(tops)

@@ -10,7 +10,7 @@
     <script src="flipside.js" type="text/javascript"></script>
     <script src="common.js" type="text/javascript"></script>
     <script>
-    let topics, tops, iargs, sargs, argument // global for simplicity
+    let project, file, topics, tops, iargs, sargs, argument, log = console.log // global for simplicity
     function selectArgument(idiot, id) {
       argument = (idiot ? iargs : sargs).find(a => a.id===id)
       const title = `assign '${argument.id} ${argument.title}' to a topic`
@@ -53,8 +53,9 @@
     function assignToTopic(event, topic) {
       const wrapper = event.target.closest('.card-wrapper')
       addToTopic(topic.id, argument.id)
-      console.log('topics => clipboard!')
-      navigator.clipboard.writeText(topics.innerHTML)
+      console.log('saving topics!')
+      save(file, topics.innerHTML) 
+      // navigator.clipboard.writeText(topics.innerHTML)
       open(document.querySelector('#wrapper-1'))
       open(document.querySelector('#wrapper-2'))
     }
@@ -112,19 +113,47 @@
       tops = extractTopics()
       findUnusedArgs(tops)
     }
+      
+    async function verifyPermission(handle, rw) {
+      const options = {}
+      if (rw) options.mode = 'readwrite'
+      if ((await handle.queryPermission(options)) === 'granted') return true
+      if ((await handle.requestPermission(options)) === 'granted') return true
+      return false
+    }
+
+    async function load(handle) {
+      if (await verifyPermission(handle)) {
+        const file = await handle.getFile()
+        return await file.text()
+      } else
+        return null
+    }
+
+    async function save(handle, contents) {
+      if (await verifyPermission(handle, true)) {
+        log(`saving ${contents.length} bytes to '${handle.name}'`)
+        const writable = await handle.createWritable()
+        await writable.write(contents)
+        await writable.close()
+      } else 
+        log(`no permission to write to file '${handle.name}'`)
+    }
 
     async function runAssignTopics() {
+      document.body.onclick = undefined
+      project = await window.showDirectoryPicker()
+      file = await project.getFileHandle('topics.html')
+      verifyPermission(file, true) // to later write to same file w/o another user request
       topics = elementWithKids('div')
-      topics.innerHTML = await fetchSilentNoSpinner('topics.html')
+      topics.innerHTML = await load(file)
       tops = extractTopics(topics)
       findUnusedArgs(tops)
       await loadAssignCard('#wrapper-1', tops, true, 0, 7)
       await loadAssignCard('#wrapper-2', tops, false, 49, 6)
       open(document.querySelector('#wrapper-1'))
       open(document.querySelector('#wrapper-2'))
-    }
-      
-    runAssignTopics()
+    }      
     </script>
     <style>
       body {
@@ -215,7 +244,7 @@
     }
     </style>
   </head>
-  <body>
+  <body onclick="runAssignTopics()">
     <div id="game" class="flip-wrapper hidden">
       <div id="wrapper-1" class="flip card-wrapper">
         <div class="card flip-front">

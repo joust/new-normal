@@ -19,8 +19,8 @@
     <script>
       let dir = undefined
       let content = {} 
-      const AUTH_KEY = AUTH_KEYS[0]
-      const LIMIT = 0
+      const AUTH_KEY = AUTH_KEYS[1]
+      const LIMIT = 1000
 
       async function fetchJson(url) {
         return fetch(url).then(async response => response.status >= 400 && response.status < 600 ? '' : await response.json()).catch(error => {})  

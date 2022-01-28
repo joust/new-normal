@@ -365,3 +365,5 @@ https://www.redvoicemedia.com/2022/01/worldwide-exclusive-embalmers-find-veins-a
 S354 https://www.medinside.ch/de/post/studie-bestaetigt-impfung-schuetzt-risikopatienten-vor-schwerstem-corona-verlauf
 I414 https://vaccinedeaths.com/2022-01-25-alberta-deletes-data-56percent-covid-deaths-vaccinated.html
 I430 https://www.researchgate.net/publication/357994624_Innate_Immune_Suppression_by_SARS-CoV-2_mRNA_Vaccinations_The_role_of_G-quadruplexes_exosomes_and_microRNAs
+I171,I188 https://www.francesoir.fr/societe-sante/oxford-authors-british-clinical-trial-recovery-attempt-hide-deaths-overdose
+https://dailyexpose.uk/2022/01/28/dangerous-chemicals-and-nanotubes-in-test-swabs/

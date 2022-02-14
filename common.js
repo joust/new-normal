@@ -6,6 +6,8 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js')
 }
 
+const supported = ['de', 'da', 'en', 'es', 'pl', 'it', 'pt', 'fr']
+const locals = [ 'de/de', 'de/ch', 'de/at', 'en/us', 'es/gb', 'pt/br']
 const attitude = { hasty: false, curious: true, open: false, fair: false, correct: false, friendly: false, exclusions: '' }
 let lang, terr
 
@@ -18,7 +20,7 @@ function load(locale) {
   FastClick.attach(document.body)
   loadAttitude()
   if (locale) [lang, terr] = locale.split('-'); else [lang, terr] = browserLocale()
-  if (!['de', 'da', 'en', 'es', 'pl', 'it', 'pt', 'fr'].includes(lang)) [lang, terr] = ['en', 'us']
+  if (!supported.includes(lang)) [lang, terr] = ['en', 'us']
   document.querySelector('.location').value = `${lang}-${terr}`
 
   if (!window.location.hash || !displayHash(window.location.hash.substring(1)))
@@ -88,13 +90,44 @@ function stopPyro() {
  * @param {boolean} idiot whether to load the idiot or sheep arguments
  */
 async function getLocalizedContent(idiot) {
-  const content = await fetchSilent(lang + (idiot ? '/idiot.html' : '/sheep.html'))
-  let local = await fetchSilent(terr + (idiot ? '/idiot-local.html' : '/sheep-local.html'))
-  if (!local.length)
-    local = await fetchSilent(lang + (idiot ? '/idiot-local.html' : '/sheep-local.html'))
-  return content + local + (await getLocalizedTopics(content + local, idiot))
+  const file = idiot ? 'idiot.html' : 'sheep.html'
+  let content = await fetchSilent(`${lang}/${file}`)
+  setBaseContent(content, lang, idiot)
+  const local = `${lang}/${terr}`
+  if (locals.includes(local))
+    content = mergeContent(content, await fetchSilent(`${local}/${file}`))
+
+  return `<div class="tr">${content}</div>${(await getLocalizedTopics(content + local, idiot))}`
 }
 
+/**
+ * merge territory local content into language specific content
+ * replacing redefined arguments, adding unique local arguments
+ *
+ * @param {content} language specific argument content
+ * @param {local} territory local argument content
+ */
+function mergeContent(content, local) {
+  const args = elementWithKids('div'), largs = elementWithKids('div')
+  args.innerHTML = content
+  largs.innerHTML = local
+  const last = args.querySelector('p:last-of-type')
+  const h1 = largs.querySelector('h1')
+  Array.from(largs.querySelectorAll('a')).reverse().forEach(la => {
+    const a = args.querySelector(`a[id="${la.id}"]`)
+    if (a) {
+      args.replaceChild(la.nextElementSibling, a.nextElementSibling)
+      args.replaceChild(la, a)
+    } else {
+      last.after(la.nextElementSibling)
+      last.after(la)
+    }
+  })
+  if (h1) last.after(h1)
+  
+  return args.innerHTML
+}
+                           
 /**
  * get topics data with localized topics, arguments, titles and labels
  */
@@ -104,7 +137,7 @@ async function getLocalizedTopics(localizedArgs, idiot) {
   const topics = elementWithKids('div')
   const localTopics = elementWithKids('div')
   topics.innerHTML = await fetchSilent('topics.html')
-  localTopics.innerHTML = await fetchSilent(lang +'/topics.html')
+  localTopics.innerHTML = await fetchSilent(`${lang}/topics.html`)
   Array.from(localTopics.querySelectorAll('a')).forEach(la => {
     const a = topics.querySelector(`#${la.id}`)
     if (a) {
@@ -123,7 +156,7 @@ async function getLocalizedTopics(localizedArgs, idiot) {
 }
 
 function getNNYear() {
-  return Math.ceil((Date.now() - new Date(2020, 2, 1).getTime()) / (365*24*60*60*1000))
+  return Math.ceil((Date.now() - new Date(2020, 2, 20).getTime()) / (365*24*60*60*1000))
 }
 
 /**

@@ -154,8 +154,14 @@ function handleTestClick(event) {
       showSources(event, false)
       break;
     case 'a':
+      if (event.target.classList.contains('correct')) break
       showSources(event)
       break;
+    case 'i':
+    case 'p':
+    case 'h2':
+      if (event.target.hasAttribute('contenteditable')) break;
+      // fall thru
     default:
       markTestChoice(event)
       showSources(event, false)

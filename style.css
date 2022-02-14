@@ -527,7 +527,7 @@ div.bingo, .detail, .card {
   }
 }
 
-#stop, .reload, .permalink {
+#stop, .reload, .permalink, .correct {
   position: absolute;
   right: 0.2vmax;
   top: 0.2vmax;
@@ -542,11 +542,20 @@ div.bingo, .detail, .card {
   z-index: 1;
 }
 
+.correct {
+  left: 0.2vmax;
+  right: inherit;
+}
+
+.correct.active {
+  background: yellow;
+}
+
 #stop {
   z-index: 2;
 }
 
-.reload:hover, .permalink:hover, #stop:hover {
+.reload:hover, .permalink:hover, #stop:hover, .correct:hover {
   background: rgba(255, 255, 255, 0.6);
   color: black;
 }

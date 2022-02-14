@@ -13,7 +13,8 @@
     <button class="run" disabled onclick="run('it')">Run 'it' translation</button>
     <button class="run" disabled onclick="run('fr')">Run 'fr' translation</button>
     <button class="run" disabled onclick="run('pt')">Run 'pt' translation</button>
-    <button class="run" disabled onclick="run('da,en,es,pl,it,fr,pt')">Run all translations</button>
+    <button class="run" disabled onclick="run('pt-br')">Run 'pt-br' translation</button>
+    <button class="run" disabled onclick="run('da,en,es,pl,it,fr,pt,pt-br')">Run all translations</button>
     <div id="message"></div>
     <script src="keys.js"></script>
     <script>
@@ -55,7 +56,8 @@
           pl: { s: 'Twierdzą', q: 'Pytają', i: ' z całą powagą' },
           it: { s: 'Dicono', q: 'Chiedono', i: ' in tutta serietà' },
           fr: { s: 'Ils disent', q: 'Ils demandent', i: ' sérieusement' },
-          pt: { s: 'Sizem', q: 'Pergunta', i: ' seriamente' }
+          pt: { s: 'Sizem', q: 'Pergunta', i: ' seriamente' },
+          'pt-br': { s: 'Sizem', q: 'Pergunta', i: ' seriamente' }
         }
         node.childNodes[0].nodeValue = defaults[lang][node.innerHTML.startsWith('Die sagen') ? 's' : 'q']
         node.childNodes[1].innerHTML = defaults[lang].i
@@ -123,7 +125,11 @@
       }
       
       async function check(lang) {
-        const dir = await project.getDirectoryHandle(lang)
+        const dirs = lang.split('-')
+        let dir = project
+        while (dirs.length) {
+          dir = await dir.getDirectoryHandle(dirs.shift())
+        }
         const idiot = await loadAndParseArguments(dir, 'idiot.html', lang)
         const sheep = await loadAndParseArguments(dir, 'sheep.html', lang)
         const topics = await loadAndParseTopics(dir, lang)
@@ -135,7 +141,8 @@
       
       async function select() {
         project = await window.showDirectoryPicker()
-        for (const lang of ['de', 'da', 'en', 'es', 'pl', 'it', 'fr', 'pt']) content[lang] = await check(lang)
+        for (const lang of ['de', 'da', 'en', 'es', 'pl', 'it', 'fr', 'pt', 'pt-br']) 
+          content[lang] = await check(lang)
         document.querySelectorAll('.run').forEach(node => node.disabled = false)
       }
       

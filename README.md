@@ -34,8 +34,8 @@ All internationalized argu&shy;ments are stored in HTML format in language- and 
 <ul>
 <li><code>&lt;language code&gt;/sheep.html</code>: Common core <b>Idiot</b> argu&shy;ments and labels</li>
 <li><code>&lt;language code&gt;/idiot.html</code>: Common core <b>Sheep</b> argu&shy;ments and labels</li>
-<li><code>&lt;territory code&gt;/sheep-local.html</code>: Local <b>Sheep</b> argu&shy;ments</li>
-<li><code>&lt;territory code&gt;/idiot-local.html</code>: Local <b>Idiot</b> argu&shy;ments</li>
+<li><code>&lt;language code&gt;/&lt;territory code&gt;/sheep.html</code>: Local <b>Sheep</b> argu&shy;ments</li>
+<li><code>&lt;language code&gt;/&lt;territory code&gt;/idiot.html</code>: Local <b>Idiot</b> argu&shy;ments</li>
 </ul>
 <p>The arguments of the Common core have a unique id across all languagues:</p>
 <ul>

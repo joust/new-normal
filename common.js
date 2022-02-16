@@ -35,7 +35,10 @@ function load(locale) {
 async function show(page) {
   document.querySelector('.logo').style.display = page === 'intro' ? 'none' : 'block'
   document.querySelector('#menu').classList.add('hidden')
-  let content = await fetchSilent(lang +'/'+page+'.html')
+  const local = `${lang}/${terr}`
+  let content = ''
+  if (locals.includes(local)) content = await fetchSilent(`${local}/${page}.html`)
+  if (content === '') content = await fetchSilent(`${lang}/${page}.html`)
   if (page === 'intro') content = content.replace('NN_YEAR', getNNYear())
   document.querySelector('#menu .content').innerHTML = content
   document.querySelector('#menu').scrollTop = 0

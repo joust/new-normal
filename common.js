@@ -115,7 +115,7 @@ function mergeContent(content, local) {
   args.innerHTML = content
   largs.innerHTML = local
   const last = args.querySelector('p:last-of-type')
-  const h1 = largs.querySelector('h1')
+  const lh1 = largs.querySelector('h1.local')
   Array.from(largs.querySelectorAll('a[id]')).reverse().forEach(la => {
     const a = args.querySelector(`a[id="${la.id}"]`)
     if (a) {
@@ -126,12 +126,13 @@ function mergeContent(content, local) {
       last.after(la)
     }
   })
-  if (h1) last.after(h1)
+  if (lh1) last.after(lh1);
   
-  Array.from(largs.querySelectorAll('center')).forEach((lc, index) => {
-    const c = args.querySelectorAll('center')[index]
-    if (c) args.replaceChild(lc, c)
+  ['select', 'label', 'input', 'h1:not(.local)', 'center.bingo', 'center.test'].forEach(s => {
+    const replacement = largs.querySelector(s)
+    if (replacement) args.replaceChild(replacement, args.querySelector(s))
   })
+  
   return args.innerHTML
 }
                            

@@ -107,9 +107,13 @@ function makeTestCard(wrapper, topics, index, size) {
       const node = elementWithKids('td')
       const topic = topics[index]
       node.id = topic.id
+      node.style.backgroundImage = `url(icons/${topic.id}.png)`
+      node.style.backgroundSize = '80%'
+      node.style.backgroundPosition = 'center'
+      node.style.backgroundRepeat = 'no-repeat'
       node.dataset.idiotLabel = topic.idiotLabel
       node.dataset.sheepLabel = topic.sheepLabel
-      node.innerHTML = node.title = topic.title
+      node.title = topic.title
       node.onclick = event => {
         openTestDetails(event, index, topic)
       }

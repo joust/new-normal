@@ -57,7 +57,7 @@
           it: { s: 'Dicono', q: 'Chiedono', i: ' in tutta serietà' },
           fr: { s: 'Ils disent', q: 'Ils demandent', i: ' en toute sincérité' },
           pt: { s: 'Dizem', q: 'Pergunta', i: ' com toda a seriedade' },
-          'pt-br': { s: 'Dizem', q: 'Pergunta', i: '  com toda a seriedade' }
+          'pt-br': { s: 'Dizem', q: 'Pergunta', i: ' com toda a seriedade' }
         }
         node.childNodes[0].nodeValue = defaults[lang][node.innerHTML.startsWith('Die sagen') ? 's' : 'q']
         node.childNodes[1].innerHTML = defaults[lang].i

@@ -601,6 +601,10 @@ div.bingo, .detail, .card {
   padding: 0.5vmax;
 }
 
+.test .card td {
+  border-radius: 50%;
+}
+
 #game table td.set {
   background: transparent;
   color: white;

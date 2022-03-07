@@ -1,6 +1,6 @@
 // From https://gist.github.com/JMPerez/8ca8d5ffcc0cc45a8b4e1c279efd8a94
 // the cache version gets updated every time there is a new deployment
-const CACHE_VERSION = 12
+const CACHE_VERSION = 11
 const CURRENT_CACHE = `main-${CACHE_VERSION}`
 
 // these are the routes we are going to cache for offline support

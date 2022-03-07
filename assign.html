@@ -11,6 +11,7 @@
     <script src="common.js" type="text/javascript"></script>
     <script>
     let project, file, topics, tops, iargs, sargs, argument, log = console.log // global for simplicity
+
     function selectArgument(idiot, id) {
       argument = (idiot ? iargs : sargs).find(a => a.id===id)
       const title = `assign '${argument.id} ${argument.title}' to a topic`
@@ -25,11 +26,11 @@
       idiot.innerHTML = await fetchSilentNoSpinner('de/idiot.html')
       const sheep = elementWithKids('div')
       sheep.innerHTML = await fetchSilentNoSpinner('de/sheep.html')
-      iargs = Array.from(idiot.querySelectorAll('a')).map(a => ({
+      iargs = Array.from(idiot.querySelectorAll('a[id]')).map(a => ({
         id: a.id,
         title: a.firstChild.innerHTML
       }))
-      sargs = Array.from(sheep.querySelectorAll('a')).map(a => ({
+      sargs = Array.from(sheep.querySelectorAll('a[id]')).map(a => ({
         id: a.id,
         title: a.firstChild.innerHTML
       }))
@@ -92,7 +93,7 @@
     }
 
     function extractTopics() {
-      return Array.from(topics.querySelectorAll('a')).map(a => ({
+      return Array.from(topics.querySelectorAll('a[id]')).map(a => ({
         id: a.id,
         idiot: a.dataset.idiot.split(' '),
         sheep: a.dataset.sheep.split(' '),
@@ -101,17 +102,25 @@
     }
 
     function addToTopic(topicId, id) {
-      const re = /\D/g
-      const nummerical = (a, b) => parseInt(a.replace(re, ''), 10)-parseInt(b.replace(re, ''), 10)
       const topic = topics.querySelector(`a[id="${topicId}"]`)
-      const idiot = id.startsWith('I')
-      const args = idiot ? topic.dataset.idiot : topic.dataset.sheep
-      const set = args=='' ? new Set() : new Set(args.split(' '))
-      set.add(id)
-      const newArgs = Array.from(set).sort(nummerical).join(' ')
-      if (idiot) topic.dataset.idiot = newArgs; else topic.dataset.sheep = newArgs 
+      const type = id.startsWith('I') ? 'idiot' : 'sheep'
+      const args = topic.dataset[type]
+      topic.dataset[type] = reorderIds(`${args} ${id}`)
       tops = extractTopics()
       findUnusedArgs(tops)
+    }
+
+    function reorderAllIds() {
+      topics.querySelectorAll('a[id]').forEach(topic => {
+        ['idiot', 'sheep'].forEach(type => topic.dataset[type] = reorderIds(topic.dataset[type]))
+      })
+    }
+      
+    function reorderIds(args) {
+      const re = /\D/g
+      const nummerical = (a, b) => parseInt(a.replace(re, ''), 10)-parseInt(b.replace(re, ''), 10)
+      const set = args=='' ? new Set() : new Set(args.split(' '))
+      return Array.from(set).sort(nummerical).join(' ')
     }
       
     async function verifyPermission(handle, rw) {
@@ -147,6 +156,7 @@
       verifyPermission(file, true) // to later write to same file w/o another user request
       topics = elementWithKids('div')
       topics.innerHTML = await load(file)
+      reorderAllIds()
       tops = extractTopics(topics)
       findUnusedArgs(tops)
       await loadAssignCard('#wrapper-1', tops, true, 0, 7)

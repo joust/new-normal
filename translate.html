@@ -67,17 +67,18 @@
       }
       
       async function updateArguments(src, target) {
+        const lowerId = id => `${id[0]}${(+id.substring(1)) - 1}`
         const argstotranslate = src.args.filter(arg => !target.args.find(targ => targ.a.id === arg.a.id)).slice(0, LIMIT)
-        let last = target.args.length > 0 ? target.args[target.args.length-1].p : target.div.querySelector('h1')
         for (const arg of argstotranslate) {
           log(`translating arg ${arg.a.id} to ${target.lang}`)
           const a = await translateArgumentA(arg.a.cloneNode(true), target.lang)
           const p = await translateArgumentP(arg.p.cloneNode(true), target.lang)
+          const lower = target.div.querySelector(`a[id=${lowerId(arg.a.id)}] + p`)
+          const last = lower ? lower : target.div.querySelector('h1')
           last.after(a)
           a.after(p)
           last.after('\n')
           a.after('\n')
-          last = p
         }
       }
       

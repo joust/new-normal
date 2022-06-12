@@ -551,3 +551,16 @@ I565 https://www.redvoicemedia.com/2022/05/smoking-gun-cdc-data-reveals-excess-m
 I572 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9062939
 I564 https://dailysceptic.org/2022/05/07/vaccinated-hospitalised-for-non-covid-reasons-at-five-times-the-rate-of-the-unvaccinated-u-k-government-data-show
 S498 https://www.merkur.de/welt/krank-affenpocken-deutschland-ciesek-virologin-symptome-verlauf-impfung-therapie-91566133.html
+I520 https://de.wikipedia.org/wiki/Antigenerbs%C3%BCnde
+I520 https://en.wikipedia.org/wiki/Original_antigenic_sin
+I520 https://es.wikipedia.org/wiki/Pecado_original_antig%C3%A9nico
+I520 https://fr.wikipedia.org/wiki/P%C3%A9ch%C3%A9_originel_antig%C3%A9nique
+I520 https://it.wikipedia.org/wiki/Peccato_originale_antigenico
+https://www.sciencedirect.com/science/article/pii/S001393512200891X
+I375 https://www.corbettreport.com/desmet-massformation
+I502 https://www.psychologytoday.com/au/blog/psych-unseen/202201/does-mass-formation-psychosis-really-exist
+I502 https://www.cnet.com/news/misinformation/discredited-mass-formation-psychosis-theory-is-being-used-to-spread-covid-misinformation
+I574 https://euroweeklynews.com/2022/05/27/2200-prominent-spanish-personalties-investigated-for-false-covid-19-vaccination
+I378 https://tkp.at/2022/05/31/neue-studie-aus-israel-natuerliche-immunitaet-ist-impfung-ueberlegen
+https://www.oxfam.org/en/press-releases/pandemic-creates-new-billionaire-every-30-hours-now-million-people-could-fall
+https://dossier.substack.com/p/ghost-shot-pfizer-quietly-admits

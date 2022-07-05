@@ -406,6 +406,7 @@ https://nationalfile.com/university-funds-bidens-think-tank-hosts-factcheck-org-
 https://gewerkschaftsforum.de/dramatische-verrottung-ein-offener-abschiedsbrief-an-den-vorstand-des-deutschen-journalistenverbands-und-dessen-gefolge
 https://www.thieme-connect.com/products/ejournals/abstract/10.1055/a-1158-4256
 I445 https://americasfrontlinedoctors.org/news/post/vaccine-acquired-immune-deficiency-syndrome-vaids-we-should-anticipate-seeing-this-immune-erosion-more-widely
+I445 https://www.nature.com/articles/s41421-021-00329-3.pdf
 https://www.berliner-zeitung.de/news/us-studie-ungeimpfte-genesene-haben-auch-nach-20-monaten-noch-antikoerper-li.210571
 https://www.medinside.ch/de/post/bund-veroeffentlicht-unbrauchbare-zahlen-zu-impfzertifikaten
 I448 https://report24.news/medien-erfinden-ausreden-fuer-epidemie-ploetzlicher-und-unerwarteter-herzprobleme
@@ -564,3 +565,19 @@ I574 https://euroweeklynews.com/2022/05/27/2200-prominent-spanish-personalties-i
 I378 https://tkp.at/2022/05/31/neue-studie-aus-israel-natuerliche-immunitaet-ist-impfung-ueberlegen
 https://www.oxfam.org/en/press-releases/pandemic-creates-new-billionaire-every-30-hours-now-million-people-could-fall
 https://dossier.substack.com/p/ghost-shot-pfizer-quietly-admits
+S504 https://www.healthing.ca/diseases-and-conditions/heart-health/sudden-adult-death-syndrome-not-a-post-covid-phenomenon
+I578 https://tkp.at/2022/06/14/chinesische-dystopie-covid-app-vereitelt-protest
+I579 https://t.me/Impfschaden_Corona_Schweiz/46582
+I445 https://www.focus.de/presseportal/was-ist-v-aids-nach-einer-impfung-wie-wird-v-aids-diagnostiziert_id_107968934.html
+Virus wurde isoliert:
+https://www.uniklinik-duesseldorf.de/forschung-lehre/coronavirus-forschung/forschungsprojekte/isolierung-des-sars-coronavirus-typ-2
+https://www.embopress.org/doi/epdf/10.15252/embj.2020106230
+https://www.rki.de/DE/Content/Infekt/NRZ/EM/Aufnahmen/EM_Tab_SARS.html
+Gibt Viren:
+https://michael.loeffler.io/2021/04/stefan-lanka-wissenschaftler-oder-scharlatan/
+https://www.leibniz-ipht.de/de/abteilungen/mikroskopie/forschung/corona-viren-sichtbar-machen-mit-dem-smartphone
+https://tkp.at/2022/06/21/cdc-daten-aus-usa-booster-fuehrt-zu-haeufigeren-positiven-tests-als-ohne
+I586 https://twitter.com/timrealityde/status/1543842369476460544
+S509 https://www.walesonline.co.uk/news/uk-news/energy-bill-price-rise-cause-22971008
+S510 https://www.newscientist.com/article/2324402-solar-storms-may-cause-up-to-5500-heart-related-deaths-in-a-given-year
+S511 https://www.the-sun.com/health/5681777/urgent-warning-gardeners-soil-increases-risk-killer

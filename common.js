@@ -100,7 +100,7 @@ async function getLocalizedContent(idiot) {
   if (locals.includes(local))
     content = mergeContent(content, await fetchSilent(`${local}/${file}`))
 
-  return `<div class="tr">${content}</div>${(await getLocalizedTopics(content + local, idiot))}`
+  return `<div lang="${lang}" class="tr">${content}</div>${(await getLocalizedTopics(content + local, idiot))}`
 }
 
 /**

@@ -17,6 +17,10 @@ body, html, #game, #menu, #pyro {
   overflow: hidden;
 }
 
+h1, h2, p, a, b, i, td {
+  hyphens: auto;
+}
+
 input[type="checkbox"] {
   margin-right: 1vmax;
 }

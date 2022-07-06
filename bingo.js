@@ -304,8 +304,7 @@ function makeCard(wrapper, topics, size, idiot) {
     }
     rows.push(elementWithKids('tr', cells))
   }
-  const table = elementWithKids('table', elementWithKids('tbody', rows))
-  table.setAttribute('lang', lang)
+  const table = elementWithKids('table', elementWithKids('tbody', rows), { lang })
   div.appendChild(table)
   safariFix(div)
 }

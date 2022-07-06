@@ -117,7 +117,7 @@ function makeTestCard(wrapper, topics, index, size) {
     }
     rows.push(elementWithKids('tr', cells))
   }
-  const table = elementWithKids('table', elementWithKids('tbody', rows))
+  const table = elementWithKids('table', elementWithKids('tbody', rows), { lang })
   div.appendChild(table)
   safariFix(div)
 }

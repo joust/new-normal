@@ -19,6 +19,7 @@ body, html, #game, #menu, #pyro {
 
 h1, h2, p, a, b, i, td {
   hyphens: auto;
+  -webkit-hyphens: auto;
 }
 
 input[type="checkbox"] {

@@ -581,3 +581,7 @@ I586 https://twitter.com/timrealityde/status/1543842369476460544
 S509 https://www.walesonline.co.uk/news/uk-news/energy-bill-price-rise-cause-22971008
 S510 https://www.newscientist.com/article/2324402-solar-storms-may-cause-up-to-5500-heart-related-deaths-in-a-given-year
 S511 https://www.the-sun.com/health/5681777/urgent-warning-gardeners-soil-increases-risk-killer
+I366 https://www.dailymail.co.uk/news/article-10266585/AstraZeneca-uncovers-trigger-blood-clots-jab.html
+I366 https://www.gov.uk/government/publications/covid-19-vaccination-blood-clotting-information-for-healthcare-professionals/information-for-healthcare-professionals-on-blood-clotting-following-covid-19-vaccination
+I459 https://www.dailymail.co.uk/news/article-10266585/AstraZeneca-uncovers-trigger-blood-clots-jab.html
+I459 https://www.gov.uk/government/publications/covid-19-vaccination-blood-clotting-information-for-healthcare-professionals/information-for-healthcare-professionals-on-blood-clotting-following-covid-19-vaccination

@@ -428,6 +428,22 @@ div.bingo, .detail, .card {
   float: right;
 }
 
+.detail li span {
+  float: left;
+  clear: both;
+  min-width: 2.5em;
+  text-align: center;
+}
+
+.detail li h3 {
+  margin: 0.6em;
+}
+
+.detail li h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+
 .detail .navigation {
   display: none;
 }

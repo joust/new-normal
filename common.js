@@ -156,7 +156,7 @@ async function getLocalizedTopics(localizedArgs, idiot) {
     const targs = idiot ? la.dataset.idiot : la.dataset.sheep
     for (const targ of targs.split(' ')) if (targ.length) {
       const title = args.querySelector(`#${targ}`)
-      title && ul.appendChild(elementWithKids('li', elementWithKids('a', [elementWithKids('span', targ), title.innerText], { href: `#${targ}`})))
+      title && ul.appendChild(elementWithKids('li', [elementWithKids('span', targ), elementWithKids('h3', [elementWithKids('a', title.innerText, { href: `#${targ}` })])]))
     }
     la.after(ul)
   })

@@ -329,7 +329,7 @@ Pharma: https://www.one-tab.com/page/feoJuh6hRzOpAQMMrSJmDA
 Lockdowns: https://www.one-tab.com/page/MpuMSFaIQQCY2KlfXyEkaw
 All-Cause Mortality: https://www.one-tab.com/page/RPiHCUCESJmEfEQ22tIVNA
 Commentary at the turning point: https://www.one-tab.com/page/m8k--itGQBes_HTVxxVPyw
-Injection injuries: https://www.one-tab.com/page/DnGEY4g6QsyhYGgd7h_gAA
+injection injuries: https://www.one-tab.com/page/DnGEY4g6QsyhYGgd7h_gAA
 Treatment: https://www.one-tab.com/page/GZ3R7DXTTea2kpJehtTXAQ
 https://corona-transition.org/plotzlich-und-unerwartet-totgeschwiegen
 https://www.bloomberg.com/news/articles/2022-01-11/j-j-vaccine-gets-additional-warning-on-bleeding-side-effect
@@ -365,7 +365,8 @@ https://www.redvoicemedia.com/2022/01/worldwide-exclusive-embalmers-find-veins-a
 S354 https://www.medinside.ch/de/post/studie-bestaetigt-impfung-schuetzt-risikopatienten-vor-schwerstem-corona-verlauf
 I414 https://vaccinedeaths.com/2022-01-25-alberta-deletes-data-56percent-covid-deaths-vaccinated.html
 I430 https://www.researchgate.net/publication/357994624_Innate_Immune_Suppression_by_SARS-CoV-2_mRNA_Vaccinations_The_role_of_G-quadruplexes_exosomes_and_microRNAs
-I171,I188 https://www.francesoir.fr/societe-sante/oxford-authors-british-clinical-trial-recovery-attempt-hide-deaths-overdose
+I171 https://www.francesoir.fr/societe-sante/oxford-authors-british-clinical-trial-recovery-attempt-hide-deaths-overdose
+I188 https://www.francesoir.fr/societe-sante/oxford-authors-british-clinical-trial-recovery-attempt-hide-deaths-overdose
 https://dailyexpose.uk/2022/01/28/dangerous-chemicals-and-nanotubes-in-test-swabs/
 https://medium.com/@njmelzer/fragw%C3%BCrdige-methoden-56f6b3340357
 https://www.thenation.com/article/economy/bill-gates-investments-covid/
@@ -528,7 +529,7 @@ S453 https://www.sueddeutsche.de/gesundheit/long-covid-symptome-hausaerzte-1.557
 https://www.dailymail.co.uk/health/article-10759403/CDC-FDA-altered-Covid-guidance-pressure-bombshell-report-claims.html
 https://bestnewshere.com/former-commercial-airline-pilot-says-squawk-7700-emergency-alerts-have-risen-12400-percent-in-age-of-covid-vax-5g-rollout
 https://corona-blog.net/2022/03/23/per-knopfdruck-schaltet-frankreich-4-millionen-digitale-impfpaesse-ab-das-rki-ist-dazu-auch-in-deutschland-berechtigt
-I503 https://miamistandard.news/2022/03/12/pfizer-ceo-backpedals-claims-pressured-into-producing-counterintuitive-mrna-injections
+I503 https://www.youtube.com/watch?v=t9_YRw7jBF4
 I297 https://www.valleycentral.com/news/local-news/gorilla-dies-unexpectedly-at-gladys-porter-zoo
 https://unlimitedhangout.com/2022/02/investigative-reports/technocracy-the-operating-system-for-the-new-international-rules-based-order-1
 https://www.skynews.com.au/australia-news/coronavirus/abs-data-reveals-over-90-per-cent-of-covd19-deaths-had-other-health-conditions/news-story/07d22543f666b20d78ae12c713d6fdee
@@ -573,8 +574,7 @@ Virus wurde isoliert:
 https://www.uniklinik-duesseldorf.de/forschung-lehre/coronavirus-forschung/forschungsprojekte/isolierung-des-sars-coronavirus-typ-2
 https://www.embopress.org/doi/epdf/10.15252/embj.2020106230
 https://www.rki.de/DE/Content/Infekt/NRZ/EM/Aufnahmen/EM_Tab_SARS.html
-Gibt Viren:
-https://michael.loeffler.io/2021/04/stefan-lanka-wissenschaftler-oder-scharlatan/
+Gibt Viren: https://michael.loeffler.io/2021/04/stefan-lanka-wissenschaftler-oder-scharlatan/
 https://www.leibniz-ipht.de/de/abteilungen/mikroskopie/forschung/corona-viren-sichtbar-machen-mit-dem-smartphone
 https://tkp.at/2022/06/21/cdc-daten-aus-usa-booster-fuehrt-zu-haeufigeren-positiven-tests-als-ohne
 I586 https://twitter.com/timrealityde/status/1543842369476460544
@@ -585,3 +585,7 @@ I366 https://www.dailymail.co.uk/news/article-10266585/AstraZeneca-uncovers-trig
 I366 https://www.gov.uk/government/publications/covid-19-vaccination-blood-clotting-information-for-healthcare-professionals/information-for-healthcare-professionals-on-blood-clotting-following-covid-19-vaccination
 I459 https://www.dailymail.co.uk/news/article-10266585/AstraZeneca-uncovers-trigger-blood-clots-jab.html
 I459 https://www.gov.uk/government/publications/covid-19-vaccination-blood-clotting-information-for-healthcare-professionals/information-for-healthcare-professionals-on-blood-clotting-following-covid-19-vaccination
+S206 https://www.theguardian.com/world/2021/jul/17/covid-misinformation-conspiracy-theories-ccdh-report
+Coronaspeak: https://language-and-innovation.com/2020/04/15/coronaspeak-part-2-the-language-of-covid-19-goes-viral/comment-page-1
+https://lockdownviehler.blog/2022/08/01/in-15-einfachen-schritten-zur-vernichtung
+

@@ -11,3 +11,11 @@
   font-weight: 600;
   src: url('./fonts/HVDCrocodileWeb-Bold.woff2') format('woff2');
 }
+
+@font-face {
+  font-family: 'HVD Crocodile';
+  font-stretch: condensed;
+  font-style: normal;
+  font-weight: 600;
+  src: url('./fonts/HVDCrocodileWeb-BoldCondensed.woff2') format('woff2');
+}

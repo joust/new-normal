@@ -387,6 +387,20 @@ div.bingo, .detail, .card {
   display: none;
 }
 
+.detail .content h2 {
+  font-family: 'HVD Crocodile';
+  font-weight: 600;
+  font-stretch: condensed;
+}
+
+.detail .content h2::before {
+  content: "\201c"
+}
+
+.detail .content h2::after {
+  content: "\201d"
+}
+
 .detail .content > h2 {
   display: none;
 }

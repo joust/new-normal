@@ -175,13 +175,6 @@ class Card extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
-    const resizeObserver = new ResizeObserver(() => {
-      const cw = this.clientWidth/100, ch = this.clientHeight/100
-      this.style.setProperty('--cw', `${cw}px`)
-      this.style.setProperty('--ch', `${ch}px`)
-      this.style.setProperty('--cavg', `${(cw+ch)/1.6}px`)
-    })
-    resizeObserver.observe(this)
   }
 
   static observedAttributes = ['idiot', 'topic', 'id', 'title', 'mirrored']
@@ -214,7 +207,16 @@ class Card extends HTMLElement {
 
   connectedCallback() {
     this.shadowRoot.appendChild(cardTemplate.content.cloneNode(true))
+    const resizeObserver = new ResizeObserver(() => this.resize())
+    resizeObserver.observe(this)
     this.update()
+  }
+
+  resize() {
+    const cw = this.clientWidth/100, ch = this.clientHeight/100
+    this.style.setProperty('--cw', `${cw}px`)
+    this.style.setProperty('--ch', `${ch}px`)
+    this.style.setProperty('--cavg', `${(cw+ch)/1.6}px`)
   }
 
   update() {

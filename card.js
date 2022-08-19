@@ -143,7 +143,7 @@ cardTemplate.innerHTML = `
       position: absolute;
       right: 0;
       top: 0;
-      width: 10%;
+      width: 12%;
       height: 4%;
       font-size: calc(2.5 * var(--cavg));
       text-align: center;
@@ -186,6 +186,8 @@ class Card extends HTMLElement {
 
   static observedAttributes = ['idiot', 'topic', 'id', 'title', 'mirrored']
 
+  element(id) { return this.shadowRoot.getElementById(id) }
+
   get idiot() {
     return this.hasAttribute('idiot')
   }
@@ -217,18 +219,17 @@ class Card extends HTMLElement {
 
   update() {
     if (this.isConnected) {
-      const element = id => this.shadowRoot.getElementById(id)
-      element('card').classList.toggle('mirrored', this.mirrored)
-      element('id').innerHTML = this.id
-      element('id').classList.toggle('red-bg', this.idiot)
-      element('id').classList.toggle('blue-bg', !this.idiot)
-      element('side-title').innerHTML = this.title
-      element('title').innerHTML = this.title
-      element('title').classList.toggle('red', this.idiot)
-      element('title').classList.toggle('blue', !this.idiot)
-      element('topic-name').innerHTML = this.topic
-      element('topic-name').classList.toggle('red', this.idiot)
-      element('topic-name').classList.toggle('blue', !this.idiot)
+      this.element('card').classList.toggle('mirrored', this.mirrored)
+      this.element('id').innerHTML = this.id
+      this.element('id').classList.toggle('red-bg', this.idiot)
+      this.element('id').classList.toggle('blue-bg', !this.idiot)
+      this.element('side-title').innerHTML = this.title
+      this.element('title').innerHTML = this.title
+      this.element('title').classList.toggle('red', this.idiot)
+      this.element('title').classList.toggle('blue', !this.idiot)
+      this.element('topic-name').innerHTML = this.topic
+      this.element('topic-name').classList.toggle('red', this.idiot)
+      this.element('topic-name').classList.toggle('blue', !this.idiot)
     }
   }
 }

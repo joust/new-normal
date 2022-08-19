@@ -155,6 +155,8 @@ class LabelCard extends HTMLElement {
 
   static observedAttributes = ['idiot', 'label', 'mirrored']
 
+  element(id) { return this.shadowRoot.getElementById(id) }
+
   get idiot() {
     return this.hasAttribute('idiot')
   }
@@ -178,12 +180,11 @@ class LabelCard extends HTMLElement {
 
   update() {
     if (this.isConnected) {
-      const element = id => this.shadowRoot.getElementById(id)
-      element('card').classList.toggle('mirrored', this.mirrored)
-      element('card').classList.toggle('red-bg', this.idiot)
-      element('card').classList.toggle('blue-bg', !this.idiot)
-      element('side-label').innerHTML = this.label
-      element('label-name').innerHTML = this.label
+      this.element('card').classList.toggle('mirrored', this.mirrored)
+      this.element('card').classList.toggle('red-bg', this.idiot)
+      this.element('card').classList.toggle('blue-bg', !this.idiot)
+      this.element('side-label').innerHTML = this.label
+      this.element('label-name').innerHTML = this.label
     }
   }
 }

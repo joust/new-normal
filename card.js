@@ -6,6 +6,8 @@ cardTemplate.innerHTML = `
     }
 
     #card {
+      --red: #f72d5d;
+      --blue: #2d60f6;
       --topic-height: 3%;
       --sidebar-width: 12%;
       --watermark-size: 50%;
@@ -38,6 +40,11 @@ cardTemplate.innerHTML = `
       top: 0;
       left: calc(var(--sidebar-width) + 6 * var(--cw));
       right: 0;
+      color: var(--blue);
+    }
+
+    .idiot #topic-name {
+      color: var(--red);
     }
 
     .mirrored #topic-name {
@@ -69,6 +76,7 @@ cardTemplate.innerHTML = `
       right: 0;
       bottom: 0;
       padding: calc(2 * var(--cavg));
+      overflow: hidden;
     }
 
     .mirrored #content {
@@ -76,47 +84,42 @@ cardTemplate.innerHTML = `
       right: var(--sidebar-width);
     }
 
-    #title {
+    ::slotted(*) {
+      text-align: justify;
+      hyphens: auto;
+      -webkit-hyphens: auto;
+    }
+
+    ::slotted(h2) {
       font-family: 'HVD Crocodile';
       font-weight: 600;
       font-stretch: condensed;
       font-size: calc(7 * var(--cavg));
-      width: 100%;
-      height: auto;
-      hyphens: auto;
+      text-align: left;
+      margin-top: 0;
+      margin-bottom: 0;
+      color: var(--blue);
     }
 
-    #title::before {
+    .idiot ::slotted(h2) {
+      color: var(--red);
+    }
+    
+    ::slotted(h2)::before {
       content: '\u201c'
     }
 
-    #title::after {
+    ::slotted(h2)::after {
       content: '\u201d'
     }
 
-    .red {
+    ::slotted(.red) {
       color: #f72d5d;
     }
 
-    .blue {
+    ::slotted(.blue) {
         color: #2d60f6;
      }
-
-    .red-bg {
-      background-color: #f72d5d;
-    }
-
-    .blue-bg {
-        background-color: #2d60f6;
-     }
-
-    #argument {
-      width: 100%;
-      text-align: justify;
-      hyphens: auto;
-      height: auto;
-      overflow: auto;
-    }
 
     #side-title {
       font-family: 'HVD Crocodile';
@@ -149,6 +152,11 @@ cardTemplate.innerHTML = `
       text-align: center;
       color: white;
       border-top-right-radius: calc(2 * var(--cavg));
+      background-color: var(--blue);
+    }
+
+    .idiot #id {
+      background-color: var(--red);
     }
 
     .mirrored #id {
@@ -162,10 +170,7 @@ cardTemplate.innerHTML = `
     <div id="watermark"></div>
     <div id="topic-icon"></div>
     <div id="topic-name"></div>
-    <div id="content">
-      <div id="title"></div>
-      <div id="argument"><slot></div>
-    </div>
+    <div id="content"><slot></div>
     <div id="side-title"></div>
     <div id="id"></div>
   </div>
@@ -177,7 +182,7 @@ class Card extends HTMLElement {
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = ['idiot', 'topic', 'id', 'title', 'mirrored']
+  static observedAttributes = ['idiot', 'topic', 'id', 'mirrored']
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
@@ -194,7 +199,7 @@ class Card extends HTMLElement {
   }
 
   get title() {
-    return this.getAttribute('title')
+    return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
   }
 
   get mirrored() {
@@ -221,17 +226,11 @@ class Card extends HTMLElement {
 
   update() {
     if (this.isConnected) {
+      this.element('card').classList.toggle('idiot', this.idiot)
       this.element('card').classList.toggle('mirrored', this.mirrored)
       this.element('id').innerHTML = this.id
-      this.element('id').classList.toggle('red-bg', this.idiot)
-      this.element('id').classList.toggle('blue-bg', !this.idiot)
-      this.element('side-title').innerHTML = this.title
-      this.element('title').innerHTML = this.title
-      this.element('title').classList.toggle('red', this.idiot)
-      this.element('title').classList.toggle('blue', !this.idiot)
       this.element('topic-name').innerHTML = this.topic
-      this.element('topic-name').classList.toggle('red', this.idiot)
-      this.element('topic-name').classList.toggle('blue', !this.idiot)
+      setTimeout(() => this.element('side-title').innerHTML = this.title)
     }
   }
 }

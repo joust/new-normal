@@ -322,7 +322,7 @@ function getTopics(detail) {
     sheepLabel: a.dataset.sheepLabel,
     idiotTitle: a.dataset.idiotTitle,
     sheepTitle: a.dataset.sheepTitle,
-    title: a.firstChild.innerHTML
+    title: a.querySelector('h2').innerHTML
     })
   )
 }

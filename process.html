@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <title>New Normal - Process links into sources</title>
+  </head>
+  <body>
+    <button id="set" onclick="select()">Set project dir</button>
+    <button class="run" disabled onclick="process()">Process links</button>
+    <div id="message"></div>
+    <script>
+      let dir = undefined
+      content = []
+      lines = []
+
+      function log(msg = '') {
+        document.getElementById('message').innerHTML += msg + '<br>'
+      }
+      
+      async function transferLinksToSources() {
+        const linksh = await project.getFileHandle('links.txt')
+        const sourcesh = await project.getFileHandle('sources.html')
+        const sources = document.createElement('div')
+        sources.innerHTML = await load(sourcesh, true)
+
+        const links = (await load(linksh, true)).split('\n')
+        for (const link of links) {
+          const elems = link.split(' ')
+          if (elems.length>1 && (elems[0].startsWith('I') || elems[0].startsWith('S'))) {
+            await processLink(elems, sources)
+          }
+        }
+      }
+      
+      async function processLink(elems, sources) {
+        const id = elems[0]
+        const href = elems[1]
+        const [text, lang] = await getTitleAndLangFromUrl(href)
+        console.log('processing', id, href, lang, text)
+        // const entry = findEntryPoint(id)
+        // if (entry) entry.after(elementWithKids('a', text, {class: id, href, lang}))
+      }
+      
+      async function select() {
+        project = await window.showDirectoryPicker()
+        document.querySelector('.run').disabled = false
+      }
+      
+      async function getTitleAndLangFromUrl(url) {
+        if (url.includes('.pdf')) return [url, '?']
+        const html = await fetchTxt(url)
+        if (html) {
+          const titles = html.match(/<title>(.*?)<\/title>/)
+          const langs = html.match(/lang="(.*?)"/)
+          const title = titles ? titles[1] : undefined
+          let lang = langs ? langs[1] : undefined
+          if (lang && lang.includes('-')) lang = lang.split('-')[0]
+          return [title, lang]
+        } else {
+          alert('Could not access URL. Please activate an CORS browser plugin.')
+          return undefined
+        }
+      }
+      
+      async function process() {
+        transferLinksToSources()
+      }
+  
+      async function fetchTxt(url) {
+        return fetch(url).then(async response => response.status >= 400 && response.status < 600 ? '' : await response.text()).catch(error => undefined)  
+      }
+
+      async function verifyPermission(handle, rw) {
+        const options = {}
+        if (rw) options.mode = 'readwrite'
+        if ((await handle.queryPermission(options)) === 'granted') return true
+        if ((await handle.requestPermission(options)) === 'granted') return true
+        return false
+      }
+      
+      async function load(handle, rw) {
+        if (await verifyPermission(handle, rw)) {
+          const file = await handle.getFile()
+          return await file.text()
+        } else
+          return null
+      }
+      
+      async function save(handle, contents) {
+        if (await verifyPermission(handle, true)) {
+          log(`saving ${contents.length} bytes to '${handle.name}'`)
+          const writable = await handle.createWritable()
+          await writable.write(contents)
+          await writable.close()
+        } else 
+          log(`no permission to write to file '${handle.name}'`)
+      }
+      
+      function element(tag, kids, attrs = undefined) {
+        const node = document.createElement(tag)
+        if (attrs) for (attr in attrs) node.setAttribute(attr, attrs[attr])
+        if (kids) {
+          if (!(kids instanceof Array)) kids = [kids]
+          kids.forEach(kid => {
+            if (!(kid instanceof HTMLElement)) kid = document.createTextNode(kid)
+            node.appendChild(kid)
+          })
+        }
+        return node
+      }
+    </script>
+  </body>
+</html>

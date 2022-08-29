@@ -29,11 +29,15 @@ class Hand extends HTMLElement {
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
     const mutationObserver = new MutationObserver(() => this.update())
-    mutationObserver.observe(this, { subtree: true, childList: true, attributes: true, attributeFilter: ['top']})
+    mutationObserver.observe(this, { subtree: true, childList: true, attributes: true, attributeFilter: ['top', 'style', 'class']})
   }
   
-  visible() {
-    return this.element('hand').firstChild.assignedElements().filter(node => !!node.offsetParent)
+  slotChildren() {
+    return this.element('hand').firstChild.assignedElements()
+  }
+  
+  slotVisible() {
+    return this.slotChildren().filter(node => !!node.offsetParent)
   }
   
   columns(len, top) {
@@ -49,7 +53,7 @@ class Hand extends HTMLElement {
   }
 
   recalc() {
-    const children = this.visible()
+    const children = this.slotVisible()
     const topIndex = children.findIndex(child => child.hasAttribute('top'))
     const columns = this.columns(children.length, topIndex)
     this.element('hand').style.gridTemplateColumns = `1fr ${columns} 1fr`
@@ -62,9 +66,14 @@ class Hand extends HTMLElement {
   }
 
   update() {
-    const children = this.visible()
+    const children = this.slotChildren()
+    const visible = this.slotVisible()
     let z = children.length, after = false
     children.forEach((child, index) => {
+      child.style.removeProperty('gridRow')
+      child.style.removeProperty('gridColumn')
+    })
+    visible.forEach((child, index) => {
       child.style.gridRow = 1
       child.style.gridColumn = `${index+2}/span 8`
       child.style.zIndex = z

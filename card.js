@@ -12,7 +12,7 @@ cardTemplate.innerHTML = `
       --sidebar-width: 12%;
       --watermark-size: 50%;
       position: relative;
-      background: linear-gradient(0deg, #fdfdfd 0%, #fff 100%);
+      background: linear-gradient(30deg, #fdfdfd 0%, #fff 100%);
       font-family: 'Open Sans', Helvetica;
       font-size: calc(4 * var(--cavg));
       border: calc(0.1 * var(--cavg)) solid #aaa;
@@ -210,9 +210,17 @@ class Card extends HTMLElement {
     this.update()
   }
 
+  debounce(f, delay) {
+    let timer = 0
+    return function(...args) {
+      clearTimeout(timer)
+      timer = setTimeout(() => f.apply(this, args), delay)
+    }
+  }
+
   connectedCallback() {
     this.shadowRoot.appendChild(cardTemplate.content.cloneNode(true))
-    const resizeObserver = new ResizeObserver(() => this.resize())
+    const resizeObserver = new ResizeObserver(this.debounce(() => this.resize(), 10))
     resizeObserver.observe(this)
     this.update()
   }
@@ -225,7 +233,7 @@ class Card extends HTMLElement {
   }
 
   update() {
-    if (this.isConnected) {
+    if (this.isConnected && this.element('card')) {
       this.element('card').classList.toggle('idiot', this.idiot)
       this.element('card').classList.toggle('mirrored', this.mirrored)
       this.element('id').innerHTML = this.id

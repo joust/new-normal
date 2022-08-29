@@ -5,7 +5,11 @@ labelCardTemplate.innerHTML = `
       display: inline-block;
     }
 
-    #card {
+    #label-card {
+      --red: #f72d5d;
+      --blue: #2d60f6;
+      --lred: #f93b6b;
+      --lblue: #3b69f8;
       --sidebar-width: 12%;
       --watermark-size: 50%;
       position: relative;
@@ -13,6 +17,11 @@ labelCardTemplate.innerHTML = `
       height: 100%;
       border: calc(0.1 * var(--cavg)) solid #aaa;
       border-radius: calc(2 * var(--cavg));
+      background: linear-gradient(30deg, var(--lblue) 100%, var(--blue) 0%);
+    }
+
+    #label-card.idiot {
+      background: linear-gradient(30deg, var(--lred) 100%, var(--red) 0%);
     }
 
     #watermark {
@@ -31,15 +40,19 @@ labelCardTemplate.innerHTML = `
       right: var(--sidebar-width);
     }
 
-    #new {
+    
+    #new, #normal {
       font-family: 'HVD Crocodile';
       font-weight: 600;
       font-size: calc(14 * var(--cavg));
       position: absolute;
-      left: var(--sidebar-width);
-      top: 0;
       color: white;
       opacity: 0.15;
+    }
+    
+    #new {
+      left: var(--sidebar-width);
+      top: 0;
     }
 
     .mirrored #new {
@@ -47,14 +60,8 @@ labelCardTemplate.innerHTML = `
     }
 
     #normal {
-      font-family: 'HVD Crocodile';
-      font-weight: 600;
-      font-size: calc(14 * var(--cavg));
-      position: absolute;
       bottom: 0;
       right: 2%;
-      color: white;
-      opacity: 0.15;
     }
 
     .mirrored #normal {
@@ -122,16 +129,8 @@ labelCardTemplate.innerHTML = `
     .mirrored #side-label {
       left: calc(100% - var(--sidebar-width));
     }
-
-    .red-bg {
-      background-color: #f72d5d;
-    }
-
-    .blue-bg {
-        background-color: #2d60f6;
-     }
   </style>
-  <div id="card">
+  <div id="label-card">
     <div id="watermark"></div>
     <div id="new">New</div>
     <div id="label"><span id="label-name"></span></div>
@@ -181,10 +180,9 @@ class LabelCard extends HTMLElement {
   }
 
   update() {
-    if (this.isConnected) {
-      this.element('card').classList.toggle('mirrored', this.mirrored)
-      this.element('card').classList.toggle('red-bg', this.idiot)
-      this.element('card').classList.toggle('blue-bg', !this.idiot)
+    if (this.isConnected && this.element('label-card')) {
+      this.element('label-card').classList.toggle('mirrored', this.mirrored)
+      this.element('label-card').classList.toggle('idiot', this.idiot)
       this.element('side-label').innerHTML = this.label
       this.element('label-name').innerHTML = this.label
     }

@@ -1,15 +1,13 @@
-const labelCardTemplate = document.createElement('template')
-labelCardTemplate.innerHTML = `
+const strawmanCardTemplate = document.createElement('template')
+strawmanCardTemplate.innerHTML = `
   <style>
      :host {
       display: inline-block;
     }
 
-    #label-card {
-      --red: #f72d5d;
-      --blue: #2d60f6;
-      --lred: #f93b6b;
-      --lblue: #3b69f8;
+    #strawman-card {
+      --grey: grey;
+      --lightgrey: lightgrey;
       --sidebar-width: 12%;
       --watermark-size: 50%;
       position: relative;
@@ -17,11 +15,8 @@ labelCardTemplate.innerHTML = `
       height: 100%;
       border: calc(0.1 * var(--cavg)) solid #aaa;
       border-radius: calc(2 * var(--cavg));
-      background: linear-gradient(30deg, var(--lblue) 100%, var(--blue) 0%);
-    }
-
-    #label-card.idiot {
-      background: linear-gradient(30deg, var(--lred) 100%, var(--red) 0%);
+      background: linear-gradient(30deg, var(--grey) 0%, var(--lightgrey) 100%);
+      user-select: none;
     }
 
     #watermark {
@@ -68,12 +63,8 @@ labelCardTemplate.innerHTML = `
       right: calc(2% + var(--sidebar-width));
     }
 
-    #label {
+    #phrase {
       position: absolute;
-      font-family: 'HVD Crocodile';
-      font-size: calc(7 * var(--cavg));
-      font-weight: 600;
-      font-stretch: condensed;
       color: white;
       display: flex;
       align-items: center;
@@ -83,28 +74,43 @@ labelCardTemplate.innerHTML = `
       left: var(--sidebar-width);
       height: 100%;
       hyphens: auto;
-    }
+      padding: calc(7 * var(--cavg));
+      box-sizing: border-box;
+}
 
-    .mirrored #label {
+    .mirrored #phrase {
       left: 0;
       right: var(--sidebar-width);
     }
 
-    #label-name {
+     #fallacy {
+      font-family: 'Open Sans', Helvetica;
+      font-size: calc(4 * var(--cavg));
+    }
+
+    #fallacy::after {
+      content: 'Strawman';
+    }
+
+    #phrase span.quoted {
+      font-family: 'HVD Crocodile';
+      font-size: calc(7 * var(--cavg));
+      font-weight: 600;
+      font-stretch: condensed;
       max-width: 100%;
-      display: inline-block;
+      display: inline;
       text-align: center;
     }
 
-    #label-name::before {
-      content: '\u201c'
+    .quoted::before {
+      content: open-quote;
     }
 
-    #label-name::after {
-      content: '!\u201d'
+    .quoted::after {
+      content: '!' close-quote;
     }
 
-    #side-label {
+    #side-phrase {
       position: absolute;
       font-family: 'HVD Crocodile';
       font-size: calc(6 * var(--cavg));
@@ -117,44 +123,76 @@ labelCardTemplate.innerHTML = `
       left: 0;
       height: calc(15 * var(--cw));
       width: calc(85 * var(--ch));
-      text-overflow: ellipsis;
       transform: rotate(-90deg);
       transform-origin: top left;
     }
 
-    #side-label::after {
-      content: '!'
+    #side-phrase::after {
+      content: '!';
     }
 
-    .mirrored #side-label {
+    .mirrored #side-phrase {
       left: calc(100% - var(--sidebar-width));
     }
+
+    :lang(da) .phrase::after {
+      content: 'Lad mig lægge det her i din mund';
+    }
+
+    :lang(de) .phrase::after {
+      content: 'Lass mich Dir das in den Mund legen';
+    }
+
+    :lang(en) .phrase::after {
+      content: 'Let me put this in your mouth';
+    }
+
+    :lang(es) .phrase::after {
+      content: 'Déjame poner esto en tu boca';
+    }
+
+    :lang(fr) .phrase::after {
+      content: 'Laisse-moi te mettre ça en bouche';
+    }
+
+    :lang(it) .phrase::after {
+      content: 'Lasciate che ve lo metta in bocca';
+    }
+
+    :lang(pl) .phrase::after {
+      content: 'Pozwól, że włożę ci to do ust';
+    }
+
+    :lang(pt) .phrase::after {
+      content: 'Deixa-me pôr-te isto na boca';
+    }
+
+    :lang(pt-br) .phrase::after {
+      content: 'Deixe-me pôr isto em sua boca';
+    }
+
   </style>
-  <div id="label-card">
+  <div id="strawman-card">
     <div id="watermark"></div>
     <div id="new">New</div>
-    <div id="label"><span id="label-name"></span></div>
-    <div id="side-label"></div>
+    <div id="phrase"><span id="fallacy"></span><span class="quoted"><span class="phrase"></span></span></div>
+    <div id="side-phrase"><span class="phrase"></span></div>
     <div id="normal">Normal</div>
   </div>
 `
 
-class LabelCard extends HTMLElement {
+class StrawmanCard extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = ['idiot', 'label', 'mirrored']
+  static observedAttributes = ['idiot', 'mirrored']
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
   get idiot() {
     return this.hasAttribute('idiot')
-  }
-
-  get label() {
-    return this.getAttribute('label')
   }
 
   get mirrored() {
@@ -166,7 +204,7 @@ class LabelCard extends HTMLElement {
   }
 
   connectedCallback() {
-    this.shadowRoot.appendChild(labelCardTemplate.content.cloneNode(true))
+    this.shadowRoot.appendChild(strawmanCardTemplate.content.cloneNode(true))
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
     this.update()
@@ -180,13 +218,11 @@ class LabelCard extends HTMLElement {
   }
 
   update() {
-    if (this.isConnected && this.element('label-card')) {
-      this.element('label-card').classList.toggle('mirrored', this.mirrored)
-      this.element('label-card').classList.toggle('idiot', this.idiot)
-      this.element('side-label').innerHTML = this.label
-      this.element('label-name').innerHTML = this.label
+    if (this.isConnected && this.element('strawman-card')) {
+      this.element('strawman-card').classList.toggle('mirrored', this.mirrored)
+      this.element('strawman-card').classList.toggle('idiot', this.idiot)
     }
   }
 }
 
-customElements.define('nn-label-card', LabelCard)
+customElements.define('strawman-card', StrawmanCard)

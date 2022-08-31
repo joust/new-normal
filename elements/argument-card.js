@@ -1,11 +1,11 @@
-const cardTemplate = document.createElement('template')
-cardTemplate.innerHTML = `
+const argumentCardTemplate = document.createElement('template')
+argumentCardTemplate.innerHTML = `
   <style>
      :host {
       display: inline-block;
     }
 
-    #card {
+    #argument-card {
       --red: #f72d5d;
       --blue: #2d60f6;
       --topic-height: 3%;
@@ -19,6 +19,7 @@ cardTemplate.innerHTML = `
       border-radius: calc(2 * var(--cavg));
       width: 100%;
       height: 100%;
+      user-select: none;
     }
 
     #topic-icon {
@@ -106,11 +107,11 @@ cardTemplate.innerHTML = `
     }
     
     ::slotted(h2)::before {
-      content: '\u201c'
+      content: open-quote;
     }
 
     ::slotted(h2)::after {
-      content: '\u201d'
+      content: close-quote;
     }
 
     ::slotted(.red) {
@@ -134,6 +135,9 @@ cardTemplate.innerHTML = `
       height: calc(15 * var(--cw));
       width: calc(85 * var(--ch));
       text-overflow: ellipsis;
+      text-align: left;
+      overflow: hidden;
+      white-space: nowrap;
       transform: rotate(-90deg);
       transform-origin: top left;
     }
@@ -166,7 +170,7 @@ cardTemplate.innerHTML = `
       border-top-right-radius: 0;
     }
   </style>
-  <div id="card">
+  <div id="argument-card">
     <div id="watermark"></div>
     <div id="topic-icon"></div>
     <div id="topic-name"></div>
@@ -176,7 +180,7 @@ cardTemplate.innerHTML = `
   </div>
 `
 
-class Card extends HTMLElement {
+class ArgumentCard extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
@@ -206,7 +210,7 @@ class Card extends HTMLElement {
     return this.hasAttribute('mirrored')
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
+  attributeChangedCallback() {
     this.update()
   }
 
@@ -219,7 +223,7 @@ class Card extends HTMLElement {
   }
 
   connectedCallback() {
-    this.shadowRoot.appendChild(cardTemplate.content.cloneNode(true))
+    this.shadowRoot.appendChild(argumentCardTemplate.content.cloneNode(true))
     const resizeObserver = new ResizeObserver(this.debounce(() => this.resize(), 10))
     resizeObserver.observe(this)
     this.update()
@@ -233,9 +237,9 @@ class Card extends HTMLElement {
   }
 
   update() {
-    if (this.isConnected && this.element('card')) {
-      this.element('card').classList.toggle('idiot', this.idiot)
-      this.element('card').classList.toggle('mirrored', this.mirrored)
+    if (this.isConnected && this.element('argument-card')) {
+      this.element('argument-card').classList.toggle('idiot', this.idiot)
+      this.element('argument-card').classList.toggle('mirrored', this.mirrored)
       this.element('id').innerHTML = this.id
       this.element('topic-name').innerHTML = this.topic
       setTimeout(() => this.element('side-title').innerHTML = this.title)
@@ -243,4 +247,4 @@ class Card extends HTMLElement {
   }
 }
 
-customElements.define('nn-card', Card)
+customElements.define('argument-card', ArgumentCard)

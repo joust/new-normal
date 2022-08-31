@@ -15,11 +15,11 @@ cardBackTemplate.innerHTML = `
       height: 100%;
       border: calc(0.1 * var(--cavg)) solid #aaa;
       border-radius: calc(2 * var(--cavg));
-      background: linear-gradient(30deg, var(--lblue) 100%, var(--blue) 0%);
+      background: linear-gradient(30deg, var(--lblue) 0%, var(--blue) 100%);
     }
     
     #card-back.idiot {
-      background: linear-gradient(30deg, var(--lred) 100%, var(--red) 0%);
+      background: linear-gradient(30deg, var(--lred) 0%, var(--red) 100%);
     }
 
     #inner {
@@ -88,4 +88,4 @@ class CardBack extends HTMLElement {
   }
 }
 
-customElements.define('nn-card-back', CardBack)
+customElements.define('card-back', CardBack)

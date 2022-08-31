@@ -7,10 +7,14 @@
     <link rel="stylesheet" href="opensans.css">
     <link rel="stylesheet" href="crocodile.css">
     <title>New Normal - New Design</title>
-    <script src="hand.js" type="text/javascript"></script>
-    <script src="card.js" type="text/javascript"></script>
-    <script src="card-back.js" type="text/javascript"></script>
-    <script src="label-card.js" type="text/javascript"></script>
+    <script src="elements/player-hand.js" type="text/javascript"></script>
+    <script src="elements/argument-card.js" type="text/javascript"></script>
+    <script src="elements/card-back.js" type="text/javascript"></script>
+    <script src="elements/ad-hominem-card.js" type="text/javascript"></script>
+    <script src="elements/strawman-card.js" type="text/javascript"></script>
+    <script src="elements/fake-news-card.js" type="text/javascript"></script>
+    <script src="elements/appeal-to-card.js" type="text/javascript"></script>
+    <script src="elements/let-me-research-card.js" type="text/javascript"></script>
     <style>
       html, body {
         width: 100%;
@@ -19,19 +23,20 @@
         margin: 0;
       }
       
-      nn-hand {
+      player-hand {
         position: absolute;
         top: 10%;
         left: 10%;
         bottom: 10%;
         right: 10%;
+        overflow: auto;
       }
       
-      nn-hand * {
+      player-hand * {
         cursor: pointer;
       }
       
-      nn-hand > *[top] {
+      player-hand > *[top] {
         transform: scale(1.03);
         transition: all .2s linear;
       }
@@ -51,17 +56,21 @@
           element.toggleAttribute('top', true)
         }
       }
+      function toggle() {
+        document.getElementById('hand').toggleAttribute('active')
+      }
     </script>
-    <nn-hand>
-      <nn-card-back idiot top onclick="down(event)" onmouseover="over(event)"></nn-card-back>
-      <nn-card-back onclick="down(event)" onmouseover="over(event)"></nn-card-back>
-      <nn-card idiot id="I9" topic="Masken" onclick="down(event)" onmouseover="over(event)"><h2>Maske gesundheitsschädlich</h2>
-      <p>Die sagen<i> doch allen Ernstes</i>, dass das längere Tragen von Masken zu einer Sauerstoffunterversorgung führt, die schädlich für den Körper ist. Und dass dies zu bleibenden Schäden wie dem Absterben von Gehirnzellen führt!</p></nn-card>
-      <nn-card id="S360" topic="Masken" onclick="down(event)" onmouseover="over(event)"><h2>Es gibt doch so schöne Masken</h2>
-      <p>Die sagen<i> doch allen Ernstes</i>, dass es doch inzwischen, so wie Anfangs bei den Stoffmasken so viele schöne Motive und Farben für die medizinischen Masken gibt. Und dass die eigene Sicherheit doch so zumindest kein ästhetisches Problem mehr sein muss.</p></nn-card>
-      <nn-card id="I123" topic="Masken" onclick="down(event)" onmouseover="over(event)"><h2>Bill Gates ist auch geimpft</h2><p>Die sagen<i> doch allen Ernstes</i>, dass Bill Gates, den manche als Drahtzieher eine großen Corona-Verschwörung sehen, doch auch selbst geimpft ist. Und dass er doch nicht sich selbst und seine Kinder impfen lassen würde, wenn die Impfung das repräsentierte, was die Kritiker behaupten.</p></nn-card>
-      <nn-label-card label="Verschwörungs&shy;theoretiker" onclick="down(event)"  onmouseover="over(event)"></nn-label-card>
-      <nn-label-card idiot label="Schlafschaf" onclick="down(event)" onmouseover="over(event)"></nn-label-card>
-    </nn-hand>
+    <button onclick="toggle()">Toggle</button>
+    <player-hand id="hand" lang="de">
+      <card-back idiot top onclick="down(event)" onmouseover="over(event)"></card-back>
+      <card-back onclick="down(event)" onmouseover="over(event)"></card-back>
+      <argument-card idiot id="I9" topic="Masken" onclick="down(event)" onmouseover="over(event)"><h2>Maske gesundheitsschädlich</h2>
+      <p>Die sagen<i> doch allen Ernstes</i>, dass das längere Tragen von Masken zu einer Sauerstoffunterversorgung führt, die schädlich für den Körper ist. Und dass dies zu bleibenden Schäden wie dem Absterben von Gehirnzellen führt!</p></argument-card>
+      <argument-card id="S360" topic="Masken" onclick="down(event)" onmouseover="over(event)"><h2>Es gibt doch so schöne Masken</h2>
+      <p>Die sagen<i> doch allen Ernstes</i>, dass es doch inzwischen, so wie Anfangs bei den Stoffmasken so viele schöne Motive und Farben für die medizinischen Masken gibt. Und dass die eigene Sicherheit doch so zumindest kein ästhetisches Problem mehr sein muss.</p></argument-card>
+      <argument-card id="I123" topic="Bill Gates" onclick="down(event)" onmouseover="over(event)"><h2>Bill Gates ist auch geimpft</h2><p>Die sagen<i> doch allen Ernstes</i>, dass Bill Gates, den manche als Drahtzieher eine großen Corona-Verschwörung sehen, doch auch selbst geimpft ist. Und dass er doch nicht sich selbst und seine Kinder impfen lassen würde, wenn die Impfung das repräsentierte, was die Kritiker behaupten.</p></argument-card>
+      <ad-hominem-card label="Verschwörungs&shy;theoretiker" onclick="down(event)"  onmouseover="over(event)"></ad-hominem-card>
+      <ad-hominem-card idiot label="Schlafschaf" onclick="down(event)" onmouseover="over(event)"></ad-hominem-card>
+    </player-hand>
   </body>
 </html>

@@ -56,7 +56,7 @@ class CardBack extends HTMLElement {
     return this.hasAttribute('idiot')
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
+  attributeChangedCallback() {
     this.update()
   }
 

@@ -40,7 +40,7 @@ class GameCard extends HTMLElement {
     return this.hasAttribute('mirrored')
   }
 
-  attributeChangedCallback(name) {
+  attributeChangedCallback() {
     this.update()
   }
 

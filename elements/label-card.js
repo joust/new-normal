@@ -99,7 +99,6 @@ labelCardTemplate.innerHTML = `
       font-stretch: condensed;
       max-width: 100%;
       display: inline-block;
-      text-align: center;
       padding-left: calc(7 * var(--cavg));
       padding-right: calc(7 * var(--cavg));
     }
@@ -173,7 +172,7 @@ class LabelCard extends HTMLElement {
     return this.hasAttribute('mirrored')
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
+  attributeChangedCallback() {
     this.update()
   }
 

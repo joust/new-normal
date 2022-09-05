@@ -190,7 +190,7 @@ class StrawmanCard extends HTMLElement {
     return this.hasAttribute('mirrored')
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
+  attributeChangedCallback() {
     this.update()
   }
 

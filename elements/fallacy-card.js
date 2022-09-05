@@ -134,10 +134,6 @@ FallacyCardTemplate.innerHTML = `
       content: '!';
     }
 
-    .phrase::after {
-      content: var(--phrase);
-    }
-
     .mirrored #side-phrase {
       left: calc(100% - var(--sidebar-width));
     }
@@ -177,7 +173,7 @@ class FallacyCard extends HTMLElement {
     return this.hasAttribute('mirrored')
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
+  attributeChangedCallback() {
     this.update()
   }
 

@@ -108,7 +108,6 @@ appealToCardTemplate.innerHTML = `
     }
 
     .quoted {
-      text-align: center;
       padding-left: calc(7 * var(--cavg));
       padding-right: calc(7 * var(--cavg));
     }
@@ -197,7 +196,7 @@ class AppealToCard extends HTMLElement {
     return this.hasAttribute('mirrored')
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
+  attributeChangedCallback() {
     this.update()
   }
 

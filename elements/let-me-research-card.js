@@ -153,79 +153,6 @@ letMeResearchCardTemplate.innerHTML = `
     .mirrored #side-phrase {
       left: calc(100% - var(--sidebar-width));
     }
-
-    :lang(da) .phrase::after {
-      content: 'Lad mig google det et øjeblik';
-    }
-
-    .idiot:lang(da) .phrase::after {
-      content: 'Lad mig lige tale med Telegram';
-    }
-
-    :lang(de) .phrase::after {
-      content: 'Lass mich das kurz googlen';
-    }
-
-    .idiot:lang(de) .phrase::after {
-      content: 'Lass mich kurz auf Telegram';
-    }
-
-    :lang(en) .phrase::after {
-      content: 'Let me google that for a moment';
-    }
-
-    .idiot:lang(en) .phrase::after {
-      content: 'Let me just find this on Telegram';
-    }
-
-    :lang(es) .phrase::after {
-      content: 'Déjeme buscar en Google por un momento';
-    }
-
-    .idiot:lang(es) .phrase::after {
-      content: 'Dejadme un momento en Telegram';
-    }
-
-    :lang(fr) .phrase::after {
-      content: 'Laisse-moi faire une recherche rapide sur Google';
-    }
-
-    .idiot:lang(fr) .phrase::after {
-      content: 'Laisse-moi un peu sur Telegram';
-    }
-
-    :lang(it) .phrase::after {
-      content: 'Lasciatemi cercare su Google';
-    }
-
-    .idiot:lang(it) .phrase::after {
-      content: 'Lasciatemi un attimo su Telegram';
-    }
-
-    :lang(pl) .phrase::after {
-      content: 'Pozwól, że przez chwilę pogoogluję';
-    }
-
-    .idiot:lang(pl) .phrase::after {
-      content: 'Daj mi chwilkę na Telegramie';
-    }
-
-    :lang(pt) .phrase::after {
-      content: 'Deixe-me ir ao Google por um momento';
-    }
-
-    .idiot:lang(pt) .phrase::after {
-      content: 'Dê-me um momento no Telegrama';
-    }
-
-    :lang(pt-br) .phrase::after {
-      content: 'Deixe-me ir ao Google por um momento';
-    }
-
-    .idiot:lang(pt-br) .phrase::after {
-      content: 'Dê-me um momento no Telegrama';
-    }
-
   </style>
   <div id="let-me-research-card">
     <div id="watermark"></div>
@@ -243,6 +170,30 @@ class LetMeResearchCard extends HTMLElement {
   }
 
   static observedAttributes = ['idiot', 'mirrored']
+  static phrase = {
+    sheep: {
+      da: 'Lad mig google det et øjeblik',
+      de: 'Lass mich das kurz googlen',
+      en: 'Let me google that for a moment',
+      es: 'Déjeme buscar en Google por un momento',
+      fr: 'Laisse-moi faire une recherche rapide sur Google',
+      it: 'Lasciatemi cercare su Google',
+      pl: 'Pozwól, że przez chwilę pogoogluję',
+      pt: 'Deixe-me ir ao Google por um momento',
+      'pt-br': 'Deixe-me ir ao Google por um momento'
+    },
+    idiot: {
+      da: 'Lad mig lige tale med Telegram',
+      de: 'Lass mich kurz auf Telegram',
+      en: 'Let me just find this on Telegram',
+      es: 'Dejadme un momento en Telegram',
+      fr: 'Laisse-moi un peu sur Telegram',
+      it: 'Lasciatemi un attimo su Telegram',
+      pl: 'Daj mi chwilkę na Telegramie',
+      pt: 'Dê-me um momento no Telegrama',
+      'pr-br': 'Dê-me um momento no Telegrama'
+    }
+  }
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
@@ -256,6 +207,12 @@ class LetMeResearchCard extends HTMLElement {
 
   attributeChangedCallback() {
     this.update()
+  }
+
+  static browserLocale() {
+    let [language, territory] = navigator.language.split('-')
+    territory = territory ? territory.toLowerCase() : language
+    return [language, territory]
   }
 
   connectedCallback() {
@@ -274,9 +231,14 @@ class LetMeResearchCard extends HTMLElement {
   }
 
   update() {
-    if (this.isConnected && this.element('let-me-research-card')) {
-      this.element('let-me-research-card').classList.toggle('mirrored', this.mirrored)
-      this.element('let-me-research-card').classList.toggle('idiot', this.idiot)
+    const root = this.element('let-me-research-card')
+    if (this.isConnected && root) {
+      root.classList.toggle('mirrored', this.mirrored)
+      root.classList.toggle('idiot', this.idiot)
+      const type = this.idiot ? 'idiot' : 'sheep'
+      const [lang, terr] = LetMeResearchCard.browserLocale()
+      const phrase = LetMeResearchCard.phrase[type][`${lang}-${terr}`] || LetMeResearchCard.phrase[type][lang] || 'LetMeResearchCard'
+      Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = phrase)
     }
   }
 }

@@ -37,6 +37,7 @@ argumentCardTemplate.innerHTML = `
 
     #topic-name {
       position: absolute;
+      font-weight: 300;
       height: var(--topic-height);
       top: 0;
       left: calc(var(--sidebar-width) + 6 * var(--cw));
@@ -237,12 +238,13 @@ class ArgumentCard extends HTMLElement {
   }
 
   update() {
-    if (this.isConnected && this.element('argument-card')) {
-      this.element('argument-card').classList.toggle('idiot', this.idiot)
-      this.element('argument-card').classList.toggle('mirrored', this.mirrored)
+    const root = this.element('argument-card')
+    if (this.isConnected && root) {
+      root.classList.toggle('idiot', this.idiot)
+      root.classList.toggle('mirrored', this.mirrored)
       this.element('id').innerHTML = this.id
       this.element('topic-name').innerHTML = this.topic
-      setTimeout(() => this.element('side-title').innerHTML = this.title)
+      this.element('side-title').innerHTML = this.title
     }
   }
 }

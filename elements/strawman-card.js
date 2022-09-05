@@ -7,6 +7,8 @@ strawmanCardTemplate.innerHTML = `
 
     #strawman-card {
       --grey: grey;
+      --red: #f72d5d;
+      --blue: #2d60f6;
       --lightgrey: lightgrey;
       --sidebar-width: 12%;
       --watermark-size: 50%;
@@ -65,7 +67,7 @@ strawmanCardTemplate.innerHTML = `
 
     #phrase {
       position: absolute;
-      color: white;
+      color: var(--blue);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -76,7 +78,11 @@ strawmanCardTemplate.innerHTML = `
       hyphens: auto;
       padding: calc(7 * var(--cavg));
       box-sizing: border-box;
-}
+    }
+
+    .idiot #phrase {
+      color: var(--red);
+    }
 
     .mirrored #phrase {
       left: 0;
@@ -86,6 +92,8 @@ strawmanCardTemplate.innerHTML = `
      #fallacy {
       font-family: 'Open Sans', Helvetica;
       font-size: calc(4 * var(--cavg));
+      font-weight: 300;
+      color: white;
     }
 
     #fallacy::after {
@@ -116,15 +124,23 @@ strawmanCardTemplate.innerHTML = `
       font-size: calc(6 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
-      color: white;
+      color: var(--blue);
       opacity: 0.4;
       padding-left: 2%;
       top: 100%;
       left: 0;
+      text-overflow: ellipsis;
+      text-align: left;
+      overflow: hidden;
+      white-space: nowrap;
       height: calc(15 * var(--cw));
       width: calc(85 * var(--ch));
       transform: rotate(-90deg);
       transform-origin: top left;
+    }
+
+    .idiot #side-phrase {
+      color: var(--red);
     }
 
     #side-phrase::after {
@@ -134,43 +150,6 @@ strawmanCardTemplate.innerHTML = `
     .mirrored #side-phrase {
       left: calc(100% - var(--sidebar-width));
     }
-
-    :lang(da) .phrase::after {
-      content: 'Lad mig lægge det her i din mund';
-    }
-
-    :lang(de) .phrase::after {
-      content: 'Lass mich Dir das in den Mund legen';
-    }
-
-    :lang(en) .phrase::after {
-      content: 'Let me put this in your mouth';
-    }
-
-    :lang(es) .phrase::after {
-      content: 'Déjame poner esto en tu boca';
-    }
-
-    :lang(fr) .phrase::after {
-      content: 'Laisse-moi te mettre ça en bouche';
-    }
-
-    :lang(it) .phrase::after {
-      content: 'Lasciate che ve lo metta in bocca';
-    }
-
-    :lang(pl) .phrase::after {
-      content: 'Pozwól, że włożę ci to do ust';
-    }
-
-    :lang(pt) .phrase::after {
-      content: 'Deixa-me pôr-te isto na boca';
-    }
-
-    :lang(pt-br) .phrase::after {
-      content: 'Deixe-me pôr isto em sua boca';
-    }
-
   </style>
   <div id="strawman-card">
     <div id="watermark"></div>
@@ -189,6 +168,18 @@ class StrawmanCard extends HTMLElement {
 
   static observedAttributes = ['idiot', 'mirrored']
 
+  static phrase = {
+    da: 'Lad mig lægge det her i din mund',
+    de: 'Lass mich Dir das in den Mund legen',
+    en: 'Let me put this in your mouth',
+    es: 'Déjame poner esto en tu boca',
+    fr: 'Laisse-moi te mettre ça en bouche',
+    it: 'Lasciate che ve lo metta in bocca',
+    pl: 'Pozwól, że włożę ci to do ust',
+    pt: 'Deixa-me pôr-te isto na boca',
+    'pt-br': 'Deixe-me pôr isto em sua boca'
+  }
+
   element(id) { return this.shadowRoot.getElementById(id) }
 
   get idiot() {
@@ -203,10 +194,18 @@ class StrawmanCard extends HTMLElement {
     this.update()
   }
 
+  static browserLocale() {
+    let [language, territory] = navigator.language.split('-')
+    territory = territory ? territory.toLowerCase() : language
+    return [language, territory]
+  }
+
   connectedCallback() {
     this.shadowRoot.appendChild(strawmanCardTemplate.content.cloneNode(true))
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
+    const langObserver = new MutationObserver(() => this.update())
+    langObserver.observe(document, { attributes: true, attributeFilter: ['lang'], subtree: true })
     this.update()
   }
 
@@ -218,9 +217,13 @@ class StrawmanCard extends HTMLElement {
   }
 
   update() {
-    if (this.isConnected && this.element('strawman-card')) {
-      this.element('strawman-card').classList.toggle('mirrored', this.mirrored)
-      this.element('strawman-card').classList.toggle('idiot', this.idiot)
+    const root = this.element('strawman-card')
+    if (this.isConnected && root) {
+      root.classList.toggle('mirrored', this.mirrored)
+      root.classList.toggle('idiot', this.idiot)
+      const [lang, terr] = StrawmanCard.browserLocale()
+      const phrase = StrawmanCard.phrase[`${lang}-${terr}`] || StrawmanCard.phrase[lang]
+      Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = phrase)
     }
   }
 }

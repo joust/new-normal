@@ -1,13 +1,15 @@
-const adHominemCardTemplate = document.createElement('template')
-adHominemCardTemplate.innerHTML = `
+const FallacyCardTemplate = document.createElement('template')
+FallacyCardTemplate.innerHTML = `
   <style>
      :host {
       display: inline-block;
     }
 
-    #ad-hominem-card {
+    #fallacy-card {
       --red: #f72d5d;
       --blue: #2d60f6;
+      --lred: #f93b6b;
+      --lblue: #3b69f8;
       --sidebar-width: 12%;
       --watermark-size: 50%;
       position: relative;
@@ -15,8 +17,12 @@ adHominemCardTemplate.innerHTML = `
       height: 100%;
       border: calc(0.1 * var(--cavg)) solid #aaa;
       border-radius: calc(2 * var(--cavg));
-      background: linear-gradient(30deg, black 0%, grey 100%);
+      background: linear-gradient(30deg, var(--lblue) 0%, var(--blue) 100%);
       user-select: none;
+    }
+
+    #fallacy-card.idiot {
+      background: linear-gradient(30deg, var(--lred) 0%, var(--red) 100%);
     }
 
     #watermark {
@@ -35,7 +41,6 @@ adHominemCardTemplate.innerHTML = `
       right: var(--sidebar-width);
     }
 
-    
     #new, #normal {
       font-family: 'HVD Crocodile';
       font-weight: 600;
@@ -63,9 +68,13 @@ adHominemCardTemplate.innerHTML = `
       right: calc(2% + var(--sidebar-width));
     }
 
-    #label {
+    #phrase {
       position: absolute;
-      color: var(--blue);
+      font-family: 'HVD Crocodile';
+      font-size: calc(7 * var(--cavg));
+      font-weight: 600;
+      font-stretch: condensed;
+      color: white;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -76,28 +85,20 @@ adHominemCardTemplate.innerHTML = `
       hyphens: auto;
     }
 
-    .mirrored #label {
+    .mirrored #phrase {
       left: 0;
       right: var(--sidebar-width);
     }
 
-     #fallacy {
+    #phrase .phrase {
+      padding-left: calc(7 * var(--cavg));
+      padding-right: calc(7 * var(--cavg));
+    }
+
+    #fallacy {
       font-family: 'Open Sans', Helvetica;
       font-size: calc(4 * var(--cavg));
-    }
-
-    #fallacy::after {
-      content: 'Ad Hominem';
-    }
-
-    #label-name {
-      font-family: 'HVD Crocodile';
-      font-size: calc(7 * var(--cavg));
-      font-weight: 600;
-      font-stretch: condensed;
-      max-width: 100%;
-      display: inline-block;
-      text-align: center;
+      font-weight: 300;
     }
 
     .quoted::before {
@@ -108,52 +109,55 @@ adHominemCardTemplate.innerHTML = `
       content: '!' close-quote;
     }
 
-    #side-label {
+    #side-phrase {
       position: absolute;
       font-family: 'HVD Crocodile';
       font-size: calc(6 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
-      color: var(--blue);
-      opacity: 0.8;
+      color: white;
+      opacity: 0.4;
       padding-left: 2%;
       top: 100%;
       left: 0;
+      text-overflow: ellipsis;
+      text-align: left;
+      overflow: hidden;
+      white-space: nowrap;
       height: calc(15 * var(--cw));
       width: calc(85 * var(--ch));
-      text-overflow: ellipsis;
       transform: rotate(-90deg);
       transform-origin: top left;
     }
 
-    #ad-hominem-card.idiot #label, #ad-hominem-card.idiot #side-label {
-      color: var(--red);
-    }
-
-    #side-label::after {
+    #side-phrase::after {
       content: '!';
     }
 
-    .mirrored #side-label {
+    .phrase::after {
+      content: var(--phrase);
+    }
+
+    .mirrored #side-phrase {
       left: calc(100% - var(--sidebar-width));
     }
   </style>
-  <div id="ad-hominem-card">
+  <div id="fallacy-card">
     <div id="watermark"></div>
     <div id="new">New</div>
-    <div id="label"><span id="fallacy"></span><span class="quoted" id="label-name"></span></div>
-    <div id="side-label"></div>
+    <div id="phrase"><span id="fallacy"></span><span class="quoted phrase"></span></div>
+    <div id="side-phrase"><span class="phrase"></span></div>
     <div id="normal">Normal</div>
   </div>
 `
 
-class AdHominemCard extends HTMLElement {
+class FallacyCard extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = ['idiot', 'label', 'mirrored']
+  static observedAttributes = ['idiot', 'mirrored']
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
@@ -161,8 +165,12 @@ class AdHominemCard extends HTMLElement {
     return this.hasAttribute('idiot')
   }
 
-  get label() {
-    return this.getAttribute('label')
+  get fallacy() {
+    return this.querySelector('i') ? this.querySelector('i').innerHTML : ''
+  }
+
+  get phrase() {
+    return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
   }
 
   get mirrored() {
@@ -174,7 +182,7 @@ class AdHominemCard extends HTMLElement {
   }
 
   connectedCallback() {
-    this.shadowRoot.appendChild(adHominemCardTemplate.content.cloneNode(true))
+    this.shadowRoot.appendChild(FallacyCardTemplate.content.cloneNode(true))
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
     this.update()
@@ -188,13 +196,14 @@ class AdHominemCard extends HTMLElement {
   }
 
   update() {
-    if (this.isConnected && this.element('ad-hominem-card')) {
-      this.element('ad-hominem-card').classList.toggle('mirrored', this.mirrored)
-      this.element('ad-hominem-card').classList.toggle('idiot', this.idiot)
-      this.element('side-label').innerHTML = this.label
-      this.element('label-name').innerHTML = this.label
+    const root = this.element('fallacy-card')
+    if (this.isConnected && root) {
+      root.classList.toggle('mirrored', this.mirrored)
+      root.classList.toggle('idiot', this.idiot)
+      this.element('fallacy').innerHTML = this.fallacy 
+      Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = this.phrase)
     }
   }
 }
 
-customElements.define('ad-hominem-card', AdHominemCard)
+customElements.define('fallacy-card', FallacyCard)

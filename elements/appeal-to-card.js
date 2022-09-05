@@ -6,11 +6,12 @@ appealToCardTemplate.innerHTML = `
     }
 
     #appeal-to-card {
+      --red: #f72d5d;
+      --blue: #2d60f6;
       --yellow: yellow;
       --orange: orange;
       --sidebar-width: 12%;
       --watermark-size: 50%;
-      --to: 'WHO';
       position: relative;
       width: 100%;
       height: 100%;
@@ -82,23 +83,34 @@ appealToCardTemplate.innerHTML = `
       right: var(--sidebar-width);
     }
 
-     #fallacy {
-      font-family: 'Open Sans', Helvetica;
-      font-size: calc(4 * var(--cavg));
-    }
-
-    #fallacy::after {
-      content: 'Appeal to Authority';
-    }
-
-    #phrase span.phrase {
+    #phrase {
       font-family: 'HVD Crocodile';
       font-size: calc(7 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
+    }
+
+    #phrase .to {
+      color: var(--blue);
+    }
+
+    .idiot #phrase .to {
+      color: var(--red);
+    }
+
+     #fallacy {
+      font-family: 'Open Sans', Helvetica;
+      font-size: calc(4 * var(--cavg));
+      font-weight: 300;
       max-width: 100%;
       display: inline-block;
       text-align: center;
+    }
+
+    .quoted {
+      text-align: center;
+      padding-left: calc(7 * var(--cavg));
+      padding-right: calc(7 * var(--cavg));
     }
 
     .quoted::before {
@@ -109,13 +121,13 @@ appealToCardTemplate.innerHTML = `
       content: '!' close-quote;
     }
 
-    #side-phrase {
+    #side-to {
       position: absolute;
       font-family: 'HVD Crocodile';
       font-size: calc(6 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
-      color: darkgrey;
+      color: var(--blue);
       opacity: 0.4;
       padding-left: 2%;
       top: 100%;
@@ -130,23 +142,23 @@ appealToCardTemplate.innerHTML = `
       transform-origin: top left;
     }
 
-    #side-phrase::after {
+    .idiot #side-to {
+      color: var(--red);
+    }
+
+    #side-to::after {
       content: '!';
     }
 
-    .mirrored #side-phrase {
+    .mirrored #side-to {
       left: calc(100% - var(--sidebar-width));
-    }
-
-    .to::after {
-      content: var(--to);
     }
   </style>
   <div id="appeal-to-card">
     <div id="watermark"></div>
     <div id="new">New</div>
-    <div id="phrase"><span id="fallacy"></span><span class="quoted phrase"><span class="to"></span></span></span></div>
-    <div id="side-phrase"><span class="phrase"><span class="to"></span></span></div>
+    <div id="phrase"><span id="fallacy"></span><span class="quoted"><span class="to"></span> <span class="phrase"></span></span></div>
+    <div id="side-to"><span class="to"></span></div>
     <div id="normal">Normal</div>
   </div>
 `
@@ -157,7 +169,7 @@ class AppealToCard extends HTMLElement {
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = ['idiot', 'to', 'mirrored']
+  static observedAttributes = ['idiot', 'type', 'mirrored']
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
@@ -165,8 +177,20 @@ class AppealToCard extends HTMLElement {
     return this.hasAttribute('idiot')
   }
 
+  get type() {
+    return this.getAttribute('type')
+  }
+
+  get fallacy() {
+    return this.type === 'authority' ? 'Appeal to Authority' : 'Appeal to Popularity'
+  }
+
   get to() {
-    return this.getAttribute('to')
+    return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
+  }
+
+  get phrase() {
+    return this.querySelector('p') ? this.querySelector('p').innerHTML : ''
   }
 
   get mirrored() {
@@ -192,10 +216,13 @@ class AppealToCard extends HTMLElement {
   }
 
   update() {
-    if (this.isConnected && this.element('appeal-to-card')) {
-      this.element('appeal-to-card').classList.toggle('mirrored', this.mirrored)
-      this.element('appeal-to-card').classList.toggle('idiot', this.idiot)
-      if (this.to) this.style.setProperty('--to', this.to)
+    const root = this.element('appeal-to-card')
+    if (this.isConnected && root) {
+      root.classList.toggle('mirrored', this.mirrored)
+      root.classList.toggle('idiot', this.idiot)
+      this.element('fallacy').innerHTML = this.fallacy 
+      Array.from(root.querySelectorAll('.to')).forEach(node => node.innerHTML = this.to)
+      root.querySelector('.phrase').innerHTML = this.phrase
     }
   }
 }

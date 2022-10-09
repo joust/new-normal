@@ -1,0 +1,18 @@
+{
+  "scripts": {
+    "clean-dist": "rm -rf dist && mkdir dist",
+    "copy": "cp -r {da,de,en,es,fr,it,pl,pt} topics-new.html dist",
+    "init": "npm run clean-dist && npm run copy",
+    "start": "npm run init && parcel uno.html --open",
+    "build": "npm run init && parcel build uno.html --out-dir build"
+  },
+  "dependencies": {
+    "@boardgame.io/p2p": "^0.4.1",
+    "boardgame.io": "^0.49.12"
+  },
+  "devDependencies": {
+    "@parcel/transformer-webmanifest": "^2.7.0",
+    "parcel": "latest",
+    "process": "^0.11.10"
+  }
+}

@@ -1,301 +1,55 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-    <link rel="apple-touch-icon" href="images/nn-icon.png">
-    <link rel="icon" type="image/png" href="images/nn-icon.png">
-    <link rel="stylesheet" href="opensans.css">
-    <link rel="stylesheet" href="crocodile.css">
-    <title>New Normal - Corona-Uno</title>
-    <script src="elements/player-hand.js" type="text/javascript"></script>
-    <script src="elements/argument-card.js" type="text/javascript"></script>
-    <script src="elements/game-card.js" type="text/javascript"></script>
-    <script src="elements/card-back.js" type="text/javascript"></script>
-    <script src="elements/label-card.js" type="text/javascript"></script>
-    <script src="elements/fallacy-card.js" type="text/javascript"></script>
-    <script src="elements/strawman-card.js" type="text/javascript"></script>
-    <script src="elements/appeal-to-card.js" type="text/javascript"></script>
-    <script src="elements/let-me-research-card.js" type="text/javascript"></script>
-    <script src="common.js" type="text/javascript"></script>
-    <script src="swipy.js" type="text/javascript"></script>
-    <script src="fastclick.js" type="text/javascript"></script>
-    <style>
-      html, body, #uno {
-        width: 100%;
-        height: 100%;
-        padding: 0;
-        margin: 0;
-        overflow: visible;
-      }
-      
-      html {
-        overflow: hidden;
-      }
-        
-      #uno {
-        display: flex;
-        flex-direction: column;
-        background: lightgrey;
-      }
-      #hand {
-        flex: 2;
-        width: 100%;
-      }
-      #deck {
-        flex: 1;
-        width: 100%;
-      }
-
-      @media (orientation: portrait) and (min-aspect-ratio: 1/2) {
-        #hand {
-          flex: 0.8;
-        }
-      }
-
-      @media (orientation: landscape) and (min-aspect-ratio: 2/1) {
-        #uno {
-          display: flex;
-          flex-direction: row;
-          align-items: flex-end;
-        }
-        #hand {
-          order: 1;
-          height: 95%;
-        }
-        #deck {
-          order: 2;
-          height: 100%;
-        }
-      }
-
-      #hand * {
-        cursor: pointer;
-      }
-      
-      #hand > *[top] {
-        transform: scale(1.03) translateY(-1vh);
-        transition: all .2s linear;
-      }
-      
-      #location {
-        position: absolute;
-        top: 0;
-        right: 0;
-        font-size: 2em;
-        background: transparent;
-        border: none;
-      }
-      
-      #loader {
-        position: absolute;
-        border: 16px solid #f3f3f3;
-        border-top: 16px solid #2d60f6; 
-        border-radius: 50%;
-        width: 120px;
-        height: 120px;
-        animation: spin 2s linear infinite;
-        z-index: 1;
-      }
-
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-    </style>
-    <script>
-      function move(event) {
-        console.log('move', event.target)
-        show(event.target)
-      }
-      function over(event) {
-        console.log('over', event.target)
-        show(event.target)
-      }
-      function down(event) {
-        show(event.target)
-      }
-      function show(element) {
-        if (!element.hasAttribute('top')) {
-          for (const node of element.parentElement.children) 
-            node.toggleAttribute('top', node === element)
-        }
-      }
-      function toggle() {
-        document.getElementById('hand').toggleAttribute('active')
-      }
-
-      function flagcheck() {
-        if (navigator.userAgent.indexOf('Windows') > 0)
-          document.head.innerHTML += '<link rel="stylesheet" href="noto.css">'
-      }
-      function uno(locale) {
-        if (locale) [lang, terr] = locale.split('-'); else [lang, terr] = browserLocale()
-        if (!supported.includes(lang)) [lang, terr] = ['en', 'us']
-        document.body.lang = document.querySelector('#location').value = `${lang}-${terr}`
-      }
-      
-      function addSwiping(id) {
-        const node = document.getElementById(id)
-        const swipy = new Swipy(node)
-
-        swipy.on('swipeleft', () => {
-          const top = node.querySelector('*[top]')
-          if (top && top.previousElementSibling) this.show(top.previousElementSibling)
-        })
-        swipy.on('swiperight', () => {
-          const top = node.querySelector('*[top]')
-          if (top && top.nextElementSibling) this.show(top.nextElementSibling)
-        })
-      }
-      
-      function addGameCards() {
-        for (let i=0; i<5; i++) {
-          const card = new GameCard()
-          card.setAttribute('idiot', true)
-          document.getElementById('hand').appendChild(card)
-        }
-        for (let i=0; i<5; i++) {
-          const card = new GameCard()
-          document.getElementById('hand').appendChild(card)
-        }
-      }
-      
-      function fixAnchors(html) {
-        return html.replaceAll('</h2></a>', '</h2>').replaceAll('</p>', '</p></a>')
-      }
-      
-      async function loadContent(lang) {
-        document.querySelector('#content .idiot').innerHTML =  fixAnchors(await fetchSilent(`${lang}/idiot.html`))
-        document.querySelector('#content .sheep').innerHTML = fixAnchors(await fetchSilent(`${lang}/sheep.html`))
-        document.querySelector('#content .labels').innerHTML = await fetchSilent(`${lang}/labels.html`)
-        document.querySelector('#content .appeal-tos').innerHTML = await fetchSilent(`${lang}/appeal-to.html`)
-        document.querySelector('#content .fallacies').innerHTML = await fetchSilent(`${lang}/fallacies.html`)
-        document.querySelector('#content .strawmans').innerHTML = await fetchSilent(`${lang}/strawmans.html`)
-        addGameCards()
-      }
-    </script>
-  </head>
-  <body lang="de" onload="flagcheck(); uno(); loadContent('de'); /*addSwiping('hand')*/">
-    <div id="uno">
-      <div id="deck">
+<head>
+  <title>Uno</title>
+  <meta charset="utf-8" />
+</head>
+<style>
+.hidden {
+  display: none;
+}
+</style>
+<body onload="load()">
+  <script type="module" src="app.js"></script>
+  <script>
+    function load() {
+      const randomMatchID = Math.floor(1000+Math.random()*9000)
+      document.getElementById('matchID').value = randomMatchID
+    }
+    function play(e) {
+      e.preventDefault()
+      const isHost = document.getElementById('isHost').value
+      const playerID = document.getElementById('playerID').value
+      const matchID = document.getElementById('matchID').value
+      document.getElementById('app').classList.toggle('hidden', false)
+      document.getElementById('config').classList.toggle('hidden', true)
+      startGame('de', host, playerID, matchID)
+    }
+  </script>
+  <div id="app" class="hidden"></div>
+  <div id="config">
+    <h2>Configure this client</h2>
+    <form onsubmit="play(event)">
+      <label>
+        <code>isHost</code>
+        <input id="isHost" type="checkbox" checked>
+      </label>
+      <label>
+        <code>player ID</code>
+        <select id="playerID" value="0">
+          <option value="">spectator</option>
+          <option value="0">0</option>
+          <option value="1">1</option>
+        </select>
+      </label>
+      <div className="row">
+        <label>
+          <code>match ID</code>
+          <input id="matchID" type="text">
+        </label>
       </div>
-      <player-hand active id="hand" ontouchmove="move(event)"  onclick="down(event)" onmouseover="over(event)">
-        <card-back idiot top></card-back>
-        <card-back></card-back>
-        <argument-card idiot id="I9" topic="Masken"><h2>Maske gesundheitsschädlich</h2>
-        <p>Die sagen<i> doch allen Ernstes</i>, dass das längere Tragen von Masken zu einer Sauerstoffunterversorgung führt, die schädlich für den Körper ist. Und dass dies zu bleibenden Schäden wie dem Absterben von Gehirnzellen führt!</p></argument-card>
-        <argument-card id="S360" topic="Masken"><h2>Es gibt doch so schöne Masken</h2>
-        <p>Die sagen<i> doch allen Ernstes</i>, dass es doch inzwischen, so wie Anfangs bei den Stoffmasken so viele schöne Motive und Farben für die medizinischen Masken gibt. Und dass die eigene Sicherheit doch so zumindest kein ästhetisches Problem mehr sein muss.</p></argument-card>
-        <argument-card id="I123" topic="Bill Gates"><h2>Bill Gates ist auch geimpft</h2><p>Die sagen<i> doch allen Ernstes</i>, dass Bill Gates, den manche als Drahtzieher eine großen Corona-Verschwörung sehen, doch auch selbst geimpft ist. Und dass er doch nicht sich selbst und seine Kinder impfen lassen würde, wenn die Impfung das repräsentierte, was die Kritiker behaupten.</p></argument-card>
-        <label-card><h2>Verschwörungs&shy;theoretiker</h2></label-card>
-        <label-card idiot>
-          <h2>Schlafschaf</h2>
-        </label-card>
-        <appeal-to-card>
-          <h2>Die WHO</h2><p>sorgt sich um die Weltgesundheit</p>
-        </appeal-to-card>
-        <appeal-to-card idiot>
-          <h2>Eric Clapton</h2><p>hat die Lage schon früh erkannt</p>
-        </appeal-to-card>
-        <let-me-research-card></let-me-research-card>
-        <let-me-research-card idiot></let-me-research-card>
-        <strawman-card></strawman-card>
-        <strawman-card idiot></strawman-card>
-        <fallacy-card>
-          <i>Decision Point</i><h2>Faktenchecker: Teilweise falsch</h2>
-        </fallacy-card>
-        <fallacy-card idiot>
-          <i>Thought-terminating cliché</i><h2>Wahrheits&shy;ministerium</h2>
-        </fallacy-card>
-      </player-hand>
-    </div>
-    <select id="location" onchange="uno(event.target.value)">
-      <option title="Deutschland" value="de-de">🇩🇪</option>
-      <option title="Österreich" value="de-at">🇦🇹</option>
-      <option title="Schweiz" value="de-ch">🇨🇭</option>
-      <option title="Svizzera" value="it-ch">🇨🇭</option>
-      <option title="Suisse" value="fr-ch">🇨🇭</option>
-      <option title="Danmark" value="da-da">🇩🇰</option>
-      <option title="Liechtenstein" value="de-li">🇱🇮</option>
-      <option title="Italia" value="it-it">🇮🇹</option>
-      <option title="Italien" value="de-it">🇮🇹</option>
-      <option title="San Marino" value="it-sm">🇸🇲</option>
-      <option title="Città del Vaticano" value="it-va">🇻🇦</option>
-      <option title="United States" value="en-us">🇺🇸</option>
-      <option title="United Kingdom" value="en-gb">🇬🇧</option>
-      <option title="Australia" value="en-au">🇦🇺</option>
-      <option title="New Zealand" value="en-nz">🇳🇿</option>
-      <option title="Canada" value="en-ca">🇨🇦</option>
-      <option title="Canada" value="fr-ca">🇨🇦</option>
-      <option title="Polska" value="pl-pl">🇵🇱</option>
-      <option title="Antigua and Barbuda" value="en-ag">🇦🇬</option>
-      <option title="The Bahamas" value="en-bs">🇧🇸</option>
-      <option title="Barbados" value="en-bb">🇧🇧</option>
-      <option title="Belize" value="en-bz">🇧🇿 </option>
-      <option title="Dominica" value="en-dm">🇩🇲</option>
-      <option title="Grenada" value="en-gd">🇬🇩</option>
-      <option title="Guyana" value="en-gy">🇬🇾</option>
-      <option title="Ireland" value="en-ie">🇮🇪</option>
-      <option title="Jamaica" value="en-jm">🇯🇲</option>
-      <option title="Malta" value="en-mt">🇲🇹</option>
-      <option title="St Kitts and Nevis" value="en-kn">🇰🇳</option>
-      <option title="St Lucia" value="en-lc">🇱🇨</option>
-      <option title="St Vincent and the Grenadines" value="en-vc">🇻🇨</option>
-      <option title="Trinidad and Tobago" value="en-tt">🇹🇹</option>
-      <option title="España" value="es-es">🇪🇸</option>
-      <option title="Cuba" value="es-cu">🇨🇺</option>
-      <option title="Perú" value="es-pe">🇵🇪</option>
-      <option title="Chile" value="es-cl">🇨🇱</option>
-      <option title="México" value="es-mx">🇲🇽</option>
-      <option title="Puerto Rico" value="es-pr">🇵🇷</option>
-      <option title="Argentina" value="es-ar">🇦🇷</option>
-      <option title="Bolivia" value="es-bo">🇧🇴</option>
-      <option title="Colombia" value="es-co">🇨🇴</option>
-      <option title="Costa Rica" value="es-cr">🇨🇷</option>
-      <option title="República Dominicana" value="es-do">🇩🇴</option>
-      <option title="Ecuador" value="es-ec">🇪🇨</option>
-      <option title="El Salvador" value="es-sv">🇸🇻</option>
-      <option title="Guinea Ecuatorial" value="es-gq">🇬🇶</option>
-      <option title="Guatemala" value="es-gt">🇬🇹</option>
-      <option title="Honduras" value="es-hn">🇭🇳</option>
-      <option title="Nicaragua" value="es-ni">🇳🇮</option>
-      <option title="Panama" value="es-pa">🇵🇦</option>
-      <option title="Paraguay" value="es-py">🇵🇾</option>
-      <option title="Uruguay" value="es-uy">🇺🇾</option>
-      <option title="Venezuela" value="es-ve">🇻🇪</option>
-      <option title="Portugual" value="pt-pt">🇵🇹</option>
-      <option title="Brasil" value="pt-br">🇧🇷</option>
-      <option title="Angola" value="pt-ao">🇦🇴</option>
-      <option title="Moçambique" value="pt-mz">🇲🇿</option>
-      <option title="Guiné-Bissau" value="pt-gw">🇬🇼</option>
-      <option title="São Tomé &amp; Príncipe" value="pt-st">🇸🇹</option>
-      <option title="Cabo Verde" value="pt-cv">🇨🇻</option>
-      <option title="France" value="fr-fr">🇫🇷</option>
-      <option title="België" value="nl-be">🇧🇪</option>
-      <option title="Belgien" value="de-be">🇧🇪</option>
-      <option title="Belgique" value="fr-be">🇧🇪</option>
-      <option title="Congo" value="fr-cd">🇨🇩</option>
-      <option title="Congo" value="fr-cg">🇨🇬</option>
-      <option title="Côte d’Ivoire" value="fr-ko">🇨🇮</option>
-      <option title="Madagascar" value="fr-ko">🇲🇬</option>
-      <option title="Cameroun" value="fr-cm">🇨🇲</option>
-      <option title="Cameroon" value="en-cm">🇨🇲</option>
-      <option title="Burkina Faso" value="fr-bf">🇧🇫</option>
-      <option title="Niger" value="fr-ne">🇳🇪</option>
-      <option title="Mali" value="fr-ml">🇲🇱</option>
-      <option title="Sénégal" value="fr-sn">🇸🇳</option>
-      <option title="Haïti" value="fr-ht">🇭🇹</option>
-      <option title="Benin" value="fr-bj">🇧🇯</option>
-    </select>
-    <div id="content" class="hidden">
-      <div class="idiot"></div>
-      <div class="sheep"></div>    
-      <div class="labels"></div>
-      <div class="fallacies"></div>
-      <div class="appeal-tos"></div>
-      <div class="strawmans"></div>
-      <div class="topics"></div>
-    </div>
-    <div id="loader" class="hidden"></div>
-  </body>
+      <button type="submit">Connect</button>
+    </form>
+  </div>
+</body>
 </html>

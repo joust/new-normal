@@ -65,7 +65,6 @@ class GameCard extends HTMLElement {
     if (this.isConnected && card) {
       const template = document.createElement('template')
       template.innerHTML = this.getCardElement()
-      console.log(card)
       card.parentElement.replaceChild(card, template.content)
     }
   }
@@ -75,10 +74,6 @@ class GameCard extends HTMLElement {
       const card = this.querySelector('argument-card, fallacy-card, appeal-to-card, label-card, research-card, strawman-card')
       if (card) card.toggleAttribute('mirrored', this.mirrored)
     }
-  }
-
-  random(min, max) {
-    return min + Math.floor(Math.random()*(max-min+1))
   }
 
   getCardElement() {

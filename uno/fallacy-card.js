@@ -153,12 +153,12 @@ class FallacyCard extends HTMLElement {
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = ['idiot', 'mirrored']
+  static observedAttributes = ['id', 'mirrored']
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
   get idiot() {
-    return this.hasAttribute('idiot')
+    return this.id && this.id[1]==='I'
   }
 
   get fallacy() {
@@ -167,6 +167,10 @@ class FallacyCard extends HTMLElement {
 
   get phrase() {
     return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
+  }
+
+  get id() {
+    return this.getAttribute('id')
   }
 
   get mirrored() {

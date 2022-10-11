@@ -73,7 +73,7 @@ class CardBack extends HTMLElement {
   }
 
   randomViruses() {
-    return Array(60).fill().map(() => `url(${CardBack.virus}) ${this.random(-20,120)}% ${this.random(-20,120)}% / ${this.random(20,40)}% no-repeat`).join(',')
+    return Array(10).fill().map(() => `url(${CardBack.virus}) ${this.random(-20,120)}% ${this.random(-20,120)}% / ${this.random(30,50)}% no-repeat`).join(',')
   }
 
   resize() {

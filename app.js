@@ -1,8 +1,42 @@
-import { Client } from 'boardgame.io/client'
-import { P2P } from '@boardgame.io/p2p'
-import { Uno } from './uno'      
+const { Client } = require('boardgame.io/client')
+const { P2P } = require('@boardgame.io/p2p')
 
-export async function startGame(lang, isHost, playerID, matchID) {
+async function startClient(lang, isHost, numPlayers, playerID, matchID) {
   await Uno.init(lang)
-  const client = Client({ game: Uno, matchID, playerID, multiplayer: P2P({ isHost }) })
+  const client = Client({
+    game: Uno,
+    numPlayers,
+    matchID,
+    playerID,
+    multiplayer: P2P({
+      isHost,
+      onError: e => { console.log('P2P error', e) }
+    })
+  })
+  client.start()
+  return client
+}
+
+function flagcheck() {
+  if (navigator.userAgent.indexOf('Windows') > 0)
+    document.head.innerHTML += '<link rel="stylesheet" href="noto.css">'
+}
+
+function uno(locale) {
+  if (locale) [lang, terr] = locale.split('-'); else [lang, terr] = browserLocale()
+  if (!supported.includes(lang)) [lang, terr] = ['en', 'us']
+  document.body.lang = document.querySelector('#location').value = `${lang}-${terr}`
+}
+
+function fixAnchors(html) {
+  return html.replaceAll('</h2></a>', '</h2>').replaceAll('</p>', '</p></a>')
+}
+
+async function loadContent(lang) {
+  document.querySelector('#content .idiot').innerHTML =  fixAnchors(await fetchSilent(`${lang}/idiot.html`))
+  document.querySelector('#content .sheep').innerHTML = fixAnchors(await fetchSilent(`${lang}/sheep.html`))
+  document.querySelector('#content .labels').innerHTML = await fetchSilent(`${lang}/labels.html`)
+  document.querySelector('#content .appeal-tos').innerHTML = await fetchSilent(`${lang}/appeal-to.html`)
+  document.querySelector('#content .fallacies').innerHTML = await fetchSilent(`${lang}/fallacies.html`)
+  addGameCards()
 }

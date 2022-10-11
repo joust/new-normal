@@ -1,11 +1,11 @@
-const letMeResearchCardTemplate = document.createElement('template')
-letMeResearchCardTemplate.innerHTML = `
+const researchCardTemplate = document.createElement('template')
+researchCardTemplate.innerHTML = `
   <style>
      :host {
       display: inline-block;
     }
 
-    #let-me-research-card {
+    #research-card {
       --sidebar-width: 12%;
       --watermark-size: 50%;
       position: relative;
@@ -30,7 +30,7 @@ letMeResearchCardTemplate.innerHTML = `
       user-select: none;
     }
 
-    #let-me-research-card.idiot {
+    #research-card.idiot {
     background: linear-gradient(
         30deg,
         rgba(28, 127, 238, 1) 0%,
@@ -154,7 +154,7 @@ letMeResearchCardTemplate.innerHTML = `
       left: calc(100% - var(--sidebar-width));
     }
   </style>
-  <div id="let-me-research-card">
+  <div id="research-card">
     <div id="watermark"></div>
     <div id="new">New</div>
     <div id="phrase"><span><span class="phrase"></span></span></div>
@@ -163,7 +163,7 @@ letMeResearchCardTemplate.innerHTML = `
   </div>
 `
 
-class LetMeResearchCard extends HTMLElement {
+class ResearchCard extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
@@ -216,7 +216,7 @@ class LetMeResearchCard extends HTMLElement {
   }
 
   connectedCallback() {
-    this.shadowRoot.appendChild(letMeResearchCardTemplate.content.cloneNode(true))
+    this.shadowRoot.appendChild(researchCardTemplate.content.cloneNode(true))
     this.element('side-phrase').innerHTML = this.element('phrase').innerHTML // copy phrases
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
@@ -231,16 +231,16 @@ class LetMeResearchCard extends HTMLElement {
   }
 
   update() {
-    const root = this.element('let-me-research-card')
+    const root = this.element('research-card')
     if (this.isConnected && root) {
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
       const type = this.idiot ? 'idiot' : 'sheep'
-      const [lang, terr] = LetMeResearchCard.browserLocale()
-      const phrase = LetMeResearchCard.phrase[type][`${lang}-${terr}`] || LetMeResearchCard.phrase[type][lang] || 'LetMeResearchCard'
+      const [lang, terr] = ResearchCard.browserLocale()
+      const phrase = ResearchCard.phrase[type][`${lang}-${terr}`] || ResearchCard.phrase[type][lang] || 'ResearchCard'
       Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = phrase)
     }
   }
 }
 
-customElements.define('let-me-research-card', LetMeResearchCard)
+customElements.define('research-card', ResearchCard)

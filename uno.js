@@ -1,6 +1,6 @@
 const INITIAL = 8
-const STRAWMANS = 100
-const JOKERS = 100
+const STRAWMANS = 80
+const RESEARCHS = 120
 const INVALID_MOVE = 'INVALID_MOVE'
 
 /**
@@ -14,7 +14,8 @@ Game state: {
 }
 */
 let content
-export const Uno = {
+const Uno = {
+  name: 'NewNormalUno',
   init: async (lang) => {
     content = await init(lang)
   },
@@ -29,39 +30,34 @@ export const Uno = {
       const idiot = isIdiot(ctx.currentPlayer)
       const hand = G.hands[ctx.currentPlayer]
       if (index === undefined || index >= hand.length) return INVALID_MOVE
+      
       const card = hand[index]
       const top = G.pile.length ? G.pile[G.pile.length-1] : undefined
+      if (!canBePlayedOn(top, card, idiot)) return INVALID_MOVE
+
       switch(card[0]) {
         case 'A': // appeal to
         case 'F': // fallacy
         case 'L': // label
           hand.splice(index, 1)
           G.pile.push(card) // allows to play any argument card afterwards
-          break;
-        case 'J': // joker
-          if (top && isArgument(top)) {
-            resolveJoker(hand, G.decks, top, idiot)
-            hand.splice(index, 1)
-          } else return INVALID_MOVE
-          break;
+          break
+        case 'R': // research
+          resolveResearch(hand, G.decks, top, idiot)
+          hand.splice(index, 1)
+          break
         case 'S': // strawman
-          if (top && isArgument(top)) {
-            resolveStrawman(hand, G.decks, isIdiot(ctx.currentPlayer))
-            hand.splice(index, 1)
-            G.pile.push(card)
-          } else return INVALID_MOVE
-          break;
+          resolveStrawman(hand, G.decks, idiot)
+          hand.splice(index, 1)
+          G.pile.push(card)
+          break
         default: // argument card
-          if (top && top[0]==='S' && isArgument(card) && isOfType(card, !idiot)) {
-            hand.splice(index, 1)
-            G.pile.push(card)
-          } else if (!top 
-                    || (isArgument(top) && isOfType(card, idiot) && topicOf(card)===topicOf(top))
-                    || (['A','F','L'].includes(top[0]) && isOfType(card, idiot))) {
-            hand.splice(index, 1)
-            G.pile.push(card)
-            ctx.events.endTurn() // only playing a valid argument card of your side ends the turn
-          } else return INVALID_MOVE
+          hand.splice(index, 1)
+          G.pile.push(card)
+          // only playing a valid argument card of your side ends the turn
+          if (!top || (isArgument(top) && isOfType(card, idiot))) {
+            ctx.events.endTurn()
+          }
       }
     },
     drawCard: (G, ctx) => {
@@ -77,9 +73,36 @@ export const Uno = {
     if (winner >= 0) return { winner }
   },
   minPlayers: 2,
-  maxPlayers: 10,
-  // Disable undo feature for all the moves in the game
-  disableUndo: true
+  disableUndo: true, // Disable undo feature for all the moves in the game
+  ai: {
+    enumerate: (G, ctx) => {
+      const idiot = isIdiot(ctx.currentPlayer)
+      const hand = G.hands[ctx.currentPlayer]
+      const top = G.pile.length ? G.pile[G.pile.length-1] : undefined
+      const toPlayMove = (card, index) => ({ move: 'playCard', args: [index]})
+      const canBePlayed = move => canBePlayedOn(top, hand[move.args[0]], idiot)
+      return [ { move: 'drawCard', args: [] }, ...hand.map(toPlayMove).filter(canBePlayed) ]
+    }
+  }
+}
+
+function canBePlayedOn(top, card, idiot) {
+  switch(card[0]) {
+    case 'A': // appeal to
+    case 'F': // fallacy
+    case 'L': // label
+      return true
+    case 'R': // research
+      return top && isArgument(top)
+    case 'S': // strawman
+      return top && isArgument(top)
+    default: // argument card
+      return (top && top[0]==='S' && isArgument(card) && isOfType(card, !idiot))
+        || (!top 
+          || (isArgument(top) && isOfType(card, idiot) && topicOf(card)===topicOf(top))
+          || (['A','F','L'].includes(top[0]) && isOfType(card, idiot))
+           )
+  }
 }
 
 /** check player for idiot */
@@ -114,7 +137,7 @@ function hasTopic(id, topic) {
  * @param {{idiot: Array, sheep: Array}} decks The decks.
  * @param {string} card card to counter on the pile
  */ 
-function resolveJoker(hand, decks, top, idiot) {
+function resolveResearch(hand, decks, top, idiot) {
   const deck = decks[idiot ? 'idiot' : 'sheep']
   const topic = topicOf(top)
   const cards = deck.filter(c => hasTopic(c, topic))
@@ -172,8 +195,8 @@ function initialDeck(idiot) {
   const type = idiot ? 'I' : 'S'
   const cards = content[idiot ? 'idiot' : 'sheep']
   const strawmans = new Array(STRAWMANS).fill(`S${type}`)
-  const jokers = new Array(JOKERS).fill(`J${type}`)
-  return [...cards.args, ...cards.labels, ...cards.fallacies, ...cards.appealTos, ...strawmans, ...jokers]
+  const researchs = new Array(RESEARCHS).fill(`R${type}`)
+  return [...cards.args, ...cards.labels, ...cards.fallacies, ...cards.appealTos, ...strawmans, ...researchs]
 }
 
 /**
@@ -201,7 +224,7 @@ async function init(lang) {
 
 /**
  * adjust the deck size of the smaller deck 
- * by duplicating labels, fallacies, appealTos, strawmans or jokers
+ * by duplicating labels, fallacies, appealTos, strawmans or researchs
  * side effect: directly changes the smaller array
  * @param {{idiot: Array, sheep: Array}} decks The unadjusted decks
  */

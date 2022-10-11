@@ -21,7 +21,17 @@ playerHandTemplate.innerHTML = `
       overflow: visible;
     }  
 
-    #player-hand:not(.active) ::slotted(nn-card) {
+    #player-hand * {
+      cursor: pointer;
+    }
+
+    #player-hand > *[top] {
+      transform: scale(1.03) translateY(-1vh);
+      transition: all .2s linear;
+    }
+      
+
+    #player-hand:not(.active) ::slotted(game-card) {
       display: inline-block;
       height: calc(100 * var(--ch));
       width: calc(100 * var(--ratio) * var(--ch));
@@ -36,9 +46,13 @@ class PlayerHand extends HTMLElement {
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = ['active']
+  static observedAttributes = ['ids', 'active']
 
   element(id) { return this.shadowRoot.getElementById(id) }
+
+  get ids() {
+    return this.getAttribute('ids')
+  }
 
   get active() {
     return this.hasAttribute('active')
@@ -46,24 +60,57 @@ class PlayerHand extends HTMLElement {
 
   connectedCallback() {
     this.shadowRoot.appendChild(playerHandTemplate.content.cloneNode(true))
-    this.element('player-hand').classList.toggle('active', this.active)
+    const hand = this.element('player-hand')
+    hand.classList.toggle('active', this.active)
+    hand.ontouchmove = e => this.move(e)
+    hand.onclick = e => this.down(e)
+    hand.onmouseover = e => this.over(e)
+    this.updateCards()
+    
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
-    const mutationObserver = new MutationObserver(() => this.update())
+    const mutationObserver = new MutationObserver(() => this.updateLayout())
     mutationObserver.observe(this, { subtree: true, childList: true, attributes: true, attributeFilter: ['top', 'style', 'class']})
   }
   
-  attributeChangedCallback() {
-    if (this.isConnected && this.element('hand')) {
-      this.element('player-hand').classList.toggle('active', this.active)
-      this.update()
+  attributeChangedCallback(name) {
+    if (this.isConnected && this.element('player-hand')) {
+      if (name=="ids") {
+        this.updateCards()
+      }
+      if (name==="active") {
+        this.element('player-hand').classList.toggle('active', this.active)
+      }
+      this.updateLayout()
+    }
+  }
+
+  updateCards() {
+    if (this.ids) {
+      const cardIds = this.ids.split(',')
+      const hand = this.element('player-hand')
+      let elements = Array.from(hand.querySelectorAll('game-card'))
+      for (let index=0; index < Math.max(cardIds.length, elements.length); index++) {
+        if (index < Math.min(cardIds.length, elements.length)) {
+          elements[index].setAttribute('id', cardIds[index])
+        } else if (index < cardIds.length) {
+          hand.insertAdjacentHTML('beforeend', `<game-card id="${cardIds[index]}"></game-card>`);
+          elements = Array.from(hand.querySelectorAll('game-card'))
+        } else {
+          elements[index].parentElement.removeChild(elements[index])
+        }
+      }
     }
   }
 
   slotChildren() {
     return this.element('player-hand').firstChild.assignedElements()
   }
-  
+
+  ownChildren() {
+    return Array.from(this.element('player-hand').querySelectorAll('game-card'))
+  }
+
   slotVisible() {
     return this.slotChildren().filter(node => !!node.offsetParent)
   }
@@ -85,7 +132,7 @@ class PlayerHand extends HTMLElement {
   }
 
   recalc() {
-    const children = this.slotVisible()
+    const children = [ ...this.slotVisible(), ...this.ownChildren()]
     const topIndex = children.findIndex(child => child.hasAttribute('top'))
     const columns = this.columns(children.length, topIndex)
     this.element('player-hand').style.gridTemplateColumns = `1fr ${columns} 1fr`
@@ -97,9 +144,9 @@ class PlayerHand extends HTMLElement {
     this.recalc()
   }
 
-  update() {
+  updateLayout() {
     const invisible = this.active ? this.slotInvisible() : this.slotChildren()
-    const visible = this.slotVisible()
+    const visible = [ ...this.slotVisible(), ...this.ownChildren()]
     invisible.forEach(child => {
       child.style.removeProperty('gridRow')
       child.style.removeProperty('gridColumn')
@@ -119,6 +166,42 @@ class PlayerHand extends HTMLElement {
     } else
       this.element('player-hand').style.gridTemplateColumns = undefined
   }
+
+  move(event) {
+    event.target && this.show(event.target)
+  }
+
+  over(event) {
+    event.target && this.show(event.target)
+  }
+
+  down(event) {
+    event.target && this.show(event.target)
+  }
+
+  show(element) {
+    console.log('show', element)
+    if (!element.hasAttribute('top') && element.parentElement) {
+      for (const node of element.parentElement.children) 
+        node.toggleAttribute('top', node === element)
+    }
+    this.updateLayout()
+  }
+
+  addSwiping() {
+    const hand = this.element('player-hand')
+    const swipy = new Swipy(hand)
+
+    swipy.on('swipeleft', () => {
+      const top = hand.querySelector('*[top]')
+      if (top && top.previousElementSibling) this.show(top.previousElementSibling)
+    })
+    swipy.on('swiperight', () => {
+      const top = hand.querySelector('*[top]')
+      if (top && top.nextElementSibling) this.show(top.nextElementSibling)
+    })
+  }
+
 }
 
 customElements.define('player-hand', PlayerHand)

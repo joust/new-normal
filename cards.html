@@ -7,15 +7,16 @@
     <link rel="stylesheet" href="opensans.css">
     <link rel="stylesheet" href="crocodile.css">
     <title>New Normal - Corona-Uno</title>
-    <script src="elements/player-hand.js" type="text/javascript"></script>
-    <script src="elements/argument-card.js" type="text/javascript"></script>
-    <script src="elements/game-card.js" type="text/javascript"></script>
-    <script src="elements/card-back.js" type="text/javascript"></script>
-    <script src="elements/label-card.js" type="text/javascript"></script>
-    <script src="elements/fallacy-card.js" type="text/javascript"></script>
-    <script src="elements/strawman-card.js" type="text/javascript"></script>
-    <script src="elements/appeal-to-card.js" type="text/javascript"></script>
-    <script src="elements/let-me-research-card.js" type="text/javascript"></script>
+    <script src="uno/player-hand.js" type="text/javascript"></script>
+    <script src="uno/opponent-hand.js" type="text/javascript"></script>
+    <script src="uno/argument-card.js" type="text/javascript"></script>
+    <script src="uno/game-card.js" type="text/javascript"></script>
+    <script src="uno/card-back.js" type="text/javascript"></script>
+    <script src="uno/label-card.js" type="text/javascript"></script>
+    <script src="uno/fallacy-card.js" type="text/javascript"></script>
+    <script src="uno/strawman-card.js" type="text/javascript"></script>
+    <script src="uno/appeal-to-card.js" type="text/javascript"></script>
+    <script src="uno/research-card.js" type="text/javascript"></script>
     <script src="common.js" type="text/javascript"></script>
     <script src="swipy.js" type="text/javascript"></script>
     <script src="fastclick.js" type="text/javascript"></script>
@@ -45,6 +46,11 @@
         flex: 1;
         width: 100%;
       }
+      
+      opponent-hand {
+        width: 200px;
+        height: 100px;
+      }
 
       @media (orientation: portrait) and (min-aspect-ratio: 1/2) {
         #hand {
@@ -68,15 +74,6 @@
         }
       }
 
-      #hand * {
-        cursor: pointer;
-      }
-      
-      #hand > *[top] {
-        transform: scale(1.03) translateY(-1vh);
-        transition: all .2s linear;
-      }
-      
       #location {
         position: absolute;
         top: 0;
@@ -107,23 +104,6 @@
       }
     </style>
     <script>
-      function move(event) {
-        console.log('move', event.target)
-        show(event.target)
-      }
-      function over(event) {
-        console.log('over', event.target)
-        show(event.target)
-      }
-      function down(event) {
-        show(event.target)
-      }
-      function show(element) {
-        if (!element.hasAttribute('top')) {
-          for (const node of element.parentElement.children) 
-            node.toggleAttribute('top', node === element)
-        }
-      }
       function toggle() {
         document.getElementById('hand').toggleAttribute('active')
       }
@@ -137,33 +117,7 @@
         if (!supported.includes(lang)) [lang, terr] = ['en', 'us']
         document.body.lang = document.querySelector('#location').value = `${lang}-${terr}`
       }
-      
-      function addSwiping(id) {
-        const node = document.getElementById(id)
-        const swipy = new Swipy(node)
 
-        swipy.on('swipeleft', () => {
-          const top = node.querySelector('*[top]')
-          if (top && top.previousElementSibling) this.show(top.previousElementSibling)
-        })
-        swipy.on('swiperight', () => {
-          const top = node.querySelector('*[top]')
-          if (top && top.nextElementSibling) this.show(top.nextElementSibling)
-        })
-      }
-      
-      function addGameCards() {
-        for (let i=0; i<5; i++) {
-          const card = new GameCard()
-          card.setAttribute('idiot', true)
-          document.getElementById('hand').appendChild(card)
-        }
-        for (let i=0; i<5; i++) {
-          const card = new GameCard()
-          document.getElementById('hand').appendChild(card)
-        }
-      }
-      
       function fixAnchors(html) {
         return html.replaceAll('</h2></a>', '</h2>').replaceAll('</p>', '</p></a>')
       }
@@ -172,46 +126,23 @@
         document.querySelector('#content .idiot').innerHTML =  fixAnchors(await fetchSilent(`${lang}/idiot.html`))
         document.querySelector('#content .sheep').innerHTML = fixAnchors(await fetchSilent(`${lang}/sheep.html`))
         document.querySelector('#content .labels').innerHTML = await fetchSilent(`${lang}/labels.html`)
-        document.querySelector('#content .appeal-tos').innerHTML = await fetchSilent(`${lang}/appeal-to.html`)
+        document.querySelector('#content .appeal-tos').innerHTML = await fetchSilent(`${lang}/appeal-tos.html`)
         document.querySelector('#content .fallacies').innerHTML = await fetchSilent(`${lang}/fallacies.html`)
-        document.querySelector('#content .strawmans').innerHTML = await fetchSilent(`${lang}/strawmans.html`)
-        addGameCards()
+        document.querySelector('#content .topics').innerHTML = await fetchSilent(`${lang}/topics.html`)
+      }
+      
+      async function addHands() {
+        await loadContent('de')
+        document.querySelector('#uno').insertAdjacentHTML('beforeend', '<player-hand id="hand" active ids="T48:S90,T35:S297,LS13,LS74,SS,T5:S142,T35:S469,RS"></player-hand>') 
+        document.querySelector('#deck').insertAdjacentHTML('beforeend', '<opponent-hand id="o1" idiot cards="8"></opponent-hand>') 
+        document.querySelector('#deck').insertAdjacentHTML('beforeend', '<opponent-hand id="o2" cards="8"></opponent-hand>')
       }
     </script>
   </head>
-  <body lang="de" onload="flagcheck(); uno(); loadContent('de'); /*addSwiping('hand')*/">
+  <body lang="de" onload="flagcheck(); uno(); addHands()">
     <div id="uno">
       <div id="deck">
       </div>
-      <player-hand active id="hand" ontouchmove="move(event)"  onclick="down(event)" onmouseover="over(event)">
-        <card-back idiot top></card-back>
-        <card-back></card-back>
-        <argument-card idiot id="I9" topic="Masken"><h2>Maske gesundheitsschädlich</h2>
-        <p>Die sagen<i> doch allen Ernstes</i>, dass das längere Tragen von Masken zu einer Sauerstoffunterversorgung führt, die schädlich für den Körper ist. Und dass dies zu bleibenden Schäden wie dem Absterben von Gehirnzellen führt!</p></argument-card>
-        <argument-card id="S360" topic="Masken"><h2>Es gibt doch so schöne Masken</h2>
-        <p>Die sagen<i> doch allen Ernstes</i>, dass es doch inzwischen, so wie Anfangs bei den Stoffmasken so viele schöne Motive und Farben für die medizinischen Masken gibt. Und dass die eigene Sicherheit doch so zumindest kein ästhetisches Problem mehr sein muss.</p></argument-card>
-        <argument-card id="I123" topic="Bill Gates"><h2>Bill Gates ist auch geimpft</h2><p>Die sagen<i> doch allen Ernstes</i>, dass Bill Gates, den manche als Drahtzieher eine großen Corona-Verschwörung sehen, doch auch selbst geimpft ist. Und dass er doch nicht sich selbst und seine Kinder impfen lassen würde, wenn die Impfung das repräsentierte, was die Kritiker behaupten.</p></argument-card>
-        <label-card><h2>Verschwörungs&shy;theoretiker</h2></label-card>
-        <label-card idiot>
-          <h2>Schlafschaf</h2>
-        </label-card>
-        <appeal-to-card>
-          <h2>Die WHO</h2><p>sorgt sich um die Weltgesundheit</p>
-        </appeal-to-card>
-        <appeal-to-card idiot>
-          <h2>Eric Clapton</h2><p>hat die Lage schon früh erkannt</p>
-        </appeal-to-card>
-        <let-me-research-card></let-me-research-card>
-        <let-me-research-card idiot></let-me-research-card>
-        <strawman-card></strawman-card>
-        <strawman-card idiot></strawman-card>
-        <fallacy-card>
-          <i>Decision Point</i><h2>Faktenchecker: Teilweise falsch</h2>
-        </fallacy-card>
-        <fallacy-card idiot>
-          <i>Thought-terminating cliché</i><h2>Wahrheits&shy;ministerium</h2>
-        </fallacy-card>
-      </player-hand>
     </div>
     <select id="location" onchange="uno(event.target.value)">
       <option title="Deutschland" value="de-de">🇩🇪</option>
@@ -297,7 +228,6 @@
       <div class="labels"></div>
       <div class="fallacies"></div>
       <div class="appeal-tos"></div>
-      <div class="strawmans"></div>
       <div class="topics"></div>
     </div>
     <div id="loader" class="hidden"></div>

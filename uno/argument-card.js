@@ -24,10 +24,22 @@ argumentCardTemplate.innerHTML = `
 
     #topic-icon {
       position: absolute;
-      width: var(--sidebar-width);
-      heigt: var(--sidebar-width);
+      width: calc(1.3 * var(--sidebar-width));
+      heigt: calc(1.3 * var(--sidebar-width))
       top: 0;
       left: 0;
+      font-family: 'HVD Crocodile';
+      font-weight: 600;
+      font-stretch: condensed;
+      font-size: calc(8 * var(--cavg));
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 0;
+      color: var(--blue);
+    }
+
+    .idiot #topic-icon {
+      color: var(--red);
     }
 
     .mirrored #topic-icon {
@@ -187,7 +199,7 @@ class ArgumentCard extends HTMLElement {
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = ['idiot', 'topic', 'id', 'mirrored']
+  static observedAttributes = ['idiot', 'topic', 'topicId', 'id', 'mirrored']
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
@@ -197,6 +209,10 @@ class ArgumentCard extends HTMLElement {
 
   get topic() {
     return this.getAttribute('topic')
+  }
+
+  get topicId() {
+    return this.getAttribute('topicId')
   }
 
   get id() {
@@ -243,6 +259,7 @@ class ArgumentCard extends HTMLElement {
       root.classList.toggle('idiot', this.idiot)
       root.classList.toggle('mirrored', this.mirrored)
       this.element('id').innerHTML = this.id
+      this.element('topic-icon').innerHTML = this.topicId.substring(1)
       this.element('topic-name').innerHTML = this.topic
       this.element('side-title').innerHTML = this.title
     }

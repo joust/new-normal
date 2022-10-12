@@ -30160,7 +30160,7 @@ class P2PTransport extends internal_1.Transport {
             throw new Error("matchID must be provided");
         // Sanitize host ID for PeerJS: remove any non-alphanumeric characters, trim
         // leading/trailing hyphens/underscores and collapse consecutive hyphens/underscores.
-        return `boardgameio-${this.gameName}-matchid-${this.matchID}`.replace(/([^A-Za-z0-9_-]|^[_-]+|[_-]+$|(?<=[_-])[_-]+)/g, "");
+        return `boardgameio-${this.gameName}-matchid-${this.matchID}`;
     }
     /** Keep credentials and encryption keys in sync. */
     setCredentials(credentials) {

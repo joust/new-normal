@@ -3,9 +3,6 @@ noCardTemplate.innerHTML = `
   <style>
      :host {
       display: inline-block;
-      width: 100%;
-      height: 100%;
-      border: none;
     }
 
     #no-card {
@@ -13,7 +10,6 @@ noCardTemplate.innerHTML = `
       width: 100%;
       height: 100%;
       border: calc(0.1 * var(--cavg)) solid #aaa;
-      border-style: dashed;
       border-radius: calc(2 * var(--cavg));
       background: white;
     }

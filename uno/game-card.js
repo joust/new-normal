@@ -3,9 +3,6 @@ gameCardTemplate.innerHTML = `
   <style>
      :host {
       display: inline-block;
-      width: 100%;
-      height: 100%;
-      border: none;
     }
 
     argument-card, fallacy-card, appeal-to-card, label-card, research-card, strawman-card {
@@ -61,23 +58,22 @@ class GameCard extends HTMLElement {
   }
 
   updateId() {
-      const card = this.querySelector('argument-card, fallacy-card, appeal-to-card, label-card, research-card, strawman-card')
+      const card = this.shadowRoot.querySelector('argument-card, fallacy-card, appeal-to-card, label-card, research-card, strawman-card')
     if (this.isConnected && card) {
-      const template = document.createElement('template')
-      template.innerHTML = this.getCardElement()
-      card.parentElement.replaceChild(card, template.content)
+      card.insertAdjacentHTML('beforeBegin', this.getCardElement())
+      this.shadowRoot.removeChild(card)
     }
   }
 
   updateMirrored() {
     if (this.isConnected) {
-      const card = this.querySelector('argument-card, fallacy-card, appeal-to-card, label-card, research-card, strawman-card')
+      const card = this.shadowRoot.querySelector('argument-card, fallacy-card, appeal-to-card, label-card, research-card, strawman-card')
       if (card) card.toggleAttribute('mirrored', this.mirrored)
     }
   }
 
   getCardElement() {
-    const data = document.querySelector(`${GameCard.contentRootSelector} a[id="${this.idOnly}"]`)
+    const data = document.querySelector(`${GameCard.contentRootSelector} a[id="${this.idOnly}"]`) || ''
     const type = this.idiot ? 'idiot' : ''
     switch (this.id[0]) {
       case 'L': return `<label-card ${type} id="${this.id}">${data.innerHTML}</label-card>`

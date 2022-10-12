@@ -47,15 +47,19 @@
       #piles {
         flex: 1;
         width: 100%;
-        align-content: center;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
       }
       
       #piles card-pile {
+        position: relative;
         height: 200px;
         width: 142px; 
       }
       
       opponent-hand {
+        position: absolute;
         width: 200px;
         height: 70px;
       }
@@ -112,10 +116,6 @@
       }
     </style>
     <script>
-      function toggle() {
-        document.getElementById('hand').toggleAttribute('active')
-      }
-
       function flagcheck() {
         if (navigator.userAgent.indexOf('Windows') > 0)
           document.head.innerHTML += '<link rel="stylesheet" href="noto.css">'
@@ -141,9 +141,10 @@
       
       async function addHands() {
         await loadContent('de')
-        document.querySelector('#uno').insertAdjacentHTML('beforeend', '<player-hand id="hand" active ids="T48:S90,T35:S297,LS13,LS74,SS,T5:S142,T35:S469,RS"></player-hand>') 
+        document.querySelector('#uno').insertAdjacentHTML('beforeend', '<player-hand id="hand" active ids="T48:S90,T35:S297,LS13,LS74,SS,T5:S142,T35:S469,RS,LS4,LS90,LS70,RS,SS"></player-hand>') 
         document.querySelector('#game').insertAdjacentHTML('beforeend', '<opponent-hand id="o1" idiot cards="8"></opponent-hand>') 
         document.querySelector('#game').insertAdjacentHTML('beforeend', '<opponent-hand id="o2" cards="8"></opponent-hand>')
+        document.querySelector('#piles').insertAdjacentHTML('beforeend', '<card-pile top="I"></card-pile><card-pile top="T15:I345"></card-pile>')
       }
     </script>
   </head>
@@ -151,8 +152,6 @@
     <div id="uno">
       <div id="game">
         <div id="piles">
-          <card-pile id="S"></card-pile>
-          <card-pile id="RS"></card-pile>
         </div>
       </div>
     </div>

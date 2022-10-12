@@ -5,6 +5,7 @@
   <meta charset="utf-8" />
   <link rel="stylesheet" href="opensans.css">
   <link rel="stylesheet" href="crocodile.css">
+  <link rel="stylesheet" href="uno.css">
   <script src="uno/player-hand.js" type="text/javascript"></script>
   <script src="uno/opponent-hand.js" type="text/javascript"></script>
   <script src="uno/argument-card.js" type="text/javascript"></script>
@@ -20,36 +21,52 @@
   <script src="common.js" type="text/javascript"></script>
   <script src="swipy.js" type="text/javascript"></script>
   <script src="fastclick.js" type="text/javascript"></script>
-  <style src="uno.css"></style>
 </head>
 <body onload="load()">
   <script src="boardgame.js"></script>
   <script src="uno.js"></script>
   <script src="app.js"></script>
   <script>
-    function load() {
-      const randomMatchID = Math.floor(1000+Math.random()*9000)
-      document.getElementById('matchID').value = randomMatchID
+    function element(id) {
+      return document.getElementById(id)
     }
+    
+    async function load() {
+      const randomMatchID = Math.floor(1000+Math.random()*9000)
+      element('matchID').value = randomMatchID
+      await loadContent('de')
+      element('uno').insertAdjacentHTML('afterBegin', `
+      <div id="game">
+        <div id="piles">
+          <card-pile id="draw-pile" top="I"></card-pile>
+          <card-pile id="pile" top=""></card-pile>
+        </div>
+      </div>
+      <player-hand id="hand" active ids=""></player-hand>`)
+    }
+    
     async function play(e) {
       e.preventDefault()
-      const isHost = document.getElementById('isHost').checked
+      const isHost = element('isHost').checked
       const numPlayers = parseInt(document.getElementById('numPlayers').value)
-      const playerID = document.getElementById('playerID').value
-      const matchID = document.getElementById('matchID').value
-      document.getElementById('app').classList.toggle('hidden', false)
-      document.getElementById('config').classList.toggle('hidden', true)
+      const playerID = element('playerID').value
+      const matchID = element('matchID').value
+      element('uno').classList.toggle('hidden', false)
+      element('config').classList.toggle('hidden', true)
       const client = await startClient('de', isHost, numPlayers, playerID, matchID)
+      element('draw-pile').onclick = event => client.moves.drawCard()
+      element('hand').onplay = event => client.moves.playCard(event.detail.index)
+      
       const unsubscribe = client.subscribe(state => {
-        console.log('stateChange', state)
+        // console.log('client', client)
+        element('draw-pile').setAttribute('top', !!(client.playerID%2) ? 'I' : 'S')
+        element('pile').setAttribute('top', state.G.pile[state.G.pile.length-1])
+        element('hand').setAttribute('ids', state.G.hands[client.playerID].join(','))
       })
     }
-  </script>
-  <div id="app" class="hidden">
-    <oponent-hand></oponent-hand>
 
-    <player-hand></player-hand>
-  </div>
+  </script>
+  <div id="uno" class="hidden"></div>
   <div id="config">
     <h2>Configure this client</h2>
     <form onsubmit="play(event)">

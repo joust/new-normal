@@ -174,7 +174,7 @@ class ResearchCard extends HTMLElement {
     sheep: {
       da: 'Lad mig google det et øjeblik',
       de: 'Lass mich das kurz googlen',
-      en: 'Let me google that for a moment',
+      en: 'Let me google this for us',
       es: 'Déjeme buscar en Google por un momento',
       fr: 'Laisse-moi faire une recherche rapide sur Google',
       it: 'Lasciatemi cercare su Google',

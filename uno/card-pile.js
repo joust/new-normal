@@ -3,8 +3,6 @@ cardPileTemplate.innerHTML = `
   <style>
     :host {
       display: inline-block;
-      width: 100%;
-      height: 100%;
     }
 
     no-card, card-back, game-card {
@@ -12,6 +10,7 @@ cardPileTemplate.innerHTML = `
       width: 98%;
       height: 98%;
       z-index: 2;
+      cursor: pointer;
     }
 
     no-card#second {
@@ -34,15 +33,15 @@ class CardPile extends HTMLElement {
     this.attachShadow({ mode: 'open' })
   }
 
-  // no id given means empty stack, id given as 'I' or 'S' means facing down pile with idiot or sheep card-back
-  static observedAttributes = ['id', 'mirrored']
+  // no top given means empty stack, top given as 'I' or 'S' means facing down pile with idiot or sheep card-back
+  static observedAttributes = ['top', 'mirrored']
 
-  get id() {
-    return this.getAttribute('id')
+  get top() {
+    return this.getAttribute('top')
   }
 
   get idiot() {
-    return this.id.includes('I')
+    return this.top.includes('I')
   }
 
   get mirrored() {
@@ -50,24 +49,23 @@ class CardPile extends HTMLElement {
   }
 
   attributeChangedCallback(name) {
-    if (name==='id') this.updateId()
+    if (name==='top') this.updateTop()
     if (name==='mirrored') this.updateMirrored()
   }
 
   connectedCallback() {
-    this.shadowRoot.appendChild(gameCardTemplate.content.cloneNode(true))
+    this.shadowRoot.appendChild(cardPileTemplate.content.cloneNode(true))
     const template = document.createElement('template')
     template.innerHTML = `${this.getTopElement()}<no-card id="second"></no-card><no-card id="third"></no-card>`
 
     this.shadowRoot.appendChild(template.content)
   }
 
-  updateId() {
-    const card = this.querySelector('no-card, card-back, game-card') // selects the first/top element
+  updateTop() {
+    const card = this.shadowRoot.querySelector('no-card, card-back, game-card') // select top element
     if (this.isConnected && card) {
-      const template = document.createElement('template')
-      template.innerHTML = this.getTopElement()
-      card.parentElement.replaceChild(card, template.content)
+      card.insertAdjacentHTML('beforeBegin', this.getTopElement())
+      this.shadowRoot.removeChild(card)
     }
   }
 
@@ -80,13 +78,14 @@ class CardPile extends HTMLElement {
 
   getTopElement() {
     const mirrored = this.mirrored ? 'mirrored' : ''
-    switch (this.id) {
+    console.log('top', this.top)
+    switch (this.top) {
       case null:
       case undefined:
       case '': return '<no-card></no-card>'
       case 'I': return '<card-back idiot></card-back>'
       case 'S': return '<card-back></card-back>'
-      default: return `<game-card ${mirrored} id="${this.id}"></game-card>`
+      default: return `<game-card ${mirrored} id="${this.top}"></game-card>`
     }
   }
 }

@@ -71,6 +71,7 @@ class PlayerHand extends HTMLElement {
     resizeObserver.observe(this)
     const mutationObserver = new MutationObserver(() => this.updateLayout())
     mutationObserver.observe(this, { subtree: true, childList: true, attributes: true, attributeFilter: ['top', 'style', 'class']})
+    this.addSwiping()
   }
   
   attributeChangedCallback(name) {
@@ -87,7 +88,7 @@ class PlayerHand extends HTMLElement {
 
   updateCards() {
     if (this.ids) {
-      const cardIds = this.ids.split(',')
+      const cardIds = !this.ids || !this.ids.length ? [] : this.ids.split(',')
       const hand = this.element('player-hand')
       let elements = Array.from(hand.querySelectorAll('game-card'))
       for (let index=0; index < Math.max(cardIds.length, elements.length); index++) {
@@ -146,7 +147,8 @@ class PlayerHand extends HTMLElement {
 
   updateLayout() {
     const invisible = this.active ? this.slotInvisible() : this.slotChildren()
-    const visible = [ ...this.slotVisible(), ...this.ownChildren()]
+    // reverse() to handle zIndex priorities on mouseover
+    const visible = [ ...this.slotVisible(), ...this.ownChildren()].reverse()
     invisible.forEach(child => {
       child.style.removeProperty('gridRow')
       child.style.removeProperty('gridColumn')
@@ -177,10 +179,15 @@ class PlayerHand extends HTMLElement {
 
   down(event) {
     event.target && this.show(event.target)
+    this.dispatchEvent(new CustomEvent('play', {
+      detail: {
+        id: event.target.id, 
+        index: this.ownChildren().indexOf(event.target)
+      }
+    }))
   }
 
   show(element) {
-    console.log('show', element)
     if (!element.hasAttribute('top') && element.parentElement) {
       for (const node of element.parentElement.children) 
         node.toggleAttribute('top', node === element)

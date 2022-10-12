@@ -36,7 +36,6 @@ async function loadContent(lang) {
   document.querySelector('#content .idiot').innerHTML =  fixAnchors(await fetchSilent(`${lang}/idiot.html`))
   document.querySelector('#content .sheep').innerHTML = fixAnchors(await fetchSilent(`${lang}/sheep.html`))
   document.querySelector('#content .labels').innerHTML = await fetchSilent(`${lang}/labels.html`)
-  document.querySelector('#content .appeal-tos').innerHTML = await fetchSilent(`${lang}/appeal-to.html`)
+  document.querySelector('#content .appeal-tos').innerHTML = await fetchSilent(`${lang}/appeal-tos.html`)
   document.querySelector('#content .fallacies').innerHTML = await fetchSilent(`${lang}/fallacies.html`)
-  addGameCards()
 }

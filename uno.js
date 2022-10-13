@@ -87,13 +87,13 @@ const Uno = {
 }
 
 function canBePlayedOn(top, card, idiot) {
+  if (top && !top.length) top = undefined
   switch(card[0]) {
     case 'A': // appeal to
     case 'F': // fallacy
     case 'L': // label
       return true
     case 'R': // research
-      return top && isArgument(top)
     case 'S': // strawman
       return top && isArgument(top)
     default: // argument card
@@ -140,9 +140,10 @@ function hasTopic(id, topic) {
 function resolveResearch(hand, decks, top, idiot) {
   const deck = decks[idiot ? 'idiot' : 'sheep']
   const topic = topicOf(top)
-  const cards = deck.filter(c => hasTopic(c, topic))
+  const cards = deck.filter(c => hasTopic(c, topic)).slice(0, 1+Math.floor(Math.random()*3))
+  cards.forEach(card => deck.splice(deck.indexOf(card), 1))
   shuffle(cards)
-  hand.push(...cards.slice(0, 1+Math.floor(Math.random()*3))) // 1..3
+  hand.push(...cards)
 }
 
 /**
@@ -157,6 +158,7 @@ function resolveStrawman(hand, decks, idiot) {
   const myTopics = hand.filter(isArgument).map(topicOf)
   const cards = deck.filter(isArgument).filter(c => myTopics.includes(topicOf(c)))
   shuffle(cards)
+  deck.splice(deck.indexOf(cards[0]), 1)
   hand.push(cards[0])
 }
 

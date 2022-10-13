@@ -41,9 +41,9 @@ html {
 }
 
 opponent-hand {
-  position: absolute;
-  width: 200px;
-  height: 70px;
+  position: relative;
+  width: 20vw;
+  height: 7vw;
 }
 
 @media (orientation: portrait) and (min-aspect-ratio: 1/2) {
@@ -71,7 +71,7 @@ opponent-hand {
 #location {
   position: absolute;
   top: 0;
-  right: 0;
+  left: 0;
   font-size: 2em;
   background: transparent;
   border: none;
@@ -99,4 +99,8 @@ opponent-hand {
 
 #uno.hidden {
   visibility: collapse;
+}
+
+opponent-hand.active {
+  border: 3px solid #ff7f50;
 }

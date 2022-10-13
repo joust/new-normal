@@ -22,10 +22,14 @@ playerHandTemplate.innerHTML = `
     }  
 
     #player-hand * {
+      cursor: not-allowed;
+    }
+
+    #player-hand .playable {
       cursor: pointer;
     }
 
-    #player-hand > *[top] {
+    #player-hand > .playable[top] {
       transform: scale(1.03) translateY(-1vh);
       transition: all .2s linear;
     }
@@ -46,12 +50,18 @@ class PlayerHand extends HTMLElement {
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = ['ids', 'active']
+  static observedAttributes = ['ids', 'playable', 'active']
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
   get ids() {
-    return this.getAttribute('ids')
+    const ids = this.getAttribute('ids')
+    return !ids || !ids.length ? [] : ids.split(',')
+  }
+
+  get playable() {
+    const ids = this.getAttribute('playable')
+    return !ids || !ids.length ? [] : ids.split(',')
   }
 
   get active() {
@@ -87,19 +97,17 @@ class PlayerHand extends HTMLElement {
   }
 
   updateCards() {
-    if (this.ids) {
-      const cardIds = !this.ids || !this.ids.length ? [] : this.ids.split(',')
-      const hand = this.element('player-hand')
-      let elements = Array.from(hand.querySelectorAll('game-card'))
-      for (let index=0; index < Math.max(cardIds.length, elements.length); index++) {
-        if (index < Math.min(cardIds.length, elements.length)) {
-          elements[index].setAttribute('id', cardIds[index])
-        } else if (index < cardIds.length) {
-          hand.insertAdjacentHTML('beforeend', `<game-card id="${cardIds[index]}"></game-card>`);
-          elements = Array.from(hand.querySelectorAll('game-card'))
-        } else {
-          elements[index].parentElement.removeChild(elements[index])
-        }
+    const cardIds = this.ids
+    const hand = this.element('player-hand')
+    let elements = Array.from(hand.querySelectorAll('game-card'))
+    for (let index=0; index < Math.max(cardIds.length, elements.length); index++) {
+      if (index < Math.min(cardIds.length, elements.length)) {
+        elements[index].setAttribute('id', cardIds[index])
+      } else if (index < cardIds.length) {
+        hand.insertAdjacentHTML('beforeend', `<game-card id="${cardIds[index]}"></game-card>`);
+        elements = Array.from(hand.querySelectorAll('game-card'))
+      } else {
+        elements[index].parentElement.removeChild(elements[index])
       }
     }
   }
@@ -161,6 +169,7 @@ class PlayerHand extends HTMLElement {
         child.style.gridColumn = `${index+2}/span 8`
         child.style.zIndex = z
         child.toggleAttribute('mirrored', after)
+        child.classList.toggle('playable', this.playable.includes(child.id))
         if (child.hasAttribute('top')) after = true
         if (after) z--; else z++
       })

@@ -47,7 +47,7 @@ class OpponentHand extends HTMLElement {
   }
   
   attributeChangedCallback() {
-    if (this.isConnected && this.element('hand')) {
+    if (this.isConnected && this.element('opponent-hand')) {
       this.updateCards()
       this.update()
     }
@@ -61,7 +61,7 @@ class OpponentHand extends HTMLElement {
       if (index < Math.min(this.cards, elements.length)) {
         elements[index].toggleAttribute('idiot', this.idiot)
       } else if (index < this.cards) {
-        hand.insertAdjacentHTML('beforeend', `<card-back ${type}"></card-back>`);
+        hand.insertAdjacentHTML('beforeend', `<card-back ${type}></card-back>`);
         elements = Array.from(hand.querySelectorAll('card-back'))
       } else {
         elements[index].parentElement.removeChild(elements[index])

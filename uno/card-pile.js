@@ -78,7 +78,6 @@ class CardPile extends HTMLElement {
 
   getTopElement() {
     const mirrored = this.mirrored ? 'mirrored' : ''
-    console.log('top', this.top)
     switch (this.top) {
       case null:
       case undefined:

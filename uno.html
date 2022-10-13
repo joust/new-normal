@@ -58,10 +58,12 @@
       element('hand').onplay = event => client.moves.playCard(event.detail.index)
       
       const unsubscribe = client.subscribe(state => {
-        // console.log('client', client)
-        element('draw-pile').setAttribute('top', !!(client.playerID%2) ? 'I' : 'S')
-        element('pile').setAttribute('top', state.G.pile[state.G.pile.length-1])
-        element('hand').setAttribute('ids', state.G.hands[client.playerID].join(','))
+        console.log('state', state)
+        if (state) {
+          element('draw-pile').setAttribute('top', !!(client.playerID%2) ? 'I' : 'S')
+          element('pile').setAttribute('top', state.G.pile[state.G.pile.length-1])
+          element('hand').setAttribute('ids', state.G.hands[client.playerID].join(','))
+        }
       })
     }
 

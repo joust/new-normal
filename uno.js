@@ -55,7 +55,7 @@ const Uno = {
           hand.splice(index, 1)
           G.pile.push(card)
           // only playing a valid argument card of your side ends the turn
-          if (!top || (isArgument(top) && isOfType(card, idiot))) {
+          if (isOfType(card, idiot)) {
             ctx.events.endTurn()
           }
       }

@@ -6,6 +6,13 @@ playerHandTemplate.innerHTML = `
       display: inline-block;
     }
 
+    #player-name {
+      font-family: 'Open Sans', Helvetica;
+      font-size: calc(6 * var(--cavg));
+      font-weight: 600;
+      text-align: center;
+    }
+
     #player-hand {
       width: 100%;
       height: 100%;
@@ -15,7 +22,7 @@ playerHandTemplate.innerHTML = `
     }
 
     #player-hand.active {
-      height: 100%;
+      height: calc(100% - 4vh);
       display: grid;
       grid-gap: 0;
       overflow: visible;
@@ -42,6 +49,7 @@ playerHandTemplate.innerHTML = `
     }
   </style>
   <div id="player-hand"><slot></div>
+  <div id="player-name"></div>
 `
 
 class PlayerHand extends HTMLElement {
@@ -50,7 +58,7 @@ class PlayerHand extends HTMLElement {
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = ['ids', 'playable', 'active']
+  static observedAttributes = ['ids', 'playable', 'nr', 'name', 'active']
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
@@ -62,6 +70,14 @@ class PlayerHand extends HTMLElement {
   get playable() {
     const ids = this.getAttribute('playable')
     return !ids || !ids.length ? [] : ids.split(',')
+  }
+
+  get nr() {
+    return this.getAttribute('nr')
+  }
+
+  get name() {
+    return this.getAttribute('name')
   }
 
   get active() {
@@ -110,6 +126,10 @@ class PlayerHand extends HTMLElement {
         elements[index].parentElement.removeChild(elements[index])
       }
     }
+  }
+
+  updateNameNr() {
+    this.element('opponent-name').innerHTML = `${this.nr}${this.name ? ': '+this.name : ''}`
   }
 
   slotChildren() {

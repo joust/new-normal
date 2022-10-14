@@ -11,6 +11,7 @@ Game state: {
     },
     pile: [],
     hands: [[], ...]
+    names: ['']
 }
 */
 let content
@@ -22,8 +23,9 @@ const Uno = {
   setup: (ctx) => {
     const decks = generateDecks()
     const hands = new Array(ctx.numPlayers).fill([]).map((p,i) => drawHand(decks, INITIAL, isIdiot(i)))
+    const names = new Array(ctx.numPlayers).fill(undefined)
     const pile = [] // empty in the beginning
-    return { decks, pile, hands }
+    return { decks, pile, hands, names }
   },
   moves: {
     playCard: (G, ctx, index) => {
@@ -65,6 +67,9 @@ const Uno = {
       const type = isIdiot(ctx.currentPlayer) ? 'idiot' : 'sheep'
       const deck = G.decks[type]
       hand.push(deck.pop())
+    },
+    setName: (G, ctx, name) => {
+      G.names[ctx.currentPlayer] = name
     }
     // reorder hand?
   },

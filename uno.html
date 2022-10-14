@@ -30,6 +30,9 @@
     function element(id) {
       return document.getElementById(id)
     }
+    function elements(tag) {
+      return Array.from(document.getElementsByTagName(tag))
+    }
     
     async function load() {
       const randomMatchID = Math.floor(1000+Math.random()*9000)
@@ -48,16 +51,25 @@
     }
     
     async function play(isHost, numPlayers) {
-      const addOpponentHand = (idiot, clickable) => element('players').insertAdjacentHTML('beforeEnd', `<opponent-hand ${idiot ? 'idiot' : ''} ${clickable ? 'style="cursor:pointer"' : ''} cards="8"></opponent-hand>`)
+      const addOpponentHand = (clickable) => element('players').insertAdjacentHTML('beforeEnd', `<opponent-hand ${clickable ? 'style="cursor:pointer"' : ''} cards="8"></opponent-hand>`)
       const playerID = isHost ? '0' : undefined
       const matchID = element('matchID').value
       element('uno').classList.toggle('hidden', false)
       element('config').classList.toggle('hidden', true)
       let client = await startClient('de', isHost, numPlayers, playerID, matchID)
       if (playerID) {
+        client.moves.setName(prompt(`Name for Host Player?`, ''))
+        element('hand').setAttribute('nr', playerID)
         element('draw-pile').onclick = event => client.moves.drawCard()
         element('hand').onplay = event => client.moves.playCard(event.detail.index)
-        while (--numPlayers) addOpponentHand(!!(numPlayers%2), false)
+        while (--numPlayers) addOpponentHand(false)
+      }
+      
+      async function setMyName(client, currentPlayer) {
+        const clientName = prompt(`Name for Player ${client.playerID}?`, '')
+        client.events.endTurn({ next: client.playerID })
+        client.moves.setName(clientName)
+        client.events.endTurn({ next: currentPlayer })
       }
       
       let unsubscribe
@@ -67,15 +79,30 @@
           element('draw-pile').setAttribute('top', '')
           element('pile').setAttribute('top', top)
           if (client.playerID && client.playerID.length) {
+            const name = state.G.names[client.playerID]
             const hand = state.G.hands[client.playerID]
             const idiot = !!(client.playerID%2)
+            const opponentIds = [...Array(state.ctx.numPlayers).keys()].filter(id => id!==client.playerID)
+            if (!name && state.ctx.currentPlayer!==client.playerID)
+              setTimeout(() => setMyName(client, state.ctx.currentPlayer), 0) // leave callback first
             element('draw-pile').setAttribute('top', idiot ? 'I' : 'S')
             element('hand').setAttribute('ids', hand.join(','))
+            element('hand').setAttribute('nr', client.playerID)
+            element('hand').setAttribute('name', name)
             element('hand').setAttribute('playable', client.playerID===state.ctx.currentPlayer ? hand.filter(card => canBePlayedOn(top, card, idiot)).join(',') : '')
+            elements('opponent-hand').forEach((hand, index) => {
+              hand.setAttribute('nr', opponentIds[index])
+              hand.setAttribute('name', state.G.names[opponentIds[index]])
+              hand.setAttribute('cards', state.G.hands[opponentIds[index]].length)
+            })
+            if (client.playerID==='0' && !state.G.names[state.ctx.currentPlayer]) {
+              console.log(client)
+              client.step && client.step() // CPU move
+            }
           } else {
             if (!element('players').children.length) { // first call
               let numPlayers = state.ctx.numPlayers
-              while (--numPlayers) addOpponentHand(!!(numPlayers%2), true)
+              while (--numPlayers) addOpponentHand(true)
               const children = Array.from(element('players').children)
               children.forEach((child, index) => child.onclick = async event => {
                 const selectedPlayerID = ''+(index+1)

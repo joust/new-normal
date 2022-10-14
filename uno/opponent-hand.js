@@ -8,7 +8,7 @@ opponentHandTemplate.innerHTML = `
 
     #opponent-hand {
       width: 100%;
-      height: 100%;
+      height: calc(100% - 4vh);
       overflow-x: hidden;
       overflow-y: auto;
       box-sizing: border-box;
@@ -16,8 +16,16 @@ opponentHandTemplate.innerHTML = `
       grid-gap: 0;
       overflow: visible;
     }  
+
+    #opponent-name {
+      font-family: 'Open Sans', Helvetica;
+      font-size: calc(6 * var(--cavg));
+      font-weight: 600;
+      text-align: center;
+    }
   </style>
   <div id="opponent-hand"></div>
+  <div id="opponent-name"></div>
 `
 
 class OpponentHand extends HTMLElement {
@@ -26,16 +34,24 @@ class OpponentHand extends HTMLElement {
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = ['cards', 'idiot']
+  static observedAttributes = ['nr', 'name', 'cards']
 
   element(id) { return this.shadowRoot.getElementById(id) }
+
+  get nr() {
+    return this.getAttribute('nr')
+  }
+
+  get name() {
+    return this.getAttribute('name')
+  }
 
   get cards() {
     return this.getAttribute('cards')
   }
 
   get idiot() {
-    return this.hasAttribute('idiot')
+    return !!(this.nr%2)
   }
 
   connectedCallback() {
@@ -49,6 +65,7 @@ class OpponentHand extends HTMLElement {
   attributeChangedCallback() {
     if (this.isConnected && this.element('opponent-hand')) {
       this.updateCards()
+      this.updateNameNr()
       this.update()
     }
   }
@@ -67,6 +84,10 @@ class OpponentHand extends HTMLElement {
         elements[index].parentElement.removeChild(elements[index])
       }
     }
+  }
+
+  updateNameNr() {
+    this.element('opponent-name').innerHTML = `${this.nr}${this.name ? ': '+this.name : ''}`
   }
 
   ownChildren() {

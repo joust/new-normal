@@ -106,6 +106,7 @@
       const matchID = element('matchID').value
       element('uno').classList.toggle('hidden', false)
       element('config').classList.toggle('hidden', true)
+      element('players').classList.add(`p${numPlayers}`)
       let client = await startClient('de', isHost, numPlayers, playerID, matchID)
       if (isHost) {
         element('uno').insertAdjacentHTML('beforeEnd', '<player-hand id="hand" nr="0" active ids=""></player-hand>')

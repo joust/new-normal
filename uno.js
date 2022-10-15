@@ -66,10 +66,14 @@ const Uno = {
       const hand = G.hands[ctx.currentPlayer]
       const type = isIdiot(ctx.currentPlayer) ? 'idiot' : 'sheep'
       const deck = G.decks[type]
+      if (!hand.length) return INVALID_MOVE
       hand.push(deck.pop())
     },
-    setName: (G, ctx, name) => {
-      G.names[ctx.currentPlayer] = name
+    setName: (G, ctx, id, name) => {
+      if (ctx.currentPlayer==='0')
+        G.names = G.names.map((n, i) => i==id ? name : n);
+      else
+        return INVALID_MOVE
     }
     // reorder hand?
   },

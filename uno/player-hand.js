@@ -8,7 +8,7 @@ playerHandTemplate.innerHTML = `
 
     #player-name {
       font-family: 'Open Sans', Helvetica;
-      font-size: calc(6 * var(--cavg));
+      font-size: calc(12 * var(--cavg));
       font-weight: 600;
       text-align: center;
     }
@@ -108,6 +108,7 @@ class PlayerHand extends HTMLElement {
       if (name==="active") {
         this.element('player-hand').classList.toggle('active', this.active)
       }
+      this.updateName()
       this.updateLayout()
     }
   }
@@ -120,7 +121,7 @@ class PlayerHand extends HTMLElement {
       if (index < Math.min(cardIds.length, elements.length)) {
         elements[index].setAttribute('id', cardIds[index])
       } else if (index < cardIds.length) {
-        hand.insertAdjacentHTML('beforeend', `<game-card id="${cardIds[index]}"></game-card>`);
+        hand.insertAdjacentHTML('beforeEnd', `<game-card id="${cardIds[index]}"></game-card>`);
         elements = Array.from(hand.querySelectorAll('game-card'))
       } else {
         elements[index].parentElement.removeChild(elements[index])
@@ -128,8 +129,8 @@ class PlayerHand extends HTMLElement {
     }
   }
 
-  updateNameNr() {
-    this.element('opponent-name').innerHTML = `${this.nr}${this.name ? ': '+this.name : ''}`
+  updateName() {
+    this.element('player-name').innerHTML = this.name ? this.name : '?'
   }
 
   slotChildren() {
@@ -228,6 +229,15 @@ class PlayerHand extends HTMLElement {
     const hand = this.element('player-hand')
     const swipy = new Swipy(hand)
 
+    swipy.on('swipetop', () => {
+      const top = hand.querySelector('*[top]')
+      this.dispatchEvent(new CustomEvent('play', {
+        detail: {
+          id: event.target.id, 
+          index: this.ownChildren().indexOf(event.target)
+        }
+      }))      
+    })
     swipy.on('swipeleft', () => {
       const top = hand.querySelector('*[top]')
       if (top && top.previousElementSibling) this.show(top.previousElementSibling)

@@ -1,5 +1,18 @@
 const { Client } = require('boardgame.io/client')
+const { Local } = require('boardgame.io/multiplayer')
 const { P2P } = require('@boardgame.io/p2p')
+
+async function startLocalClient(lang, playerID) {
+  await Uno.init(lang)
+  const client = Client({
+    game: Uno,
+    numPlayers: 2,
+    playerID,
+    multiplayer: Local(),
+  })
+  client.start()
+  return client
+}
 
 async function startClient(lang, isHost, numPlayers, playerID, matchID) {
   await Uno.init(lang)
@@ -16,6 +29,7 @@ async function startClient(lang, isHost, numPlayers, playerID, matchID) {
   client.start()
   return client
 }
+
 
 function flagcheck() {
   if (navigator.userAgent.indexOf('Windows') > 0)

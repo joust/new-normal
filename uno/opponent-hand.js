@@ -47,7 +47,7 @@ class OpponentHand extends HTMLElement {
   }
 
   get cards() {
-    return this.getAttribute('cards')
+    return parseInt(this.getAttribute('cards')) || 8
   }
 
   get idiot() {
@@ -65,9 +65,10 @@ class OpponentHand extends HTMLElement {
   attributeChangedCallback() {
     if (this.isConnected && this.element('opponent-hand')) {
       this.updateCards()
-      this.updateNameNr()
+      this.updateName()
       this.update()
     }
+    this.style.cursor = this.name ? 'pointer' : 'not-allowed'
   }
 
   updateCards() {
@@ -78,7 +79,7 @@ class OpponentHand extends HTMLElement {
       if (index < Math.min(this.cards, elements.length)) {
         elements[index].toggleAttribute('idiot', this.idiot)
       } else if (index < this.cards) {
-        hand.insertAdjacentHTML('beforeend', `<card-back ${type}></card-back>`);
+        hand.insertAdjacentHTML('beforeEnd', `<card-back ${type}></card-back>`);
         elements = Array.from(hand.querySelectorAll('card-back'))
       } else {
         elements[index].parentElement.removeChild(elements[index])
@@ -86,16 +87,16 @@ class OpponentHand extends HTMLElement {
     }
   }
 
-  updateNameNr() {
-    this.element('opponent-name').innerHTML = `${this.nr}${this.name ? ': '+this.name : ''}`
+  updateName() {
+    this.element('opponent-name').innerHTML = this.name ? this.name : '?'
   }
 
   ownChildren() {
-    return Array.from(this.element('opponent-hand').querySelectorAll('game-card'))
+    return Array.from(this.element('opponent-hand').querySelectorAll('card-back'))
   }
 
   columns(len) {
-    const cw = this.clientWidth, ch = this.clientHeight, ratio = 0.71
+    const cw = this.clientWidth, ch = this.element('opponent-hand').clientHeight, ratio = 0.71
     const cardw = ch * ratio, rest = cw - cardw
     const cardw8 = (cardw/8)*100/cw
     const restw8 = Math.min(cardw/8, rest/(len-1))*100/cw
@@ -117,11 +118,9 @@ class OpponentHand extends HTMLElement {
 
   update() {
     const visible = this.ownChildren()
-    let z = visible.length
     visible.forEach((child, index) => {
       child.style.gridRow = 1
       child.style.gridColumn = `${index+2}/span 8`
-      child.style.zIndex = z
     })
     this.recalc()
   }

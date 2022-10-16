@@ -588,4 +588,5 @@ I459 https://www.gov.uk/government/publications/covid-19-vaccination-blood-clott
 S206 https://www.theguardian.com/world/2021/jul/17/covid-misinformation-conspiracy-theories-ccdh-report
 Coronaspeak: https://language-and-innovation.com/2020/04/15/coronaspeak-part-2-the-language-of-covid-19-goes-viral/comment-page-1
 https://lockdownviehler.blog/2022/08/01/in-15-einfachen-schritten-zur-vernichtung
-
+I593 https://tkp.at/2022/08/24/weltweiter-mangel-an-herzinfarkt-und-schlaganfallmedikamenten-franzoesische-behoerde-alarmiert
+I99 https://wikipedia.org/wiki/Primum_non_nocere

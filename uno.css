@@ -1,9 +1,9 @@
 html, body, #uno {
-  width: 100%;
+  position: fixed;
   height: 100%;
-  padding: 0;
+  width: 100%;
   margin: 0;
-  overflow: visible;
+  overflow: hidden;
 }
 
 html {

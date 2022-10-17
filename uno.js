@@ -1,10 +1,16 @@
 const INITIAL = 8
 const STRAWMANS = 80
 const RESEARCHS = 120
+const PERCENTAGE_APPEAL_TOS = 15 // e.g. 600 argument cards => 90 appeal to cards
+const PERCENTAGE_STRAWMANS = 15 // e.g. 600 argument cards => 90 strawman cards
+const PERCENTAGE_RESEARCHS = 20 // e.g. 600 argument cards => 120 research cards
+const PERCENTAGE_LABELS = 15 // e.g. 600 argument cards => 90 research cards
+const PERCENTAGE_FALLACIES = 15 // e.g. 600 argument cards => 90 research cards
 const INVALID_MOVE = 'INVALID_MOVE'
 
 /**
 Game state: {
+    lang: 'de',
     deck: {
       idiot: ['I1', 'I2', ...],
       sheep: ['S1', 'S2', ...]
@@ -25,7 +31,7 @@ const Uno = {
     const hands = new Array(ctx.numPlayers).fill([]).map((p,i) => drawHand(decks, INITIAL, isIdiot(i)))
     const names = new Array(ctx.numPlayers).fill(undefined)
     const pile = [] // empty in the beginning
-    return { decks, pile, hands, names }
+    return { lang: document.body.lang, decks, pile, hands, names }
   },
   moves: {
     playCard: (G, ctx, index) => {
@@ -166,9 +172,11 @@ function resolveStrawman(hand, decks, idiot) {
   const deck = decks[idiot ? 'sheep' : 'idiot']
   const myTopics = hand.filter(isArgument).map(topicOf)
   const cards = deck.filter(isArgument).filter(c => myTopics.includes(topicOf(c)))
-  shuffle(cards)
-  deck.splice(deck.indexOf(cards[0]), 1)
-  hand.push(cards[0])
+  if (cards.length) {
+    shuffle(cards)
+    deck.splice(deck.indexOf(cards[0]), 1)
+    hand.push(cards[0])
+  }
 }
 
 /**

@@ -209,14 +209,9 @@ class ResearchCard extends HTMLElement {
     this.update()
   }
 
-  static browserLocale() {
-    let [language, territory] = navigator.language.split('-')
-    territory = territory ? territory.toLowerCase() : language
-    return [language, territory]
-  }
-
   connectedCallback() {
     this.shadowRoot.appendChild(researchCardTemplate.content.cloneNode(true))
+    this.lang = document.body.lang
     this.element('side-phrase').innerHTML = this.element('phrase').innerHTML // copy phrases
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
@@ -236,8 +231,8 @@ class ResearchCard extends HTMLElement {
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
       const type = this.idiot ? 'idiot' : 'sheep'
-      const [lang, terr] = ResearchCard.browserLocale()
-      const phrase = ResearchCard.phrase[type][`${lang}-${terr}`] || ResearchCard.phrase[type][lang] || 'ResearchCard'
+      const key = Object.keys(ResearchCard.phrase[type]).find(p => p.startsWith(this.lang)) || 'de'
+      const phrase = ResearchCard.phrase[type][key]
       Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = phrase)
     }
   }

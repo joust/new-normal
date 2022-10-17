@@ -178,6 +178,7 @@ class LabelCard extends HTMLElement {
 
   connectedCallback() {
     this.shadowRoot.appendChild(labelCardTemplate.content.cloneNode(true))
+    this.lang = document.body.lang
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
     this.update()

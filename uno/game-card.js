@@ -52,6 +52,7 @@ class GameCard extends HTMLElement {
 
   connectedCallback() {
     this.shadowRoot.appendChild(gameCardTemplate.content.cloneNode(true))
+    this.lang = document.body.lang
     const template = document.createElement('template')
     template.innerHTML = this.getCardElement()
     this.shadowRoot.appendChild(template.content)
@@ -73,7 +74,7 @@ class GameCard extends HTMLElement {
   }
 
   getCardElement() {
-    const data = document.querySelector(`${GameCard.contentRootSelector} a[id="${this.idOnly}"]`) || ''
+    const data = document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} a[id="${this.idOnly}"]`) || ''
     const type = this.idiot ? 'idiot' : ''
     switch (this.id[0]) {
       case 'L': return `<label-card ${type} id="${this.id}">${data.innerHTML}</label-card>`
@@ -82,7 +83,7 @@ class GameCard extends HTMLElement {
       case 'S': return `<strawman-card ${type}></strawman-card>`
       case 'R': return `<research-card ${type}></research-card>`
       default: // argument id may contain the topic too
-        const topicData = this.topic && document.querySelector(`${GameCard.contentRootSelector} a[id="${this.topic}"]`)
+        const topicData = this.topic && document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} a[id="${this.topic}"]`)
         const topic = topicData ? topicData.firstElementChild.innerHTML : ''
         return `<argument-card ${type} id="${this.idOnly}" topicId="${this.topic}" topic="${topic}">${data.innerHTML}</argument-card>`
     }

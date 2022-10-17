@@ -194,14 +194,9 @@ class StrawmanCard extends HTMLElement {
     this.update()
   }
 
-  static browserLocale() {
-    let [language, territory] = navigator.language.split('-')
-    territory = territory ? territory.toLowerCase() : language
-    return [language, territory]
-  }
-
   connectedCallback() {
     this.shadowRoot.appendChild(strawmanCardTemplate.content.cloneNode(true))
+    this.lang = document.body.lang
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
     const langObserver = new MutationObserver(() => this.update())
@@ -221,8 +216,8 @@ class StrawmanCard extends HTMLElement {
     if (this.isConnected && root) {
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
-      const [lang, terr] = StrawmanCard.browserLocale()
-      const phrase = StrawmanCard.phrase[`${lang}-${terr}`] || StrawmanCard.phrase[lang]
+      const key = Object.keys(StrawmanCard.phrase).find(p => p.startsWith(this.lang)) || 'de'
+      const phrase = StrawmanCard.phrase[key]
       Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = phrase)
     }
   }

@@ -95,8 +95,8 @@ class PlayerHand extends HTMLElement {
     
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
-    const mutationObserver = new MutationObserver(() => this.updateLayout())
-    mutationObserver.observe(this, { subtree: true, childList: true, attributes: true, attributeFilter: ['top', 'style', 'class']})
+    //const mutationObserver = new MutationObserver(() => this.updateLayout())
+    //mutationObserver.observe(this, { subtree: true, childList: true, attributes: true, //attributeFilter: ['top', 'style', 'class']})
     this.addSwiping()
   }
   

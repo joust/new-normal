@@ -10,16 +10,31 @@ html {
   overflow: hidden;
 }
 
+dialog, dialog * {
+  font-family: 'HVD Crocodile';
+  font-weight: 300;
+  font-size: 5vmin;
+  color: #777;
+}
+
+dialog {
+  border: 0;
+}
+
 #config {
   position: absolute;
   top: 0;
 }
 
-#config h1, #config label, #config button, #config input {
+#config h1, #config label, #config button, #config input, #config select {
   font-family: 'HVD Crocodile';
   font-weight: 300;
-  font-size: 7vmin;
+  font-size: 5vmin;
   color: #777;
+}
+
+#location {
+  border: none;
 }
 
 #config h1 {
@@ -130,15 +145,6 @@ html {
     order: 2;
     height: 100%;
   }
-}
-
-#location {
-  position: absolute;
-  top: 0;
-  left: 0;
-  font-size: 2em;
-  background: transparent;
-  border: none;
 }
 
 #loader {

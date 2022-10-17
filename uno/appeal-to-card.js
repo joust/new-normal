@@ -202,6 +202,7 @@ class AppealToCard extends HTMLElement {
 
   connectedCallback() {
     this.shadowRoot.appendChild(appealToCardTemplate.content.cloneNode(true))
+    this.lang = document.body.lang
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
     this.update()

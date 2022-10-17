@@ -47,9 +47,22 @@ function fixAnchors(html) {
 }
 
 async function loadContent(lang) {
-  document.querySelector('#content .idiot').innerHTML =  fixAnchors(await fetchSilent(`${lang}/idiot.html`))
-  document.querySelector('#content .sheep').innerHTML = fixAnchors(await fetchSilent(`${lang}/sheep.html`))
-  document.querySelector('#content .labels').innerHTML = await fetchSilent(`${lang}/labels.html`)
-  document.querySelector('#content .appeal-tos').innerHTML = await fetchSilent(`${lang}/appeal-tos.html`)
-  document.querySelector('#content .fallacies').innerHTML = await fetchSilent(`${lang}/fallacies.html`)
+  const loaded = document.querySelector(`#content > #${lang}`)
+  if (!loaded) {
+    const root = elementWithKids('div', [
+      elementWithKids('div', null, { 'class': 'idiot' }),
+      elementWithKids('div', null, { 'class': 'sheep' }),
+      elementWithKids('div', null, { 'class': 'labels' }),
+      elementWithKids('div', null, { 'class': 'appeal-tos' }),
+      elementWithKids('div', null, { 'class': 'fallacies' }),
+      elementWithKids('div', null, { 'class': 'topics' })
+    ], { id: lang })
+    document.querySelector('#content').appendChild(root)
+    root.querySelector('.idiot').innerHTML =  fixAnchors(await fetchSilent(`${lang}/idiot.html`))
+    root.querySelector('.sheep').innerHTML = fixAnchors(await fetchSilent(`${lang}/sheep.html`))
+    root.querySelector('.labels').innerHTML = await fetchSilent(`${lang}/labels.html`)
+    root.querySelector('.appeal-tos').innerHTML = await fetchSilent(`${lang}/appeal-tos.html`)
+    root.querySelector('.fallacies').innerHTML = await fetchSilent(`${lang}/fallacies.html`)
+    root.querySelector('.topics').innerHTML = await fetchSilent(`${lang}/topics.html`)
+  }
 }

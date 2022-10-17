@@ -183,6 +183,7 @@ class FallacyCard extends HTMLElement {
 
   connectedCallback() {
     this.shadowRoot.appendChild(FallacyCardTemplate.content.cloneNode(true))
+    this.lang = document.body.lang
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
     this.update()

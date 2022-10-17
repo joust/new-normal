@@ -241,6 +241,7 @@ class ArgumentCard extends HTMLElement {
 
   connectedCallback() {
     this.shadowRoot.appendChild(argumentCardTemplate.content.cloneNode(true))
+    this.lang = document.body.lang
     const resizeObserver = new ResizeObserver(this.debounce(() => this.resize(), 10))
     resizeObserver.observe(this)
     this.update()

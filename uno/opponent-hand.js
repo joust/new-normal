@@ -68,7 +68,7 @@ class OpponentHand extends HTMLElement {
       this.updateName()
       this.update()
     }
-    this.style.cursor = this.name ? 'pointer' : 'not-allowed'
+    this.style.cursor = this.name ? 'not-allowed' : 'pointer'
   }
 
   updateCards() {

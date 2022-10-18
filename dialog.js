@@ -37,6 +37,7 @@ class Dialog {
   }
   show() {
     const element = this.element
+    console.log(element)
     document.body.appendChild(element)
     element.showModal()
     return new Promise((resolve, reject) => {

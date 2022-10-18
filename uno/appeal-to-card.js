@@ -8,8 +8,8 @@ appealToCardTemplate.innerHTML = `
     #appeal-to-card {
       --red: #f72d5d;
       --blue: #2d60f6;
-      --yellow: yellow;
-      --orange: orange;
+      --lightblue: aliceblue;
+      --lightgrey: lightgrey;
       --sidebar-width: 12%;
       --watermark-size: 50%;
       position: relative;
@@ -17,7 +17,7 @@ appealToCardTemplate.innerHTML = `
       height: 100%;
       border: calc(0.1 * var(--cavg)) solid #aaa;
       border-radius: calc(2 * var(--cavg));
-      background: linear-gradient(30deg, var(--yellow) 0%, var(--orange) 100%);
+      background: linear-gradient(30deg, var(--lightblue) 0%, var(--lightgrey) 100%);
       user-select: none;
     }
 
@@ -67,7 +67,7 @@ appealToCardTemplate.innerHTML = `
 
     #phrase {
       position: absolute;
-      color: white;
+      color: grey;
       display: flex;
       align-items: center;
       justify-content: center;

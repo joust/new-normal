@@ -6,10 +6,10 @@ strawmanCardTemplate.innerHTML = `
     }
 
     #strawman-card {
-      --grey: grey;
       --red: #f72d5d;
       --blue: #2d60f6;
-      --lightgrey: lightgrey;
+      --yellow: yellow;
+      --orange: orange;
       --sidebar-width: 12%;
       --watermark-size: 50%;
       position: relative;
@@ -17,7 +17,7 @@ strawmanCardTemplate.innerHTML = `
       height: 100%;
       border: calc(0.1 * var(--cavg)) solid #aaa;
       border-radius: calc(2 * var(--cavg));
-      background: linear-gradient(30deg, var(--grey) 0%, var(--lightgrey) 100%);
+      background: linear-gradient(30deg, var(--yellow) 0%, var(--orange) 100%);
       user-select: none;
     }
 

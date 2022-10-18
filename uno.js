@@ -302,13 +302,4 @@ async function fetchTopicMap() {
   return topicMap
 }
 
-/**
- * fetch a file from server, suppressing all errors
- *
- * @param {string} url - the url to fetch
- * @return {Promise<string>} the files content or '' on error
- */
-function fetchSilent(url) {
-  return fetch(url).then(async response => response.status >= 400 && response.status < 600 ? '' : await response.text()).catch(error => '')  
-}
 

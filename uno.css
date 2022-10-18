@@ -1,4 +1,6 @@
 html, body, #uno {
+  font-family: 'Open Sans', Helvetica;
+  font-size: 3vmin;
   position: fixed;
   height: 100%;
   width: 100%;
@@ -24,21 +26,26 @@ dialog {
 #config {
   position: absolute;
   top: 0;
+  overflow: auto;
+  height: 100%;
+  padding: 1rem;
 }
 
-#config h1, #config label, #config button, #config input, #config select {
+h1, #config label, #config button, #config input, #config select {
   font-family: 'HVD Crocodile';
   font-weight: 300;
   font-size: 5vmin;
   color: #777;
 }
 
-#location {
-  border: none;
+h1,h2,h3 {
+  font-family: 'HVD Crocodile';
+  font-weight: 600;
+  color: #777;
 }
 
-#config h1 {
-  font-weight: 600;
+#location {
+  border: none;
 }
 
 #config button, #config input {

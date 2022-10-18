@@ -236,6 +236,26 @@ class MessageBoxElement extends HTMLElement {
         }
       })
     }
+  
+  t(v) {
+    const lang = navigator.language.substring(0, 2)
+    const text = {
+      'Cancel': {
+        'da': 'Annuller',
+        'de': 'Abbrechen',
+        'fr': 'Annuler',
+        'es': 'Cancelar',
+        'it': 'Annulla',
+        'pt': 'Cancelar',
+        'pt-br': 'Cancelar',
+        'pl': 'Anuluj',
+        'ru': 'Отмена',
+        'nl': 'Annuleren',
+        'tr': 'İptal'
+      }
+    }
+    return text[v] && text[v][lang] || v
+  }
     /**
      * Creates the alert dialog element
      */
@@ -245,7 +265,7 @@ class MessageBoxElement extends HTMLElement {
       const dialogFooterElm = self.shadowRoot.querySelector('.msg-box-dialog-footer')
       const dialogConfirmBtn = document.createElement('button')
       dialogConfirmBtn.classList.add('msg-box-dialog-button')
-      dialogConfirmBtn.innerText = 'OK'
+      dialogConfirmBtn.innerText = self.t('OK')
       dialogFooterElm.append(dialogConfirmBtn)
       dialogConfirmBtn.focus()
       return new Promise(function (resolve) {
@@ -266,9 +286,9 @@ class MessageBoxElement extends HTMLElement {
       const dialogCancelBtn = document.createElement('button')
       const dialogConfirmBtn = document.createElement('button')
       dialogCancelBtn.classList.add('msg-box-dialog-button')
-      dialogCancelBtn.innerText = 'Cancel'
+      dialogCancelBtn.innerText = self.t('Cancel')
       dialogConfirmBtn.classList.add('msg-box-dialog-button')
-      dialogConfirmBtn.innerText = 'OK'
+      dialogConfirmBtn.innerText = self.t('OK')
       dialogFooterElm.append(dialogCancelBtn, dialogConfirmBtn)
       dialogCancelBtn.focus()
       return new Promise(function (resolve) {
@@ -303,9 +323,9 @@ class MessageBoxElement extends HTMLElement {
     const dialogCancelBtn = document.createElement('button')
     const dialogConfirmBtn = document.createElement('button')
     dialogCancelBtn.classList.add('msg-box-dialog-button')
-    dialogCancelBtn.innerText = 'Cancel'
+    dialogCancelBtn.innerText = self.t('Cancel')
     dialogConfirmBtn.classList.add('msg-box-dialog-button')
-    dialogConfirmBtn.innerText = 'OK'
+    dialogConfirmBtn.innerText = self.t('OK')
     dialogFooterElm.append(dialogCancelBtn, dialogConfirmBtn)
     dialogMessageTextBox.focus()
       // Prompt message textbox KeyPress event

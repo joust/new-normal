@@ -12,7 +12,7 @@ html {
   overflow: hidden;
 }
 
-dialog, dialog * {
+ti-msg-box, ti-msg-box * {
   font-family: 'HVD Crocodile';
   font-weight: 300;
   font-size: 5vmin;

@@ -8,11 +8,13 @@ html, body, #uno {
   overflow: hidden;
 }
 
-html {
-  overflow: hidden;
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-ti-msg-box, ti-msg-box * {
+msg-box, msg-box * {
   font-family: 'HVD Crocodile';
   font-weight: 300;
   font-size: 5vmin;

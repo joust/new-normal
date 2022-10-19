@@ -76,16 +76,17 @@ class GameCard extends HTMLElement {
   getCardElement() {
     const data = document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} a[id="${this.idOnly}"]`) || ''
     const type = this.idiot ? 'idiot' : ''
+    const mirrored = this.mirrored ? 'mirrored' : ''
     switch (this.id[0]) {
-      case 'L': return `<label-card ${type} id="${this.id}">${data.innerHTML}</label-card>`
-      case 'A': return `<appeal-to-card ${type} type="${data.type}" id="${this.id}">${data.innerHTML}</appeal-to-card>`
-      case 'F': return `<fallacy-card ${type} id="${this.id}">${data.innerHTML}</fallacy-card>`
-      case 'S': return `<strawman-card ${type}></strawman-card>`
-      case 'R': return `<research-card ${type}></research-card>`
+      case 'L': return `<label-card ${type} ${mirrored} id="${this.id}">${data.innerHTML}</label-card>`
+      case 'A': return `<appeal-to-card ${type} ${mirrored} type="${data.type}" id="${this.id}">${data.innerHTML}</appeal-to-card>`
+      case 'F': return `<fallacy-card ${type} ${mirrored} id="${this.id}">${data.innerHTML}</fallacy-card>`
+      case 'S': return `<strawman-card ${type} ${mirrored}></strawman-card>`
+      case 'R': return `<research-card ${type} ${mirrored}></research-card>`
       default: // argument id may contain the topic too
         const topicData = this.topic && document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} a[id="${this.topic}"]`)
         const topic = topicData ? topicData.firstElementChild.innerHTML : ''
-        return `<argument-card ${type} id="${this.idOnly}" topicId="${this.topic}" topic="${topic}">${data.innerHTML}</argument-card>`
+        return `<argument-card ${type} ${mirrored} id="${this.idOnly}" topicId="${this.topic}" topic="${topic}">${data.innerHTML}</argument-card>`
     }
   }
 }

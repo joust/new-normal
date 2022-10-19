@@ -81,6 +81,7 @@ class CardPile extends HTMLElement {
     switch (this.top) {
       case null:
       case undefined:
+      case 'undefined':
       case '': return '<no-card></no-card>'
       case 'I': return '<card-back idiot></card-back>'
       case 'S': return '<card-back></card-back>'

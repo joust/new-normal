@@ -102,10 +102,10 @@ class PlayerHand extends HTMLElement {
   
   attributeChangedCallback(name) {
     if (this.isConnected && this.element('player-hand')) {
-      if (name=="ids") {
+      if (name=='ids') {
         this.updateCards()
       }
-      if (name==="active") {
+      if (name==='active') {
         this.element('player-hand').classList.toggle('active', this.active)
       }
       this.updateName()
@@ -200,21 +200,23 @@ class PlayerHand extends HTMLElement {
   }
 
   move(event) {
-    event.target && this.show(event.target)
+    event.target && event.target.id!=='player-hand' && this.show(event.target)
   }
 
   over(event) {
-    event.target && this.show(event.target)
+    event.target && event.target.id!=='player-hand' && this.show(event.target)
   }
 
   down(event) {
-    event.target && this.show(event.target)
-    this.dispatchEvent(new CustomEvent('play', {
-      detail: {
-        id: event.target.id, 
-        index: this.ownChildren().indexOf(event.target)
-      }
-    }))
+    if (event.target && event.target.id!=='player-hand') {
+      this.show(event.target)
+      this.dispatchEvent(new CustomEvent('play', {
+        detail: {
+          id: event.target.id, 
+          index: this.ownChildren().indexOf(event.target)
+        }
+      }))
+    }
   }
 
   show(element) {

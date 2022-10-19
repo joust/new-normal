@@ -1,6 +1,4 @@
 const INITIAL = 8
-const STRAWMANS = 80
-const RESEARCHS = 120
 const PERCENTAGE_APPEAL_TOS = 15 // e.g. 600 argument cards => 90 appeal to cards
 const PERCENTAGE_STRAWMANS = 15 // e.g. 600 argument cards => 90 strawman cards
 const PERCENTAGE_RESEARCHS = 20 // e.g. 600 argument cards => 120 research cards
@@ -10,7 +8,7 @@ const INVALID_MOVE = 'INVALID_MOVE'
 
 /**
 Game state: {
-    lang: 'de',
+    lang: 'de', // opponents have to use the same language!
     deck: {
       idiot: ['I1', 'I2', ...],
       sheep: ['S1', 'S2', ...]
@@ -44,7 +42,6 @@ const Uno = {
       if (!canBePlayedOn(top, card, idiot)) return INVALID_MOVE
 
       switch(card[0]) {
-        case 'A': // appeal to
         case 'F': // fallacy
         case 'L': // label
           hand.splice(index, 1)
@@ -59,7 +56,8 @@ const Uno = {
           hand.splice(index, 1)
           G.pile.push(card)
           break
-        default: // argument card
+        case 'A': // appeal to
+        default: // argument
           hand.splice(index, 1)
           G.pile.push(card)
           // only playing a valid argument card of your side ends the turn
@@ -84,8 +82,11 @@ const Uno = {
     // reorder hand?
   },
   endIf: (G, ctx) => {
-    const winner = G.hands.findIndex(hand => hand && hand.length === 0)
-    if (winner >= 0) return { winner }
+    const idiot = isIdiot(ctx.currentPlayer)
+    const hand = G.hands[ctx.currentPlayer]
+    const top = G.pile.length ? G.pile[G.pile.length-1] : undefined
+    if (!hand.length && (isArgument(top) || isAppealTo(top)) && isOfType(top, idiot))
+      return { winner: ctx.currentPlayer }
   },
   minPlayers: 2,
   disableUndo: true, // Disable undo feature for all the moves in the game
@@ -102,21 +103,25 @@ const Uno = {
 }
 
 function canBePlayedOn(top, card, idiot) {
-  if (top && !top.length) top = undefined
+  if (top && !top.length) top = undefined // empty string or array
   switch(card[0]) {
-    case 'A': // appeal to
     case 'F': // fallacy
     case 'L': // label
       return true
     case 'R': // research
+      return top && (isArgument(top) || isAppealTo(top))
     case 'S': // strawman
       return top && isArgument(top)
-    default: // argument card
-      return (top && top[0]==='S' && isArgument(card) && isOfType(card, !idiot))
-        || (!top 
-          || (isArgument(top) && isOfType(card, idiot) && topicOf(card)===topicOf(top))
-          || (['A','F','L'].includes(top[0]) && isOfType(card, idiot))
-           )
+    case 'A': // appeal to
+      return isOfType(card, idiot) && 
+        (!top || isAppealTo(top) || isArgument(top) || isFallacy(top) || isLabel(top))
+    default: // argument
+      return (top && isStrawman(top) && (isArgument(card) || isAppealTo(top)) && isOfType(card, !idiot))
+        || isOfType(card, idiot) && (!top 
+          || isAppealTo(top) 
+          || (isArgument(top) && topicOf(card)===topicOf(top))
+          || isFallacy(top) 
+          || isLabel(top))
   }
 }
 
@@ -125,14 +130,16 @@ function isIdiot(player) {
   return !!(player%2) // every second player is an idiot
 }
 
-/** check for argument card */
-function isArgument(id) {
-  return id.includes(':')
-}
+function isArgument(id) { return id.includes(':') }
+function isAppealTo(id) { return id.startsWith('A') }
+function isFallacy(id) { return id.startsWith('F') }
+function isLabel(id) { return id.startsWith('L') }
+function isStrawman(id) { return id.startsWith('S') }
+function isResearch(id) { return id.startsWith('R') }
 
 /** check for type of card */
 function isOfType(id, idiot) {
-  return isArgument(id) ? id.split(':')[1].startsWith('I')===idiot : undefined
+  return (id.includes('I') && idiot) || (id.includes('S') && !idiot)
 }
 
 /** find topic of card */
@@ -154,10 +161,19 @@ function hasTopic(id, topic) {
  */ 
 function resolveResearch(hand, decks, top, idiot) {
   const deck = decks[idiot ? 'idiot' : 'sheep']
-  const topic = topicOf(top)
-  const cards = deck.filter(c => hasTopic(c, topic)).slice(0, 1+Math.floor(Math.random()*3))
+  const nrOfCards = 1+Math.floor(Math.random()*3)
+  let cards
+  if (isAppealTo(top)) {
+    cards = deck.filter(isAppealTo).slice(0, nrOfCards)
+    if (cards.length < nrOfCards)
+      cards = [...cards, deck.filter(isArgument).slice(0, nrOfCards-cards.length)]
+  } else {
+    const topic = topicOf(top)
+    cards = deck.filter(c => hasTopic(c, topic)).slice(0, nrOfCards)
+    if (cards.length < nrOfCards)
+      cards = [...cards, deck.filter(isAppealTo).slice(0, nrOfCards-cards.length)]
+  }
   cards.forEach(card => deck.splice(deck.indexOf(card), 1))
-  shuffle(cards)
   hand.push(...cards)
 }
 
@@ -171,11 +187,16 @@ function resolveResearch(hand, decks, top, idiot) {
 function resolveStrawman(hand, decks, idiot) {
   const deck = decks[idiot ? 'sheep' : 'idiot']
   const myTopics = hand.filter(isArgument).map(topicOf)
-  const cards = deck.filter(isArgument).filter(c => myTopics.includes(topicOf(c)))
+  let cards = deck.filter(isArgument).filter(c => myTopics.includes(topicOf(c)))
   if (cards.length) {
-    shuffle(cards)
     deck.splice(deck.indexOf(cards[0]), 1)
     hand.push(cards[0])
+  } else {
+    cards = deck.filter(isAppealTo)
+    if (cards.length) {
+      deck.splice(deck.indexOf(cards[0]), 1)
+      hand.push(cards[0])
+    }
   }
 }
 
@@ -213,14 +234,38 @@ function generateDecks(lang) {
 function initialDeck(idiot) {
   const type = idiot ? 'I' : 'S'
   const cards = content[idiot ? 'idiot' : 'sheep']
-  const strawmans = new Array(STRAWMANS).fill(`S${type}`)
-  const researchs = new Array(RESEARCHS).fill(`R${type}`)
-  return [...cards.args, ...cards.labels, ...cards.fallacies, ...cards.appealTos, ...strawmans, ...researchs]
+  const nargs = cards.args.length
+  const strawmans = new Array(Math.round(PERCENTAGE_STRAWMANS*nargs/100)).fill(`S${type}`)
+  const researchs = new Array(Math.round(PERCENTAGE_RESEARCHS*nargs/100)).fill(`R${type}`)
+  const labels = elementsFrom(Math.round(PERCENTAGE_LABELS*nargs/100), cards.labels)
+  const fallacies = elementsFrom(Math.round(PERCENTAGE_FALLACIES*nargs/100), cards.fallacies)
+  const appealTos = elementsFrom(Math.round(PERCENTAGE_APPEAL_TOS*nargs/100), cards.appealTos)
+  return [...cards.args, ...labels, ...fallacies, ...appealTos, ...strawmans, ...researchs]
+}
+
+/**
+ * selects n elements from a list (which can be longer or shorter than n)
+ * if list has no entries, an empty array is returned
+ * @param {number} n number of cards to select.
+ * @param {Array} list the list to select from.
+ * @return {any} The selected elements
+ */
+function elementsFrom(n, list) {
+  const selection = []
+  if (!list.length) return selection
+  while (n >= list.length) {
+    selection.push(...list)
+    n -= list.length
+  }
+  const rest = shuffle([...list])
+  selection.push(...rest.slice(0, n))
+  return selection
 }
 
 /**
  * perform async initialization by loading all needed files so the game engine can run sync
  * @param {string} lang The language.
+ * @return {any} A content structure
  */
 async function init(lang) {
   const topicMap = await fetchTopicMap()

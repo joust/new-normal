@@ -18,9 +18,9 @@ opponentHandTemplate.innerHTML = `
     }  
 
     #opponent-name {
-      font-family: 'Open Sans', Helvetica;
-      font-size: calc(6 * var(--cavg));
-      font-weight: 600;
+      font-family: 'HVD Crocodile', Helvetica;
+      font-size: calc(5 * var(--cavg));
+      font-weight: 300;
       text-align: center;
     }
   </style>

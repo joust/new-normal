@@ -113,10 +113,11 @@ function canBePlayedOn(top, card, idiot) {
     case 'S': // strawman
       return top && isArgument(top)
     case 'A': // appeal to
-      return isOfType(card, idiot) && 
+      return isOfType(card, !idiot) && isStrawman(top) 
+      || isOfType(card, idiot) && 
         (!top || isAppealTo(top) || isArgument(top) || isFallacy(top) || isLabel(top))
     default: // argument
-      return (top && isStrawman(top) && (isArgument(card) || isAppealTo(top)) && isOfType(card, !idiot))
+      return top && isStrawman(top) && (isArgument(card) || isAppealTo(top)) && isOfType(card, !idiot)
         || isOfType(card, idiot) && (!top 
           || isAppealTo(top) 
           || (isArgument(top) && topicOf(card)===topicOf(top))
@@ -166,12 +167,12 @@ function resolveResearch(hand, decks, top, idiot) {
   if (isAppealTo(top)) {
     cards = deck.filter(isAppealTo).slice(0, nrOfCards)
     if (cards.length < nrOfCards)
-      cards = [...cards, deck.filter(isArgument).slice(0, nrOfCards-cards.length)]
+      cards = [...cards, ...deck.filter(isArgument).slice(0, nrOfCards-cards.length)]
   } else {
     const topic = topicOf(top)
     cards = deck.filter(c => hasTopic(c, topic)).slice(0, nrOfCards)
     if (cards.length < nrOfCards)
-      cards = [...cards, deck.filter(isAppealTo).slice(0, nrOfCards-cards.length)]
+      cards = [...cards, ...deck.filter(isAppealTo).slice(0, nrOfCards-cards.length)]
   }
   cards.forEach(card => deck.splice(deck.indexOf(card), 1))
   hand.push(...cards)

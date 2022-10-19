@@ -15,7 +15,7 @@ body {
 }
 
 msg-box, msg-box * {
-  font-family: 'HVD Crocodile';
+  font-family: 'HVD Crocodile', Helvetica;
   font-weight: 300;
   font-size: 5vmin;
   color: #777;
@@ -34,14 +34,14 @@ dialog {
 }
 
 h1, #config label, #config button, #config input, #config select {
-  font-family: 'HVD Crocodile';
+  font-family: 'HVD Crocodile', Helvetica;
   font-weight: 300;
   font-size: 5vmin;
   color: #777;
 }
 
 h1,h2,h3 {
-  font-family: 'HVD Crocodile';
+  font-family: 'HVD Crocodile', Helvetica;
   font-weight: 600;
   color: #777;
 }

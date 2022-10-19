@@ -7,9 +7,9 @@ playerHandTemplate.innerHTML = `
     }
 
     #player-name {
-      font-family: 'Open Sans', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica;
       font-size: calc(12 * var(--cavg));
-      font-weight: 600;
+      font-weight: 300;
       text-align: center;
     }
 

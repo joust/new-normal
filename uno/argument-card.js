@@ -28,7 +28,7 @@ argumentCardTemplate.innerHTML = `
       heigt: calc(1.3 * var(--sidebar-width))
       top: 0;
       left: 0;
-      font-family: 'HVD Crocodile';
+      font-family: 'HVD Crocodile', Helvetica;
       font-weight: 600;
       font-stretch: condensed;
       font-size: calc(8 * var(--cavg));
@@ -105,7 +105,7 @@ argumentCardTemplate.innerHTML = `
     }
 
     ::slotted(h2) {
-      font-family: 'HVD Crocodile';
+      font-family: 'HVD Crocodile', Helvetica;
       font-weight: 600;
       font-stretch: condensed;
       font-size: calc(7 * var(--cavg));
@@ -136,7 +136,7 @@ argumentCardTemplate.innerHTML = `
      }
 
     #side-title {
-      font-family: 'HVD Crocodile';
+      font-family: 'HVD Crocodile', Helvetica;
       font-size: calc(6 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;

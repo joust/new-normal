@@ -42,7 +42,7 @@ FallacyCardTemplate.innerHTML = `
     }
 
     #new, #normal {
-      font-family: 'HVD Crocodile';
+      font-family: 'HVD Crocodile', Helvetica;
       font-weight: 600;
       font-size: calc(14 * var(--cavg));
       position: absolute;
@@ -70,7 +70,7 @@ FallacyCardTemplate.innerHTML = `
 
     #phrase {
       position: absolute;
-      font-family: 'HVD Crocodile';
+      font-family: 'HVD Crocodile', Helvetica;
       font-size: calc(7 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
@@ -111,7 +111,7 @@ FallacyCardTemplate.innerHTML = `
 
     #side-phrase {
       position: absolute;
-      font-family: 'HVD Crocodile';
+      font-family: 'HVD Crocodile', Helvetica;
       font-size: calc(6 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;

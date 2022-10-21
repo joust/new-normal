@@ -172,6 +172,10 @@ class LabelCard extends HTMLElement {
     return this.hasAttribute('mirrored')
   }
 
+  get card() {
+    return this.querySelector('a') ? this.querySelector('a').id : ''
+  }
+
   attributeChangedCallback() {
     this.update()
   }

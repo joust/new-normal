@@ -67,6 +67,23 @@
     function addOpponentHand(nr, name) {
       element('players').insertAdjacentHTML('beforeEnd', `<opponent-hand cards="8" nr="${nr}" ${name ? `name="${name}"` : ''}></opponent-hand>`)
     }
+    
+    function getAlternatives(id, deck) {
+      if (isArgument(id)) return deck.filter(card => id!==card && isArgument(card) && hasTopic(card, topicOf(id)))
+      if (isAppealTo(id)) return deck.filter(card => id!==card && isAppealTo(card))
+      if (isFallacy(id)) return deck.filter(card => id!==card && isFallacy(card))
+      if (isLabel(id)) return deck.filter(card => id!==card && isLabel(card))
+      return undefined
+    }
+    
+    function cardsString(hand, deck, top, current, idiot) {
+      // JSON array of id+alternative elements in format { id: '...', alt: ['...', '...'], playable }
+      return JSON.stringify(hand.map(card => (
+        { card,
+          alt: getAlternatives(card, deck),
+          playable: current && canBePlayedOn(top, card, idiot)
+        })))
+    }
 
     async function playWithBot() {
       const lang = document.body.lang
@@ -74,7 +91,7 @@
       element('config').classList.toggle('hidden', true)
       const clients = [await startLocalClient(lang, '0'), await startLocalClient(lang, '1')]
       await loadContent(lang)
-      element('uno').insertAdjacentHTML('beforeEnd', '<player-hand id="hand" nr="0" active ids=""></player-hand>')
+      element('uno').insertAdjacentHTML('beforeEnd', '<player-hand id="hand" nr="0" active cards="[]"></player-hand>')
       addOpponentHand('1', 'CPU')
       clients[0].moves.setName('0', 'Me')
       clients[0].moves.setName('1', 'CPU')
@@ -90,11 +107,12 @@
             const name = state.G.names[client.playerID]
             const hand = state.G.hands[client.playerID]
             const idiot = !!(client.playerID%2)
+            const deck = idiot ? state.G.decks.idiot : state.G.decks.sheep
+            const current = client.playerID===state.ctx.currentPlayer
             element('draw-pile').setAttribute('top', idiot ? 'I' : 'S')
-            element('hand').setAttribute('ids', hand.join(','))
+            element('hand').setAttribute('cards', cardsString(hand, deck, top, current, idiot))
             element('hand').setAttribute('nr', client.playerID)
             if (name) element('hand').setAttribute('name', name) 
-            element('hand').setAttribute('playable', client.playerID===state.ctx.currentPlayer ? hand.filter(card => canBePlayedOn(top, card, idiot)).join(',') : '')
             const opponentId = state.ctx.currentPlayer==='0' ? '1' : '0'
             const opponentHand = elements('opponent-hand')[0]
             opponentHand.setAttribute('nr', opponentId)
@@ -125,7 +143,7 @@
       element('players').classList.add(`p${numPlayers}`)
       let client = await startClient(lang, isHost, numPlayers, playerID, matchID)
       if (isHost) {
-        element('uno').insertAdjacentHTML('beforeEnd', '<player-hand id="hand" nr="0" active ids=""></player-hand>')
+        element('uno').insertAdjacentHTML('beforeEnd', '<player-hand id="hand" nr="0" active cards="[]"></player-hand>')
         client.moves.setName(playerID, await prompt(`Name for Host Player?`, ''))
         element('draw-pile').onclick = event => client.moves.drawCard()
         element('hand').onplay = event => client.moves.playCard(event.detail.index)
@@ -146,6 +164,8 @@
             const name = state.G.names[client.playerID]
             const hand = state.G.hands[client.playerID]
             const idiot = !!(client.playerID%2)
+            const deck = idiot ? state.G.decks.idiot : state.G.decks.sheep
+            const current = client.playerID===state.ctx.currentPlayer
             if (!setNameRequestSent && !name && state.ctx.currentPlayer==="0") {
               await sendSetNameRequest(client, client.playerID)
             }
@@ -158,10 +178,9 @@
               )
             }
             element('draw-pile').setAttribute('top', idiot ? 'I' : 'S')
-            element('hand').setAttribute('ids', hand.join(','))
+            element('hand').setAttribute('cards', cardsString(hand, deck, top, current, idiot))
             element('hand').setAttribute('nr', client.playerID)
             element('hand').setAttribute('name', name)
-            element('hand').setAttribute('playable', client.playerID===state.ctx.currentPlayer ? hand.filter(card => canBePlayedOn(top, card, idiot)).join(',') : '')
             Array.from(element('players').children).forEach((hand, index) => {
               hand.setAttribute('nr', opponentIds[index])
               if (state.G.names[opponentIds[index]]) 
@@ -181,7 +200,7 @@
                 client = await startClient(state.G.lang, false, numPlayers, selectedPlayerID, matchID)
                 unsubscribe = client.subscribe(stateHandler)
                 element('uno').removeChild(element('hand'))
-                element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand" nr="${selectedPlayerID}" name="${state.G.names[selectedPlayerID]}" active ids=""></player-hand>`)
+                element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand" nr="${selectedPlayerID}" name="${state.G.names[selectedPlayerID]}" active cards="[]"></player-hand>`)
                 element('draw-pile').onclick = event => client.moves.drawCard()
                 element('hand').onplay = event => client.moves.playCard(event.detail.index)
               })

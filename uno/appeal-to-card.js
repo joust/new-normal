@@ -180,6 +180,10 @@ class AppealToCard extends HTMLElement {
     return this.getAttribute('type')
   }
 
+  get card() {
+    return this.querySelector('a') ? this.querySelector('a').id : ''
+  }
+
   get fallacy() {
     return this.type === 'authority' ? 'Appeal to Authority' : 'Appeal to Popularity'
   }

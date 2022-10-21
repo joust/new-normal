@@ -58,18 +58,18 @@ class PlayerHand extends HTMLElement {
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = ['ids', 'playable', 'nr', 'name', 'active']
+  static observedAttributes = ['cards', 'nr', 'name', 'active']
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
-  get ids() {
-    const ids = this.getAttribute('ids')
-    return !ids || !ids.length ? [] : ids.split(',')
+  playable(card) {
+    return !!this.cards.find(element => element.card===card && element.playable)
   }
 
-  get playable() {
-    const ids = this.getAttribute('playable')
-    return !ids || !ids.length ? [] : ids.split(',')
+  // JSON array of id+alternative+playable elements in the format { id: '...', alt: ['...', '...'], playable: ...}
+  get cards() {
+    const cards = this.getAttribute('cards')
+    return !cards || !cards.length ? [] : JSON.parse(cards)
   }
 
   get nr() {
@@ -102,7 +102,7 @@ class PlayerHand extends HTMLElement {
   
   attributeChangedCallback(name) {
     if (this.isConnected && this.element('player-hand')) {
-      if (name=='ids') {
+      if (name=='cards') {
         this.updateCards()
       }
       if (name==='active') {
@@ -114,14 +114,15 @@ class PlayerHand extends HTMLElement {
   }
 
   updateCards() {
-    const cardIds = this.ids
+    const cards = this.cards.map(element => element.card)
+    const alts = this.cards.map(element => element.alt || [])
     const hand = this.element('player-hand')
     let elements = Array.from(hand.querySelectorAll('game-card'))
-    for (let index=0; index < Math.max(cardIds.length, elements.length); index++) {
-      if (index < Math.min(cardIds.length, elements.length)) {
-        elements[index].setAttribute('id', cardIds[index])
-      } else if (index < cardIds.length) {
-        hand.insertAdjacentHTML('beforeEnd', `<game-card id="${cardIds[index]}"></game-card>`);
+    for (let index=0; index < Math.max(cards.length, elements.length); index++) {
+      if (index < Math.min(cards.length, elements.length)) {
+        elements[index].setAttribute('card', cards[index])
+      } else if (index < cards.length) {
+        hand.insertAdjacentHTML('beforeEnd', `<game-card card="${cards[index]}" alternatives="${alts[index].join(',')}"></game-card>`);
         elements = Array.from(hand.querySelectorAll('game-card'))
       } else {
         elements[index].parentElement.removeChild(elements[index])
@@ -190,7 +191,7 @@ class PlayerHand extends HTMLElement {
         child.style.gridColumn = `${index+2}/span 8`
         child.style.zIndex = z
         child.toggleAttribute('mirrored', after)
-        child.classList.toggle('playable', this.playable.includes(child.id))
+        child.classList.toggle('playable', this.playable(child.getAttribute('card')))
         if (child.hasAttribute('top')) after = true
         if (after) z--; else z++
       })

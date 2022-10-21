@@ -159,7 +159,7 @@ argumentCardTemplate.innerHTML = `
       left: calc(100% - var(--sidebar-width));
     }
 
-    #id {
+    #card {
       position: absolute;
       right: 0;
       top: 0;
@@ -172,11 +172,11 @@ argumentCardTemplate.innerHTML = `
       background-color: var(--blue);
     }
 
-    .idiot #id {
+    .idiot #card {
       background-color: var(--red);
     }
 
-    .mirrored #id {
+    .mirrored #card {
       left: 0;
       right: auto;
       border-top-left-radius: calc(2 * var(--cavg));
@@ -189,7 +189,7 @@ argumentCardTemplate.innerHTML = `
     <div id="topic-name"></div>
     <div id="content"><slot></div>
     <div id="side-title"></div>
-    <div id="id"></div>
+    <div id="card"></div>
   </div>
 `
 
@@ -199,7 +199,7 @@ class ArgumentCard extends HTMLElement {
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = ['idiot', 'topic', 'topicId', 'id', 'mirrored']
+  static observedAttributes = ['idiot', 'topic', 'topicId', 'card', 'mirrored']
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
@@ -215,8 +215,8 @@ class ArgumentCard extends HTMLElement {
     return this.getAttribute('topicId')
   }
 
-  get id() {
-    return this.getAttribute('id')
+  get card() {
+    return this.getAttribute('card')
   }
 
   get title() {
@@ -259,7 +259,7 @@ class ArgumentCard extends HTMLElement {
     if (this.isConnected && root) {
       root.classList.toggle('idiot', this.idiot)
       root.classList.toggle('mirrored', this.mirrored)
-      this.element('id').innerHTML = this.id
+      this.element('card').innerHTML = this.card
       this.element('topic-icon').innerHTML = this.topicId.substring(1)
       this.element('topic-name').innerHTML = this.topic
       this.element('side-title').innerHTML = this.title

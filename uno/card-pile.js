@@ -85,7 +85,7 @@ class CardPile extends HTMLElement {
       case '': return '<no-card></no-card>'
       case 'I': return '<card-back idiot></card-back>'
       case 'S': return '<card-back></card-back>'
-      default: return `<game-card ${mirrored} id="${this.top}"></game-card>`
+      default: return `<game-card ${mirrored} card="${this.top}"></game-card>`
     }
   }
 }

@@ -2,22 +2,19 @@ const { Client } = require('boardgame.io/client')
 const { Local } = require('boardgame.io/multiplayer')
 const { P2P } = require('@boardgame.io/p2p')
 
-async function startLocalClient(lang, playerID) {
-  await Uno.init(lang)
-  const client = Client({
-    game: Uno,
-    numPlayers: 2,
-    playerID,
-    multiplayer: Local(),
-  })
-  client.start()
-  return client
+async function startLocal(lang, playerID) {
+  const game = await Uno(lang, playerID)
+  const player = Client({ game, numPlayers: 2, playerID, multiplayer: Local() })
+  const bot = Client({ game, numPlayers: 2, playerID: playerID==='0' ? '1' : '0', multiplayer: Local() })
+  player.start()
+  bot.start()
+  return playerID==='0' ? [player, bot] : [bot, player]
 }
 
 async function startClient(lang, isHost, numPlayers, playerID, matchID) {
-  await Uno.init(lang)
+  const game = await Uno(lang, isHost ? playerID : undefined)
   const client = Client({
-    game: Uno,
+    game,
     numPlayers,
     matchID,
     playerID,
@@ -58,11 +55,19 @@ async function loadContent(lang) {
       elementWithKids('div', null, { 'class': 'topics' })
     ], { id: lang })
     document.querySelector('#content').appendChild(root)
-    root.querySelector('.idiot').innerHTML =  fixAnchors(await fetchSilent(`${lang}/idiot.html`))
-    root.querySelector('.sheep').innerHTML = fixAnchors(await fetchSilent(`${lang}/sheep.html`))
-    root.querySelector('.labels').innerHTML = await fetchSilent(`${lang}/labels.html`)
-    root.querySelector('.appeal-tos').innerHTML = await fetchSilent(`${lang}/appeal-tos.html`)
-    root.querySelector('.fallacies').innerHTML = await fetchSilent(`${lang}/fallacies.html`)
-    root.querySelector('.topics').innerHTML = await fetchSilent(`${lang}/topics.html`)
+    const [idiot, sheep, labels, appealTos, fallacies, topics] = await Promise.all([
+      fetchSilent(`${lang}/idiot.html`),
+      fetchSilent(`${lang}/sheep.html`),
+      fetchSilent(`${lang}/labels.html`),
+      fetchSilent(`${lang}/appeal-tos.html`),
+      fetchSilent(`${lang}/fallacies.html`),
+      fetchSilent(`${lang}/topics.html`)
+    ])
+    root.querySelector('.idiot').innerHTML =  fixAnchors(idiot)
+    root.querySelector('.sheep').innerHTML = fixAnchors(sheep)
+    root.querySelector('.labels').innerHTML = labels
+    root.querySelector('.appeal-tos').innerHTML = appealTos
+    root.querySelector('.fallacies').innerHTML = fallacies
+    root.querySelector('.topics').innerHTML = topics
   }
 }

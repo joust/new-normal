@@ -59,8 +59,8 @@
     
     let setNameRequestSent = false
     async function sendSetNameRequest(client, playerID) {
-      const name = await prompt(`Name for Player ${playerID}?`, '')
       setNameRequestSent = true
+      const name = await prompt(`Name for Player ${playerID}?`, '')
       client.sendChatMessage({ message: 'setName', name })
     }
     
@@ -84,59 +84,67 @@
           playable: current && canBePlayedOn(top, card, idiot)
         })))
     }
+    
+    function updateTable(client, state) { // TODO move to uno/game-table.js component
+      const top = state.G.pile[state.G.pile.length-1]
+      element('draw-pile').setAttribute('top', '')
+      element('pile').setAttribute('top', top)
+      const opponentIds = [...Array(state.ctx.numPlayers).keys()].filter(id => id!=client.playerID) // number!=string
+      const name = state.G.names[client.playerID]
+      const hand = state.G.hands[client.playerID]
+      const idiot = !!(client.playerID%2)
+      const deck = idiot ? state.G.decks.idiot : state.G.decks.sheep
+      const current = client.playerID===state.ctx.currentPlayer
+      element('draw-pile').setAttribute('top', idiot ? 'I' : 'S')
+      element('hand').setAttribute('cards', cardsString(hand, deck, top, current, idiot))
+      element('hand').setAttribute('nr', client.playerID)
+      if (name) element('hand').setAttribute('name', name)
+      Array.from(element('players').children).forEach((hand, index) => {
+        hand.setAttribute('nr', opponentIds[index])
+        if (state.G.names[opponentIds[index]]) 
+          hand.setAttribute('name', state.G.names[opponentIds[index]])
+        hand.setAttribute('cards', state.G.hands[opponentIds[index]].length)
+      })
+    }
 
-    async function playWithBot() {
+    async function playWithBot(idiot) {
       const lang = document.body.lang
+      const playerID = idiot ? '1' : '0'
+      const botID = idiot ? '0' : '1'
       element('uno').classList.toggle('hidden', false)
       element('config').classList.toggle('hidden', true)
-      const clients = [await startLocalClient(lang, '0'), await startLocalClient(lang, '1')]
+      const clients = await startLocal(lang, playerID)
       await loadContent(lang)
-      element('uno').insertAdjacentHTML('beforeEnd', '<player-hand id="hand" nr="0" active cards="[]"></player-hand>')
-      addOpponentHand('1', 'CPU')
-      clients[0].moves.setName('0', 'Me')
-      clients[0].moves.setName('1', 'CPU')
+      element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand" nr="${playerID}" active cards="[]"></player-hand>`)
+      addOpponentHand(botID, 'CPU')
+      clients[playerID].moves.setName(playerID, 'Me')
+      clients[playerID].moves.setName(botID, 'CPU')
+      element('draw-pile').onclick = event => clients[playerID].moves.drawCard()
+      element('hand').onplay = event => clients[playerID].moves.playCard(event.detail.index)
       const stateHandler = state => {
-        if (state && state.ctx.currentPlayer==='0') {
-          const client = clients[state.ctx.currentPlayer] 
-          element('draw-pile').onclick = event => client.moves.drawCard()
-          element('hand').onplay = event => client.moves.playCard(event.detail.index)
-          const top = state.G.pile[state.G.pile.length-1]
-          element('draw-pile').setAttribute('top', '')
-          element('pile').setAttribute('top', top)
-          if (client.playerID && client.playerID.length) {
-            const name = state.G.names[client.playerID]
-            const hand = state.G.hands[client.playerID]
-            const idiot = !!(client.playerID%2)
-            const deck = idiot ? state.G.decks.idiot : state.G.decks.sheep
-            const current = client.playerID===state.ctx.currentPlayer
-            element('draw-pile').setAttribute('top', idiot ? 'I' : 'S')
-            element('hand').setAttribute('cards', cardsString(hand, deck, top, current, idiot))
-            element('hand').setAttribute('nr', client.playerID)
-            if (name) element('hand').setAttribute('name', name) 
-            const opponentId = state.ctx.currentPlayer==='0' ? '1' : '0'
-            const opponentHand = elements('opponent-hand')[0]
-            opponentHand.setAttribute('nr', opponentId)
-            if (state.G.names[opponentId]) opponentHand.setAttribute('name', state.G.names[opponentId])
-            opponentHand.setAttribute('cards', state.G.hands[opponentId].length)
-          }
-        }
+        if (state) updateTable(clients[playerID], state)
       }
-      const cpuStateHandler = state => {
-        if (state && state.ctx.currentPlayer==='1') {
-          const client = clients[state.ctx.currentPlayer]
-          const possibleMoves = Uno.ai.enumerate(state.G, state.ctx)
+      const botStateHandler = state => {
+        if (state && state.ctx.currentPlayer===botID) {
+          const client = clients[botID]
+          const idiot = isIdiot(botID)
+          const hand = state.G.hands[botID]
+          const top = state.G.pile.length ? state.G.pile[state.G.pile.length-1] : undefined
+          const possibleMoves = allPossibleMoves(hand, idiot, top)
           const randomMoveIndex = Math.floor(Math.random()*possibleMoves.length)
           const move = possibleMoves[randomMoveIndex]
           setTimeout(() => client.moves[move.move](...move.args), 500)
         }
       }
-      clients[0].subscribe(stateHandler)
-      clients[1].subscribe(cpuStateHandler)
+      clients[playerID].subscribe(stateHandler)
+      clients[botID].subscribe(botStateHandler)
     }
     
     async function play(isHost, numPlayers) {
       const lang = document.body.lang
-      const playerID = isHost ? '0' : undefined
+      const idiot = element('idiot').checked
+      const hostPlayerID = idiot ? '1' : '0'
+      const playerID = isHost ? hostPlayerID : undefined
       const matchID = element('matchID').value
       element('uno').classList.toggle('hidden', false)
       element('config').classList.toggle('hidden', true)
@@ -147,29 +155,20 @@
         client.moves.setName(playerID, await prompt(`Name for Host Player?`, ''))
         element('draw-pile').onclick = event => client.moves.drawCard()
         element('hand').onplay = event => client.moves.playCard(event.detail.index)
-        for (let id=1; id<numPlayers; id++) addOpponentHand(id, '?')
-      } else {
-        element('uno').insertAdjacentHTML('beforeEnd', '<opponent-hand id="hand" nr="0" name="Host"  cards="8"></opponent-hand>')
+        const opponentPlayerIds = [...Array(numPlayers).keys()].filter(id => id!=playerID)
+        opponentPlayerIds.forEach(id => addOpponentHand(id, '?'))
       }
       
       const setNameRequest = msg => msg.payload.message==='setName'
       let unsubscribe
       const stateHandler = async state => {
         if (state) {
-          const top = state.G.pile[state.G.pile.length-1]
-          element('draw-pile').setAttribute('top', '')
-          element('pile').setAttribute('top', top)
-          if (client.playerID && client.playerID.length) {
-            const opponentIds = [...Array(state.ctx.numPlayers).keys()].filter(id => id!=client.playerID) // number!=string
-            const name = state.G.names[client.playerID]
-            const hand = state.G.hands[client.playerID]
-            const idiot = !!(client.playerID%2)
-            const deck = idiot ? state.G.decks.idiot : state.G.decks.sheep
-            const current = client.playerID===state.ctx.currentPlayer
-            if (!setNameRequestSent && !name && state.ctx.currentPlayer==="0") {
+          if (client.playerID) {
+            if (!isHost && !setNameRequestSent && state.ctx.currentPlayer===hostPlayerID) { // first call after guest select
               await sendSetNameRequest(client, client.playerID)
             }
-            if (client.playerID==='0' && state.ctx.currentPlayer==='0') {
+            updateTable(client, state)
+            if (isHost && state.ctx.currentPlayer===hostPlayerID) {
               client.chatMessages.filter(setNameRequest).forEach(msg => {
                 if (state.G.names[msg.sender]!=msg.payload.name) {
                   client.moves.setName(msg.sender, msg.payload.name)
@@ -177,24 +176,17 @@
               }
               )
             }
-            element('draw-pile').setAttribute('top', idiot ? 'I' : 'S')
-            element('hand').setAttribute('cards', cardsString(hand, deck, top, current, idiot))
-            element('hand').setAttribute('nr', client.playerID)
-            element('hand').setAttribute('name', name)
-            Array.from(element('players').children).forEach((hand, index) => {
-              hand.setAttribute('nr', opponentIds[index])
-              if (state.G.names[opponentIds[index]]) 
-                hand.setAttribute('name', state.G.names[opponentIds[index]])
-              hand.setAttribute('cards', state.G.hands[opponentIds[index]].length)
-            })
           } else {
-            if (!element('players').children.length) { // first call
+            const hostPlayerID = state.G.host
+            const hostPlayerName = state.G.names[state.G.host]
+            if (!element('players').children.length) { // first call in a guest (no playerID set)
               document.body.lang = state.G.lang
-              await load(state.G.lang)
-              const selectablePlayerIds = [...Array(state.ctx.numPlayers).keys()].slice(1)
+              const selectablePlayerIds = state.ctx.playOrder.filter(id => id!==hostPlayerID)
+              element('uno').insertAdjacentHTML('beforeEnd', `<opponent-hand id="hand" nr="${hostPlayerID}" name="${hostPlayerName}" cards="8"></opponent-hand>`)
               selectablePlayerIds.forEach(id => addOpponentHand(id, state.G.names[id]))
+              await load(state.G.lang)
               elements('opponent-hand').forEach((child, index) => child.onclick = async event => {
-                const selectedPlayerID = ''+(index+1)
+                const selectedPlayerID = selectablePlayerIds[index]
                 client.stop()
                 unsubscribe()
                 client = await startClient(state.G.lang, false, numPlayers, selectedPlayerID, matchID)
@@ -302,6 +294,11 @@
       <label>
         Match#
         <input id="matchID" type="text" maxlength="4" minlength="4" size="5">
+        Role
+        <input type="radio" id="idiot" name="role" value="idiot" checked>
+        <label for="idiot">Idiot</label>
+        <input type="radio" id="sheep" name="role" value="sheep">
+        <label for="sheep">Sheep</label>
       </label>
     </div>
       <label>
@@ -317,7 +314,8 @@
     <hr>
       <label>
         Local
-    <button onclick="playWithBot()">Against Bot</button>
+    <button onclick="playWithBot(true)">Against Bot as Idiot</button>
+    <button onclick="playWithBot(false)">Against Bot as Sheep</button>
       </label>
     <div id="instructions"></div>
   </div>

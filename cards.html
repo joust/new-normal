@@ -19,6 +19,8 @@
     <script src="uno/strawman-card.js" type="text/javascript"></script>
     <script src="uno/appeal-to-card.js" type="text/javascript"></script>
     <script src="uno/research-card.js" type="text/javascript"></script>
+    <script src="uno/discuss-card.js" type="text/javascript"></script>
+    <script src="uno/pause-card.js" type="text/javascript"></script>
     <script src="common.js" type="text/javascript"></script>
     <script src="swipy.js" type="text/javascript"></script>
     <script src="fastclick.js" type="text/javascript"></script>
@@ -36,32 +38,13 @@
       }
         
       #uno {
-        display: flex;
-        flex-direction: column;
-        background: lightgrey;
+        width: 100%;
+        height: 100%;
       }
       #hand {
-        flex: 2;
+        margin-top: 3em;
+        height: calc(100% - 4em);
         width: 100%;
-      }
-      #piles {
-        flex: 1;
-        width: 100%;
-        display: flex;
-        align-items: flex-end;
-        justify-content: center;
-      }
-      
-      #piles card-pile {
-        position: relative;
-        height: 200px;
-        width: 142px; 
-      }
-      
-      opponent-hand {
-        position: absolute;
-        width: 200px;
-        height: 70px;
       }
 
       @media (orientation: portrait) and (min-aspect-ratio: 1/2) {
@@ -120,42 +103,84 @@
         if (navigator.userAgent.indexOf('Windows') > 0)
           document.head.innerHTML += '<link rel="stylesheet" href="noto.css">'
       }
-      function uno(locale) {
-        if (locale) [lang, terr] = locale.split('-'); else [lang, terr] = browserLocale()
-        if (!supported.includes(lang)) [lang, terr] = ['en', 'us']
-        document.body.lang = document.querySelector('#location').value = `${lang}-${terr}`
-      }
 
       function fixAnchors(html) {
         return html.replaceAll('</h2></a>', '</h2>').replaceAll('</p>', '</p></a>')
       }
-      
+
       async function loadContent(lang) {
-        document.querySelector('#content .idiot').innerHTML =  fixAnchors(await fetchSilent(`${lang}/idiot.html`))
-        document.querySelector('#content .sheep').innerHTML = fixAnchors(await fetchSilent(`${lang}/sheep.html`))
-        document.querySelector('#content .labels').innerHTML = await fetchSilent(`${lang}/labels.html`)
-        document.querySelector('#content .appeal-tos').innerHTML = await fetchSilent(`${lang}/appeal-tos.html`)
-        document.querySelector('#content .fallacies').innerHTML = await fetchSilent(`${lang}/fallacies.html`)
-        document.querySelector('#content .topics').innerHTML = await fetchSilent(`${lang}/topics.html`)
+        const loaded = document.querySelector(`#content > #${lang}`)
+        if (!loaded) {
+          const root = elementWithKids('div', [
+            elementWithKids('div', null, { 'class': 'idiot' }),
+            elementWithKids('div', null, { 'class': 'sheep' }),
+            elementWithKids('div', null, { 'class': 'labels' }),
+            elementWithKids('div', null, { 'class': 'appeal-tos' }),
+            elementWithKids('div', null, { 'class': 'fallacies' }),
+            elementWithKids('div', null, { 'class': 'topics' })
+          ], { id: lang })
+          document.querySelector('#content').appendChild(root)
+          const [idiot, sheep, labels, appealTos, fallacies, topics] = await Promise.all([
+            fetchSilent(`${lang}/idiot.html`),
+            fetchSilent(`${lang}/sheep.html`),
+            fetchSilent(`${lang}/labels.html`),
+            fetchSilent(`${lang}/appeal-tos.html`),
+            fetchSilent(`${lang}/fallacies.html`),
+            fetchSilent(`${lang}/topics.html`)
+          ])
+          root.querySelector('.idiot').innerHTML =  fixAnchors(idiot)
+          root.querySelector('.sheep').innerHTML = fixAnchors(sheep)
+          root.querySelector('.labels').innerHTML = labels
+          root.querySelector('.appeal-tos').innerHTML = appealTos
+          root.querySelector('.fallacies').innerHTML = fallacies
+          root.querySelector('.topics').innerHTML = topics
+          
+          return {idiot, sheep, labels, appealTos, fallacies, topics}
+        }
       }
       
-      async function addHands() {
-        await loadContent('de')
-        document.querySelector('#uno').insertAdjacentHTML('beforeend', '<player-hand id="hand" active ids="T48:S90,T35:S297,LS13,LS74,SS,T5:S142,T35:S469,RS,LS4,LS90,LS70,RS,SS"></player-hand>') 
-        document.querySelector('#game').insertAdjacentHTML('beforeend', '<opponent-hand id="o1" idiot cards="8"></opponent-hand>') 
-        document.querySelector('#game').insertAdjacentHTML('beforeend', '<opponent-hand id="o2" cards="8"></opponent-hand>')
-        document.querySelector('#piles').insertAdjacentHTML('beforeend', '<card-pile top="I"></card-pile><card-pile top="T15:I345"></card-pile>')
+      function idsFrom(content, filter = '') {
+        return [...content.matchAll(/a id="([^"]*)"/g)].map(r => r[1]).filter(id => id.includes(filter))
+      }
+      
+      function setLang(loc) {
+        document.body.lang = loc.split('-')[0] 
+      }
+      
+      async function addHand() {
+        const content = await loadContent(document.body.lang)
+        const cards = JSON.stringify([
+          {card: 'T1:S1', alt: idsFrom(content.sheep), playable: true},
+          {card: 'T2:I2', alt: idsFrom(content.idiot), playable: true},
+          {card: 'AS1', alt: idsFrom(content.appealTos, 'AS'), playable: true},
+          {card: 'AI1', alt: idsFrom(content.appealTos, 'AI'), playable: true},
+          {card: 'FS1', alt: idsFrom(content.fallacies, 'FS'), playable: true},
+          {card: 'FI1', alt: idsFrom(content.fallacies, 'FI'), playable: true},
+          {card: 'LS1', alt: idsFrom(content.labels, 'LS'), playable: true},
+          {card: 'LI1', alt: idsFrom(content.labels, 'LI'), playable: true},
+          {card: 'T1:DS', alt: idsFrom(content.topics).map(id => `${id}:DS`), playable: true},
+          {card: 'T2:DI', alt: idsFrom(content.topics).map(id => `${id}:DI`), playable: true},
+          {card: 'NI', playable: true},
+          {card: 'NS', playable: true},
+          {card: 'RS', playable: true},
+          {card: 'RI', playable: true},
+          {card: 'PS', playable: true},
+          {card: 'PI', playable: true}
+        ])
+        const existing = document.querySelector('#hand')
+        if (existing) existing.parentElement.removeChild(existing)
+        
+        document.querySelector('#uno').insertAdjacentHTML('beforeEnd', '<player-hand nr="0" name="All Cards" id="hand" active cards="[]"></player-hand>')
+        document.querySelector('#hand').setAttribute('cards', cards)
       }
     </script>
   </head>
-  <body lang="de" onload="flagcheck(); uno(); addHands()">
+  <body lang="de" onload="flagcheck(); addHand()">
     <div id="uno">
       <div id="game">
-        <div id="piles">
-        </div>
       </div>
     </div>
-    <select id="location" onchange="uno(event.target.value)">
+    <select id="location" onchange="setLang(event.target.value); addHand()">
       <option title="Deutschland" value="de-de">🇩🇪</option>
       <option title="Österreich" value="de-at">🇦🇹</option>
       <option title="Schweiz" value="de-ch">🇨🇭</option>
@@ -233,14 +258,7 @@
       <option title="Haïti" value="fr-ht">🇭🇹</option>
       <option title="Benin" value="fr-bj">🇧🇯</option>
     </select>
-    <div id="content" class="hidden">
-      <div class="idiot"></div>
-      <div class="sheep"></div>    
-      <div class="labels"></div>
-      <div class="fallacies"></div>
-      <div class="appeal-tos"></div>
-      <div class="topics"></div>
-    </div>
+    <div id="content" class="hidden"></div>
     <div id="loader" class="hidden"></div>
   </body>
 </html>

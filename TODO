@@ -1,0 +1,31 @@
+Uno
+
+* add description texts to strawman, research, discuss, pause, ad-hominem and label cards
+* add random first player (currently the host always makes the first move)
+* handle multiple topics per argument (in uno.js initialDeck)
+* add working scrollable game-cards
+* implement infinite argument card, e.g. 'T52:I32*' with a star
+* implement pause card (for >2 players)
+* implement game end for >2 players => game ends when *all* players of one side got rid of their cards
+* implement game-table component
+* implement bot players in multiplayer game (which take the free seats)
+
+Bingo
+
+* use a player-hand on the bingo backside to display topic arguments
+* implement bingo-card component
+* use the same (parallel) content loading as the uno game
+
+Test
+
+* use random topics
+* switch test to display random cards of the common topic from of both sides (using the backsides of the bingo cards)
+* implement test-cert component
+
+General
+
+* have arguments files with the same format - remove fixAnchors
+* implement the new intro, remove the old
+* refactor dialog.js
+* refactor all redundant card local css to cards.css
+* implement flipping cards to display the sources

@@ -1,15 +1,13 @@
-const appealToCardTemplate = document.createElement('template')
-appealToCardTemplate.innerHTML = `
+const discussCardTemplate = document.createElement('template')
+discussCardTemplate.innerHTML = `
   <style>
      :host {
       display: inline-block;
     }
 
-    #appeal-to-card {
+    #discuss-card {
       --red: #f72d5d;
       --blue: #2d60f6;
-      --lightblue: aliceblue;
-      --lightgrey: lightgrey;
       --sidebar-width: 12%;
       --watermark-size: 50%;
       position: relative;
@@ -17,8 +15,28 @@ appealToCardTemplate.innerHTML = `
       height: 100%;
       border: calc(0.1 * var(--cavg)) solid #aaa;
       border-radius: calc(2 * var(--cavg));
-      background: linear-gradient(30deg, var(--lightblue) 0%, var(--lightgrey) 100%);
+    background: linear-gradient(
+        30deg,
+        var(--blue) 0%,
+        var(--red) 20%,
+        var(--blue) 40%,
+        var(--red) 60%,
+        var(--blue) 80%,
+        var(--red) 100%
+      );
       user-select: none;
+    }
+
+    #discuss-card.idiot {
+    background: linear-gradient(
+        30deg,
+        var(--red) 0%,
+        var(--blue) 20%,
+        var(--red) 40%,
+        var(--blue) 60%,
+        var(--red) 80%,
+        var(--blue) 100%
+      );
     }
 
     #watermark {
@@ -36,7 +54,6 @@ appealToCardTemplate.innerHTML = `
     .mirrored #watermark {
       right: var(--sidebar-width);
     }
-
     
     #new, #normal {
       font-family: 'HVD Crocodile', Helvetica;
@@ -67,7 +84,11 @@ appealToCardTemplate.innerHTML = `
 
     #phrase {
       position: absolute;
-      color: grey;
+      font-family: 'HVD Crocodile', Helvetica;
+      font-size: calc(7 * var(--cavg));
+      font-weight: 600;
+      font-stretch: condensed;
+      color: white;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -76,6 +97,17 @@ appealToCardTemplate.innerHTML = `
       left: var(--sidebar-width);
       height: 100%;
       hyphens: auto;
+      padding: calc(7 * var(--cavg));
+      box-sizing: border-box;
+    }
+
+    #phrase b {
+      -webkit-text-stroke: calc(0.15 * var(--cavg)) white;
+      color: var(--blue);
+    }
+
+    .idiot #phrase b {
+      color: var(--red);
     }
 
     .mirrored #phrase {
@@ -83,50 +115,27 @@ appealToCardTemplate.innerHTML = `
       right: var(--sidebar-width);
     }
 
-    #phrase {
-      font-family: 'HVD Crocodile', Helvetica;
-      font-size: calc(7 * var(--cavg));
-      font-weight: 600;
-      font-stretch: condensed;
-    }
-
-    #phrase .to {
-      color: var(--blue);
-    }
-
-    .idiot #phrase .to {
-      color: var(--red);
-    }
-
-     #fallacy {
-      font-family: 'Open Sans', Helvetica;
-      font-size: calc(4 * var(--cavg));
-      font-weight: 300;
+    #phrase span {
       max-width: 100%;
-      display: inline-block;
+      display: inline;
       text-align: center;
     }
 
-    .quoted {
-      padding-left: calc(7 * var(--cavg));
-      padding-right: calc(7 * var(--cavg));
-    }
-
-    .quoted::before {
+    #phrase > span::before {
       content: open-quote;
     }
 
-    .quoted::after {
-      content: '!' close-quote;
+    #phrase > span::after {
+      content: close-quote;
     }
 
-    #side-to {
+    #side-phrase {
       position: absolute;
       font-family: 'HVD Crocodile', Helvetica;
       font-size: calc(6 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
-      color: var(--blue);
+      color: white;
       opacity: 0.4;
       padding-left: 2%;
       top: 100%;
@@ -141,59 +150,51 @@ appealToCardTemplate.innerHTML = `
       transform-origin: top left;
     }
 
-    .idiot #side-to {
-      color: var(--red);
-    }
-
-    #side-to::after {
-      content: '!';
-    }
-
-    .mirrored #side-to {
+    .mirrored #side-phrase {
       left: calc(100% - var(--sidebar-width));
     }
   </style>
-  <div id="appeal-to-card">
+  <div id="discuss-card">
     <div id="watermark"></div>
     <div id="new">New</div>
-    <div id="phrase"><span id="fallacy"></span><span class="quoted"><span class="to"></span> <span class="phrase"></span></span></div>
-    <div id="side-to"><span class="to"></span></div>
+    <div id="phrase"><span><span class="phrase"></span></span></div>
+    <div id="side-phrase"><span class="phrase"></span></div>
     <div id="normal">Normal</div>
   </div>
 `
 
-class AppealToCard extends HTMLElement {
+class DiscussCard extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = ['idiot', 'type', 'mirrored']
+  static observedAttributes = ['idiot', 'topicId', 'topic', 'mirrored']
+
+  static phrase = topic => ({
+    da: `Lad os diskutere emnet <b>${topic}</b> til det sidste!`,
+    de: `Lasst uns das Thema <b>${topic}</b> mal zu Ende diskutieren!`,
+    en: `Let's discuss the topic <b>${topic}</b> to the end!`,
+    es: `¡Vamos a discutir el tema <b>${topic}</b> hasta el final!`,
+    fr: `Finissons-en avec le sujet <b>${topic}</b> !`,
+    it: `Discutiamo l'argomento <b>${topic}</b> fino in fondo!`,
+    pl: `Przedyskutujmy temat <b>${topic}</b> do końca!`,
+    pt: `Vamos discutir o tema <b>${topic}</b> até ao fim!`,
+    'pt-br': `Vamos discutir o tema <b>${topic}</b> até o final!`
+  })
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
+  get topic() {
+    return this.getAttribute('topic')
+  }
+
+  get topicId() {
+    return this.getAttribute('topicId')
+  }
+
   get idiot() {
     return this.hasAttribute('idiot')
-  }
-
-  get type() {
-    return this.getAttribute('type')
-  }
-
-  get card() {
-    return this.querySelector('a') ? this.querySelector('a').id : ''
-  }
-
-  get fallacy() {
-    return this.type === 'authority' ? 'Appeal to Authority' : 'Appeal to Popularity'
-  }
-
-  get to() {
-    return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
-  }
-
-  get phrase() {
-    return this.querySelector('p') ? this.querySelector('p').innerHTML : ''
   }
 
   get mirrored() {
@@ -205,8 +206,9 @@ class AppealToCard extends HTMLElement {
   }
 
   connectedCallback() {
-    this.shadowRoot.appendChild(appealToCardTemplate.content.cloneNode(true))
+    this.shadowRoot.appendChild(discussCardTemplate.content.cloneNode(true))
     this.lang = document.body.lang
+    this.element('side-phrase').innerHTML = this.element('phrase').innerHTML // copy phrases
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
     this.update()
@@ -220,15 +222,16 @@ class AppealToCard extends HTMLElement {
   }
 
   update() {
-    const root = this.element('appeal-to-card')
+    const root = this.element('discuss-card')
     if (this.isConnected && root) {
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
-      this.element('fallacy').innerHTML = this.fallacy 
-      Array.from(root.querySelectorAll('.to')).forEach(node => node.innerHTML = this.to)
-      root.querySelector('.phrase').innerHTML = this.phrase
+      const type = this.idiot ? 'idiot' : 'sheep'
+      const key = Object.keys(DiscussCard.phrase(this.topic)).find(p => p.startsWith(this.lang)) || 'de'
+      const phrase = DiscussCard.phrase(this.topic)[key]
+      Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = phrase)
     }
   }
 }
 
-customElements.define('appeal-to-card', AppealToCard)
+customElements.define('discuss-card', DiscussCard)

@@ -1,15 +1,15 @@
-const appealToCardTemplate = document.createElement('template')
-appealToCardTemplate.innerHTML = `
+const pauseCardTemplate = document.createElement('template')
+pauseCardTemplate.innerHTML = `
   <style>
      :host {
       display: inline-block;
     }
 
-    #appeal-to-card {
+    #pause-card {
       --red: #f72d5d;
       --blue: #2d60f6;
-      --lightblue: aliceblue;
-      --lightgrey: lightgrey;
+      --blue0: lightblue;
+      --blue1: cornflowerblue;
       --sidebar-width: 12%;
       --watermark-size: 50%;
       position: relative;
@@ -17,7 +17,7 @@ appealToCardTemplate.innerHTML = `
       height: 100%;
       border: calc(0.1 * var(--cavg)) solid #aaa;
       border-radius: calc(2 * var(--cavg));
-      background: linear-gradient(30deg, var(--lightblue) 0%, var(--lightgrey) 100%);
+      background: linear-gradient(30deg, var(--blue0) 0%, var(--blue1) 100%);
       user-select: none;
     }
 
@@ -67,7 +67,11 @@ appealToCardTemplate.innerHTML = `
 
     #phrase {
       position: absolute;
-      color: grey;
+      font-family: 'HVD Crocodile', Helvetica;
+      font-size: calc(7 * var(--cavg));
+      font-weight: 600;
+      font-stretch: condensed;
+      color: var(--blue);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -76,6 +80,12 @@ appealToCardTemplate.innerHTML = `
       left: var(--sidebar-width);
       height: 100%;
       hyphens: auto;
+      padding: calc(7 * var(--cavg));
+      box-sizing: border-box;
+    }
+
+    .idiot #phrase {
+      color: var(--red);
     }
 
     .mirrored #phrase {
@@ -83,44 +93,17 @@ appealToCardTemplate.innerHTML = `
       right: var(--sidebar-width);
     }
 
-    #phrase {
-      font-family: 'HVD Crocodile', Helvetica;
-      font-size: calc(7 * var(--cavg));
-      font-weight: 600;
-      font-stretch: condensed;
-    }
-
-    #phrase .to {
-      color: var(--blue);
-    }
-
-    .idiot #phrase .to {
-      color: var(--red);
-    }
-
-     #fallacy {
-      font-family: 'Open Sans', Helvetica;
-      font-size: calc(4 * var(--cavg));
-      font-weight: 300;
+    #phrase span {
       max-width: 100%;
-      display: inline-block;
+      display: inline;
       text-align: center;
     }
 
-    .quoted {
-      padding-left: calc(7 * var(--cavg));
-      padding-right: calc(7 * var(--cavg));
-    }
-
-    .quoted::before {
+    #phrase > span::before {
       content: open-quote;
     }
 
-    .quoted::after {
-      content: '!' close-quote;
-    }
-
-    #side-to {
+    #side-phrase {
       position: absolute;
       font-family: 'HVD Crocodile', Helvetica;
       font-size: calc(6 * var(--cavg));
@@ -133,67 +116,63 @@ appealToCardTemplate.innerHTML = `
       left: 0;
       height: calc(15 * var(--cw));
       width: calc(85 * var(--ch));
-      text-overflow: ellipsis;
-      text-align: left;
-      overflow: hidden;
-      white-space: nowrap;
       transform: rotate(-90deg);
       transform-origin: top left;
     }
 
-    .idiot #side-to {
+    .idiot #phrase {
       color: var(--red);
     }
 
-    #side-to::after {
-      content: '!';
-    }
-
-    .mirrored #side-to {
+    .mirrored #side-phrase {
       left: calc(100% - var(--sidebar-width));
     }
   </style>
-  <div id="appeal-to-card">
+  <div id="pause-card">
     <div id="watermark"></div>
     <div id="new">New</div>
-    <div id="phrase"><span id="fallacy"></span><span class="quoted"><span class="to"></span> <span class="phrase"></span></span></div>
-    <div id="side-to"><span class="to"></span></div>
+    <div id="phrase"><span><span class="phrase"></span></span></div>
+    <div id="side-phrase"><span class="phrase"></span></div>
     <div id="normal">Normal</div>
   </div>
 `
 
-class AppealToCard extends HTMLElement {
+class PauseCard extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = ['idiot', 'type', 'mirrored']
+  static observedAttributes = ['idiot', 'mirrored']
+  static phrase = {
+    sheep: {
+      da: 'Vær venlig også at sige noget!',
+      de: 'Sag\' doch bitte auch mal was!',
+      en: 'Please say something too!',
+      es: 'Por favor, ¡diga algo también!',
+      fr: 'Dis quelque chose !',
+      it: 'Per favore, dite qualcosa anche voi!',
+      pl: 'Proszę też coś powiedzieć!',
+      pt: 'Por favor, diga algo também!',
+      'pt-br': 'Por favor, diga algo também!'
+    },
+    idiot: {
+      da: 'Hjælp mig her, tak!',
+      de: 'Hilf mir doch mal bitte, Mensch!',
+      en: 'Help me out here, please!',
+      es: '¡Ayúdenme, por favor!',
+      fr: 'Aide-moi, s\'il te plaît !',
+      it: 'Aiutatemi, per favore!',
+      pl: 'Pomóż mi tutaj, proszę!',
+      pt: 'Ajude-me, por favor!',
+      'pr-br': 'Ajude-me, por favor!'
+    }
+  }
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
   get idiot() {
     return this.hasAttribute('idiot')
-  }
-
-  get type() {
-    return this.getAttribute('type')
-  }
-
-  get card() {
-    return this.querySelector('a') ? this.querySelector('a').id : ''
-  }
-
-  get fallacy() {
-    return this.type === 'authority' ? 'Appeal to Authority' : 'Appeal to Popularity'
-  }
-
-  get to() {
-    return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
-  }
-
-  get phrase() {
-    return this.querySelector('p') ? this.querySelector('p').innerHTML : ''
   }
 
   get mirrored() {
@@ -205,8 +184,9 @@ class AppealToCard extends HTMLElement {
   }
 
   connectedCallback() {
-    this.shadowRoot.appendChild(appealToCardTemplate.content.cloneNode(true))
+    this.shadowRoot.appendChild(pauseCardTemplate.content.cloneNode(true))
     this.lang = document.body.lang
+    this.element('side-phrase').innerHTML = this.element('phrase').innerHTML // copy phrases
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
     this.update()
@@ -220,15 +200,16 @@ class AppealToCard extends HTMLElement {
   }
 
   update() {
-    const root = this.element('appeal-to-card')
+    const root = this.element('pause-card')
     if (this.isConnected && root) {
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
-      this.element('fallacy').innerHTML = this.fallacy 
-      Array.from(root.querySelectorAll('.to')).forEach(node => node.innerHTML = this.to)
-      root.querySelector('.phrase').innerHTML = this.phrase
+      const type = this.idiot ? 'idiot' : 'sheep'
+      const key = Object.keys(PauseCard.phrase[type]).find(p => p.startsWith(this.lang)) || 'de'
+      const phrase = PauseCard.phrase[type][key]
+      Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = phrase)
     }
   }
 }
 
-customElements.define('appeal-to-card', AppealToCard)
+customElements.define('pause-card', PauseCard)

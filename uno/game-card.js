@@ -18,29 +18,34 @@ gameCardTemplate.innerHTML = `
       height: 100%;
     }
 
-    #previous {
+    #previous, #next {
       position: absolute;
-      top: 0;
-      left: auto;
-      right: auto;
-      font-size: 1em;
+      font-size: calc(7 * var(--cavg));
       color: white;
       opacity: .5;
+      right: 0;
+      cursor: pointer;
+    }
+
+    #previous.mirrored, #next.mirrored {
+      left: 0;
+      right: auto;
+    }
+
+    #previous {
+      top: 0;
     }
 
     #next {
-      position: absolute;
       bottom: 0;
-      left: auto;
-      right: auto;
-      font-size: 1em;
-      color: white;
-      opacity: .3;
-      cursor: pointer;
     }
 
     #previous:hover, #next:hover {
       opacity: 1;
+    }
+
+    .hidden {
+      display: none;
     }
   </style>
   <div id="previous">▲</div>
@@ -101,6 +106,8 @@ class GameCard extends HTMLElement {
     this.lang = document.body.lang
     const template = document.createElement('template')
     this.shadowRoot.appendChild(template.content)
+    const resizeObserver = new ResizeObserver(() => this.resize())
+    resizeObserver.observe(this)
     this.element('previous').insertAdjacentHTML('beforeBegin', this.getCardElement())
 
     this.element('previous').onlick = event => console.log('click previous')
@@ -113,6 +120,11 @@ class GameCard extends HTMLElement {
     }
   }
 
+  resize() {
+    const cw = this.clientWidth/100, ch = this.clientHeight/100
+    this.style.setProperty('--cavg', `${(cw+ch)/1.6}px`)
+  }
+
   updateCard() {
     const card = this.element('card')
     if (this.isConnected && card) {
@@ -122,12 +134,19 @@ class GameCard extends HTMLElement {
   }
 
   updateMirrored() {
+    const previous = this.element('previous')
+    const next = this.element('next')
     const card = this.element('card')
+    if (previous) previous.classList.toggle('mirrored', this.mirrored)
+    if (next) next.classList.toggle('mirrored', this.mirrored)
     if (card) card.toggleAttribute('mirrored', this.mirrored)
   }
 
   updateAlternatives() {
-    // TODO
+    const previous = this.element('previous')
+    const next = this.element('next')
+    if (previous) previous.classList.toggle('hidden', !this.alternatives.length)
+    if (next) next.classList.toggle('hidden', !this.alternatives.length)
   }
 
   getCardElement() {
@@ -136,14 +155,18 @@ class GameCard extends HTMLElement {
     const mirrored = this.mirrored ? 'mirrored' : ''
     switch (this.card[0]) {
       case 'L': return `<label-card id="card" ${type} ${mirrored} card="${this.card}">${data.innerHTML}</label-card>`
-      case 'A': return `<appeal-to-card id="card"  ${type} ${mirrored} type="${data.type}" card="${this.card}">${data.innerHTML}</appeal-to-card>`
+      case 'A': return `<appeal-to-card id="card" ${type} ${mirrored} type="${data.type}" card="${this.card}">${data.innerHTML}</appeal-to-card>`
       case 'F': return `<fallacy-card id="card" ${type} ${mirrored} card="${this.card}">${data.innerHTML}</fallacy-card>`
-      case 'S': return `<strawman-card id="card" ${type} ${mirrored}></strawman-card>`
+      case 'N': return `<strawman-card id="card" ${type} ${mirrored}></strawman-card>`
       case 'R': return `<research-card id="card" ${type} ${mirrored}></research-card>`
-      default: // argument id may contain the topic too
+      case 'P': return `<pause-card id="card" ${type} ${mirrored}></pause-card>`
+      default: // argument id and discuss id will contain the topic too
         const topicData = this.topic && document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} a[id="${this.topic}"]`)
         const topic = topicData ? topicData.firstElementChild.innerHTML : ''
-        return `<argument-card id="card" ${type} ${mirrored} card="${this.idOnly}" topicId="${this.topic}" topic="${topic}">${data.innerHTML}</argument-card>`
+        if (this.idOnly.startsWith('D'))
+          return `<discuss-card id="card" ${type} ${mirrored} topicId="${this.topic}" topic="${topic}"></discuss-card>`
+        else
+          return `<argument-card id="card" ${type} ${mirrored} card="${this.idOnly}" topicId="${this.topic}" topic="${topic}">${data.innerHTML}</argument-card>`
     }
   }
 }

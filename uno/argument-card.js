@@ -182,6 +182,28 @@ argumentCardTemplate.innerHTML = `
       border-top-left-radius: calc(2 * var(--cavg));
       border-top-right-radius: 0;
     }
+
+    #wildcard {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      font-size: calc(40 * var(--cavg));
+      color: grey;
+      opacity: 0.4;
+    }
+
+    .mirrored #wildcard {
+      left: 0;
+      right: auto;
+    }
+
+    #wildcard:after {
+      content: '✱'
+    }
+
+    .hidden {
+      display: none;
+    }
   </style>
   <div id="argument-card">
     <div id="watermark"></div>
@@ -190,6 +212,7 @@ argumentCardTemplate.innerHTML = `
     <div id="content"><slot></div>
     <div id="side-title"></div>
     <div id="card"></div>
+    <div id="wildcard" class="hidden"></div>
   </div>
 `
 
@@ -199,7 +222,7 @@ class ArgumentCard extends HTMLElement {
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = ['idiot', 'topic', 'topicId', 'card', 'mirrored']
+  static observedAttributes = ['idiot', 'topic', 'topicId', 'card', 'wildcard', 'mirrored']
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
@@ -221,6 +244,10 @@ class ArgumentCard extends HTMLElement {
 
   get title() {
     return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
+  }
+
+  get wildcard() {
+    return this.hasAttribute('wildcard')
   }
 
   get mirrored() {
@@ -259,10 +286,11 @@ class ArgumentCard extends HTMLElement {
     if (this.isConnected && root) {
       root.classList.toggle('idiot', this.idiot)
       root.classList.toggle('mirrored', this.mirrored)
+      this.element('wildcard').classList.toggle('hidden', !this.wildcard)
       this.element('card').innerHTML = this.card
       this.element('topic-icon').innerHTML = this.topicId.substring(1)
       this.element('topic-name').innerHTML = this.topic
-      this.element('side-title').innerHTML = this.title
+      this.element('side-title').innerHTML = `${this.wildcard?'✱ ':''}${this.title}`
     }
   }
 }

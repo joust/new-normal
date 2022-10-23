@@ -88,8 +88,8 @@ class PlayerHand extends HTMLElement {
     this.shadowRoot.appendChild(playerHandTemplate.content.cloneNode(true))
     const hand = this.element('player-hand')
     hand.classList.toggle('active', this.active)
-    hand.ontouchmove = e => this.move(e)
     hand.onclick = e => this.down(e)
+    hand.ontouchmove = e => this.over(e)
     hand.onmouseover = e => this.over(e)
     this.updateCards()
     
@@ -97,7 +97,6 @@ class PlayerHand extends HTMLElement {
     resizeObserver.observe(this)
     //const mutationObserver = new MutationObserver(() => this.updateLayout())
     //mutationObserver.observe(this, { subtree: true, childList: true, attributes: true, //attributeFilter: ['top', 'style', 'class']})
-    this.addSwiping()
   }
   
   attributeChangedCallback(name) {
@@ -121,6 +120,7 @@ class PlayerHand extends HTMLElement {
     for (let index=0; index < Math.max(cards.length, elements.length); index++) {
       if (index < Math.min(cards.length, elements.length)) {
         elements[index].setAttribute('card', cards[index])
+        elements[index].setAttribute('alternatives', alts[index].join(','))
       } else if (index < cards.length) {
         hand.insertAdjacentHTML('beforeEnd', `<game-card card="${cards[index]}" alternatives="${alts[index].join(',')}"></game-card>`);
         elements = Array.from(hand.querySelectorAll('game-card'))
@@ -200,10 +200,6 @@ class PlayerHand extends HTMLElement {
       this.element('player-hand').style.gridTemplateColumns = undefined
   }
 
-  move(event) {
-    event.target && event.target.id!=='player-hand' && this.show(event.target)
-  }
-
   over(event) {
     event.target && event.target.id!=='player-hand' && this.show(event.target)
   }
@@ -214,7 +210,8 @@ class PlayerHand extends HTMLElement {
       this.dispatchEvent(new CustomEvent('play', {
         detail: {
           id: event.target.id, 
-          index: this.ownChildren().indexOf(event.target)
+          index: this.ownChildren().indexOf(event.target),
+          card: event.target.getAttribute('card')
         }
       }))
     }
@@ -227,30 +224,6 @@ class PlayerHand extends HTMLElement {
     }
     this.updateLayout()
   }
-
-  addSwiping() {
-    const hand = this.element('player-hand')
-    const swipy = new Swipy(hand)
-
-    swipy.on('swipetop', () => {
-      const top = hand.querySelector('*[top]')
-      this.dispatchEvent(new CustomEvent('play', {
-        detail: {
-          id: event.target.id, 
-          index: this.ownChildren().indexOf(event.target)
-        }
-      }))      
-    })
-    swipy.on('swipeleft', () => {
-      const top = hand.querySelector('*[top]')
-      if (top && top.previousElementSibling) this.show(top.previousElementSibling)
-    })
-    swipy.on('swiperight', () => {
-      const top = hand.querySelector('*[top]')
-      if (top && top.nextElementSibling) this.show(top.nextElementSibling)
-    })
-  }
-
 }
 
 customElements.define('player-hand', PlayerHand)

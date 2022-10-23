@@ -2,26 +2,52 @@ const INITIAL = 8
 const PERCENTAGE_APPEAL_TOS = 15 // e.g. 600 argument cards => 90 appeal to cards
 const PERCENTAGE_STRAWMANS = 15 // e.g. 600 argument cards => 90 strawman cards
 const PERCENTAGE_RESEARCHS = 20 // e.g. 600 argument cards => 120 research cards
-const PERCENTAGE_LABELS = 15 // e.g. 600 argument cards => 90 research cards
-const PERCENTAGE_FALLACIES = 15 // e.g. 600 argument cards => 90 research cards
+const PERCENTAGE_LABELS = 15 // e.g. 600 argument cards => 90 label cards
+const PERCENTAGE_FALLACIES = 15 // e.g. 600 argument cards => 90 fallacy cards
+const PERCENTAGE_PAUSES = 10 // e.g. 600 argument cards => 60 pause cards
 const INVALID_MOVE = 'INVALID_MOVE'
 
 /**
 Game state: {
     lang: 'de', // opponents have to use the same language!
     host: '0'/'1', 
-    deck: {
+    decks: {
       idiot: ['I1', 'I2', ...],
       sheep: ['S1', 'S2', ...]
     },
     pile: [],
-    hands: [[], ...]
+    hands: [[], ...],
     names: ['']
 }
 */
 
 async function Uno(lang, host) {
+  const [topics, topicMap] = await fetchTopics()
   const content = await init(lang)
+ 
+  /**
+   * adds wildcard argument cards to every players hand, removing the 
+   * @param {Array}} hand The players hand.
+   * @param {{idiot: Array, sheep: Array}} decks The decks.
+   * @param {string} top top card on the pile
+   * @param {boolean} idiot if an idiot
+   */ 
+  function resolveDiscuss(hands, decks, card) {
+    const topic = topicOf(card)
+    const firstI = decks.idiot.findLast(c => isArgument(c) && hasTopic(c, topic))
+    const firstS = decks.sheep.findLast(c => isArgument(c) && hasTopic(c, topic))
+    hands.forEach((hand, index) => {
+      const idiot = isIdiot(index)
+      // first remove all matching cards of this players hand
+      hand.filter(c => isArgument(c) && hasTopic(c, topic)).forEach(c => hand.slice(hand.indexOf(c), 1))
+      // next add the wildcard argument to his hand
+      if (idiot && firstI)
+        hand.push(`${firstI}*`)
+      else if (!idiot && firstS)
+        hand.push(`${firstS}*`)  
+      // else do nothing for this player
+    })
+  }
   
   /**
    * look up cards matching the current argument on the pile and add to hand
@@ -40,7 +66,7 @@ async function Uno(lang, host) {
         cards = [...cards, ...deck.filter(isArgument).slice(0, nrOfCards-cards.length)]
     } else {
       const topic = topicOf(top)
-      cards = deck.filter(c => hasTopic(c, topic)).slice(0, nrOfCards)
+      cards = deck.filter(c => isArgument(c) && hasTopic(c, topic)).slice(0, nrOfCards)
       if (cards.length < nrOfCards)
         cards = [...cards, ...deck.filter(isAppealTo).slice(0, nrOfCards-cards.length)]
     }
@@ -71,6 +97,28 @@ async function Uno(lang, host) {
     }
   }
 
+  function removeFrom(deckOrHand, card) {
+    card = argumentOnly(card)
+    const index = deckOrHand.findIndex(c => argumentOnly(c)===card)
+    if (index>=0) deckOrHand.splice(index, 1)
+  }
+
+  function removeTopicFrom(hands, card) {
+    hands.forEach(hand => {
+      const index = hand.findIndex(c => isDiscuss(c) && topicOf(c)===topicOf(card))
+      if (index>=0) hand.splice(index, 1)
+    })
+  }
+
+  function draw(hand, deck) {
+    const top = deck[deck.length - 1]
+    if (isArgument(top) || isAppealTo(top))
+      deck.unshift(deck.pop()) // don't remove but put to the 'end' of the deck
+    else
+      deck.pop()
+    hand.push(top)
+  }
+  
   /**
    * draw an initial hand of size size from a given deck
    * side effect: will modify the given deck
@@ -81,7 +129,7 @@ async function Uno(lang, host) {
   function drawHand(decks, size, idiot) {
     const deck = decks[idiot ? 'idiot' : 'sheep']
     const hand = []
-    while (size--) hand.push(deck.pop())
+    while (size--) draw(hand, deck)
     return hand
   }
 
@@ -89,8 +137,8 @@ async function Uno(lang, host) {
    * generates decks for idiot and sheep
    * @param {string} lang The language.
    */
-  function generateDecks(lang) {
-    const decks = { idiot: initialDeck(true), sheep: initialDeck(false) }
+  function generateDecks(lang, players) {
+    const decks = { idiot: initialDeck(true, players), sheep: initialDeck(false, players) }
     adjustDeckSize(decks)
     shuffle(decks.idiot)
     shuffle(decks.sheep)
@@ -99,10 +147,10 @@ async function Uno(lang, host) {
 
   /**
    * generates an initial deck
-   * @param {string} lang The language.
    * @param {boolean} idiot If idiot or sheep deck.
+   * @param {number} players Number of players.
    */
-  function initialDeck(idiot) {
+  function initialDeck(idiot, players) {
     const type = idiot ? 'I' : 'S'
     const cards = content[idiot ? 'idiot' : 'sheep']
     const nargs = cards.args.length
@@ -111,7 +159,9 @@ async function Uno(lang, host) {
     const labels = elementsFrom(Math.round(PERCENTAGE_LABELS*nargs/100), cards.labels)
     const fallacies = elementsFrom(Math.round(PERCENTAGE_FALLACIES*nargs/100), cards.fallacies)
     const appealTos = elementsFrom(Math.round(PERCENTAGE_APPEAL_TOS*nargs/100), cards.appealTos)
-    return [...cards.args, ...labels, ...fallacies, ...appealTos, ...strawmans, ...researchs]
+    const pauses = players > 2 ? new Array(Math.round(PERCENTAGE_PAUSES*nargs/100)).fill(`P${type}`) : []
+    const discusses = topics.map(id => `${id}:D${type}`)
+    return [...cards.args, ...labels, ...fallacies, ...appealTos, ...strawmans, ...researchs, ...pauses, ...discusses]
   }
 
   /**
@@ -133,15 +183,15 @@ async function Uno(lang, host) {
     return selection
   }
 
-  async function fetchContent(lang, idiot, topicMap) {
-    const topicMapped = id => `${topicMap[id]||''}:${id}`
+  async function fetchContent(lang, idiot) {
+    const topicMapped = id => topicMap[id] ? topicMap[id].map(topicId => `${topicId}:${id}`) : [`:${id}`]
     const [args, labels, fallacies, appealTos]  = await Promise.all([
       fetchContentIds(lang, idiot ? 'idiot' : 'sheep'),
       fetchContentIds(lang, 'labels', idiot ? 'LI' : 'LS'),
       fetchContentIds(lang, 'fallacies', idiot ? 'FI' : 'FS'),
       fetchContentIds(lang, 'appeal-tos', idiot ? 'AI' : 'AS')
       ])
-    return {args: args.map(topicMapped), labels, fallacies, appealTos}
+    return {args: args.flatMap(topicMapped), labels, fallacies, appealTos}
   }
   
   /**
@@ -150,10 +200,9 @@ async function Uno(lang, host) {
    * @return {any} A content structure
    */
   async function init(lang) {
-    const topicMap = await fetchTopicMap()
     const [idiot, sheep] = await Promise.all([
-      fetchContent(lang, true, topicMap),
-      fetchContent(lang, false, topicMap),
+      fetchContent(lang, true),
+      fetchContent(lang, false),
     ])
     return {idiot, sheep}
   }
@@ -206,43 +255,52 @@ async function Uno(lang, host) {
     return [...content.matchAll(/a id="([^"]*)"/g)].map(r => r[1]).filter(id => id.includes(filter))
   }
 
-  /** Fetch all topics and arguments into a hash argumentId => topicId */
-  async function fetchTopicMap() {
+  /** Fetch all topics and arguments into a topics array and a hash argumentId => [topicId] */
+  async function fetchTopics() {
     const content = await fetchSilent(`topics-new.html`)
     const topicIds = [...content.matchAll(/p id="([^"]*)"/g)].map(r => r[1])
-    const topicMap = {}
+    const map = {}
     for (const id of topicIds) {
       const subcontent = content.match(`p id="${id}">((.|\n)*?)<\/p`)[1]
       const argIds = [...subcontent.matchAll(/a id="([^"]*)"/g)].map(r => r[1])
-      for (const argId of argIds) topicMap[argId] = id
+      for (const argId of argIds) if (map[argId]) map[argId].push(id); else map[argId] = [id]
     }
-    return topicMap
+    return [topicIds, map]
   }
   
   return {
     name: 'NewNormalUno',
     setup: (ctx) => {
-      const decks = generateDecks()
+      const decks = generateDecks(ctx.numPlayers)
       const hands = new Array(ctx.numPlayers).fill([]).map((p,i) => drawHand(decks, INITIAL, isIdiot(i)))
       const names = new Array(ctx.numPlayers).fill(undefined)
       const pile = [] // empty in the beginning
       return { lang, host, decks, pile, hands, names }
     },
     moves: {
-      playCard: (G, ctx, index) => {
+      playCard: (G, ctx, index, alt) => { // alt = alternative card
         const idiot = isIdiot(ctx.currentPlayer)
+        const deck = idiot ? G.decks.idiot : G.decks.sheep
         const hand = G.hands[ctx.currentPlayer]
         if (index === undefined || index >= hand.length) return INVALID_MOVE
 
-        const card = hand[index]
+        const card =
+          (alt && isArgument(alt) && topicOf(alt)===topicOf(hand[index]) && deck.indexOf(alt)>=0) ?
+           alt : hand[index]
+        
         const top = G.pile.length ? G.pile[G.pile.length-1] : undefined
         if (!canBePlayedOn(top, card, idiot)) return INVALID_MOVE
 
-        switch(card[0]) {
+        switch(cardType(card)) {
           case 'F': // Fallacy
           case 'L': // Label
             hand.splice(index, 1)
             G.pile.push(card) // allows to play any argument card afterwards
+            break
+          case 'D': // Discuss
+            resolveDiscuss(G.hands, G.decks, card)
+            hand.splice(index, 1)
+            G.pile.push(card)
             break
           case 'R': // Research
             resolveResearch(hand, G.decks, top, idiot)
@@ -253,18 +311,32 @@ async function Uno(lang, host) {
             hand.splice(index, 1)
             G.pile.push(card)
             break
-          case 'A': // Appeal to
-          default: // argument
+          case 'P': // Pause
             hand.splice(index, 1)
+            G.pile.push(card) // allows to play any argument card afterwards
+            ctx.events.endTurn({ next: ctx.playOrder[(ctx.playOrderPos + 2) % ctx.numPlayers]})
+            break;
+          case 'A': // Appeal to
+            removeFrom(deck, card) // appeal to cards are only removed from their deck when played
             G.pile.push(card)
+            break
+          default: // argument
+            if (!isWildcard(card)) hand.splice(index, 1)
+            removeFrom(deck, card) // argument cards are only removed from their deck when played
+            const remaining = [...G.decks.idiot, ...G.decks.sheep].filter(c => isArgument(c) && hasTopic(topicOf(card))).length
+            if (!remaining) {
+              removeTopicFrom([G.decks.idiot, G.decks.sheep], card) // remove possible discuss cards
+              removeTopicFrom(G.hands, card)
+            }     
+            G.pile.push(argumentOnly(card))
         }
       },
       drawCard: (G, ctx) => {
         const hand = G.hands[ctx.currentPlayer]
         const type = isIdiot(ctx.currentPlayer) ? 'idiot' : 'sheep'
         const deck = G.decks[type]
-        if (!hand.length) return INVALID_MOVE
-        hand.push(deck.pop())
+        if (!deck.length) return INVALID_MOVE
+        draw(hand, deck)
       },
       setName: (G, ctx, id, name) => {
         if (ctx.currentPlayer===G.host)
@@ -272,7 +344,11 @@ async function Uno(lang, host) {
         else
           return INVALID_MOVE
       }
+      // feat: update hand (to persist changed argument / appeal-to cards)
       // feat: reorder hand (to persist order)?
+    },
+    events: {
+      endGame: false // disallow to manually endGame
     },
     turn: {
       order: {
@@ -283,7 +359,7 @@ async function Uno(lang, host) {
         const idiot = isIdiot(ctx.currentPlayer)
         const top = G.pile.length ? G.pile[G.pile.length-1] : undefined
         // only when a valid argument / appeal to card was played, the turn is over
-        return top && isOfType(top, idiot) && (isAppealTo(top) || isArgument(top))
+        return top && isOfType(top, idiot) && (isAppealTo(top) || isArgument(top) || isDiscuss(top))
       }
     },
     endIf: (G, ctx) => {
@@ -308,23 +384,26 @@ async function Uno(lang, host) {
 
 function canBePlayedOn(top, card, idiot) {
   if (top && !top.length) top = undefined // empty string or array
-  switch(card[0]) {
-    case 'F': // fallacy
-    case 'L': // label
+  switch(cardType(card)) {
+    case 'D': // Discuss
+    case 'F': // Fallacy
+    case 'L': // Label
+    case 'P': // Pause
       return true
-    case 'R': // research
+    case 'R': // Research
       return top && (isArgument(top) || isAppealTo(top))
     case 'N': // strawmaN
       return top && isArgument(top)
-    case 'A': // appeal to
+    case 'A': // Appeal to
       return isOfType(card, !idiot) && isStrawman(top) 
       || isOfType(card, idiot) && 
-        (!top || isAppealTo(top) || isArgument(top) || isFallacy(top) || isLabel(top))
-    default: // argument
+        (!top || isAppealTo(top) || isFallacy(top) || isLabel(top))
+    case 'I': // Idiot argument
+    case 'S': // Sheep argument
       return top && isStrawman(top) && (isArgument(card) || isAppealTo(top)) && isOfType(card, !idiot)
         || isOfType(card, idiot) && (!top 
           || isAppealTo(top) 
-          || (isArgument(top) && topicOf(card)===topicOf(top))
+          || ((isArgument(top) || isDiscuss(top)) && topicOf(card)===topicOf(top))
           || isFallacy(top) 
           || isLabel(top))
   }
@@ -341,13 +420,14 @@ function isIdiot(player) {
   return !!(player%2) // every second player is an idiot
 }
 
-function isArgument(id) { return id.includes(':') }
+function cardType(id) { return id.includes(':') ? id.split(':')[1][0] : id[0] }
+function isArgument(id) { return id.includes(':I') || id.includes(':S') }
 function isAppealTo(id) { return id.startsWith('A') }
 function isFallacy(id) { return id.startsWith('F') }
 function isLabel(id) { return id.startsWith('L') }
 function isStrawman(id) { return id.startsWith('N') }
 function isResearch(id) { return id.startsWith('R') }
-function isDiscuss(id) { return id.startsWith('D') }
+function isDiscuss(id) { return id.includes('D') }
 function isPause(id) { return id.startsWith('P') }
 
 /** check for type of card */
@@ -365,4 +445,13 @@ function hasTopic(id, topic) {
   return isArgument(id)||isDiscuss(id) ? id.split(':')[0]===topic : false
 }
 
+/** check for wildcard */
+function isWildcard(id) {
+  return isArgument(id) && id.endsWith('*')
+}
+
+/** remove wildcard */
+function argumentOnly(id) {
+  return id.replace('*', '')
+}
 

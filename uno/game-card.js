@@ -58,6 +58,7 @@ class GameCard extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
+    this.altIndex = 0
   }
 
   static observedAttributes = ['card', 'alternatives', 'mirrored']
@@ -70,7 +71,11 @@ class GameCard extends HTMLElement {
   }
 
   get idOnly() {
-    return this.hasTopic ? this.card.split(':')[1] : this.card
+    return (this.hasTopic ? this.card.split(':')[1] : this.card).replace('*', '')
+  }
+
+  get isWildcard() {
+    return this.card.endsWith('*')
   }
 
   get hasTopic() {
@@ -86,7 +91,7 @@ class GameCard extends HTMLElement {
   }
 
   get alternatives() {
-    return this.hasAttribute('alternatives') ? this.getAttribute('alternatives').split(',') : []
+    return this.hasAttribute('alternatives') ? this.getAttribute('alternatives').split(',') : [this.card]
   }
 
   get mirrored() {
@@ -110,14 +115,21 @@ class GameCard extends HTMLElement {
     resizeObserver.observe(this)
     this.element('previous').insertAdjacentHTML('beforeBegin', this.getCardElement())
 
-    this.element('previous').onlick = event => console.log('click previous')
-    this.element('next').onlick = event => console.log('click next')
+    this.element('previous').onlick = event => this.updateAltIndex(-1)
+    this.element('next').onlick = event => this.updateAltIndex(1)
     this.onwheel = event => {
-      console.log('wheel', event.deltaY)
       if (Math.abs(event.deltaY) >= ALTERNATIVES_STEP) {
-        this.setAttribute('card', randomElement(this.alternatives))
+        this.updateAltIndex(Math.sign(event.deltaY))
       }
     }
+  }
+
+  updateAltIndex(diff) {
+    this.altIndex += diff
+    if (this.altIndex < 0) this.altIndex += this.alternatives.length
+    if (this.altIndex >= this.alternatives.length) this.altIndex -= this.alternatives.length
+
+    this.setAttribute('card', this.alternatives[this.altIndex]+(this.isWildcard?'*':''))
   }
 
   resize() {
@@ -143,16 +155,18 @@ class GameCard extends HTMLElement {
   }
 
   updateAlternatives() {
+    this.altIndex = this.alternatives.indexOf(this.card.replace('*', ''))
     const previous = this.element('previous')
     const next = this.element('next')
-    if (previous) previous.classList.toggle('hidden', !this.alternatives.length)
-    if (next) next.classList.toggle('hidden', !this.alternatives.length)
+    if (previous) previous.classList.toggle('hidden', this.alternatives.length>1)
+    if (next) next.classList.toggle('hidden', this.alternatives.length>1)
   }
 
   getCardElement() {
     const data = document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} a[id="${this.idOnly}"]`) || ''
     const type = this.idiot ? 'idiot' : ''
     const mirrored = this.mirrored ? 'mirrored' : ''
+    const wildcard = this.isWildcard ? 'wildcard' : ''
     switch (this.card[0]) {
       case 'L': return `<label-card id="card" ${type} ${mirrored} card="${this.card}">${data.innerHTML}</label-card>`
       case 'A': return `<appeal-to-card id="card" ${type} ${mirrored} type="${data.type}" card="${this.card}">${data.innerHTML}</appeal-to-card>`
@@ -166,7 +180,7 @@ class GameCard extends HTMLElement {
         if (this.idOnly.startsWith('D'))
           return `<discuss-card id="card" ${type} ${mirrored} topicId="${this.topic}" topic="${topic}"></discuss-card>`
         else
-          return `<argument-card id="card" ${type} ${mirrored} card="${this.idOnly}" topicId="${this.topic}" topic="${topic}">${data.innerHTML}</argument-card>`
+          return `<argument-card id="card" ${type} ${mirrored} ${wildcard} card="${this.idOnly}" topicId="${this.topic}" topic="${topic}">${data.innerHTML}</argument-card>`
     }
   }
 }

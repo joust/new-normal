@@ -100,6 +100,22 @@ strawmanCardTemplate.innerHTML = `
       content: 'Strawman';
     }
 
+    #description {
+      position: absolute;
+      bottom: 0; 
+      font-family: 'Open Sans', Helvetica;
+      padding: calc(5 * var(--cavg));;
+      padding-bottom: calc(15 * var(--cavg));;
+      font-size: calc(3 * var(--cavg));
+      font-style: italic;
+      color: var(--blue);
+      opacity: 0.4;
+    }
+
+    .idiot #description {
+      color: var(--red);
+    }
+
     #phrase span.quoted {
       font-family: 'HVD Crocodile', Helvetica;
       font-size: calc(7 * var(--cavg));
@@ -115,7 +131,7 @@ strawmanCardTemplate.innerHTML = `
     }
 
     .quoted::after {
-      content: '!' close-quote;
+      content: close-quote;
     }
 
     #side-phrase {
@@ -143,10 +159,6 @@ strawmanCardTemplate.innerHTML = `
       color: var(--red);
     }
 
-    #side-phrase::after {
-      content: '!';
-    }
-
     .mirrored #side-phrase {
       left: calc(100% - var(--sidebar-width));
     }
@@ -154,7 +166,7 @@ strawmanCardTemplate.innerHTML = `
   <div id="strawman-card">
     <div id="watermark"></div>
     <div id="new">New</div>
-    <div id="phrase"><span id="fallacy"></span><span class="quoted"><span class="phrase"></span></span></div>
+    <div id="phrase"><span id="fallacy"></span><span class="quoted"><span class="phrase"></span></span><span id="description"></span></div>
     <div id="side-phrase"><span class="phrase"></span></div>
     <div id="normal">Normal</div>
   </div>
@@ -169,15 +181,27 @@ class StrawmanCard extends HTMLElement {
   static observedAttributes = ['idiot', 'mirrored']
 
   static phrase = {
-    da: 'Lad mig lægge det her i din mund',
-    de: 'Lass mich Dir das in den Mund legen',
-    en: 'Let me put this in your mouth',
-    es: 'Déjame poner esto en tu boca',
-    fr: 'Laisse-moi te mettre ça en bouche',
-    it: 'Lasciate che ve lo metta in bocca',
-    pl: 'Pozwól, że włożę ci to do ust',
-    pt: 'Deixa-me pôr-te isto na boca',
-    'pt-br': 'Deixe-me pôr isto em sua boca'
+    da: 'Lad mig lægge det her i din mund!',
+    de: 'Lass mich Dir das in den Mund legen!',
+    en: 'Let me put this in your mouth!',
+    es: '¡Déjame poner esto en tu boca!',
+    fr: 'Laisse-moi te mettre ça en bouche !',
+    it: 'Lasciate che ve lo metta in bocca!',
+    pl: 'Pozwól, że włożę ci to do ust!',
+    pt: 'Deixa-me pôr-te isto na boca!',
+    'pt-br': 'Deixe-me pôr isto em sua boca!'
+  }
+
+  static description = {
+    da: 'At pådutte den anden side et argument, der passer til mine kort',
+    de: 'Der Gegenseite ein zu meinen Karten passendes Argument unterschieben',
+    en: 'Foist an argument on the other side that fits my cards',
+    es: 'Para endilgar un argumento a la otra parte que se ajuste a mis cartas',
+    fr: 'Donner à l\'autre partie un argument qui correspond à mes cartes',
+    it: 'Per imporre all\'altra parte un\'argomentazione che si adatti alle mie carte',
+    pl: 'Aby przedstawić drugiej stronie argument, który pasuje do moich kart',
+    pt: 'Impor uma discussão do outro lado que se encaixa nas minhas cartas',
+    'pt-br': 'Impor uma discussão do outro lado que se encaixa nas minhas cartas'
   }
 
   element(id) { return this.shadowRoot.getElementById(id) }
@@ -219,6 +243,8 @@ class StrawmanCard extends HTMLElement {
       const key = Object.keys(StrawmanCard.phrase).find(p => p.startsWith(this.lang)) || 'de'
       const phrase = StrawmanCard.phrase[key]
       Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = phrase)
+      const dkey = Object.keys(StrawmanCard.description).find(p => p.startsWith(this.lang)) || 'de'
+      this.element('description').innerHTML = StrawmanCard.description[dkey]
     }
   }
 }

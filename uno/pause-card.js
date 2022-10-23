@@ -103,6 +103,10 @@ pauseCardTemplate.innerHTML = `
       content: open-quote;
     }
 
+    #phrase > span::after {
+      content: close-quote;
+    }
+
     #side-phrase {
       position: absolute;
       font-family: 'HVD Crocodile', Helvetica;
@@ -149,7 +153,7 @@ class PauseCard extends HTMLElement {
       da: 'Vær venlig også at sige noget!',
       de: 'Sag\' doch bitte auch mal was!',
       en: 'Please say something too!',
-      es: 'Por favor, ¡diga algo también!',
+      es: '¡Por favor, ¡diga algo también!',
       fr: 'Dis quelque chose !',
       it: 'Per favore, dite qualcosa anche voi!',
       pl: 'Proszę też coś powiedzieć!',

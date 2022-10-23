@@ -126,7 +126,7 @@ researchCardTemplate.innerHTML = `
     }
 
     #phrase > span::after {
-      content: '!' close-quote;
+      content: close-quote;
     }
 
     #side-phrase {
@@ -144,10 +144,6 @@ researchCardTemplate.innerHTML = `
       width: calc(85 * var(--ch));
       transform: rotate(-90deg);
       transform-origin: top left;
-    }
-
-    #side-phrase::after {
-      content: '!';
     }
 
     .mirrored #side-phrase {
@@ -172,26 +168,26 @@ class ResearchCard extends HTMLElement {
   static observedAttributes = ['idiot', 'mirrored']
   static phrase = {
     sheep: {
-      da: 'Lad mig google det et øjeblik',
-      de: 'Lass mich das kurz googlen',
-      en: 'Let me google this for us',
-      es: 'Déjeme buscar en Google por un momento',
-      fr: 'Laisse-moi faire une recherche rapide sur Google',
-      it: 'Lasciatemi cercare su Google',
-      pl: 'Pozwól, że przez chwilę pogoogluję',
-      pt: 'Deixe-me ir ao Google por um momento',
-      'pt-br': 'Deixe-me ir ao Google por um momento'
+      da: 'Lad mig google det et øjeblik!',
+      de: 'Lass mich das kurz googlen!',
+      en: 'Let me google this for us!',
+      es: '¡Déjeme buscar en Google por un momento!',
+      fr: 'Laisse-moi faire une recherche rapide sur Google !',
+      it: 'Lasciatemi cercare su Google!',
+      pl: 'Pozwól, że przez chwilę pogoogluję!',
+      pt: 'Deixe-me ir ao Google por um momento!',
+      'pt-br': 'Deixe-me ir ao Google por um momento!'
     },
     idiot: {
-      da: 'Lad mig lige tale med Telegram',
-      de: 'Lass mich kurz auf Telegram',
-      en: 'Let me just find this on Telegram',
-      es: 'Dejadme un momento en Telegram',
-      fr: 'Laisse-moi un peu sur Telegram',
-      it: 'Lasciatemi un attimo su Telegram',
-      pl: 'Daj mi chwilkę na Telegramie',
-      pt: 'Dê-me um momento no Telegrama',
-      'pr-br': 'Dê-me um momento no Telegrama'
+      da: 'Lad mig lige tale med Telegram!',
+      de: 'Lass mich kurz auf Telegram!',
+      en: 'Let me just find this on Telegram!',
+      es: '¡Dejadme un momento en Telegram!',
+      fr: 'Laisse-moi un peu sur Telegram !',
+      it: 'Lasciatemi un attimo su Telegram!',
+      pl: 'Daj mi chwilkę na Telegramie!',
+      pt: 'Dê-me um momento no Telegrama!',
+      'pr-br': 'Dê-me um momento no Telegrama!'
     }
   }
 

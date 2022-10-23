@@ -1,6 +1,7 @@
 Uno
 
-* add description texts to strawman, research, discuss, pause, ad-hominem and label cards
+* implement touchmove for hand & card shuffle (vertical & horizontal)
+* add description texts to research, discuss, pause, ad-hominem and label cards
 * add random first player (currently the host always makes the first move)
 * handle multiple topics per argument (in uno.js initialDeck)
 * add working scrollable game-cards

@@ -222,12 +222,12 @@ class ArgumentCard extends HTMLElement {
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = ['idiot', 'topic', 'topicId', 'card', 'wildcard', 'mirrored']
+  static observedAttributes = ['topic', 'topicId', 'card', 'wildcard', 'mirrored']
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
   get idiot() {
-    return this.hasAttribute('idiot')
+    return this.card && this.card.includes('I')
   }
 
   get topic() {

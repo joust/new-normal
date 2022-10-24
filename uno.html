@@ -25,10 +25,9 @@
   <script src="common.js" type="text/javascript"></script>
   <script src="fastclick.js" type="text/javascript"></script>
 </head>
-<body onload="randomMatchId(); load('de')">
+<body onload="flagcheck(); randomMatchId(); load()">
   <script src="boardgame.js"></script>
   <script src="uno.js"></script>
-  <script src="app.js"></script>
   <script>
     function element(id) {
       return document.getElementById(id)
@@ -41,8 +40,11 @@
       element('matchID').value = Math.floor(1000+Math.random()*9000)
     }
     
-    async function load(lang) {
-      lang = lang.includes('-') ? lang.split('-')[0]: lang
+    async function load(locale) {
+      FastClick.attach(document.body)
+      if (locale) [lang, terr] = locale.split('-'); else [lang, terr] = browserLocale()
+      if (!supported.includes(lang)) [lang, terr] = ['en', 'us']
+      document.querySelector('#location').value = `${lang}-${terr}`
       document.body.lang = lang
       await loadContent(lang)
       element('instructions').innerHTML = await fetchSilent(`${lang}/uno.html`)
@@ -69,15 +71,6 @@
       element('players').insertAdjacentHTML('beforeEnd', `<opponent-hand cards="8" nr="${nr}" ${name ? `name="${name}"` : ''}></opponent-hand>`)
     }
     
-    function getAlternatives(id, deck) {
-      if (isArgument(id)) return deck.filter(card => id!==card && isArgument(card) && hasTopic(card, topicOf(id)))
-      if (isAppealTo(id)) return deck.filter(card => id!==card && isAppealTo(card))
-      if (isFallacy(id)) return deck.filter(card => id!==card && isFallacy(card))
-      if (isLabel(id)) return deck.filter(card => id!==card && isLabel(card))
-      if (isDiscuss(id)) return deck.filter(card => id!==card && isDiscuss(card))
-      return [id]
-    }
-    
     function cardsString(hand, deck, top, current, idiot) {
       // JSON array of id+alternative elements in format { id: '...', alt: ['...', '...'], playable }
       return JSON.stringify(hand.map(card => (
@@ -100,15 +93,30 @@
       element('draw-pile').setAttribute('top', idiot ? 'I' : 'S')
       element('hand').setAttribute('cards', cardsString(hand, deck, top, current, idiot))
       element('hand').setAttribute('nr', client.playerID)
+      element('hand').setAttribute('name', state.G.names[client.playerID])
+      element('hand').classList.toggle('current', state.ctx.currentPlayer===client.playerID)
       if (name) element('hand').setAttribute('name', name)
       Array.from(element('players').children).forEach((hand, index) => {
         hand.setAttribute('nr', opponentIds[index])
+        hand.classList.toggle('current', state.ctx.currentPlayer===opponentIds[index])
         if (state.G.names[opponentIds[index]]) 
           hand.setAttribute('name', state.G.names[opponentIds[index]])
         hand.setAttribute('cards', state.G.hands[opponentIds[index]].length)
       })
     }
 
+    function makeBotMove(client, botID, state) {
+      if (state.ctx.currentPlayer===botID) {
+        const idiot = isIdiot(botID)
+        const hand = state.G.hands[botID]
+        const top = state.G.pile.length ? state.G.pile[state.G.pile.length-1] : undefined
+        const possibleMoves = allPossibleMoves(hand, idiot, top)
+        const randomMoveIndex = Math.floor(Math.random()*possibleMoves.length)
+        const move = possibleMoves[randomMoveIndex]
+        setTimeout(() => client.moves[move.move](...move.args), 500)
+      }
+    }
+    
     async function playWithBot(idiot) {
       const lang = document.body.lang
       const playerID = idiot ? '1' : '0'
@@ -117,29 +125,14 @@
       element('config').classList.toggle('hidden', true)
       const clients = await startLocal(lang, playerID)
       await loadContent(lang)
-      element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand" nr="${playerID}" active cards="[]"></player-hand>`)
+      element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand" nr="${playerID}" cards="[]"></player-hand>`)
       addOpponentHand(botID, 'CPU')
       clients[playerID].moves.setName(playerID, 'Me')
       clients[playerID].moves.setName(botID, 'CPU')
       element('draw-pile').onclick = event => clients[playerID].moves.drawCard()
       element('hand').onplay = event => clients[playerID].moves.playCard(event.detail.index, event.detail.card)
-      const stateHandler = state => {
-        if (state) updateTable(clients[playerID], state)
-      }
-      const botStateHandler = state => {
-        if (state && state.ctx.currentPlayer===botID) {
-          const client = clients[botID]
-          const idiot = isIdiot(botID)
-          const hand = state.G.hands[botID]
-          const top = state.G.pile.length ? state.G.pile[state.G.pile.length-1] : undefined
-          const possibleMoves = allPossibleMoves(hand, idiot, top)
-          const randomMoveIndex = Math.floor(Math.random()*possibleMoves.length)
-          const move = possibleMoves[randomMoveIndex]
-          setTimeout(() => client.moves[move.move](...move.args), 500)
-        }
-      }
-      clients[playerID].subscribe(stateHandler)
-      clients[botID].subscribe(botStateHandler)
+      clients[playerID].subscribe(state => updateTable(clients[playerID], state))
+      clients[botID].subscribe(state => makeBotMove(clients[botID], botID, state))
     }
     
     async function play(isHost, numPlayers) {
@@ -153,10 +146,10 @@
       element('players').classList.add(`p${numPlayers}`)
       let client = await startClient(lang, isHost, numPlayers, playerID, matchID)
       if (isHost) {
-        element('uno').insertAdjacentHTML('beforeEnd', '<player-hand id="hand" nr="0" active cards="[]"></player-hand>')
+        element('uno').insertAdjacentHTML('beforeEnd', '<player-hand id="hand" nr="0" cards="[]"></player-hand>')
         client.moves.setName(playerID, await prompt(`Name for Host Player?`, ''))
         element('draw-pile').onclick = event => client.moves.drawCard()
-        element('hand').onplay = event => client.moves.playCard(event.detail.index)
+        element('hand').onplay = event => client.moves.playCard(event.detail.index, event.detail.card)
         const opponentPlayerIds = [...Array(numPlayers).keys()].filter(id => id!=playerID)
         opponentPlayerIds.forEach(id => addOpponentHand(id, '?'))
       }
@@ -181,23 +174,27 @@
           } else {
             const hostPlayerID = state.G.host
             const hostPlayerName = state.G.names[state.G.host]
+            const takeSeat = (client, playerID) => { 
+              elements('opponent-hand').forEach(child => child.classList.remove('selectable'))
+              client.updatePlayerID(playerID)
+              updateTable(client, state)              
+              element('draw-pile').onclick = event => client.moves.drawCard()
+              element('hand').onplay = event => client.moves.playCard(event.detail.index, event.detail.card)
+            }
+
             if (!element('players').children.length) { // first call in a guest (no playerID set)
-              document.body.lang = state.G.lang
-              const selectablePlayerIds = state.ctx.playOrder.filter(id => id!==hostPlayerID)
-              element('uno').insertAdjacentHTML('beforeEnd', `<opponent-hand id="hand" nr="${hostPlayerID}" name="${hostPlayerName}" cards="8"></opponent-hand>`)
-              selectablePlayerIds.forEach(id => addOpponentHand(id, state.G.names[id]))
-              await load(state.G.lang)
-              elements('opponent-hand').forEach((child, index) => child.onclick = async event => {
-                const selectedPlayerID = selectablePlayerIds[index]
-                client.stop()
-                unsubscribe()
-                client = await startClient(state.G.lang, false, numPlayers, selectedPlayerID, matchID)
-                unsubscribe = client.subscribe(stateHandler)
-                element('uno').removeChild(element('hand'))
-                element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand" nr="${selectedPlayerID}" name="${state.G.names[selectedPlayerID]}" active cards="[]"></player-hand>`)
-                element('draw-pile').onclick = event => client.moves.drawCard()
-                element('hand').onplay = event => client.moves.playCard(event.detail.index)
-              })
+              element('players').classList.add(`p${state.ctx.numPlayers}`)
+              await load(document.body.lang = state.G.lang)
+              element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand"></opponent-hand>`)
+              if (state.ctx.numPlayers===2) {
+                addOpponentHand(hostPlayerID, state.G.names[hostPlayerID])
+                takeSeat(client, hostPlayerID==='0' ? '1' : '0')
+              } else {
+                const selectablePlayerIds = state.ctx.playOrder.filter(id => id!==hostPlayerID)
+                selectablePlayerIds.forEach(id => addOpponentHand(id, state.G.names[id]))
+                elements('opponent-hand').forEach(child => child.classList.add('selectable'))
+                elements('opponent-hand').forEach((child, index) => child.onclick = async event => takeSeat(client, selectablePlayerIds[index]))
+              }
             }
           }
         }
@@ -206,6 +203,43 @@
       unsubscribe = client.subscribe(stateHandler)
     }
 
+    function flagcheck() {
+      if (navigator.userAgent.indexOf('Windows') > 0)
+        document.head.innerHTML += '<link rel="stylesheet" href="noto.css">'
+    }
+
+    function fixAnchors(html) {
+      return html.replaceAll('</h2></a>', '</h2>').replaceAll('</p>', '</p></a>')
+    }
+
+    async function loadContent(lang) {
+      const loaded = document.querySelector(`#content > #${lang}`)
+      if (!loaded) {
+        const root = elementWithKids('div', [
+          elementWithKids('div', null, { 'class': 'idiot' }),
+          elementWithKids('div', null, { 'class': 'sheep' }),
+          elementWithKids('div', null, { 'class': 'labels' }),
+          elementWithKids('div', null, { 'class': 'appeal-tos' }),
+          elementWithKids('div', null, { 'class': 'fallacies' }),
+          elementWithKids('div', null, { 'class': 'topics' })
+        ], { id: lang })
+        document.querySelector('#content').appendChild(root)
+        const [idiot, sheep, labels, appealTos, fallacies, topics] = await Promise.all([
+          fetchSilent(`${lang}/idiot.html`),
+          fetchSilent(`${lang}/sheep.html`),
+          fetchSilent(`${lang}/labels.html`),
+          fetchSilent(`${lang}/appeal-tos.html`),
+          fetchSilent(`${lang}/fallacies.html`),
+          fetchSilent(`${lang}/topics.html`)
+        ])
+        root.querySelector('.idiot').innerHTML =  fixAnchors(idiot)
+        root.querySelector('.sheep').innerHTML = fixAnchors(sheep)
+        root.querySelector('.labels').innerHTML = labels
+        root.querySelector('.appeal-tos').innerHTML = appealTos
+        root.querySelector('.fallacies').innerHTML = fallacies
+        root.querySelector('.topics').innerHTML = topics
+      }
+    }
   </script>
   <div id="uno" class="hidden"></div>
   <div id="config">

@@ -1,3 +1,20 @@
+<style>
+  .icard {
+    width: 10em;
+    height: 15em;
+    float: left;
+    margin-right: 1em;
+  }
+  
+  h2, h3 {
+    padding-top: 1em;
+    clear: both;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  </style>
 <h1>Spielanleitung</h1>
 <p>
 Das <b>New-Normal-Uno</b> ist eine Variante des rundenbasierten Uno-Kartenspiels, bei der eine Corona-Diskussion simuliert wird. Es können 2-10 Personen daran teilnehmen, wobei beide Seiten - Idioten und Schafe - gleichermaßen repräsentiert sind.
@@ -16,41 +33,60 @@ Die Teilnehmer des Diskurses argumentieren hintereinander durch das Ausspielen v
 
 <h3>Argument-Karte</h3>
 <p>
+ <argument-card class="icard hidden" card="S1" topicId="T1" topic="Infektion"><h2></h2></argument-card>
+ <argument-card class="icard" card="S21" topicId="T1" topic="Infektion"><h2>Immunität hält nicht an</h2>
+<p>Genauer, dass Antikörper gegen das Corona-Virus bereits nach kurzer Zeit nicht mehr bei Erkrankten nachgewiesen werden konnten! Und dass man deshalb davon ausgehen muss, das eine Herdenimmunität sich nicht natürlich einstellen wird.</p></argument-card>
+ <argument-card class="icard" card="I1" topicId="T1" topic="Infektion"><h2>Immunsystem?</h2>
+<p>Genauer, gegen Viren würde uns unser Immunsystem schützen. Und dass, wenn wir keines hätten, uns der liebe Gott doch gleich mit einer Alltagsmaske zur Welt kommen lassen würde.</p></argument-card>
 Eine Argument-Karte repräsentiert eines von vielen Argumenten aus dem Diskurs. Sie gehört immer zu einem Thema und um auf sie zu antworten, benötigt man eine Karte mit dem gleichen Thema. Argument-Karten haben idR eine aufklappbare Rückseite, auf der Quellen aufgeführt sind, die das Argument stützen. Diese können bei Interesse nachgelesen werden.
 </p>
 <h3>Appellier-Karte</h3>
+ <appeal-to-card class="icard" idiot type="authority" card="AI1"><h2>Bhakdi</h2></appeal-to-card>
+ <appeal-to-card class="icard" type="authority" card="AS1"><h2>Drosten</h2></appeal-to-card>
 <p>
 Die Appellier-Karte repräsentiert eine Authorität oder Berühmtheit, die für die jeweilige Seite steht. Das können Personen und Institutionen sein. Die Gegenseite kann auf sie mit einer beliebigen Argument-Karte reagieren, also ggf. das Thema wechseln, oder ebenfalls mit einer Appellier-Karte reagieren. Auch Appellier-Karten haben idR eine aufklappbare Rückseite, auf der Quellen aufgeführt sind. Diese können bei Interesse nachgelesen werden.
 </p>
 <h3>Recherchier-Karte</h3>
 <p>
+ <research-card idiot class="icard"></research-card>
+ <research-card class="icard"></research-card>
 Die Recherchier-Karte ist eine Joker-Karte und kann auf eine Argument- oder Appellier-Karte gespielt werden. Sie liefert 1-3 passende Karten aus dem eigenen Stapel. Sollte der Stapel keine passenden Karten mehr enthalten, kann sie in seltenen Fällen auch gar keine Karten liefern. Liegt eine Argument-Karte, werden bevorzugt passende Gegen-Argumente geliefert. Finden sich keine oder nicht genug, können auch Appellier-Karten dazukommen. Liegt oben auf dem Stapel eine Appellier-Karte, so werden Appellier-Karten geliefert. Finden sich keine oder nicht genug, können auch Argument-Karten dazukommen. Die Karten werden der eigenen Hand hinzugefügt und können im Anschluss ausgespielt werden.
 </p>
 <h3>Strohmann-Karte</h3>
 <p>
+ <strawman-card class="icard" idiot></strawman-card>
+ <strawman-card class="icard"></strawman-card>
 Die Strohmann-Karte ist eine Joker-Karte und kann auf eine Argument-Karte gespielt werden. Sie hebt die vom Gegner gespielte Karte auf und ermöglicht es, sie durch eine andere zu ersetzen (dem Gegner als etwas in den Mund zu legen). Dies geschieht, indem beim Ausspielen der eigenen Hand eine passende Karte aus dem gegnerischen Stapel hinzugefügt wird. Diese muss der Spieler dann Ausspielen und mit einer eigenen Argument- oder Appellier-Karte beantworten, um den Zug zu beenden.
 </p>
 <h3>Allgemeinplatz-Karte</h3>
 <p>
-Mit der Allgemeinplatz-Karte kann auf eine Argument- oder Appellier-Karte geantwortet werden. Sie hebt den Zwang auf, genau auf diese Karte und ihr Thema reagieren zu müssen. Mit ihr wird ein Themenwechsel ermöglicht. Von Allgemeinplatz-Karten können mehrere hintereinander ausgespielt werden, der Zug ist aber erst beendet, wenn, denn der aktuelle Spieler abschließend eine Argument- oder Appellier-Karte ausgespielt hat.
+ <fallacy-card class="icard hidden" idiot card="FI1"><h2>Mainstream</h2></fallacy-card>
+ <fallacy-card class="icard" idiot card="FI1"><h2>Mainstream</h2></fallacy-card>
+ <fallacy-card class="icard" card="FS1"><h2>Verschwörung&shy;stheorie</h2></fallacy-card>
+Mit der Allgemeinplatz-Karte kann auf eine Argument- oder Appellier-Karte geantwortet werden. Sie hebt den Zwang auf, genau auf diese Karte und ihr Thema reagieren zu müssen. Mit ihr wird ein Themenwechsel ermöglicht. Von Allgemeinplatz-Karten können mehrere hintereinander ausgespielt werden, der Zug ist aber erst beendet, wenn, denn der aktuelle Spieler abschließend eine Argument-, Appellier- oder Diskutier-Karte ausgespielt hat.
 </p>
 <h3>Etikettier-Karte</h3>
 <p>
-Mit der Etikettier-Karte kann auf eine Argument- oder Appellier-Karte geantwortet werden. Sie hebt den Zwang auf, genau auf diese Karte und ihr Thema reagieren zu müssen. Mit ihr wird ein Themenwechsel ermöglicht. Von Etikettier-Karten können mehrere hintereinander ausgespielt werden, der Zug ist aber erst beendet, wenn, denn der aktuelle Spieler abschließend eine Argument- oder Appellier-Karte ausgespielt hat.
+ <label-card class="icard hidden" idiot card="LI1"><h2>Schaf</h2></label-card>
+ <label-card class="icard" idiot card="LI1"><h2>Schaf</h2></label-card>
+ <label-card class="icard" card="LS1"><h2>Idiot</h2></label-card>
+Mit der Etikettier-Karte kann auf eine Argument- oder Appellier-Karte geantwortet werden. Sie hebt den Zwang auf, genau auf diese Karte und ihr Thema reagieren zu müssen. Mit ihr wird ein Themenwechsel ermöglicht. Von Etikettier-Karten können mehrere hintereinander ausgespielt werden, der Zug ist aber erst beendet, wenn, denn der aktuelle Spieler abschließend eine Argument-, Appellier- oder Diskutier-Karte ausgespielt hat.
 </p>
 <h3>Ausdiskutier-Karte</h3>
 <p>
+ <discuss-card class="icard" idiot topicId="T1" topic="Infektion"></discuss-card>
+ <discuss-card class="icard" topicId="T1" topic="Infektion"></discuss-card>
 Mit der Ausdiskutier-Karte kann man dafür sorgen, dass das Thema der Karte von allen Beteiligten ausdiskutiert wird. Sie kann z.B. eingesetzt werden, wenn einzelne Spieler kurz vor dem Gewinn (durch Ausspielen all ihrer Karten) stehen. Durch ihr Ausspielen erhalten alle Spieler eine spezielle "unendliche" Argument-Karte, die so lange in der Hand der Beteiligten bleibt, bis das Thema zu Ende diskutiert wurde.
 </p>
 <h3>Aussetzen-Karte</h3>
 <p>
+ <pause-card class="icard" idiot></pause-card>
+ <pause-card class="icard"></pause-card>
 Die Aussetzen-Karte ist im Spiel ab 4 Teilnehmern. In einer solchen Konstellation diskutieren beide Seiten nicht mehr allein. Mit dieser Karte besteht die Möglichkeit, auszusetzen, d.h. keine Argument- oder Appellier-Karte auf dem Stapel ablegen zu müssen. Statt dessen ist sofort der nächste Spieler der gleichen Seite an der Reihe. Dies kann sinnvoll sein, wenn man langes Nachziehen vermeiden will.
 </p>
 <h2>Spielende</h2>
 <p>
-Das Spiel endet in dem Moment, wo ein Spieler keine Karten mehr auf der Hand hat. Er ist dann der Sieger der Diskussion, da er alle seine Argumente losgeworden ist. 
+Das Spiel endet in dem Moment, wo ein Spieler bzw. eine Seite (bei mehr als 2 Spielern) keine Karten mehr auf der Hand hat. Er ist dann der Sieger der Diskussion, da er alle seine Argumente losgeworden ist. 
+<br>
 </p>
-<h2>Ideen</h2>
-<p>
-Bei mehr als 2 Mitspielern könnte es (zusätzliche) Karten geben, die die Zusammenarbeit unterstützen oder zum "Angriff" auf den Gegner abseits der Argumente (unter der Gürtellinie?) genutzt werden können. Oder bestehende Karten könnten anders funktionieren.
-</p>
+

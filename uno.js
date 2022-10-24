@@ -1,3 +1,6 @@
+const { Client } = require('boardgame.io/client')
+const { Local } = require('boardgame.io/multiplayer')
+const { P2P } = require('@boardgame.io/p2p')
 const INITIAL = 8
 const PERCENTAGE_APPEAL_TOS = 15 // e.g. 600 argument cards => 90 appeal to cards
 const PERCENTAGE_STRAWMANS = 15 // e.g. 600 argument cards => 90 strawman cards
@@ -7,8 +10,36 @@ const PERCENTAGE_FALLACIES = 15 // e.g. 600 argument cards => 90 fallacy cards
 const PERCENTAGE_PAUSES = 10 // e.g. 600 argument cards => 60 pause cards
 const INVALID_MOVE = 'INVALID_MOVE'
 
+async function startLocal(lang, playerID) {
+  const game = await Uno(lang, playerID)
+  const player = Client({ game, numPlayers: 2, playerID, multiplayer: Local() })
+  const bot = Client({ game, numPlayers: 2, playerID: playerID==='0' ? '1' : '0', multiplayer: Local() })
+  player.start()
+  bot.start()
+  return playerID==='0' ? [player, bot] : [bot, player]
+}
+
+async function startClient(lang, isHost, numPlayers, playerID, matchID) {
+  const game = await Uno(lang, isHost ? playerID : undefined)
+  const peerOptions = { host: 'new-normal.app', port: 9443 }
+  
+  const client = Client({
+    game,
+    numPlayers,
+    matchID,
+    playerID,
+    multiplayer: P2P({
+      isHost,
+      peerOptions,
+      onError: e => { console.log('P2P error', e) }
+    })
+  })
+  client.start()
+  return client
+}
+
 /**
-Game state: {
+Uno game engine. Game state: {
     lang: 'de', // opponents have to use the same language!
     host: '0'/'1', 
     decks: {
@@ -20,7 +51,6 @@ Game state: {
     names: ['']
 }
 */
-
 async function Uno(lang, host) {
   const [topics, topicMap] = await fetchTopics()
   const content = await init(lang)
@@ -97,20 +127,13 @@ async function Uno(lang, host) {
     }
   }
 
-  function removeFrom(deckOrHand, card) {
-    card = argumentOnly(card)
-    const index = deckOrHand.findIndex(c => argumentOnly(c)===card)
-    if (index>=0) deckOrHand.splice(index, 1)
-  }
-
-  function removeTopicFrom(hands, card) {
-    hands.forEach(hand => {
-      const index = hand.findIndex(c => isDiscuss(c) && topicOf(c)===topicOf(card))
-      if (index>=0) hand.splice(index, 1)
-    })
-  }
-
-  function draw(hand, deck) {
+  /**
+   * draw an a card from the given deck into the given hand
+   * side effect: will modify both the given deck and hand
+   * @param {Array} hand The hand.
+   * @param {Array} deck The deck.
+   */
+    function draw(hand, deck) {
     const top = deck[deck.length - 1]
     if (isArgument(top) || isAppealTo(top))
       deck.unshift(deck.pop()) // don't remove but put to the 'end' of the deck
@@ -125,6 +148,7 @@ async function Uno(lang, host) {
    * @param {{idiot: Array, sheep: Array}} decks The decks.
    * @param {number} size The size of the hand.
    * @param {boolean} idiot if to use the idiot or sheep deck.
+   * @return {Array} the hand
    */
   function drawHand(decks, size, idiot) {
     const deck = decks[idiot ? 'idiot' : 'sheep']
@@ -136,6 +160,7 @@ async function Uno(lang, host) {
   /**
    * generates decks for idiot and sheep
    * @param {string} lang The language.
+   * @return {{idiot: Array, sheep: Array}} The generated decks
    */
   function generateDecks(lang, players) {
     const decks = { idiot: initialDeck(true, players), sheep: initialDeck(false, players) }
@@ -183,6 +208,11 @@ async function Uno(lang, host) {
     return selection
   }
 
+  /**
+   * helper for init, loading one side of the arguments
+   * @param {string} lang The language.
+   * @return {any} A content structure
+   */
   async function fetchContent(lang, idiot) {
     const topicMapped = id => topicMap[id] ? topicMap[id].map(topicId => `${topicId}:${id}`) : [`:${id}`]
     const [args, labels, fallacies, appealTos]  = await Promise.all([
@@ -233,8 +263,9 @@ async function Uno(lang, host) {
   }
 
   /**
-   * Shuffles array in place.
+   * Shuffles array in place (side effect).
    * @param {Array} array An array containing the items.
+   * @return {Array} the shuffled array
    */
   function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -243,19 +274,35 @@ async function Uno(lang, host) {
     }
     return array
   }
+  
+  function removeFrom(deckOrHand, card) {
+    card = argumentOnly(card)
+    const index = deckOrHand.findIndex(c => argumentOnly(c)===card)
+    if (index>=0) deckOrHand.splice(index, 1)
+  }
+
+  function removeTopicFrom(hands, card) {
+    hands.forEach(hand => {
+      const index = hand.findIndex(c => isDiscuss(c) && topicOf(c)===topicOf(card))
+      if (index>=0) hand.splice(index, 1)
+    })
+  }
 
   /**
    * Fetch ids from given content file, optionally filter by substring.
    * @param {string} lang The language.
    * @param {string} file The filename (without suffix).
    * @param {string} filter An optional string filter.
+   * @return {Array} The content ids
    */
   async function fetchContentIds(lang, file, filter = '') {
     const content = await fetchSilent(`${lang}/${file}.html`)
     return [...content.matchAll(/a id="([^"]*)"/g)].map(r => r[1]).filter(id => id.includes(filter))
   }
 
-  /** Fetch all topics and arguments into a topics array and a hash argumentId => [topicId] */
+  /** Fetch all topics and arguments into a topics array and both a topics array and hash
+   * @return {Array} The topic id array and a hash argumentId => [topicId]
+   */
   async function fetchTopics() {
     const content = await fetchSilent(`topics-new.html`)
     const topicIds = [...content.matchAll(/p id="([^"]*)"/g)].map(r => r[1])
@@ -269,7 +316,7 @@ async function Uno(lang, host) {
   }
   
   return {
-    name: 'NewNormalUno',
+    name: 'newnormaluno',
     setup: (ctx) => {
       const decks = generateDecks(ctx.numPlayers)
       const hands = new Array(ctx.numPlayers).fill([]).map((p,i) => drawHand(decks, INITIAL, isIdiot(i)))
@@ -366,8 +413,8 @@ async function Uno(lang, host) {
       const idiot = isIdiot(ctx.currentPlayer)
       const hand = G.hands[ctx.currentPlayer]
       const top = G.pile.length ? G.pile[G.pile.length-1] : undefined
-      if (!hand.length && (isArgument(top) || isAppealTo(top)) && isOfType(top, idiot))
-        return { winner: ctx.currentPlayer }
+      if (!hand.length && (isArgument(top) || isAppealTo(top) || isDiscuss(top)) && isOfType(top, idiot))
+        return { winner: ctx.currentPlayer } // TODO >2 multiplayer ends, when all of one side are finished
     },
     minPlayers: 2,
     disableUndo: true, // Disable undo feature for all the moves in the game
@@ -415,11 +462,22 @@ function allPossibleMoves(hand, idiot, top) {
   return [ { move: 'drawCard', args: [] }, ...hand.map(toPlayMove).filter(canBePlayed) ]
 }
 
+function getAlternatives(id, deck) {
+  if (isArgument(id)) return deck.filter(card => id!==card && isArgument(card) && hasTopic(card, topicOf(id)))
+  if (isAppealTo(id)) return deck.filter(card => id!==card && isAppealTo(card))
+  if (isFallacy(id)) return deck.filter(card => id!==card && isFallacy(card))
+  if (isLabel(id)) return deck.filter(card => id!==card && isLabel(card))
+  if (isDiscuss(id)) return deck.filter(card => id!==card && isDiscuss(card))
+  return [id]
+}
+    
+
 /** check player for idiot */
 function isIdiot(player) {
   return !!(player%2) // every second player is an idiot
 }
 
+/** check for all types of cards */
 function cardType(id) { return id.includes(':') ? id.split(':')[1][0] : id[0] }
 function isArgument(id) { return id.includes(':I') || id.includes(':S') }
 function isAppealTo(id) { return id.startsWith('A') }
@@ -430,7 +488,7 @@ function isResearch(id) { return id.startsWith('R') }
 function isDiscuss(id) { return id.includes('D') }
 function isPause(id) { return id.startsWith('P') }
 
-/** check for type of card */
+/** check if type of card matches input */
 function isOfType(id, idiot) {
   return (id.includes('I') && idiot) || (id.includes('S') && !idiot)
 }
@@ -454,4 +512,5 @@ function isWildcard(id) {
 function argumentOnly(id) {
   return id.replace('*', '')
 }
+
 

@@ -169,7 +169,7 @@
         const existing = document.querySelector('#hand')
         if (existing) existing.parentElement.removeChild(existing)
         
-        document.querySelector('#uno').insertAdjacentHTML('beforeEnd', '<player-hand nr="0" name="All Cards" id="hand" active cards="[]"></player-hand>')
+        document.querySelector('#uno').insertAdjacentHTML('beforeEnd', '<player-hand nr="0" name="All Cards" id="hand" cards="[]"></player-hand>')
         document.querySelector('#hand').setAttribute('cards', cards)
       }
     </script>

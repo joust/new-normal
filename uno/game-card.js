@@ -7,12 +7,6 @@ gameCardTemplate.innerHTML = `
       position: relative;
     }
 
-    #parent {
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-    }
-
     #card {
       width: 100%;
       height: 100%;

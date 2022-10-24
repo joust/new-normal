@@ -16,12 +16,7 @@ playerHandTemplate.innerHTML = `
     #player-hand {
       width: 100%;
       height: 100%;
-      overflow-x: hidden;
-      overflow-y: auto;
       box-sizing: border-box;
-    }
-
-    #player-hand.active {
       height: calc(100% - 4vh);
       display: grid;
       grid-gap: 0;
@@ -40,13 +35,6 @@ playerHandTemplate.innerHTML = `
       transform: scale(1.03) translateY(-1vh);
       transition: all .2s linear;
     }
-      
-
-    #player-hand:not(.active) ::slotted(game-card) {
-      display: inline-block;
-      height: calc(100 * var(--ch));
-      width: calc(100 * var(--ratio) * var(--ch));
-    }
   </style>
   <div id="player-hand"><slot></div>
   <div id="player-name"></div>
@@ -58,7 +46,7 @@ class PlayerHand extends HTMLElement {
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = ['cards', 'nr', 'name', 'active']
+  static observedAttributes = ['cards', 'nr', 'name']
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
@@ -80,14 +68,9 @@ class PlayerHand extends HTMLElement {
     return this.getAttribute('name')
   }
 
-  get active() {
-    return this.hasAttribute('active')
-  }
-
   connectedCallback() {
     this.shadowRoot.appendChild(playerHandTemplate.content.cloneNode(true))
     const hand = this.element('player-hand')
-    hand.classList.toggle('active', this.active)
     hand.onclick = e => this.down(e)
     hand.ontouchmove = e => this.over(e)
     hand.onmouseover = e => this.over(e)
@@ -103,9 +86,6 @@ class PlayerHand extends HTMLElement {
     if (this.isConnected && this.element('player-hand')) {
       if (name=='cards') {
         this.updateCards()
-      }
-      if (name==='active') {
-        this.element('player-hand').classList.toggle('active', this.active)
       }
       this.updateName()
       this.updateLayout()
@@ -176,7 +156,7 @@ class PlayerHand extends HTMLElement {
   }
 
   updateLayout() {
-    const invisible = this.active ? this.slotInvisible() : this.slotChildren()
+    const invisible = this.slotChildren()
     // reverse() to handle zIndex priorities on mouseover
     const visible = [ ...this.slotVisible(), ...this.ownChildren()].reverse()
     invisible.forEach(child => {
@@ -185,19 +165,16 @@ class PlayerHand extends HTMLElement {
       child.style.removeProperty('zIndex')
     })
     let z = visible.length, after = false
-    if (this.active) {
-      visible.forEach((child, index) => {
-        child.style.gridRow = 1
-        child.style.gridColumn = `${index+2}/span 8`
-        child.style.zIndex = z
-        child.toggleAttribute('mirrored', after)
-        child.classList.toggle('playable', this.playable(child.getAttribute('card')))
-        if (child.hasAttribute('top')) after = true
-        if (after) z--; else z++
-      })
-      this.recalc()
-    } else
-      this.element('player-hand').style.gridTemplateColumns = undefined
+    visible.forEach((child, index) => {
+      child.style.gridRow = 1
+      child.style.gridColumn = `${index+2}/span 8`
+      child.style.zIndex = z
+      child.toggleAttribute('mirrored', after)
+      child.classList.toggle('playable', this.playable(child.getAttribute('card')))
+      if (child.hasAttribute('top')) after = true
+      if (after) z--; else z++
+    })
+    this.recalc()
   }
 
   over(event) {

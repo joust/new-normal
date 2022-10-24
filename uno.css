@@ -12,7 +12,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-}
+}s
 
 msg-box, msg-box * {
   font-family: 'HVD Crocodile', Helvetica;
@@ -119,6 +119,10 @@ h1,h2,h3 {
   height: 40%;
 }
 
+#players opponent-hand.selectable {
+    animation: pulse 0.4s ease infinite alternate;
+}
+
 #piles {
   flex: 1;
   width: 100%;
@@ -180,6 +184,11 @@ h1,h2,h3 {
   visibility: collapse;
 }
 
-opponent-hand.active {
-  border: 3px solid #ff7f50;
+opponent-hand.current {
+  border-bottom: 5px solid #ff7f50;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.05); }
 }

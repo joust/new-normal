@@ -6,6 +6,10 @@ Uno
 * implement game end for >2 players => game ends when *all* players of one side got rid of their cards
 * implement game-table component
 * implement bot players in multiplayer game (which take the free seats)
+* integrate into main app
+* implement tests for wildcard-arguments
+* add example cards to gameplay text
+* implement flash up messages without buttons like "Everythings ready, lets go!", "Finding your connection", "Choose your seat!"
 
 Bingo
 
@@ -16,11 +20,12 @@ Bingo
 Test
 
 * use random topics
-* switch test to display random cards of the common topic from of both sides (using the backsides of the bingo cards)
+* switch test to display random cards of the common topic of both sides (using the backsides of the bingo cards)
 * implement test-cert component
 
 General
 
+* Draft arguments with only headlines (h2) will be displayed with placeholder content lines
 * have arguments files with the same format - remove fixAnchors
 * implement the new intro, remove the old
 * refactor dialog.js

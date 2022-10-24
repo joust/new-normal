@@ -2,18 +2,19 @@ const { Client } = require('boardgame.io/client')
 const { Local } = require('boardgame.io/multiplayer')
 const { P2P } = require('@boardgame.io/p2p')
 const INITIAL = 8
-const PERCENTAGE_APPEAL_TOS = 15 // e.g. 600 argument cards => 90 appeal to cards
-const PERCENTAGE_STRAWMANS = 15 // e.g. 600 argument cards => 90 strawman cards
-const PERCENTAGE_RESEARCHS = 20 // e.g. 600 argument cards => 120 research cards
-const PERCENTAGE_LABELS = 15 // e.g. 600 argument cards => 90 label cards
-const PERCENTAGE_FALLACIES = 15 // e.g. 600 argument cards => 90 fallacy cards
-const PERCENTAGE_PAUSES = 10 // e.g. 600 argument cards => 60 pause cards
+const PERCENTAGE_APPEAL_TOS = 15 // e.g. 600 cards => 90 appeal to cards
+const PERCENTAGE_DISCUSSES = 8
+const PERCENTAGE_STRAWMANS = 20
+const PERCENTAGE_RESEARCHS = 20
+const PERCENTAGE_LABELS = 20
+const PERCENTAGE_FALLACIES = 20
+const PERCENTAGE_PAUSES = 10
 const INVALID_MOVE = 'INVALID_MOVE'
 
 async function startLocal(lang, playerID) {
   const game = await Uno(lang, playerID)
-  const player = Client({ game, numPlayers: 2, playerID, multiplayer: Local() })
-  const bot = Client({ game, numPlayers: 2, playerID: playerID==='0' ? '1' : '0', multiplayer: Local() })
+  const player = Client({ game, playerID, multiplayer: Local() })
+  const bot = Client({ game, playerID: playerID==='0' ? '1' : '0', multiplayer: Local() })
   player.start()
   bot.start()
   return playerID==='0' ? [player, bot] : [bot, player]
@@ -69,7 +70,7 @@ async function Uno(lang, host) {
     hands.forEach((hand, index) => {
       const idiot = isIdiot(index)
       // first remove all matching cards of this players hand
-      hand.filter(c => isArgument(c) && hasTopic(c, topic)).forEach(c => hand.slice(hand.indexOf(c), 1))
+      hand.filter(c => isArgument(c) && isOfType(c, idiot) && hasTopic(c, topic)).forEach(c => hand.splice(hand.indexOf(c), 1))
       // next add the wildcard argument to his hand
       if (idiot && firstI)
         hand.push(`${firstI}*`)
@@ -185,7 +186,7 @@ async function Uno(lang, host) {
     const fallacies = elementsFrom(Math.round(PERCENTAGE_FALLACIES*nargs/100), cards.fallacies)
     const appealTos = elementsFrom(Math.round(PERCENTAGE_APPEAL_TOS*nargs/100), cards.appealTos)
     const pauses = players > 2 ? new Array(Math.round(PERCENTAGE_PAUSES*nargs/100)).fill(`P${type}`) : []
-    const discusses = topics.map(id => `${id}:D${type}`)
+    const discusses = elementsFrom(Math.round(PERCENTAGE_DISCUSSES*nargs/100), topics).map(id => `${id}:D${type}`)
     return [...cards.args, ...labels, ...fallacies, ...appealTos, ...strawmans, ...researchs, ...pauses, ...discusses]
   }
 
@@ -345,8 +346,8 @@ async function Uno(lang, host) {
             G.pile.push(card) // allows to play any argument card afterwards
             break
           case 'D': // Discuss
-            resolveDiscuss(G.hands, G.decks, card)
             hand.splice(index, 1)
+            resolveDiscuss(G.hands, G.decks, card)
             G.pile.push(card)
             break
           case 'R': // Research
@@ -365,16 +366,15 @@ async function Uno(lang, host) {
             break;
           case 'A': // Appeal to
             removeFrom(deck, card) // appeal to cards are only removed from their deck when played
+            hand.splice(index, 1)
             G.pile.push(card)
             break
           default: // argument
-            if (!isWildcard(card)) hand.splice(index, 1)
             removeFrom(deck, card) // argument cards are only removed from their deck when played
-            const remaining = [...G.decks.idiot, ...G.decks.sheep].filter(c => isArgument(c) && hasTopic(topicOf(card))).length
-            if (!remaining) {
-              removeTopicFrom([G.decks.idiot, G.decks.sheep], card) // remove possible discuss cards
-              removeTopicFrom(G.hands, card)
-            }     
+            if (isWildcard(card))
+              resolveDiscuss(G.hands, G.decks, card)
+            else  
+              hand.splice(index, 1)
             G.pile.push(argumentOnly(card))
         }
       },
@@ -444,7 +444,7 @@ function canBePlayedOn(top, card, idiot) {
     case 'A': // Appeal to
       return isOfType(card, !idiot) && isStrawman(top) 
       || isOfType(card, idiot) && 
-        (!top || isAppealTo(top) || isFallacy(top) || isLabel(top))
+        (!top || isArgument(top) || isAppealTo(top) || isFallacy(top) || isLabel(top))
     case 'I': // Idiot argument
     case 'S': // Sheep argument
       return top && isStrawman(top) && (isArgument(card) || isAppealTo(top)) && isOfType(card, !idiot)

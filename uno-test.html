@@ -4,16 +4,15 @@
   <script src="tinytest.js"></script>
   <script src="uno.js"></script>
   <script>
-    const { Client } = require('boardgame.io/client')
-
     async function run() {
       const uno = await Uno('de', '0')
+      // scenarios
       const easy = {
               lang: 'de',
               host: '0', 
               decks: {
-                idiot: ['T1:I2', 'T1:I3'],
-                sheep: ['T1:S1', 'T1:S2', 'T1:S10', 'T2:S7', 'PS', 'T1:DS']
+                idiot: ['T1:I2', 'T1:I4'],
+                sheep: ['T1:S1', 'T1:S4', 'T1:S10', 'T2:S7', 'PS', 'T1:DS']
               },
               pile: [],
               hands: [['T1:S4'], ['T1:I4']],
@@ -23,6 +22,17 @@
               ...easy,
               hands: [['T1:S4'], ['T1:I4'], ['T1:S5'], ['T1:I5']],
               names: ['', '', '', ''] 
+            }
+      const wildcard = {
+              lang: 'de',
+              host: '0', 
+              decks: {
+                idiot: ['T1:I2', 'T1:I3', 'T2:I7', 'T1:I4'],
+                sheep: ['T1:S3', 'T1:S4', 'T1:S10', 'T2:S4', 'PS', 'T1:DS']
+              },
+              pile: [],
+              hands: [['T1:S4', 'T1:S3', 'T2:S4'], ['T1:I4']],
+              names: ['', '']
             }
 
       tests({
@@ -109,9 +119,12 @@
         'playing a discuss card should put a wildcard into every hand': () => {
           const game = { ...uno, setup: () => easy }
           const client = Client({ game })
+          let { G, ctx } = client.getState()
+          console.log(G.hands)
           client.moves.drawCard()
           client.moves.playCard(1)
-          const { G, ctx } = client.getState()
+          ;({ G, ctx } = client.getState())
+          console.log(G.hands)
           assert(!!G.hands[0].find(isWildcard))
           assert(!!G.hands[1].find(isWildcard))
         },
@@ -147,8 +160,54 @@
             const { G, ctx } = client.getState()
             assert(ctx.currentPlayer==='2')
           })
-        }
+        },
+       
+        'playing a discuss card should put a wildcard and remove all others': () => {
+          const game = { ...uno, setup: () => wildcard }
+          const client = Client({ game })
+          client.moves.drawCard()
+          client.moves.playCard(3)
+          const { G, ctx } = client.getState()
+          assert(!!G.hands[0].find(isWildcard))
+          assert(!!G.hands[1].find(isWildcard))
+          assert(G.hands[0].filter(c => hasTopic(c, 'T1')).length===1)
+          assert(G.hands[1].filter(c => hasTopic(c, 'T1')).length===1)
+        },
 
+        'playing a wildcard should remove it from deck until no left': () => {
+          const game = { ...uno, setup: () => wildcard }
+          const client0 = Client({ game, playerID: '0', multiplayer: Local() })
+          const client1 = Client({ game, playerID: '1', multiplayer: Local() })
+          client0.start()
+          client1.start()
+          client0.moves.drawCard()
+          client0.moves.playCard(3)
+          let { G, ctx } = client0.getState()
+          assert(ctx.currentPlayer==='1')
+          assert(!!G.hands[0].find(isWildcard))
+          assert(!!G.hands[1].find(isWildcard))
+          assert(G.decks.idiot.filter(c => hasTopic(c, 'T1')).length===3)
+          client1.moves.playCard(0)
+          ;({ G, ctx } = client0.getState())
+          assert(ctx.currentPlayer==='0')
+          assert(G.decks.idiot.filter(c => hasTopic(c, 'T1')).length===2)
+          assert(G.hands[1].length===1)
+          client0.moves.playCard(1)
+          ;({ G, ctx } = client0.getState())
+          assert(ctx.currentPlayer==='1')
+          assert(G.decks.idiot.filter(c => hasTopic(c, 'T1')).length===2)
+          assert(G.hands[1].length===1)
+          client1.moves.playCard(0)
+          ;({ G, ctx } = client0.getState())
+          console.log(G)
+          assert(G.decks.idiot.filter(c => hasTopic(c, 'T1')).length===1)
+          assert(G.hands[1].length===1)
+          client0.moves.playCard(1)
+          client1.moves.playCard(0)
+          ;({ G, ctx } = client0.getState())
+          assert(G.decks.idiot.filter(c => hasTopic(c, 'T1')).length===0)
+          assert(G.hands[1].length===0)
+        }
       })
     }
   </script>

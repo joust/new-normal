@@ -71,11 +71,11 @@
       element('players').insertAdjacentHTML('beforeEnd', `<opponent-hand cards="8" nr="${nr}" ${name ? `name="${name}"` : ''}></opponent-hand>`)
     }
     
-    function cardsString(hand, deck, top, current, idiot) {
+    function cardsString(hand, decks, top, current, idiot) {
       // JSON array of id+alternative elements in format { id: '...', alt: ['...', '...'], playable }
       return JSON.stringify(hand.map(card => (
         { card,
-          alt: getAlternatives(card, deck),
+          alt: getAlternatives(card, decks),
           playable: current && canBePlayedOn(top, card, idiot)
         })))
     }
@@ -91,7 +91,7 @@
       const deck = idiot ? state.G.decks.idiot : state.G.decks.sheep
       const current = client.playerID===state.ctx.currentPlayer
       element('draw-pile').setAttribute('top', idiot ? 'I' : 'S')
-      element('hand').setAttribute('cards', cardsString(hand, deck, top, current, idiot))
+      element('hand').setAttribute('cards', cardsString(hand, state.G.decks, top, current, idiot))
       element('hand').setAttribute('nr', client.playerID)
       element('hand').setAttribute('name', state.G.names[client.playerID])
       element('hand').classList.toggle('current', state.ctx.currentPlayer===client.playerID)

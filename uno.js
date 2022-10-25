@@ -462,7 +462,8 @@ function allPossibleMoves(hand, idiot, top) {
   return [ { move: 'drawCard', args: [] }, ...hand.map(toPlayMove).filter(canBePlayed) ]
 }
 
-function getAlternatives(id, deck) {
+function getAlternatives(id, decks) {
+  const deck = decks[isOfType(id, true) ? 'idiot' : 'sheep']
   if (isArgument(id)) return deck.filter(card => id!==card && isArgument(card) && hasTopic(card, topicOf(id)))
   if (isAppealTo(id)) return deck.filter(card => id!==card && isAppealTo(card))
   if (isFallacy(id)) return deck.filter(card => id!==card && isFallacy(card))

@@ -288,7 +288,7 @@ class ArgumentCard extends HTMLElement {
       root.classList.toggle('mirrored', this.mirrored)
       this.element('wildcard').classList.toggle('hidden', !this.wildcard)
       this.element('card').innerHTML = this.card
-      this.element('topic-icon').innerHTML = this.topicId.substring(1)
+      this.element('topic-icon').innerHTML = this.topicId ? this.topicId.substring(1) : '?'
       this.element('topic-name').innerHTML = this.topic
       this.element('side-title').innerHTML = `${this.wildcard?'✱ ':''}${this.title}`
     }

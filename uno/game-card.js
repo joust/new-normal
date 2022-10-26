@@ -15,10 +15,13 @@ gameCardTemplate.innerHTML = `
     #previous, #next {
       position: absolute;
       font-size: calc(7 * var(--cavg));
-      color: white;
-      opacity: .5;
+      color: grey;
+      opacity: .2;
       right: 0;
       cursor: pointer;
+      width: 100%;
+      text-align: center;
+      z-index: 1;
     }
 
     #previous.mirrored, #next.mirrored {
@@ -32,10 +35,6 @@ gameCardTemplate.innerHTML = `
 
     #next {
       bottom: 0;
-    }
-
-    #previous:hover, #next:hover {
-      opacity: 1;
     }
 
     .hidden {
@@ -109,8 +108,8 @@ class GameCard extends HTMLElement {
     resizeObserver.observe(this)
     this.element('previous').insertAdjacentHTML('beforeBegin', this.getCardElement())
 
-    this.element('previous').onlick = event => this.updateAltIndex(-1)
-    this.element('next').onlick = event => this.updateAltIndex(1)
+    this.element('previous').onlick = event => this.updateAltIndex(-1) // TODO not working
+    this.element('next').onlick = event => this.updateAltIndex(1) // TODO not working
     this.onwheel = event => {
       if (Math.abs(event.deltaY) >= ALTERNATIVES_STEP) {
         this.updateAltIndex(Math.sign(event.deltaY))
@@ -152,8 +151,8 @@ class GameCard extends HTMLElement {
     this.altIndex = this.alternatives.indexOf(this.card.replace('*', ''))
     const previous = this.element('previous')
     const next = this.element('next')
-    if (previous) previous.classList.toggle('hidden', this.alternatives.length>1)
-    if (next) next.classList.toggle('hidden', this.alternatives.length>1)
+    if (previous) previous.classList.toggle('hidden', this.alternatives.length===1)
+    if (next) next.classList.toggle('hidden', this.alternatives.length===1)
   }
 
   getCardElement() {
@@ -162,9 +161,9 @@ class GameCard extends HTMLElement {
     const mirrored = this.mirrored ? 'mirrored' : ''
     const wildcard = this.isWildcard ? 'wildcard' : ''
     switch (this.card[0]) {
-      case 'L': return `<label-card id="card" ${type} ${mirrored} card="${this.card}">${data.innerHTML}</label-card>`
-      case 'A': return `<appeal-to-card id="card" ${type} ${mirrored} type="${data.type}" card="${this.card}">${data.innerHTML}</appeal-to-card>`
-      case 'F': return `<fallacy-card id="card" ${type} ${mirrored} card="${this.card}">${data.innerHTML}</fallacy-card>`
+      case 'L': return `<label-card id="card" ${type} ${mirrored} card="${this.card}">${data.outerHTML}</label-card>`
+      case 'A': return `<appeal-to-card id="card" ${type} ${mirrored} type="${data.type}" card="${this.card}">${data.outerHTML}</appeal-to-card>`
+      case 'F': return `<fallacy-card id="card" ${type} ${mirrored} card="${this.card}">${data.outerHTML}</fallacy-card>`
       case 'N': return `<strawman-card id="card" ${type} ${mirrored}></strawman-card>`
       case 'R': return `<research-card id="card" ${type} ${mirrored}></research-card>`
       case 'P': return `<pause-card id="card" ${type} ${mirrored}></pause-card>`

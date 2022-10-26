@@ -109,6 +109,31 @@ FallacyCardTemplate.innerHTML = `
       content: '!' close-quote;
     }
 
+
+    #card {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 12%;
+      height: 4%;
+      font-size: calc(2.5 * var(--cavg));
+      text-align: center;
+      color: var(--blue);
+      border-top-right-radius: calc(2 * var(--cavg));
+      background-color: lightgrey;
+    }
+
+    .idiot #card {
+      color: var(--red);
+    }
+
+    .mirrored #card {
+      left: 0;
+      right: auto;
+      border-top-left-radius: calc(2 * var(--cavg));
+      border-top-right-radius: 0;
+    }
+
     #side-phrase {
       position: absolute;
       font-family: 'HVD Crocodile', Helvetica;
@@ -144,6 +169,7 @@ FallacyCardTemplate.innerHTML = `
     <div id="phrase"><span id="fallacy"></span><span class="quoted phrase"></span></div>
     <div id="side-phrase"><span class="phrase"></span></div>
     <div id="normal">Normal</div>
+    <div id="card"></div>
   </div>
 `
 
@@ -153,7 +179,7 @@ class FallacyCard extends HTMLElement {
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = ['card', 'mirrored']
+  static observedAttributes = ['mirrored']
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
@@ -170,7 +196,7 @@ class FallacyCard extends HTMLElement {
   }
 
   get card() {
-    return this.getAttribute('card')
+    return this.querySelector('a') ? this.querySelector('a').id : ''
   }
 
   get mirrored() {
@@ -201,6 +227,7 @@ class FallacyCard extends HTMLElement {
     if (this.isConnected && root) {
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
+      this.element('card').innerHTML = this.card
       this.element('fallacy').innerHTML = this.fallacy 
       Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = this.phrase)
     }

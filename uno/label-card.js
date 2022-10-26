@@ -111,6 +111,31 @@ labelCardTemplate.innerHTML = `
       content: '!' close-quote;
     }
 
+
+    #card {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 12%;
+      height: 4%;
+      font-size: calc(2.5 * var(--cavg));
+      text-align: center;
+      color: white;
+      border-top-right-radius: calc(2 * var(--cavg));
+      background-color: var(--blue);
+    }
+
+    .idiot #card {
+      background-color: var(--red);
+    }
+
+    .mirrored #card {
+      left: 0;
+      right: auto;
+      border-top-left-radius: calc(2 * var(--cavg));
+      border-top-right-radius: 0;
+    }
+
     #side-label {
       position: absolute;
       font-family: 'HVD Crocodile', Helvetica;
@@ -147,6 +172,7 @@ labelCardTemplate.innerHTML = `
     <div id="label"><span id="fallacy"></span><span class="quoted" id="label-name"></span></div>
     <div id="side-label"></div>
     <div id="normal">Normal</div>
+    <div id="card"></div>
   </div>
 `
 
@@ -200,6 +226,7 @@ class LabelCard extends HTMLElement {
     if (this.isConnected && root) {
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
+      this.element('card').innerHTML = this.card
       this.element('side-label').innerHTML = this.label
       this.element('label-name').innerHTML = this.label
     }

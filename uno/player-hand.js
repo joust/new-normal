@@ -51,7 +51,7 @@ class PlayerHand extends HTMLElement {
   element(id) { return this.shadowRoot.getElementById(id) }
 
   playable(card) {
-    return !!this.cards.find(element => element.card===card && element.playable)
+    return !!this.cards.find(element => element.alt.indexOf(card)>=0 && element.playable)
   }
 
   // JSON array of id+alternative+playable elements in the format { id: '...', alt: ['...', '...'], playable: ...}

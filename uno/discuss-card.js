@@ -82,6 +82,32 @@ discussCardTemplate.innerHTML = `
       right: calc(2% + var(--sidebar-width));
     }
 
+    #topic-icon {
+      position: absolute;
+      width: calc(1.3 * var(--sidebar-width));
+      heigt: calc(1.3 * var(--sidebar-width))
+      top: 0;
+      left: 0;
+      font-family: 'HVD Crocodile', Helvetica;
+      font-weight: 600;
+      font-stretch: condensed;
+      font-size: calc(8 * var(--cavg));
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 0;
+      color: var(--blue);
+      -webkit-text-stroke: calc(0.15 * var(--cavg)) white;
+    }
+
+    .idiot #topic-icon {
+      color: var(--red);
+    }
+
+    .mirrored #topic-icon {
+      right: 0;
+      left: auto;
+    }
+
     #phrase {
       position: absolute;
       font-family: 'HVD Crocodile', Helvetica;
@@ -157,6 +183,7 @@ discussCardTemplate.innerHTML = `
   <div id="discuss-card">
     <div id="watermark"></div>
     <div id="new">New</div>
+    <div id="topic-icon"></div>
     <div id="phrase"><span><span class="phrase"></span></span></div>
     <div id="side-phrase"><span class="phrase"></span></div>
     <div id="normal">Normal</div>
@@ -224,6 +251,7 @@ class DiscussCard extends HTMLElement {
   update() {
     const root = this.element('discuss-card')
     if (this.isConnected && root) {
+      this.element('topic-icon').innerHTML = this.topicId ? this.topicId.substring(1) : ''
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
       const type = this.idiot ? 'idiot' : 'sheep'

@@ -120,6 +120,30 @@ appealToCardTemplate.innerHTML = `
       content: '!' close-quote;
     }
 
+    #card {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 12%;
+      height: 4%;
+      font-size: calc(2.5 * var(--cavg));
+      text-align: center;
+      color: white;
+      border-top-right-radius: calc(2 * var(--cavg));
+      background-color: var(--blue);
+    }
+
+    .idiot #card {
+      background-color: var(--red);
+    }
+
+    .mirrored #card {
+      left: 0;
+      right: auto;
+      border-top-left-radius: calc(2 * var(--cavg));
+      border-top-right-radius: 0;
+    }
+
     #side-to {
       position: absolute;
       font-family: 'HVD Crocodile', Helvetica;
@@ -159,6 +183,7 @@ appealToCardTemplate.innerHTML = `
     <div id="phrase"><span id="fallacy"></span><span class="quoted"><span class="to"></span> <span class="phrase"></span></span></div>
     <div id="side-to"><span class="to"></span></div>
     <div id="normal">Normal</div>
+    <div id="card"></div>
   </div>
 `
 
@@ -224,6 +249,7 @@ class AppealToCard extends HTMLElement {
     if (this.isConnected && root) {
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
+      this.element('card').innerHTML = this.card
       this.element('fallacy').innerHTML = this.fallacy 
       Array.from(root.querySelectorAll('.to')).forEach(node => node.innerHTML = this.to)
       root.querySelector('.phrase').innerHTML = this.phrase

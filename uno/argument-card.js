@@ -6,6 +6,7 @@ argumentCardTemplate.innerHTML = `
     }
 
     #argument-card {
+      --neutral: #777; 
       --red: #f72d5d;
       --blue: #2d60f6;
       --topic-height: 3%;
@@ -35,11 +36,14 @@ argumentCardTemplate.innerHTML = `
       text-align: center;
       margin-top: 0;
       margin-bottom: 0;
-      color: var(--blue);
+      color: var(--neutral);
     }
 
     .idiot #topic-icon {
       color: var(--red);
+    }
+    .sheep #topic-icon {
+      color: var(--blue);
     }
 
     .mirrored #topic-icon {
@@ -54,11 +58,14 @@ argumentCardTemplate.innerHTML = `
       top: 0;
       left: calc(var(--sidebar-width) + 6 * var(--cw));
       right: 0;
-      color: var(--blue);
+      color: var(--neutral);
     }
 
     .idiot #topic-name {
       color: var(--red);
+    }
+    .sheep #topic-name {
+      color: var(--blue);
     }
 
     .mirrored #topic-name {
@@ -112,11 +119,14 @@ argumentCardTemplate.innerHTML = `
       text-align: left;
       margin-top: 0;
       margin-bottom: 0;
-      color: var(--blue);
+      color: var(--neutral);
     }
 
     .idiot ::slotted(h2) {
       color: var(--red);
+    }
+    .sheep ::slotted(h2) {
+      color: var(--blue);
     }
     
     ::slotted(h2)::before {
@@ -126,14 +136,6 @@ argumentCardTemplate.innerHTML = `
     ::slotted(h2)::after {
       content: close-quote;
     }
-
-    ::slotted(.red) {
-      color: #f72d5d;
-    }
-
-    ::slotted(.blue) {
-        color: #2d60f6;
-     }
 
     #side-title {
       font-family: 'HVD Crocodile', Helvetica;
@@ -169,11 +171,14 @@ argumentCardTemplate.innerHTML = `
       text-align: center;
       color: white;
       border-top-right-radius: calc(2 * var(--cavg));
-      background-color: var(--blue);
+      background-color: var(--neutral);
     }
 
     .idiot #card {
       background-color: var(--red);
+    }
+    .sheep #card {
+      background-color: var(--blue);
     }
 
     .mirrored #card {
@@ -222,7 +227,7 @@ class ArgumentCard extends HTMLElement {
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = ['topic', 'topicId', 'card', 'wildcard', 'mirrored']
+  static observedAttributes = ['topic', 'neutral', 'topicId', 'card', 'wildcard', 'mirrored']
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
@@ -248,6 +253,10 @@ class ArgumentCard extends HTMLElement {
 
   get wildcard() {
     return this.hasAttribute('wildcard')
+  }
+
+  get neutral() {
+    return this.hasAttribute('neutral')
   }
 
   get mirrored() {
@@ -284,10 +293,12 @@ class ArgumentCard extends HTMLElement {
   update() {
     const root = this.element('argument-card')
     if (this.isConnected && root) {
-      root.classList.toggle('idiot', this.idiot)
+      root.classList.toggle('idiot', !this.neutral && this.idiot)
+      root.classList.toggle('sheep', !this.neutral && !this.idiot)
       root.classList.toggle('mirrored', this.mirrored)
       this.element('wildcard').classList.toggle('hidden', !this.wildcard)
       this.element('card').innerHTML = this.card
+      this.element('card').classList.toggle('hidden', this.neutral)
       this.element('topic-icon').innerHTML = this.topicId ? this.topicId.substring(1) : '?'
       this.element('topic-name').innerHTML = this.topic
       this.element('side-title').innerHTML = `${this.wildcard?'✱ ':''}${this.title}`

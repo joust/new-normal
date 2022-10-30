@@ -1,13 +1,15 @@
-const labelCardTemplate = document.createElement('template')
-labelCardTemplate.innerHTML = `
+const FallacyCardTemplate = document.createElement('template')
+FallacyCardTemplate.innerHTML = `
   <style>
      :host {
       display: inline-block;
     }
 
-    #label-card {
+    #fallacy-card {
       --red: #f72d5d;
       --blue: #2d60f6;
+      --lred: #f93b6b;
+      --lblue: #3b69f8;
       --sidebar-width: 12%;
       --watermark-size: 50%;
       position: relative;
@@ -15,8 +17,12 @@ labelCardTemplate.innerHTML = `
       height: 100%;
       border: calc(0.1 * var(--cavg)) solid #aaa;
       border-radius: calc(2 * var(--cavg));
-      background: linear-gradient(30deg, black 0%, grey 100%);
+      background: linear-gradient(30deg, var(--lblue) 0%, var(--blue) 100%);
       user-select: none;
+    }
+
+    #fallacy-card.idiot {
+      background: linear-gradient(30deg, var(--lred) 0%, var(--red) 100%);
     }
 
     #watermark {
@@ -35,7 +41,6 @@ labelCardTemplate.innerHTML = `
       right: var(--sidebar-width);
     }
 
-    
     #new, #normal {
       font-family: 'HVD Crocodile', Helvetica;
       font-weight: 600;
@@ -63,9 +68,13 @@ labelCardTemplate.innerHTML = `
       right: calc(2% + var(--sidebar-width));
     }
 
-    #label {
+    #phrase {
       position: absolute;
-      color: var(--blue);
+      font-family: 'HVD Crocodile', Helvetica;
+      font-size: calc(7 * var(--cavg));
+      font-weight: 600;
+      font-stretch: condensed;
+      color: white;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -76,31 +85,20 @@ labelCardTemplate.innerHTML = `
       hyphens: auto;
     }
 
-    .mirrored #label {
+    .mirrored #phrase {
       left: 0;
       right: var(--sidebar-width);
+    }
+
+    #phrase .phrase {
+      padding-left: calc(7 * var(--cavg));
+      padding-right: calc(7 * var(--cavg));
     }
 
     #fallacy {
       font-family: 'Open Sans', Helvetica;
       font-size: calc(4 * var(--cavg));
       font-weight: 300;
-      color: white;
-    }
-
-    #fallacy::after {
-      content: 'Ad Hominem';
-    }
-
-    #label-name {
-      font-family: 'HVD Crocodile', Helvetica;
-      font-size: calc(7 * var(--cavg));
-      font-weight: 600;
-      font-stretch: condensed;
-      max-width: 100%;
-      display: inline-block;
-      padding-left: calc(7 * var(--cavg));
-      padding-right: calc(7 * var(--cavg));
     }
 
     .quoted::before {
@@ -118,15 +116,16 @@ labelCardTemplate.innerHTML = `
       top: 0;
       width: 12%;
       height: 4%;
+      font-family: 'Open Sans', Helvetica;
       font-size: calc(2.5 * var(--cavg));
       text-align: center;
-      color: white;
+      color: var(--blue);
       border-top-right-radius: calc(2 * var(--cavg));
-      background-color: var(--blue);
+      background-color: lightgrey;
     }
 
     .idiot #card {
-      background-color: var(--red);
+      color: var(--red);
     }
 
     .mirrored #card {
@@ -136,70 +135,73 @@ labelCardTemplate.innerHTML = `
       border-top-right-radius: 0;
     }
 
-    #side-label {
+    #side-phrase {
       position: absolute;
       font-family: 'HVD Crocodile', Helvetica;
       font-size: calc(6 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
-      color: var(--blue);
-      opacity: 0.8;
+      color: white;
+      opacity: 0.4;
       padding-left: 2%;
       top: 100%;
       left: 0;
+      text-overflow: ellipsis;
+      text-align: left;
+      overflow: hidden;
+      white-space: nowrap;
       height: calc(15 * var(--cw));
       width: calc(85 * var(--ch));
-      text-overflow: ellipsis;
       transform: rotate(-90deg);
       transform-origin: top left;
     }
 
-    #label-card.idiot #label, #label-card.idiot #side-label {
-      color: var(--red);
-    }
-
-    #side-label::after {
+    #side-phrase::after {
       content: '!';
     }
 
-    .mirrored #side-label {
+    .mirrored #side-phrase {
       left: calc(100% - var(--sidebar-width));
     }
   </style>
-  <div id="label-card">
+  <div id="fallacy-card">
     <div id="watermark"></div>
     <div id="new">New</div>
-    <div id="label"><span id="fallacy"></span><span class="quoted" id="label-name"></span></div>
-    <div id="side-label"></div>
+    <div id="phrase"><span id="fallacy"></span><span class="quoted phrase"></span></div>
+    <div id="side-phrase"><span class="phrase"></span></div>
     <div id="normal">Normal</div>
     <div id="card"></div>
   </div>
 `
 
-class LabelCard extends HTMLElement {
+class FallacyCard extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = ['idiot', 'mirrored']
+  static observedAttributes = ['mirrored']
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
   get idiot() {
-    return this.hasAttribute('idiot')
+    return this.card && this.card.includes('I')
   }
 
-  get label() {
+  get fallacy() {
+    return this.querySelector('i') ? this.querySelector('i').innerHTML : ''
+  }
+
+  get phrase() {
     return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
-  }
-
-  get mirrored() {
-    return this.hasAttribute('mirrored')
   }
 
   get card() {
     return this.querySelector('a') ? this.querySelector('a').id : ''
+  }
+
+  get mirrored() {
+    return this.hasAttribute('mirrored')
   }
 
   attributeChangedCallback() {
@@ -207,7 +209,7 @@ class LabelCard extends HTMLElement {
   }
 
   connectedCallback() {
-    this.shadowRoot.appendChild(labelCardTemplate.content.cloneNode(true))
+    this.shadowRoot.appendChild(FallacyCardTemplate.content.cloneNode(true))
     this.lang = document.body.lang
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
@@ -222,15 +224,15 @@ class LabelCard extends HTMLElement {
   }
 
   update() {
-    const root = this.element('label-card')
+    const root = this.element('fallacy-card')
     if (this.isConnected && root) {
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
       this.element('card').innerHTML = this.card
-      this.element('side-label').innerHTML = this.label
-      this.element('label-name').innerHTML = this.label
+      this.element('fallacy').innerHTML = this.fallacy 
+      Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = this.phrase)
     }
   }
 }
 
-customElements.define('label-card', LabelCard)
+customElements.define('fallacy-card', FallacyCard)

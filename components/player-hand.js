@@ -50,8 +50,8 @@ class PlayerHand extends HTMLElement {
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
-  playable(card) {
-    return !!this.cards.find(element => element.alt.indexOf(card)>=0 && element.playable)
+  playable(index) {
+    return this.cards[index].playable
   }
 
   // JSON array of id+alternative+playable elements in the format { id: '...', alt: ['...', '...'], playable: ...}
@@ -94,13 +94,14 @@ class PlayerHand extends HTMLElement {
 
   updateCards() {
     const cards = this.cards.map(element => element.card)
-    const alts = this.cards.map(element => element.alt || [])
+    const alts = this.cards.map(element => element.alt || [element.card])
     const hand = this.element('player-hand')
+    console.log(this.cards.map(c => `${c.card}=>${c.playable}`).join(' '))
     let elements = Array.from(hand.querySelectorAll('game-card'))
     for (let index=0; index < Math.max(cards.length, elements.length); index++) {
       if (index < Math.min(cards.length, elements.length)) {
-        elements[index].setAttribute('card', cards[index])
         elements[index].setAttribute('alternatives', alts[index].join(','))
+        elements[index].setAttribute('card', cards[index])
       } else if (index < cards.length) {
         hand.insertAdjacentHTML('beforeEnd', `<game-card card="${cards[index]}" alternatives="${alts[index].join(',')}"></game-card>`);
         elements = Array.from(hand.querySelectorAll('game-card'))
@@ -170,7 +171,8 @@ class PlayerHand extends HTMLElement {
       child.style.gridColumn = `${index+2}/span 8`
       child.style.zIndex = z
       child.toggleAttribute('mirrored', after)
-      child.classList.toggle('playable', this.playable(child.getAttribute('card')))
+      const idx = this.ownChildren().indexOf(child)
+      child.classList.toggle('playable', this.playable(idx))
       if (child.hasAttribute('top')) after = true
       if (after) z--; else z++
     })
@@ -182,15 +184,13 @@ class PlayerHand extends HTMLElement {
   }
 
   down(event) {
-    if (event.target && event.target.id!=='player-hand') {
-      this.show(event.target)
-      this.dispatchEvent(new CustomEvent('play', {
-        detail: {
-          id: event.target.id, 
-          index: this.ownChildren().indexOf(event.target),
-          card: event.target.getAttribute('card')
-        }
-      }))
+    const target = event.target
+    if (target && target.id!=='player-hand') {
+      this.show(target)
+      const index = this.ownChildren().indexOf(event.target)
+      const card = target.getAttribute('alt') || target.getAttribute('card')
+      if (card && this.playable(index)) 
+        this.dispatchEvent(new CustomEvent('play', { detail: { index, card } }))
     }
   }
 

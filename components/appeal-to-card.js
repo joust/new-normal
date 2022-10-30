@@ -126,6 +126,7 @@ appealToCardTemplate.innerHTML = `
       top: 0;
       width: 12%;
       height: 4%;
+      font-family: 'Open Sans', Helvetica;
       font-size: calc(2.5 * var(--cavg));
       text-align: center;
       color: white;

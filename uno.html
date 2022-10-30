@@ -6,22 +6,22 @@
   <link rel="stylesheet" href="opensans.css">
   <link rel="stylesheet" href="crocodile.css">
   <link rel="stylesheet" href="uno.css">
-  <link rel="stylesheet" href="uno/cards.css">
+  <link rel="stylesheet" href="components/cards.css">
   <script src="dialog.js" type="text/javascript"></script>
-  <script src="uno/player-hand.js" type="text/javascript"></script>
-  <script src="uno/opponent-hand.js" type="text/javascript"></script>
-  <script src="uno/argument-card.js" type="text/javascript"></script>
-  <script src="uno/no-card.js" type="text/javascript"></script>
-  <script src="uno/card-pile.js" type="text/javascript"></script>
-  <script src="uno/game-card.js" type="text/javascript"></script>
-  <script src="uno/card-back.js" type="text/javascript"></script>
-  <script src="uno/label-card.js" type="text/javascript"></script>
-  <script src="uno/fallacy-card.js" type="text/javascript"></script>
-  <script src="uno/strawman-card.js" type="text/javascript"></script>
-  <script src="uno/appeal-to-card.js" type="text/javascript"></script>
-  <script src="uno/research-card.js" type="text/javascript"></script>
-  <script src="uno/discuss-card.js" type="text/javascript"></script>
-  <script src="uno/pause-card.js" type="text/javascript"></script>
+  <script src="components/player-hand.js" type="text/javascript"></script>
+  <script src="components/opponent-hand.js" type="text/javascript"></script>
+  <script src="components/argument-card.js" type="text/javascript"></script>
+  <script src="components/no-card.js" type="text/javascript"></script>
+  <script src="components/card-pile.js" type="text/javascript"></script>
+  <script src="components/game-card.js" type="text/javascript"></script>
+  <script src="components/card-back.js" type="text/javascript"></script>
+  <script src="components/label-card.js" type="text/javascript"></script>
+  <script src="components/fallacy-card.js" type="text/javascript"></script>
+  <script src="components/strawman-card.js" type="text/javascript"></script>
+  <script src="components/appeal-to-card.js" type="text/javascript"></script>
+  <script src="components/research-card.js" type="text/javascript"></script>
+  <script src="components/discuss-card.js" type="text/javascript"></script>
+  <script src="components/pause-card.js" type="text/javascript"></script>
   <script src="common.js" type="text/javascript"></script>
   <script src="fastclick.js" type="text/javascript"></script>
 </head>
@@ -71,11 +71,11 @@
       element('players').insertAdjacentHTML('beforeEnd', `<opponent-hand cards="8" nr="${nr}" ${name ? `name="${name}"` : ''}></opponent-hand>`)
     }
     
-    function cardsString(hand, decks, top, current, idiot) {
+    function cardsString(hand, decks, content, top, current, idiot) {
       // JSON array of id+alternative elements in format { id: '...', alt: ['...', '...'], playable }
       return JSON.stringify(hand.map(card => (
         { card,
-          alt: getAlternatives(card, decks),
+          alt: getAlternatives(card, decks, content),
           playable: current && canBePlayedOn(top, card, idiot)
         })))
     }
@@ -91,7 +91,7 @@
       const deck = idiot ? state.G.decks.idiot : state.G.decks.sheep
       const current = client.playerID===state.ctx.currentPlayer
       element('draw-pile').setAttribute('top', idiot ? 'I' : 'S')
-      element('hand').setAttribute('cards', cardsString(hand, state.G.decks, top, current, idiot))
+      element('hand').setAttribute('cards', cardsString(hand, state.G.decks, client.game.content, top, current, idiot))
       element('hand').setAttribute('nr', client.playerID)
       element('hand').setAttribute('name', state.G.names[client.playerID])
       element('hand').classList.toggle('current', state.ctx.currentPlayer===client.playerID)

@@ -45,7 +45,7 @@ gameCardTemplate.innerHTML = `
   <div id="next">▼</div>
 `
 
-const ALTERNATIVES_STEP = 20
+const ALTERNATIVES_STEP = 200
 
 class GameCard extends HTMLElement {
   constructor() {
@@ -54,7 +54,7 @@ class GameCard extends HTMLElement {
     this.altIndex = 0
   }
 
-  static observedAttributes = ['card', 'alternatives', 'mirrored']
+  static observedAttributes = ['card', 'alt', 'alternatives', 'mirrored']
   static contentRootSelector = '#content'
 
   element(id) { return this.shadowRoot.getElementById(id) }
@@ -63,8 +63,14 @@ class GameCard extends HTMLElement {
     return this.getAttribute('card')
   }
 
+  get alt() {
+    return this.getAttribute('alt')
+  }
+
   get idOnly() {
-    return (this.hasTopic ? this.card.split(':')[1] : this.card).replace('*', '')
+    const card = this.alt || this.card
+    if (!card) debugger
+    return (this.hasTopic ? card.split(':')[1] : card).replace('*', '')
   }
 
   get isWildcard() {
@@ -72,7 +78,8 @@ class GameCard extends HTMLElement {
   }
 
   get hasTopic() {
-    return this.card.includes(':')
+    const card = this.alt || this.card
+    return card.includes(':')
   }
 
   get idiot() {
@@ -80,7 +87,8 @@ class GameCard extends HTMLElement {
   }
 
   get topic() {
-    return this.hasTopic ? this.card.split(':')[0] : ''
+    const card  = this.alt || this.card
+    return this.hasTopic ? card.split(':')[0] : ''
   }
 
   get alternatives() {
@@ -93,7 +101,7 @@ class GameCard extends HTMLElement {
 
   attributeChangedCallback(name) {
     if (this.isConnected) {
-      if (name==='card') this.updateCard()
+      if (name==='card' || name==='alt') this.updateCard()
       if (name==='mirrored') this.updateMirrored()
       if (name==='alternatives') this.updateAlternatives()
     }
@@ -110,19 +118,17 @@ class GameCard extends HTMLElement {
 
     this.element('previous').onlick = event => this.updateAltIndex(-1) // TODO not working
     this.element('next').onlick = event => this.updateAltIndex(1) // TODO not working
-    this.onwheel = event => {
-      if (Math.abs(event.deltaY) >= ALTERNATIVES_STEP) {
-        this.updateAltIndex(Math.sign(event.deltaY))
-      }
-    }
+    this.onwheel = event => this.updateAltIndex(event.deltaY)
   }
 
-  updateAltIndex(diff) {
-    this.altIndex += diff
+  updateAltIndex(delta) {
+    this.altIndex += delta / ALTERNATIVES_STEP
     if (this.altIndex < 0) this.altIndex += this.alternatives.length
     if (this.altIndex >= this.alternatives.length) this.altIndex -= this.alternatives.length
+    const index = Math.floor(this.altIndex)
+    console.log(this.index, this.alternatives[index])
 
-    this.setAttribute('card', this.alternatives[this.altIndex]+(this.isWildcard?'*':''))
+    this.setAttribute('alt', this.alternatives[index]+(this.isWildcard?'*':''))
   }
 
   resize() {
@@ -148,7 +154,9 @@ class GameCard extends HTMLElement {
   }
 
   updateAlternatives() {
-    this.altIndex = this.alternatives.indexOf(this.card.replace('*', ''))
+    const card = this.alt || this.card
+    this.altIndex = this.alternatives.indexOf(card.replace('*', ''))
+    if (this.altIndex<0) { this.setAttribute('alt', this.alternatives[0]); this.altIndex = 0 }
     const previous = this.element('previous')
     const next = this.element('next')
     if (previous) previous.classList.toggle('hidden', this.alternatives.length===1)
@@ -160,7 +168,7 @@ class GameCard extends HTMLElement {
     const type = this.idiot ? 'idiot' : ''
     const mirrored = this.mirrored ? 'mirrored' : ''
     const wildcard = this.isWildcard ? 'wildcard' : ''
-    switch (this.card[0]) {
+    switch ((this.alt || this.card)[0]) {
       case 'L': return `<label-card id="card" ${type} ${mirrored} card="${this.card}">${data.outerHTML}</label-card>`
       case 'A': return `<appeal-to-card id="card" ${type} ${mirrored} type="${data.type}" card="${this.card}">${data.outerHTML}</appeal-to-card>`
       case 'F': return `<fallacy-card id="card" ${type} ${mirrored} card="${this.card}">${data.outerHTML}</fallacy-card>`

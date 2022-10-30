@@ -7,20 +7,20 @@
     <link rel="stylesheet" href="opensans.css">
     <link rel="stylesheet" href="crocodile.css">
     <title>New Normal - Corona-Uno</title>
-    <script src="uno/player-hand.js" type="text/javascript"></script>
-    <script src="uno/opponent-hand.js" type="text/javascript"></script>
-    <script src="uno/no-card.js" type="text/javascript"></script>
-    <script src="uno/card-pile.js" type="text/javascript"></script>
-    <script src="uno/argument-card.js" type="text/javascript"></script>
-    <script src="uno/game-card.js" type="text/javascript"></script>
-    <script src="uno/card-back.js" type="text/javascript"></script>
-    <script src="uno/label-card.js" type="text/javascript"></script>
-    <script src="uno/fallacy-card.js" type="text/javascript"></script>
-    <script src="uno/strawman-card.js" type="text/javascript"></script>
-    <script src="uno/appeal-to-card.js" type="text/javascript"></script>
-    <script src="uno/research-card.js" type="text/javascript"></script>
-    <script src="uno/discuss-card.js" type="text/javascript"></script>
-    <script src="uno/pause-card.js" type="text/javascript"></script>
+    <script src="components/player-hand.js" type="text/javascript"></script>
+    <script src="components/opponent-hand.js" type="text/javascript"></script>
+    <script src="components/no-card.js" type="text/javascript"></script>
+    <script src="components/card-pile.js" type="text/javascript"></script>
+    <script src="components/argument-card.js" type="text/javascript"></script>
+    <script src="components/game-card.js" type="text/javascript"></script>
+    <script src="components/card-back.js" type="text/javascript"></script>
+    <script src="components/label-card.js" type="text/javascript"></script>
+    <script src="components/fallacy-card.js" type="text/javascript"></script>
+    <script src="components/strawman-card.js" type="text/javascript"></script>
+    <script src="components/appeal-to-card.js" type="text/javascript"></script>
+    <script src="components/research-card.js" type="text/javascript"></script>
+    <script src="components/discuss-card.js" type="text/javascript"></script>
+    <script src="components/pause-card.js" type="text/javascript"></script>
     <script src="common.js" type="text/javascript"></script>
     <script src="fastclick.js" type="text/javascript"></script>
     <style>
@@ -149,8 +149,8 @@
       async function addHand() {
         const content = await loadContent(document.body.lang)
         const cards = JSON.stringify([
-          {card: 'T1:S1', alt: idsFrom(content.sheep), playable: true},
-          {card: 'T2:I2', alt: idsFrom(content.idiot), playable: true},
+          {card: 'S1', alt: idsFrom(content.sheep), playable: true},
+          {card: 'I2', alt: idsFrom(content.idiot), playable: true},
           {card: 'AS1', alt: idsFrom(content.appealTos, 'AS'), playable: true},
           {card: 'AI1', alt: idsFrom(content.appealTos, 'AI'), playable: true},
           {card: 'FS1', alt: idsFrom(content.fallacies, 'FS'), playable: true},
@@ -159,12 +159,12 @@
           {card: 'LI1', alt: idsFrom(content.labels, 'LI'), playable: true},
           {card: 'T1:DS', alt: idsFrom(content.topics).map(id => `${id}:DS`), playable: true},
           {card: 'T2:DI', alt: idsFrom(content.topics).map(id => `${id}:DI`), playable: true},
-          {card: 'NI', playable: true},
-          {card: 'NS', playable: true},
-          {card: 'RS', playable: true},
-          {card: 'RI', playable: true},
-          {card: 'PS', playable: true},
-          {card: 'PI', playable: true}
+          {card: 'NI', alt: ['NI'], playable: true},
+          {card: 'NS', alt: ['NS'], playable: true},
+          {card: 'RS', alt: ['RS'], playable: true},
+          {card: 'RI', alt: ['RI'], playable: true},
+          {card: 'PS', alt: ['PS'], playable: true},
+          {card: 'PI', alt: ['PI'], playable: true}
         ])
         const existing = document.querySelector('#hand')
         if (existing) existing.parentElement.removeChild(existing)

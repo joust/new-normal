@@ -3,7 +3,7 @@ const { Local } = require('boardgame.io/multiplayer')
 const { P2P } = require('@boardgame.io/p2p')
 const INITIAL = 8
 const PERCENTAGE_APPEAL_TOS = 15 // e.g. 600 cards => 90 appeal to cards
-const PERCENTAGE_DISCUSSES = 8
+const PERCENTAGE_DISCUSSES = 5
 const PERCENTAGE_STRAWMANS = 20
 const PERCENTAGE_RESEARCHS = 20
 const PERCENTAGE_LABELS = 20
@@ -186,7 +186,7 @@ async function Uno(lang, host) {
     const fallacies = elementsFrom(Math.round(PERCENTAGE_FALLACIES*nargs/100), cards.fallacies)
     const appealTos = elementsFrom(Math.round(PERCENTAGE_APPEAL_TOS*nargs/100), cards.appealTos)
     const pauses = players > 2 ? new Array(Math.round(PERCENTAGE_PAUSES*nargs/100)).fill(`P${type}`) : []
-    const discusses = elementsFrom(Math.round(PERCENTAGE_DISCUSSES*nargs/100), topics).map(id => `${id}:D${type}`)
+    const discusses = elementsFrom(Math.round(PERCENTAGE_DISCUSSES*nargs/100), cards.discusses)
     return [...cards.args, ...labels, ...fallacies, ...appealTos, ...strawmans, ...researchs, ...pauses, ...discusses]
   }
 
@@ -222,7 +222,8 @@ async function Uno(lang, host) {
       fetchContentIds(lang, 'fallacies', idiot ? 'FI' : 'FS'),
       fetchContentIds(lang, 'appeal-tos', idiot ? 'AI' : 'AS')
       ])
-    return {args: args.flatMap(topicMapped), labels, fallacies, appealTos}
+    const discusses = topics.map(topic => `${topic}:${idiot ? 'DI' : 'DS'}`)
+    return {args: args.flatMap(topicMapped), labels, fallacies, appealTos, discusses}
   }
   
   /**
@@ -318,6 +319,7 @@ async function Uno(lang, host) {
   
   return {
     name: 'newnormaluno',
+    content,
     setup: (ctx) => {
       const decks = generateDecks(ctx.numPlayers)
       const hands = new Array(ctx.numPlayers).fill([]).map((p,i) => drawHand(decks, INITIAL, isIdiot(i)))
@@ -326,15 +328,14 @@ async function Uno(lang, host) {
       return { lang, host, decks, pile, hands, names }
     },
     moves: {
-      playCard: (G, ctx, index, alt) => { // alt = alternative card
+      playCard: (G, ctx, index, alt) => { // alt = alternative card to put on the pile
         const idiot = isIdiot(ctx.currentPlayer)
         const deck = idiot ? G.decks.idiot : G.decks.sheep
         const hand = G.hands[ctx.currentPlayer]
         if (index === undefined || index >= hand.length) return INVALID_MOVE
 
-        const card =
-          (alt && isArgument(alt) && topicOf(alt)===topicOf(hand[index]) && deck.indexOf(alt)>=0) ?
-           alt : hand[index]
+        const card = hand[index]
+        alt = alt ? argumentOnly(alt) : argumentOnly(card) // if not given, use the card
         
         const top = G.pile.length ? G.pile[G.pile.length-1] : undefined
         if (!canBePlayedOn(top, card, idiot)) return INVALID_MOVE
@@ -343,12 +344,12 @@ async function Uno(lang, host) {
           case 'F': // Fallacy
           case 'L': // Label
             hand.splice(index, 1)
-            G.pile.push(card) // allows to play any argument card afterwards
+            G.pile.push(alt) // allows to play any argument card afterwards
             break
           case 'D': // Discuss
             hand.splice(index, 1)
             resolveDiscuss(G.hands, G.decks, card)
-            G.pile.push(card)
+            G.pile.push(alt)
             break
           case 'R': // Research
             resolveResearch(hand, G.decks, top, idiot)
@@ -357,25 +358,25 @@ async function Uno(lang, host) {
           case 'N': // strawmaN
             resolveStrawman(hand, G.decks, idiot)
             hand.splice(index, 1)
-            G.pile.push(card)
+            G.pile.push(alt)
             break
           case 'P': // Pause
             hand.splice(index, 1)
-            G.pile.push(card) // allows to play any argument card afterwards
+            G.pile.push(alt) // allows to play any argument card afterwards
             ctx.events.endTurn({ next: ctx.playOrder[(ctx.playOrderPos + 2) % ctx.numPlayers]})
             break;
           case 'A': // Appeal to
             removeFrom(deck, card) // appeal to cards are only removed from their deck when played
             hand.splice(index, 1)
-            G.pile.push(card)
+            G.pile.push(alt)
             break
           default: // argument
-            removeFrom(deck, card) // argument cards are only removed from their deck when played
+            removeFrom(deck, argumentOnly(card)) // argument cards are only removed from their deck when played
             if (isWildcard(card))
               resolveDiscuss(G.hands, G.decks, card)
             else  
               hand.splice(index, 1)
-            G.pile.push(argumentOnly(card))
+            G.pile.push(alt)
         }
       },
       drawCard: (G, ctx) => {
@@ -430,13 +431,13 @@ async function Uno(lang, host) {
 }
 
 function canBePlayedOn(top, card, idiot) {
-  if (top && !top.length) top = undefined // empty string or array
+  if (top && !top.length) top = false // empty string or array
   switch(cardType(card)) {
     case 'D': // Discuss
     case 'F': // Fallacy
     case 'L': // Label
     case 'P': // Pause
-      return true
+      return !top || !isStrawman(top)
     case 'R': // Research
       return top && (isArgument(top) || isAppealTo(top))
     case 'N': // strawmaN
@@ -447,7 +448,7 @@ function canBePlayedOn(top, card, idiot) {
         (!top || isArgument(top) || isAppealTo(top) || isFallacy(top) || isLabel(top))
     case 'I': // Idiot argument
     case 'S': // Sheep argument
-      return top && isStrawman(top) && (isArgument(card) || isAppealTo(top)) && isOfType(card, !idiot)
+      return top && isStrawman(top) && (isArgument(card) || isAppealTo(card)) && isOfType(card, !idiot)
         || isOfType(card, idiot) && (!top 
           || isAppealTo(top) 
           || ((isArgument(top) || isDiscuss(top)) && topicOf(card)===topicOf(top))
@@ -462,13 +463,15 @@ function allPossibleMoves(hand, idiot, top) {
   return [ { move: 'drawCard', args: [] }, ...hand.map(toPlayMove).filter(canBePlayed) ]
 }
 
-function getAlternatives(id, decks) {
-  const deck = decks[isOfType(id, true) ? 'idiot' : 'sheep']
-  if (isArgument(id)) return deck.filter(card => id!==card && isArgument(card) && hasTopic(card, topicOf(id)))
-  if (isAppealTo(id)) return deck.filter(card => id!==card && isAppealTo(card))
-  if (isFallacy(id)) return deck.filter(card => id!==card && isFallacy(card))
-  if (isLabel(id)) return deck.filter(card => id!==card && isLabel(card))
-  if (isDiscuss(id)) return deck.filter(card => id!==card && isDiscuss(card))
+function getAlternatives(id, decks, content) {
+  const type = isOfType(id, true) ? 'idiot' : 'sheep'
+  const deck = decks[type]
+  const cards = content[type]
+  if (isArgument(id)) return deck.filter(card => isArgument(card) && hasTopic(card, topicOf(id))) // TODO sort by id
+  if (isAppealTo(id)) return cards.appealTos
+  if (isFallacy(id)) return cards.fallacies
+  if (isLabel(id)) return cards.labels
+  if (isDiscuss(id)) return cards.discusses
   return [id]
 }
     

@@ -117,7 +117,7 @@ appealToCardTemplate.innerHTML = `
     }
 
     .quoted::after {
-      content: '!' close-quote;
+      content: close-quote;
     }
 
     #card {
@@ -168,10 +168,6 @@ appealToCardTemplate.innerHTML = `
 
     .idiot #side-to {
       color: var(--red);
-    }
-
-    #side-to::after {
-      content: '!';
     }
 
     .mirrored #side-to {

@@ -106,7 +106,7 @@ FallacyCardTemplate.innerHTML = `
     }
 
     .quoted::after {
-      content: '!' close-quote;
+      content: close-quote;
     }
 
 
@@ -154,10 +154,6 @@ FallacyCardTemplate.innerHTML = `
       width: calc(85 * var(--ch));
       transform: rotate(-90deg);
       transform-origin: top left;
-    }
-
-    #side-phrase::after {
-      content: '!';
     }
 
     .mirrored #side-phrase {

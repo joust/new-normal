@@ -7,7 +7,6 @@ Uno
 * implement game-table component
 * implement bot players in multiplayer game (which take the free seats)
 * integrate into main app
-* implement tests for wildcard-arguments
 * add example cards to gameplay text
 * implement flash up messages without buttons like "Everythings ready, lets go!", "Finding your connection", "Choose your seat!"
 

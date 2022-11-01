@@ -96,7 +96,6 @@ class PlayerHand extends HTMLElement {
     const cards = this.cards.map(element => element.card)
     const alts = this.cards.map(element => element.alt || [element.card])
     const hand = this.element('player-hand')
-    console.log(this.cards.map(c => `${c.card}=>${c.playable}`).join(' '))
     let elements = Array.from(hand.querySelectorAll('game-card'))
     for (let index=0; index < Math.max(cards.length, elements.length); index++) {
       if (index < Math.min(cards.length, elements.length)) {

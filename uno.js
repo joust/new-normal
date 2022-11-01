@@ -9,6 +9,7 @@ const PERCENTAGE_RESEARCHS = 20
 const PERCENTAGE_LABELS = 20
 const PERCENTAGE_FALLACIES = 20
 const PERCENTAGE_PAUSES = 10
+const PERCENTAGE_SUPPRESSES = 10
 const INVALID_MOVE = 'INVALID_MOVE'
 
 async function startLocal(lang, playerID) {
@@ -57,10 +58,11 @@ async function Uno(lang, host) {
   const content = await init(lang)
  
   /**
-   * adds wildcard argument cards to every players hand, removing the 
-   * @param {Array}} hand The players hand.
-   * @param {{idiot: Array, sheep: Array}} decks The decks.
-   * @param {string} top top card on the pile
+   * adds wildcard argument cards for topic of card to every players hand, 
+   * removing possible existing arguments of given topic
+   * @param {Array<Array>} hands All hands.
+   * @param {{idiot: Array, sheep: Array}} Both decks.
+   * @param {string} card card played
    * @param {boolean} idiot if an idiot
    */ 
   function resolveDiscuss(hands, decks, card) {
@@ -79,7 +81,22 @@ async function Uno(lang, host) {
       // else do nothing for this player
     })
   }
-  
+
+    /**
+   * removes all argument cards matching the topic of top from all hands and both decks
+   * @param {Array<Array>} hands All hands.
+   * @param {{idiot: Array, sheep: Array}} Both decks.
+   * @param {string} top top card on the pile
+   */ 
+  function resolveSuppress(hands, decks, top) {
+    const topic = topicOf(top)
+    // remove all cards matching topic
+    const clean = handOrDeck => handOrDeck.filter(c => isArgument(c) && hasTopic(c, topic)).forEach(c => handOrDeck.splice(handOrDeck.indexOf(c), 1))
+    hands.forEach(clean)
+    clean(decks.idiot)
+    clean(decks.sheep)
+  }
+
   /**
    * look up cards matching the current argument on the pile and add to hand
    * gives you up to three argument cards
@@ -108,7 +125,7 @@ async function Uno(lang, host) {
   /**
    * look up other sides argument cards matching the arguments in hand - and add to hand
    * gives you one argument card of the other side that you can counter afterwards
-   * @param {Array}} hand The players hand.
+   * @param {Array} hand The players hand.
    * @param {{idiot: Array, sheep: Array}} decks The decks.
    * @param {boolean} idiot current player type.
    */ 
@@ -182,12 +199,13 @@ async function Uno(lang, host) {
     const nargs = cards.args.length
     const strawmans = new Array(Math.round(PERCENTAGE_STRAWMANS*nargs/100)).fill(`N${type}`)
     const researchs = new Array(Math.round(PERCENTAGE_RESEARCHS*nargs/100)).fill(`R${type}`)
+    const suppresses = new Array(Math.round(PERCENTAGE_SUPPRESSES*nargs/100)).fill(`X${type}`)
     const labels = elementsFrom(Math.round(PERCENTAGE_LABELS*nargs/100), cards.labels)
     const fallacies = elementsFrom(Math.round(PERCENTAGE_FALLACIES*nargs/100), cards.fallacies)
     const appealTos = elementsFrom(Math.round(PERCENTAGE_APPEAL_TOS*nargs/100), cards.appealTos)
     const pauses = players > 2 ? new Array(Math.round(PERCENTAGE_PAUSES*nargs/100)).fill(`P${type}`) : []
     const discusses = elementsFrom(Math.round(PERCENTAGE_DISCUSSES*nargs/100), cards.discusses)
-    return [...cards.args, ...labels, ...fallacies, ...appealTos, ...strawmans, ...researchs, ...pauses, ...discusses]
+    return [...cards.args, ...labels, ...fallacies, ...appealTos, ...strawmans, ...researchs, ...suppresses, ...pauses, ...discusses]
   }
 
   /**
@@ -348,7 +366,7 @@ async function Uno(lang, host) {
             break
           case 'D': // Discuss
             hand.splice(index, 1)
-            resolveDiscuss(G.hands, G.decks, card)
+            resolveDiscuss(G.hands, G.decks, alt)
             G.pile.push(alt)
             break
           case 'R': // Research
@@ -357,6 +375,11 @@ async function Uno(lang, host) {
             break
           case 'N': // strawmaN
             resolveStrawman(hand, G.decks, idiot)
+            hand.splice(index, 1)
+            G.pile.push(alt)
+            break
+          case 'X': // supress
+            resolveSuppress(G.hands, G.decks, top)
             hand.splice(index, 1)
             G.pile.push(alt)
             break
@@ -441,11 +464,12 @@ function canBePlayedOn(top, card, idiot) {
     case 'R': // Research
       return top && (isArgument(top) || isAppealTo(top))
     case 'N': // strawmaN
-      return top && isArgument(top)
+    case 'X': // suppress
+      return top && (isArgument(top) || isDiscuss(top))
     case 'A': // Appeal to
       return isOfType(card, !idiot) && isStrawman(top) 
       || isOfType(card, idiot) && 
-        (!top || isArgument(top) || isAppealTo(top) || isFallacy(top) || isLabel(top))
+        (!top || isArgument(top) || isAppealTo(top) || isFallacy(top) || isLabel(top) || isSuppress(top))
     case 'I': // Idiot argument
     case 'S': // Sheep argument
       return top && isStrawman(top) && (isArgument(card) || isAppealTo(card)) && isOfType(card, !idiot)
@@ -453,7 +477,8 @@ function canBePlayedOn(top, card, idiot) {
           || isAppealTo(top) 
           || ((isArgument(top) || isDiscuss(top)) && topicOf(card)===topicOf(top))
           || isFallacy(top) 
-          || isLabel(top))
+          || isLabel(top)
+          || isSuppress(top))
   }
 }
 
@@ -491,6 +516,7 @@ function isStrawman(id) { return id.startsWith('N') }
 function isResearch(id) { return id.startsWith('R') }
 function isDiscuss(id) { return id.includes('D') }
 function isPause(id) { return id.startsWith('P') }
+function isSuppress(id) { return id.startsWith('X') }
 
 /** check if type of card matches input */
 function isOfType(id, idiot) {

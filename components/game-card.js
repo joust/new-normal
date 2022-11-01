@@ -126,7 +126,6 @@ class GameCard extends HTMLElement {
     if (this.altIndex < 0) this.altIndex += this.alternatives.length
     if (this.altIndex >= this.alternatives.length) this.altIndex -= this.alternatives.length
     const index = Math.floor(this.altIndex)
-    console.log(this.index, this.alternatives[index])
 
     this.setAttribute('alt', this.alternatives[index]+(this.isWildcard?'*':''))
   }
@@ -175,6 +174,7 @@ class GameCard extends HTMLElement {
       case 'N': return `<strawman-card id="card" ${type} ${mirrored}></strawman-card>`
       case 'R': return `<research-card id="card" ${type} ${mirrored}></research-card>`
       case 'P': return `<pause-card id="card" ${type} ${mirrored}></pause-card>`
+      case 'X': return `<suppress-card id="card" ${type} ${mirrored}></suppress-card>`
       default: // argument id and discuss id will contain the topic too
         const topicData = this.topic && document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} a[id="${this.topic}"]`)
         const topic = topicData ? topicData.firstElementChild.innerHTML : ''

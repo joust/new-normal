@@ -15,26 +15,20 @@ discussCardTemplate.innerHTML = `
       height: 100%;
       border: calc(0.1 * var(--cavg)) solid #aaa;
       border-radius: calc(2 * var(--cavg));
-    background: linear-gradient(
-        30deg,
+    background: radial-gradient(
+        circle,
         var(--blue) 0%,
-        var(--red) 20%,
         var(--blue) 40%,
-        var(--red) 60%,
-        var(--blue) 80%,
         var(--red) 100%
       );
       user-select: none;
     }
 
     #discuss-card.idiot {
-    background: linear-gradient(
-        30deg,
+    background: radial-gradient(
+        circle,
         var(--red) 0%,
-        var(--blue) 20%,
         var(--red) 40%,
-        var(--blue) 60%,
-        var(--red) 80%,
         var(--blue) 100%
       );
     }

@@ -93,6 +93,7 @@ FallacyCardTemplate.innerHTML = `
     #phrase .phrase {
       padding-left: calc(7 * var(--cavg));
       padding-right: calc(7 * var(--cavg));
+      text-align: center;
     }
 
     #fallacy {

@@ -160,6 +160,30 @@ async function Uno(lang, host) {
     hand.push(top)
   }
   
+    /**
+   * draw an argument card from the given deck into the given hand
+   * side effect: will modify both the given deck and hand
+   * @param {Array} hand The hand.
+   * @param {Array} deck The deck.
+   */
+  function drawArgument(hand, deck) {
+    const index = deck.findLastIndex(isArgument)
+    const [card] = deck.splice(index, 1)
+    hand.push(card)
+  }
+  
+    /**
+   * draw a non argument card from the given deck into the given hand
+   * side effect: will modify both the given deck and hand
+   * @param {Array} hand The hand.
+   * @param {Array} deck The deck.
+   */
+  function drawNonArgument(hand, deck) {
+    const index = deck.findLastIndex(c => !isArgument(c))
+    const [card] = deck.splice(index, 1)
+    hand.push(card)
+  }
+  
   /**
    * draw an initial hand of size size from a given deck
    * side effect: will modify the given deck
@@ -170,8 +194,9 @@ async function Uno(lang, host) {
    */
   function drawHand(decks, size, idiot) {
     const deck = decks[idiot ? 'idiot' : 'sheep']
+    const half = size/2
     const hand = []
-    while (size--) draw(hand, deck)
+    while (size--) if (size>=half) drawNonArgument(hand, deck); else drawArgument(hand, deck)
     return hand
   }
 

@@ -22,6 +22,8 @@
     <script src="components/discuss-card.js" type="text/javascript"></script>
     <script src="components/pause-card.js" type="text/javascript"></script>
     <script src="components/banish-card.js" type="text/javascript"></script>
+    <script src="components/flip-card.js" type="text/javascript"></script>
+    <script src="components/source-back.js" type="text/javascript"></script>
     <script src="common.js" type="text/javascript"></script>
     <script src="fastclick.js" type="text/javascript"></script>
     <style>
@@ -172,15 +174,19 @@
         const existing = document.querySelector('#hand')
         if (existing) existing.parentElement.removeChild(existing)
         
-        document.querySelector('#uno').insertAdjacentHTML('beforeEnd', '<player-hand nr="0" name="All Cards" id="hand" cards="[]"></player-hand>')
-        document.querySelector('#hand').setAttribute('cards', cards)
+        //document.querySelector('#uno').insertAdjacentHTML('beforeEnd', '<player-hand nr="0" name="All Cards" id="hand" cards="[]"></player-hand>')
+        // document.querySelector('#hand').setAttribute('cards', cards)
+        document.querySelector('#uno').insertAdjacentHTML('beforeEnd', 
+          `<flip-card style="width: 20em; height: 30em;">
+            <argument-card slot="front" style="width: 20em; height: 30em;" card="I1" topicId="T1" topic="Infektion"><h2>Immunsystem?</h2>
+              <p>Ich bin bei denen, die sagen, gegen Viren würde uns unser Immunsystem schützen. Und dass, wenn wir keines hätten, uns der liebe Gott doch gleich mit einer Alltagsmaske zur Welt kommen lassen würde.</p></argument-card>
+            <source-back slot="back" style="width: 20em; height: 30em;"></source-back>
+           </flip-card>`)
       }
     </script>
   </head>
   <body lang="de" onload="flagcheck(); addHand()">
     <div id="uno">
-      <div id="game">
-      </div>
     </div>
     <select id="location" onchange="setLang(event.target.value); addHand()">
       <option title="Deutschland" value="de-de">🇩🇪</option>

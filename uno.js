@@ -2,6 +2,7 @@ const { Client } = require('boardgame.io/client')
 const { Local } = require('boardgame.io/multiplayer')
 const { P2P } = require('@boardgame.io/p2p')
 const INITIAL = 8
+const INITIAL_ARGS = 5
 const PERCENTAGE_APPEAL_TOS = 15 // e.g. 600 cards => 90 appeal to cards
 const PERCENTAGE_DISCUSSES = 5
 const PERCENTAGE_STRAWMANS = 20
@@ -188,15 +189,14 @@ async function Uno(lang, host) {
    * draw an initial hand of size size from a given deck
    * side effect: will modify the given deck
    * @param {{idiot: Array, sheep: Array}} decks The decks.
-   * @param {number} size The size of the hand.
    * @param {boolean} idiot if to use the idiot or sheep deck.
    * @return {Array} the hand
    */
-  function drawHand(decks, size, idiot) {
+  function drawHand(decks, idiot) {
+    let size = INITIAL
     const deck = decks[idiot ? 'idiot' : 'sheep']
-    const half = size/2
     const hand = []
-    while (size--) if (size>=half) drawNonArgument(hand, deck); else drawArgument(hand, deck)
+    while (size--) if (size>=INITIAL_ARGS) drawNonArgument(hand, deck); else drawArgument(hand, deck)
     return hand
   }
 
@@ -365,7 +365,7 @@ async function Uno(lang, host) {
     content,
     setup: (ctx) => {
       const decks = generateDecks(ctx.numPlayers)
-      const hands = new Array(ctx.numPlayers).fill([]).map((p,i) => drawHand(decks, INITIAL, isIdiot(i)))
+      const hands = new Array(ctx.numPlayers).fill([]).map((p,i) => drawHand(decks, isIdiot(i)))
       const names = new Array(ctx.numPlayers).fill(undefined)
       const pile = [] // empty in the beginning
       return { lang, host, decks, pile, hands, names }
@@ -567,5 +567,3 @@ function isWildcard(id) {
 function argumentOnly(id) {
   return id.replace('*', '')
 }
-
-

@@ -1,5 +1,6 @@
 Uno
 
+* implement winning policy and turn order for > 2 players, when single players can run out of cards without the game ending
 * implement touchmove for hand & card shuffle (vertical & horizontal)
 * add description texts to research, discuss, pause, ad-hominem and label cards
 * add random first player (currently the host always makes the first move)
@@ -9,10 +10,11 @@ Uno
 * integrate into main app
 * add example cards to gameplay text
 * implement flash up messages without buttons like "Everythings ready, lets go!", "Finding your connection", "Choose your seat!"
+* add info about how many idiot/sheep arguments remain on the given topic to a discuss (and banish) card
 
 Bingo
 
-* use a player-hand on the bingo backside to display topic arguments
+* use a player-hand on the bingo backside to display topic arguments(?)
 * implement bingo-card component
 * use the same (parallel) content loading as the uno game
 
@@ -24,6 +26,7 @@ Test
 
 General
 
+* Implement card display on URL param e.g. https://new-normal.app#LI4
 * Draft arguments with only headlines (h2) will be displayed with placeholder content lines
 * have arguments files with the same format - remove fixAnchors
 * implement the new intro, remove the old

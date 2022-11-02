@@ -604,3 +604,5 @@ I606 https://www.theepochtimes.com/the-unvaccinated-deserve-reparations_4793174.
 S547 https://www.tagesschau.de/faktenfinder/coronavirus-ansteckung-101.html
 S536 https://www.nature.com/articles/s41467-022-33415-5
 S541 https://www.kreiszeitung.de/deutschland/corona-influenza-viren-epoche-pandemien-h5n1-vogelgrippe-impfen-impfstoff-infektion-coronavirus-cocktail-91867513.html
+I663 https://ich-habe-mitgemacht.de
+S545 https://www.welt.de/wissenschaft/article234091530/Christian-Drosten-schreibt-Impfquote-in-Daenemark-hoeherem-Bildungsgrad-zu.html

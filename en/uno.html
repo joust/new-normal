@@ -1,3 +1,20 @@
+<style>
+  .icard {
+    width: 10em;
+    height: 15em;
+    float: left;
+    margin-right: 1em;
+  }
+  
+  h2, h3 {
+    padding-top: 1em;
+    clear: both;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  </style>
 <h1>Gameplay</h1>
 <p>
 The <b>New Normal Uno</b> is a variant of the turn-based Uno card game, in which a discussion about the Corona topic is simulated. 2-10 people can participate, and both sides - idiots and sheep - are always equally represented.
@@ -15,42 +32,65 @@ The participants of the discourse argue one after the other by playing cards. A 
 
 <h3>Argument card</h3>
 <p>
+   <argument-card class="icard hidden" card="S1" topicId="T1" topic="Infektion"><h2></h2></argument-card>
+ <argument-card class="icard" card="S21" topicId="T1" topic="Infektion"><h2>Immunity does not last</h2>
+<p>I am with those who say that antibodies against the Corona virus could no longer be detected in patients after a short time! And that one must therefore assume that a herd immunity will not occur naturally.</p></argument-card>
+ <argument-card class="icard" card="I1" topicId="T1" topic="Infektion"><h2>Immune system?</h2>
+<p>I am with those who say that our immune system protects us against viruses. And that if we didn't have one, God would have made us come into the world with an everyday mask.</p></argument-card>
 An argument card represents one of many arguments from the discourse. It always belongs to a topic and to respond to it, you need a card with the same topic. Argument cards idR have a fold-out back that lists sources that support the argument. These can be referred to if interested. As an alternative to an argument card, an Appeal-to card can always be played.
 </p>
 <h3>Appeal-to card</h3>
 <p>
+ <appeal-to-card class="icard hidden" type="authority" card="AI1"><h2></h2></appeal-to-card>
+ <appeal-to-card class="icard" idiot type="authority" card="AI1"><h2>Bhakdi</h2></appeal-to-card>
+ <appeal-to-card class="icard" type="authority" card="AS1"><h2>Fauci</h2></appeal-to-card>
 The Appeal-to card represents an authority or celebrity that stands for the respective side. This can be people or institutions. It can substitute for an argument. The other side can respond to it with any argument card, i.e. change the subject if necessary, or also respond with an Appeal-to card. Appeal-to cards also usually have a fold-out back, on which sources are listed. These can be looked up if interested.
 </p>
 <h3>Research Card</h3>
 <p>
+ <research-card idiot class="icard"></research-card>
+ <research-card class="icard"></research-card>
 The Research card is a wild card and can be played on top of an argument or Appeal-to card. It provides 1-3 matching cards from its own deck. In rare cases, should the deck run out of matching cards, it may supply no cards at all. If there is an argument card, matching counter-arguments are preferred. If there are none or not enough, Appeal-to cards can be added. If there is an Appeal-to card on top of the pile, Appeal-to cards are delivered. If there are none or not enough, argument cards can also be added. The cards are added to your hand and can be played afterwards.
 </p>
 <h3>Straw man card</h3>
 <p>
+ <strawman-card class="icard" idiot></strawman-card>
+ <strawman-card class="icard"></strawman-card>
 The Straw man card is a wild card and can be played on top of an argument or Appeal-to card. It cancels the card played by the opponent and allows it to be replaced by another (put in the opponent's mouth as something). This is done by adding a matching card from the opponent's deck when playing one's hand. The player must then play this out and answer it with an argument or Appeal-to card of their own to end the turn.
 </p>
 <h3>Commonplace Card</h3>
 <p>
+ <fallacy-card class="icard hidden" idiot card="FI1"><h2></h2></fallacy-card>
+ <fallacy-card class="icard" card="FI1"><h2>Mainstream</h2></fallacy-card>
+ <fallacy-card class="icard" card="FS1"><h2>Conspiracy Theory</h2></fallacy-card>
 The Commonplace card can be used to reply to an argument or Appeal-to card. It removes the constraint of having to respond precisely to an argument card and its topic. It is used to allow a change of topic. Several Commonplace cards can be played in succession, but the turn is not over until the current player has played a final argument or Appeal-to card.
 </p>
 <h3>Labeling Card</h3>
 <p>
+<label-card class="icard hidden" idiot card="LI1"><h2></h2></label-card>
+ <label-card class="icard" idiot card="LI1"><h2>Sheep</h2></label-card>
+ <label-card class="icard" card="LS1"><h2>Idiot</h2></label-card>
 The Labeling card can be used to respond to an argument or Appeal-to card. It removes the constraint of having to respond to that exact card and its topic. It can be used to change the topic. Several Labeling cards can be played in succession, but the turn is not over until the current player has played a final Argument or Appeal-to card.
+</p>
+<h3>Discuss Card</h3>
+<p>
+ <discuss-card class="icard" idiot topicId="T1" topic="Infection"></discuss-card>
+ <discuss-card class="icard" topicId="T1" topic="Infection"></discuss-card>
+With the Discuss card, you can make sure that the topic of the card is discussed out by all participants. It can be used, for example, when individual players are about to win (by playing all their cards). By playing this card, all players receive a special "infinite" argument card, which remains in the hands of the participants until the topic has been discussed to the end - or the topic to be discussed has been redirected to another topic by playing another Discuss card.
+</p>
+<h3>Banish Card</h3>
+<p>
+ <banish-card class="icard" idiot topicId="T1" topic="Infection"></banish-card>
+ <banish-card class="icard" topicId="T1" topic="Infection"></banish-card>
+The Banish card can be used to ensure that the topic of the last card played is banished completely from the game. All argument cards related to the topic disappear from the piles and the players' hands after this card was played. The Banish card can be used, for example, directly or delayed against an Discuss card. It can be strategically useful to banish a topic for which your own side's argument pool is particularly large.
+</p>
+<h3>Pause Card</h3>
+<p>
+ <pause-card class="icard" idiot></pause-card>
+ <pause-card class="icard"></pause-card>
+Pause cards are in the game from 4 participants up. In such a constellation, both sides no longer discuss alone. With this card there is the possibility of sitting out, i.e. not having to place an argument or appeal card on the pile. Instead, it is immediately the next player of the same side's turn. This can be useful if you want to avoid long redraws.
 </p>
 <h2>End of game</h2>
 <p>
-The game ends the moment a player has no more cards in his hand. He is then the winner of the discussion, having gotten rid of all his arguments. 
-</p>
-<h2>Ideas</h2>
-<p>
-With more than 2 players, there could be (additional) cards that support cooperation or can be used to "attack" the opponent away from the arguments (below the belt?). Or existing cards could work differently.
-</p>
-<h3>Stay-a-bit-longer card</h3>
-<p>
-<p>
-The Stay-a-bit-longer card is a special card. which gives the following player 3 cards from the deck, forcing him to stay in the game a bit longer.
-</p>
-<h3>Simply No Card</h3>
-<p>
-The Simply No card can be played, for example, to defend against a Stay-a-bit-longer card.
+The game ends the moment one side has no more cards in his/their hands - being the winner of the discussion by having gotten rid of all arguments. When more than two players are playing this can result in fewer people playing in one team than in the other! 
 </p>

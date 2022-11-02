@@ -10,6 +10,7 @@ appealToCardTemplate.innerHTML = `
       --blue: #2d60f6;
       --lightblue: aliceblue;
       --lightgrey: lightgrey;
+      --bold: black;
       --sidebar-width: 12%;
       --watermark-size: 50%;
       position: relative;
@@ -88,6 +89,10 @@ appealToCardTemplate.innerHTML = `
       font-size: calc(7 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
+    }
+    
+    #phrase b {
+      color: var(--bold);
     }
 
     #phrase .to {

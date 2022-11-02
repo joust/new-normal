@@ -1,11 +1,11 @@
-const suppressCardTemplate = document.createElement('template')
-suppressCardTemplate.innerHTML = `
+const banishCardTemplate = document.createElement('template')
+banishCardTemplate.innerHTML = `
   <style>
      :host {
       display: inline-block;
     }
 
-    #suppress-card {
+    #banish-card {
       --red: #f72d5d;
       --blue: #2d60f6;
       --sidebar-width: 12%;
@@ -24,7 +24,7 @@ suppressCardTemplate.innerHTML = `
       user-select: none;
     }
 
-    #suppress-card.idiot {
+    #banish-card.idiot {
       background: radial-gradient(
         circle,
         #222 0%,
@@ -161,7 +161,7 @@ suppressCardTemplate.innerHTML = `
       left: calc(100% - var(--sidebar-width));
     }
   </style>
-  <div id="suppress-card">
+  <div id="banish-card">
     <div id="watermark"></div>
     <div id="new">New</div>
     <div id="phrase"><span class="quoted"><span class="phrase"></span></span><span id="description"></span></div>
@@ -170,7 +170,7 @@ suppressCardTemplate.innerHTML = `
   </div>
 `
 
-class SuppressCard extends HTMLElement {
+class BanishCard extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
@@ -217,7 +217,7 @@ class SuppressCard extends HTMLElement {
   }
 
   connectedCallback() {
-    this.shadowRoot.appendChild(suppressCardTemplate.content.cloneNode(true))
+    this.shadowRoot.appendChild(banishCardTemplate.content.cloneNode(true))
     this.lang = document.body.lang
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
@@ -234,17 +234,17 @@ class SuppressCard extends HTMLElement {
   }
 
   update() {
-    const root = this.element('suppress-card')
+    const root = this.element('banish-card')
     if (this.isConnected && root) {
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
-      const key = Object.keys(SuppressCard.phrase).find(p => p.startsWith(this.lang)) || 'de'
-      const phrase = SuppressCard.phrase[key]
+      const key = Object.keys(BanishCard.phrase).find(p => p.startsWith(this.lang)) || 'de'
+      const phrase = BanishCard.phrase[key]
       Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = phrase)
-      const dkey = Object.keys(SuppressCard.description).find(p => p.startsWith(this.lang)) || 'de'
-      this.element('description').innerHTML = SuppressCard.description[dkey]
+      const dkey = Object.keys(BanishCard.description).find(p => p.startsWith(this.lang)) || 'de'
+      this.element('description').innerHTML = BanishCard.description[dkey]
     }
   }
 }
 
-customElements.define('suppress-card', SuppressCard)
+customElements.define('banish-card', BanishCard)

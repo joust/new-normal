@@ -10,7 +10,7 @@ const PERCENTAGE_RESEARCHS = 20
 const PERCENTAGE_LABELS = 20
 const PERCENTAGE_FALLACIES = 20
 const PERCENTAGE_PAUSES = 10
-const PERCENTAGE_SUPPRESSES = 10
+const PERCENTAGE_BANISHES = 10
 const INVALID_MOVE = 'INVALID_MOVE'
 
 async function startLocal(lang, playerID) {
@@ -89,7 +89,7 @@ async function Uno(lang, host) {
    * @param {{idiot: Array, sheep: Array}} Both decks.
    * @param {string} top top card on the pile
    */ 
-  function resolveSuppress(hands, decks, top) {
+  function resolveBanish(hands, decks, top) {
     const topic = topicOf(top)
     // remove all cards matching topic
     const clean = handOrDeck => handOrDeck.filter(c => isArgument(c) && hasTopic(c, topic)).forEach(c => handOrDeck.splice(handOrDeck.indexOf(c), 1))
@@ -224,13 +224,13 @@ async function Uno(lang, host) {
     const nargs = cards.args.length
     const strawmans = new Array(Math.round(PERCENTAGE_STRAWMANS*nargs/100)).fill(`N${type}`)
     const researchs = new Array(Math.round(PERCENTAGE_RESEARCHS*nargs/100)).fill(`R${type}`)
-    const suppresses = new Array(Math.round(PERCENTAGE_SUPPRESSES*nargs/100)).fill(`X${type}`)
+    const banishes = new Array(Math.round(PERCENTAGE_BANISHES*nargs/100)).fill(`B${type}`)
     const labels = elementsFrom(Math.round(PERCENTAGE_LABELS*nargs/100), cards.labels)
     const fallacies = elementsFrom(Math.round(PERCENTAGE_FALLACIES*nargs/100), cards.fallacies)
     const appealTos = elementsFrom(Math.round(PERCENTAGE_APPEAL_TOS*nargs/100), cards.appealTos)
     const pauses = players > 2 ? new Array(Math.round(PERCENTAGE_PAUSES*nargs/100)).fill(`P${type}`) : []
     const discusses = elementsFrom(Math.round(PERCENTAGE_DISCUSSES*nargs/100), cards.discusses)
-    return [...cards.args, ...labels, ...fallacies, ...appealTos, ...strawmans, ...researchs, ...suppresses, ...pauses, ...discusses]
+    return [...cards.args, ...labels, ...fallacies, ...appealTos, ...strawmans, ...researchs, ...banishes, ...pauses, ...discusses]
   }
 
   /**
@@ -403,8 +403,8 @@ async function Uno(lang, host) {
             hand.splice(index, 1)
             G.pile.push(alt)
             break
-          case 'X': // supress
-            resolveSuppress(G.hands, G.decks, top)
+          case 'B': // Banish
+            resolveBanish(G.hands, G.decks, top)
             hand.splice(index, 1)
             G.pile.push(alt)
             break
@@ -489,12 +489,12 @@ function canBePlayedOn(top, card, idiot) {
     case 'R': // Research
       return top && (isArgument(top) || isAppealTo(top))
     case 'N': // strawmaN
-    case 'X': // suppress
+    case 'B': // Banish
       return top && (isArgument(top) || isDiscuss(top))
     case 'A': // Appeal to
       return isOfType(card, !idiot) && isStrawman(top) 
       || isOfType(card, idiot) && 
-        (!top || isArgument(top) || isAppealTo(top) || isFallacy(top) || isLabel(top) || isSuppress(top))
+        (!top || isArgument(top) || isAppealTo(top) || isFallacy(top) || isLabel(top) || isBanish(top))
     case 'I': // Idiot argument
     case 'S': // Sheep argument
       return top && isStrawman(top) && (isArgument(card) || isAppealTo(card)) && isOfType(card, !idiot)
@@ -503,7 +503,7 @@ function canBePlayedOn(top, card, idiot) {
           || ((isArgument(top) || isDiscuss(top)) && topicOf(card)===topicOf(top))
           || isFallacy(top) 
           || isLabel(top)
-          || isSuppress(top))
+          || isBanish(top))
   }
 }
 
@@ -541,7 +541,7 @@ function isStrawman(id) { return id.startsWith('N') }
 function isResearch(id) { return id.startsWith('R') }
 function isDiscuss(id) { return id.includes('D') }
 function isPause(id) { return id.startsWith('P') }
-function isSuppress(id) { return id.startsWith('X') }
+function isBanish(id) { return id.startsWith('B') }
 
 /** check if type of card matches input */
 function isOfType(id, idiot) {

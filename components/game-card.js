@@ -174,7 +174,7 @@ class GameCard extends HTMLElement {
       case 'N': return `<strawman-card id="card" ${type} ${mirrored}></strawman-card>`
       case 'R': return `<research-card id="card" ${type} ${mirrored}></research-card>`
       case 'P': return `<pause-card id="card" ${type} ${mirrored}></pause-card>`
-      case 'X': return `<suppress-card id="card" ${type} ${mirrored}></suppress-card>`
+      case 'B': return `<banish-card id="card" ${type} ${mirrored}></banish-card>`
       default: // argument id and discuss id will contain the topic too
         const topicData = this.topic && document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} a[id="${this.topic}"]`)
         const topic = topicData ? topicData.firstElementChild.innerHTML : ''

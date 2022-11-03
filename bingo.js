@@ -1,7 +1,7 @@
 /**
  * create one or two idiot or sheep cards and start the game
  *
- * @param {boolean} one create a idiot card if true, otherwise a sheep card
+ * @param {boolean} one create an idiot card if true, otherwise a sheep card
  * @param {?boolean} two create a second card, idiot if true, sheep if false
  */
 async function play(one, two) {
@@ -20,7 +20,6 @@ async function play(one, two) {
  *
  * @param {HTMLElement|string} wrapper wrapper element to load the card into
  * @param {boolean} idiot load idiot content if true, otherwise sheep content
- * @param {flip} flip flip the game card open
  * @param {boolean} update true if to update the card with a different locale
  */
 async function loadCard(wrapper, idiot, update = false) {
@@ -75,12 +74,13 @@ function addCheckboxes(wrapper) {
  * copy the logo to the top of the details side of the card wrapper
  *
  * @param {HTMLElement} wrapper wrapper element to load the card into
+ * @param {boolean} idiot idiot content if true, otherwise sheep content
  */
 function copyLogoToCard(wrapper, idiot) {
   wrapper.querySelector('.content').prepend(
     document.querySelector('.logo').cloneNode(true))
   wrapper.querySelector('.logo select').value = `${lang}-${terr}`
-  wrapper.querySelector('.logo select').onchange = 
+  wrapper.querySelector('.logo select').onchange =
     event => update(wrapper, idiot, event.target.value)
 }
 
@@ -88,6 +88,8 @@ function copyLogoToCard(wrapper, idiot) {
  * prepare a random argument card on the front side of the card wrapper
  *
  * @param {HTMLElement} wrapper wrapper element to load the card into
+ * @param {Array} topics list of topics
+ * @param {boolean} idiot idiot content if true, otherwise sheep content
  */
 function prepareCard(wrapper, topics, idiot) {
   makeCard(wrapper, topics, 5, idiot)
@@ -108,7 +110,7 @@ async function update(wrapper, idiot, locale) {
   [lang, terr] = locale.split('-')
   const nav = wrapper.querySelector('.navigation')
   const ids = Array.from(nav.querySelectorAll('span')).map(span => span.innerHTML)
-  const id = nav.querySelector('span.selected').innerHTML 
+  const id = nav.querySelector('span.selected').innerHTML
   await loadCard(wrapper, idiot, true)
   if (ids.length) singleDetails(wrapper, nav.id, ids, id)
   wrapper.querySelector('.location').value = `${lang}-${terr}`
@@ -126,7 +128,7 @@ function prepareCardTitle(wrapper) {
   while (title.firstChild) title.removeChild(title.firstChild)
   const select = wrapper.querySelector('.detail select')
   if (!attitude.fair)
-    randomElement(select.querySelectorAll('option'), 1).selected = true
+    randomElement(Array.from(select.querySelectorAll('option')), 1).selected = true
   title.appendChild(select)
   const label = wrapper.querySelector('.detail label')
   if (label) {
@@ -137,7 +139,7 @@ function prepareCardTitle(wrapper) {
 
 /**
  * handle a click on the details window
- * @param {Event} event the click event
+ * @param {MouseEvent} event the click event
  */
 function handleClick(event) {
   switch (event.target.tagName.toLowerCase()) {
@@ -165,7 +167,7 @@ function handleClick(event) {
 
 /**
  * open the detail window, adding the CSS 'single' classes to the given id details
- * @param {Event} event the event that triggered the open action
+ * @param {MouseEvent} event the event that triggered the open action
  * @param {string} topicId id of the topic to open
  * @param {string[]} arguments argument ids to show
  */
@@ -177,7 +179,7 @@ function openDetails(event, topicId, arguments) {
 
 /**
  * flip close the detail window, removing the CSS 'single' classes
- * @param {Event} event - the event that triggered the close action
+ * @param {MouseEvent} event - the event that triggered the close action
  */
 function flipCloseDetails(event) {
   flipClose(event)
@@ -199,8 +201,8 @@ function closeDetails(wrapper, flip = false) {
 }
 
 /**
- * open other wrapper showing the counter arguments to current topic
- * @param {Event} event - the triggering event to show counter arguments
+ * open other wrapper showing the counterarguments to current topic
+ * @param {MouseEvent} event - the triggering event to show counterarguments
  */
 async function showCounterArguments(event) {
   const wrapper = event.target.closest('.card-wrapper')
@@ -229,7 +231,7 @@ async function showCounterArguments(event) {
  * @param {HTMLElement} detail content DOM node containing the arguments
  */
 function applyExclusions(detail) {
-  attitude.exclusions.split(',').forEach(e => 
+  attitude.exclusions.split(',').forEach(e =>
     detail.querySelector(`a[id="${e}"]`) && detail.querySelector(`a[id="${e}"]`).classList.add('excluded'))
 }
 
@@ -237,7 +239,7 @@ function applyExclusions(detail) {
  * toggle the exclusions stored in the attitudes of the user to all arguments
  *
  * @param {string} id id to toggle inside the exclusions list in attitude
- * @param {Event} event event that triggered the toggleExclusions
+ * @param {MouseEvent} event event that triggered the toggleExclusions
  */
 function toggleExclusions(id, event) {
   const exclude = !event.target.parentElement.classList.contains('excluded')
@@ -251,8 +253,8 @@ function toggleExclusions(id, event) {
  * toggle the argument details / all arguments views
  *
  * @param {HTMLElement|string} wrapper - the wrapper to close (string or element)
- * @param {Event} event - event that triggered the toggleDetails
- * @param {string[]} ids - ids 
+ * @param {MouseEvent} event - event that triggered the toggleDetails
+ * @param {string[]} ids - ids
  */
 function toggleDetails(wrapper, event, ids) {
   const single = event.target.parentElement.classList.contains('single')
@@ -269,11 +271,11 @@ function toggleDetails(wrapper, event, ids) {
  * @param {HTMLElement} wrapper - parent element to generate the table into
  * @param {Array} topics - Array of topics with data for the card
  * @param {number} size - side length for the card to generate (e.g. 3, 5, 7...)
- * @param {string} center - string with comma seperated text alternatives for the center
+ * @param {boolean} idiot - idiot or sheep content
  */
 function makeCard(wrapper, topics, size, idiot) {
   const div = wrapper.querySelector('.bingo')
-  const center = idiot ? ['🤪', '👻'] : ['🐑', '😷'] 
+  const center = idiot ? ['🤪', '👻'] : ['🐑', '😷']
   const rows = []
   if (div.firstChild) div.removeChild(div.firstChild)
   topics = topics.slice()

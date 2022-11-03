@@ -124,7 +124,7 @@ function makeTestCard(wrapper, topics, index, size) {
 
 /**
  * open both detail window, adding the CSS 'single' classes to the given id details
- * @param {Event} event the event that triggered the open action
+ * @param {MouseEvent} event the event that triggered the open action
  */
 function openTestDetails(event, index, topic) {
   const wrapper = event.target.closest('.card-wrapper')
@@ -140,7 +140,7 @@ function openTestDetails(event, index, topic) {
 
 /**
  * handle a click on the details window
- * @param {Event} event the click event
+ * @param {MouseEvent} event the click event
  */
 function handleTestClick(event) {
   const wrapper1 = document.querySelector('#wrapper-1')
@@ -174,7 +174,7 @@ function handleTestClick(event) {
 /**
  * mark test choice in table
  *
- * @param {Event} event the Event triggering the action
+ * @param {MouseEvent} event the Event triggering the action
  */
 function markTestChoice(event) {
   const wrapper = event.target.closest('.card-wrapper')
@@ -326,7 +326,7 @@ function copyLogoToTestResult() {
 
 /**
  * handle a click on the results div
- * @param {Event} event the click event
+ * @param {MouseEvent} event the click event
  */
 function handleResultClick(event) {
   if (event.target.tagName.toLowerCase() !== 'select')

@@ -35,12 +35,12 @@
         margin: 0;
         overflow: visible;
       }
-      
+
       html {
         overflow: hidden;
         background: lightgrey;
       }
-        
+
       #uno {
         width: 100%;
         height: 100%;
@@ -81,11 +81,11 @@
         background: transparent;
         border: none;
       }
-      
+
       #loader {
         position: absolute;
         border: 16px solid #f3f3f3;
-        border-top: 16px solid #2d60f6; 
+        border-top: 16px solid #2d60f6;
         border-radius: 50%;
         width: 120px;
         height: 120px;
@@ -97,20 +97,20 @@
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
       }
-      
+
       .hidden {
         display: none;
       }
     </style>
-    <script>      
+    <script>
       function idsFrom(content, block, filter = '') {
         return [...Array.from(content.querySelectorAll(`.${block} a[id]`))].map(node => node.id).filter(id => id.includes(filter))
       }
-      
+
       function setLang(loc) {
-        document.body.lang = loc.split('-')[0] 
+        document.body.lang = loc.split('-')[0]
       }
-      
+
       async function addHand() {
         await loadSources()
         const content = await loadContent(document.body.lang)
@@ -136,13 +136,13 @@
         ])
         const existing = document.querySelector('#hand')
         if (existing) existing.parentElement.removeChild(existing)
-        
+
         if (true) {
           document.querySelector('#uno').insertAdjacentHTML('beforeEnd', '<player-hand nr="0" name="All Cards" id="hand" cards="[]"></player-hand>')
           document.querySelector('#hand').setAttribute('cards', cards)
           document.querySelector('#hand').onplay = event => console.log('play', event)
         } else {
-          document.querySelector('#uno').insertAdjacentHTML('beforeEnd', 
+          document.querySelector('#uno').insertAdjacentHTML('beforeEnd',
           `<flip-card style="width: 20em; height: 30em;">
             <argument-card slot="front" card="I1" topicId="T1" topic="Infektion"><h2>Immunsystem?</h2>
               <p>Ich bin bei denen, die sagen, gegen Viren würde uns unser Immunsystem schützen. Und dass, wenn wir keines hätten, uns der liebe Gott doch gleich mit einer Alltagsmaske zur Welt kommen lassen würde.</p></argument-card>

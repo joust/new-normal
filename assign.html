@@ -9,7 +9,7 @@
     <title>New Normal - Assign Topics</title>
     <script src="flipside.js" type="text/javascript"></script>
     <script src="common.js" type="text/javascript"></script>
-    <script>
+    <script type="text/javascript">
     let project, file, topics, tops, iargs, sargs, argument, log = console.log // global for simplicity
 
     function selectArgument(idiot, id) {
@@ -20,7 +20,7 @@
       close(document.querySelector('#wrapper-1'))
       close(document.querySelector('#wrapper-2'))
     }
-    
+
     async function findUnusedArgs(tops) {
       const idiot = elementWithKids('div')
       idiot.innerHTML = await fetchSilentNoSpinner('de/idiot.html')
@@ -39,28 +39,27 @@
       document.querySelector('.idiot').innerHTML = iargs.reduce((html, arg) => html += `<p ${used(arg)?'class="light"':''} onclick="selectArgument(true, '${arg.id}')">${arg.id} ${arg.title}</p>`, '')
       document.querySelector('.sheep').innerHTML = sargs.reduce((html, arg) => html += `<p ${used(arg)?'class="light"':''} onclick="selectArgument(false, '${arg.id}')">${arg.id} ${arg.title}</p>`, '')
     }
-      
+
     function prepareAssignCardTitle(wrapper, label) {
       if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
       const title = wrapper.querySelector('.title')
       title.innerHTML = label
     }
 
-    async function loadAssignCard(wrapper, topics, idiot, start, size, update = false) {
+    async function loadAssignCard(wrapper, topics, idiot, start, size) {
       if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
       prepareAssignCard(wrapper, topics, start, size)
     }
-      
+
     function assignToTopic(event, topic) {
-      const wrapper = event.target.closest('.card-wrapper')
       addToTopic(topic.id, argument.id)
       console.log('saving topics!')
-      save(file, topics.innerHTML) 
+      save(file, topics.innerHTML)
       // navigator.clipboard.writeText(topics.innerHTML)
       open(document.querySelector('#wrapper-1'))
       open(document.querySelector('#wrapper-2'))
     }
-      
+
     function makeAssignCard(wrapper, topics, index, size) {
       const div = wrapper.querySelector('.bingo')
       const rows = []
@@ -115,14 +114,14 @@
         ['idiot', 'sheep'].forEach(type => topic.dataset[type] = reorderIds(topic.dataset[type]))
       })
     }
-      
+
     function reorderIds(args) {
       const re = /\D/g
       const nummerical = (a, b) => parseInt(a.replace(re, ''), 10)-parseInt(b.replace(re, ''), 10)
-      const set = args=='' ? new Set() : new Set(args.split(' '))
+      const set = args==='' ? new Set() : new Set(args.split(' '))
       return Array.from(set).sort(nummerical).join(' ')
     }
-      
+
     async function verifyPermission(handle, rw) {
       const options = {}
       if (rw) options.mode = 'readwrite'
@@ -145,7 +144,7 @@
         const writable = await handle.createWritable()
         await writable.write(contents)
         await writable.close()
-      } else 
+      } else
         log(`no permission to write to file '${handle.name}'`)
     }
 
@@ -153,17 +152,17 @@
       document.body.onclick = undefined
       project = await window.showDirectoryPicker()
       file = await project.getFileHandle('topics.html')
-      verifyPermission(file, true) // to later write to same file w/o another user request
+      await verifyPermission(file, true) // to later write to same file w/o another user request
       topics = elementWithKids('div')
       topics.innerHTML = await load(file)
       reorderAllIds()
       tops = extractTopics(topics)
-      findUnusedArgs(tops)
+      await findUnusedArgs(tops)
       await loadAssignCard('#wrapper-1', tops, true, 0, 7)
       await loadAssignCard('#wrapper-2', tops, false, 49, 6)
       open(document.querySelector('#wrapper-1'))
       open(document.querySelector('#wrapper-2'))
-    }      
+    }
     </script>
     <style>
       body {
@@ -200,13 +199,13 @@
         width: 100vmin;
         margin: 2vw;
       }
-      
+
       .card-wrapper:after {
         content: '';
         display: block;
         padding-bottom: 100%;
       }
-      
+
       @media (orientation: landscape) {
         body {
           font-size: 1.5vw;
@@ -232,7 +231,7 @@
           width: 50vh;
         }
       }
-  
+
       table {
         border: 2vw solid transparent;
         border-top: none;
@@ -242,15 +241,11 @@
         width: 100%;
         height: 100%;
       }
-      
+
     .bingo, .detail, .card {
       position: absolute;
       width: 100%;
       height: 100%;
-    }
-
-    .light {
-      color: lightgrey;
     }
     </style>
   </head>

@@ -145,7 +145,7 @@ class FlipCard extends HTMLElement {
     const cw = this.clientWidth/100, ch = this.clientHeight/100
     this.style.setProperty('--cavg', `${(cw+ch)/1.6}px`)
   }
-  
+
   updateMirrored() {
     const slots = Array.from(this.querySelectorAll('[slot]'))
     slots.forEach(slot => slot.toggleAttribute('mirrored', this.mirrored))
@@ -156,7 +156,7 @@ class FlipCard extends HTMLElement {
   /**
    * flip open, taking the mouse position into account
    *
-   * @param {Event} event event that triggered the open action
+   * @param {MouseEvent} event event that triggered the open action
    */
   clickOpen(event) {
     this.open(event.clientX, event.clientY)
@@ -193,8 +193,8 @@ class FlipCard extends HTMLElement {
       flip.setAttribute('data-direction', directions.shift().id)
     } else {
       const current = flip.getAttribute('data-direction')
-      direction = directions.filter(d => d.id !== current)
-      flip.setAttribute('data-direction', directions[Math.floor(Math.random() * directions.length)].id)
+      const filteredDirections = directions.filter(d => d.id !== current)
+      flip.setAttribute('data-direction', filteredDirections[Math.floor(Math.random() * filteredDirections.length)].id)
     }
 
     flip.classList.add('is-open')

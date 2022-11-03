@@ -39,7 +39,7 @@ async function show(page) {
   let content = ''
   if (locals.includes(local)) content = await fetchSilent(`${local}/${page}.html`)
   if (content === '') content = await fetchSilent(`${lang}/${page}.html`)
-  if (page === 'intro') content = content.replace('NN_YEAR', getNNYear())
+  if (page === 'intro') content = content.replace('NN_YEAR', ''+getNNYear())
   document.querySelector('#menu .content').innerHTML = content
   document.querySelector('#menu').scrollTop = 0
   if (page==='attitude') initAttitude()
@@ -107,8 +107,8 @@ async function getLocalizedContent(idiot) {
  * merge territory local content into language specific content
  * replacing redefined arguments, adding unique local arguments
  *
- * @param {content} language specific argument content
- * @param {local} territory local argument content
+ * @param {string} content language specific argument content
+ * @param {string} local territory local argument content
  */
 function mergeContent(content, local) {
   const args = elementWithKids('div'), largs = elementWithKids('div')
@@ -125,15 +125,15 @@ function mergeContent(content, local) {
     }
   })
   if (lh1) last.after(lh1);
-  
+
   ['select', 'label', 'input', 'h1:not(.local)', 'center.bingo', 'center.test'].forEach(s => {
     const replacement = largs.querySelector(s)
     if (replacement) args.replaceChild(replacement, args.querySelector(s))
   })
-  
+
   return args.innerHTML
 }
-                           
+
 /**
  * get topics data with localized topics, arguments, titles and labels
  */
@@ -168,14 +168,14 @@ function getNNYear() {
 /**
  * show idiot, sheep or test cards corresponding to the id(s) given in the hash
  *
- * @param {string} hash with ids of argument(s) to show
+ * @param {string} hash with comma separated ids of argument(s) to show
  * @return {boolean} true if success false otherwise
  */
 async function displayHash(hash) {
-  hash = hash.toUpperCase().split('&').map(v => v.split('=')[0])
-  const idiot = hash.filter(v => v.startsWith('I'))
-  const sheep = hash.filter(v => v.startsWith('S'))
-  const test = hash.filter(v => v.startsWith('T'))
+  const ids = hash.toUpperCase().split('&').map(v => v.split('=')[0])
+  const idiot = ids.filter(v => v.startsWith('I'))
+  const sheep = ids.filter(v => v.startsWith('S'))
+  const test = ids.filter(v => v.startsWith('T'))
   const wrapper1 = document.querySelector('#wrapper-1')
   const wrapper2 = document.querySelector('#wrapper-2')
   if (test.length) {
@@ -186,8 +186,8 @@ async function displayHash(hash) {
     if (td) td.click(); else console.error('no element', test[0])
   } else {
   if (!idiot.length && !sheep.length) return false // nothing to evaluate
-    const one = idiot.length
-    const two = (one ? sheep : idiot).length ? !one : undefined
+    const one = idiot.length > 0
+    const two = (one ? sheep : idiot).length > 0 ? !one : undefined
     await loadCard(wrapper1, one)
     singleDetails(wrapper1, null, one ? idiot : sheep)
     open(wrapper1)
@@ -251,7 +251,7 @@ function showWrapperTwo() {
 
 /**
  * handle change of the search input text
- * @param {Event} event - the input event
+ * @param {MouseEvent} event - the input event
  */
 function search(event) {
   const wrapper = event.target.closest('.card-wrapper')
@@ -259,7 +259,7 @@ function search(event) {
   const args = Array.from(wrapper.querySelectorAll('a[id]'))
   args.forEach(a => a.classList.remove('not-matching'))
   const notMatching = input.length ? args.filter(a => !a.textContent.replace(/\u00ad/gi, '').toLowerCase().includes(input)) : []
-  notMatching.forEach(a => a.classList.add('not-matching'))  
+  notMatching.forEach(a => a.classList.add('not-matching'))
 }
 
 /**
@@ -290,19 +290,6 @@ function hideGame() {
   document.querySelector('#game').classList.add('hidden')
   document.querySelector('#result').classList.add('hidden')
   document.querySelector('#pyro').classList.add('hidden')
-}
-
-/**
- * extract the argument ids and texts from HTML content
- *
- * @param {HTMLElement} detail - content DOM node containing the arguments
- * @return {{id: string, word: string}[]} the extracted arguments
- */
-function getArguments(detail) {
-  return Array.from(detail.querySelectorAll('a[id]')).map(
-    a => ({id: a.id, 
-           word: a.querySelector('h2').innerHTML, 
-           content: a.querySelector('p').innerText}))
 }
 
 /**
@@ -408,7 +395,7 @@ function setNavigation(wrapper, topicId, ids, selected, bingo) {
   const navigation = elementWithKids('p', ids.flatMap(id => {
     const idtag = elementWithKids('span', id)
     idtag.onclick = () => singleDetails(wrapper, topicId, ids, id, bingo)
-    if (id == selected) idtag.classList.add('selected')
+    if (id === selected) idtag.classList.add('selected')
     return ['\u00ad', idtag]
   }))
   navigation.id = topicId ? topicId : 'nav'
@@ -424,8 +411,8 @@ function setNavigation(wrapper, topicId, ids, selected, bingo) {
 
 /**
  * show selected details, add the CSS 'single' classes if only one is shown
- * @param {HTMLElement} wrapper the event that triggered the open action
- * @param {string} topicId id of topic to save as navigation id
+ * @param {HTMLElement|string} wrapper the event that triggered the open action
+ * @param {string|null} topicId id of topic to save as navigation id
  * @param {string[]} ids list of ids to show
  * @param {string} selected id to select
  * @param {boolean} permalink if to show a permalink
@@ -449,7 +436,7 @@ function singleDetails(wrapper, topicId, ids, selected = undefined, permalink = 
 /**
  * show/hide all sources boxes if available
  *
- * @param {Event} event the Event triggering the action
+ * @param {MouseEvent} event the Event triggering the action
  * @param {boolean} show true if the sources should be made visible false otherwise
  */
 function showSources(event, show = true) {
@@ -458,8 +445,9 @@ function showSources(event, show = true) {
 }
 
 /**
- * update an topics based (test/bingo) card with a different language
- *
+ * update a topics based (test/bingo) card with a different language
+ * @param {Array} topics true if the sources should be made visible false otherwise
+ * @param {boolean} idiot true if idiot content
  * @param {HTMLElement} wrapper wrapper element of the card
  */
 function updateCard(wrapper, topics, idiot = undefined) {
@@ -473,13 +461,13 @@ function updateCard(wrapper, topics, idiot = undefined) {
 }
 
 /**
- * generates an archive.is mirror anchor node for the given node 
+ * generates an archive.is mirror anchor node for the given node
  *
  * @param {HTMLElement} a the anchor node to mirror
  */
 function mirrorNode(a) {
   const mirror = a.cloneNode(true)
-  mirror.href = `https://archive.is/${a.href}` 
+  mirror.href = `https://archive.is/${a.href}`
   mirror.firstChild.textContent = 'Mirror'
   return mirror
 }
@@ -497,14 +485,14 @@ function browserLocale() {
 
 /**
  * create a DOM Element, optionally with children and attributes.
- * Any string given as kids will be converted in a HTML text node
+ * Any string given as kids will be converted in an HTML text node
  *
  * @param {string} tag - tag name for the element to create
- * @param {(string|HTMLElement)|(string|HTMLElement)[]} kids - a element or string, or an array of elements or strings
+ * @param {(string|HTMLElement)|(string|HTMLElement)[]} kids - an element or string, or an array of elements or strings
  * @param {Object} attrs - optional attributes to set
  * @return {HTMLElement} The created element
  */
-function elementWithKids(tag, kids, attrs = undefined) {
+function elementWithKids(tag, kids = undefined, attrs = undefined) {
   const node = document.createElement(tag)
   if (attrs) for (attr in attrs) node.setAttribute(attr, attrs[attr])
   if (kids) {
@@ -518,7 +506,7 @@ function elementWithKids(tag, kids, attrs = undefined) {
 }
 
 /**
- * select an unique random element from an array
+ * select a unique random element from an array
  * side effect: The element is removed from from the array to achieve the uniqueness!
  *
  * @param {Array} wordset - Array to choose a random element from
@@ -569,5 +557,5 @@ function fetchSilent(url) {
  * @return {Promise<string>} the files content or '' on error
  */
 function fetchSilentNoSpinner(url) {
-  return fetch(url).then(async response => response.status >= 400 && response.status < 600 ? '' : await response.text()).catch(error => '')  
+  return fetch(url).then(async response => response.status >= 400 && response.status < 600 ? '' : await response.text()).catch(() => '')
 }

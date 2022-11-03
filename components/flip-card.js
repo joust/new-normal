@@ -1,9 +1,48 @@
+// idea from: https://github.com/hakimel/css/tree/master/flipside
 const flipCardTemplate = document.createElement('template')
 flipCardTemplate.innerHTML = `
   <style>
      :host {
       display: inline-block;
       position: relative;
+      overflow: visible;
+    }
+
+    #wrapper, #flip, #front, #back, slot, ::slotted(*[slot]) {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    #open {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 10%;
+      height: 7%;
+      color: white;
+      background: lightgrey;
+      text-align: center;
+      font-size: calc(5 * var(--cavg));
+      cursor: pointer;
+      border-radius: 50%;
+      font-family: 'Open Sans', Helvetica;
+    }
+
+    #open:hover {
+      color: white;
+      background: grey;
+    }
+
+    #open.mirrored {
+      right: auto;
+      left: 0;
+    }
+
+    #open:after {
+      content: '“';
     }
 
     #wrapper {
@@ -11,32 +50,24 @@ flipCardTemplate.innerHTML = `
     }
 
     #flip {
-      display: flex;
-      justify-content: center;
-      align-items: center;
       position: relative;
       transition: width 0.8s cubic-bezier(0.23, 1, 0.32, 1), height 0.8s cubic-bezier(0.23, 1, 0.32, 1), transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), margin 0.5s ease;
       transform-style: preserve-3d;
       transform-origin: 50% 50%;
-      text-align: center;
     }
 
     #front {
-      position: absolute;
       display: block;
-      z-index: 1;
       backface-visibility: hidden;
       transition: background 0.15s ease, line-height 0.8s cubic-bezier(0.23, 1, 0.32, 1);
       transition: opacity 0.2s ease;
     }
 
     #back {
-      position: absolute;
       display: block;
       transform: translateZ(-2px) rotateX(180deg);
-      box-shadow: 0 1vw 3vw rgba(0, 0, 0, 0.4);
-      transition: box-shadow 0.8s ease;
       backface-visibility: hidden;
+      cursor: pointer;
     }
 
     #flip[data-direction="left"] #back,
@@ -46,7 +77,6 @@ flipCardTemplate.innerHTML = `
 
     #flip.is-open #front {
       pointer-events: none;
-      box-shadow: none;
       opacity: 0;
     }
 
@@ -73,25 +103,14 @@ flipCardTemplate.innerHTML = `
     #flip[data-direction="left"].is-open {
       transform: rotateY(-180deg);
     }
-
-    #wrapper, #flip, #front, #back, #front slot > *, #back slot > * {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-    }
-
-    #front {
-      z-index: 1;
-    }
-
-    .hidden {
-      display: none;
-    }
   </style>
   <div id="wrapper">
     <div id="flip">
-      <div id="front"><slot name="front"></div>
-      <div id="back"><slot name="back"></div>
+      <div id="back"><slot name="back"></slot></div>
+      <div id="front">
+        <slot name="front"></slot>
+        <div id="open"></div>
+      </div>
     </div>
   </div>
 `
@@ -102,10 +121,14 @@ class FlipCard extends HTMLElement {
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = []
+  static observedAttributes = ['mirrored']
   static contentRootSelector = '#content'
 
   element(id) { return this.shadowRoot.getElementById(id) }
+
+  attributeChangedCallback() {
+    this.updateMirrored()
+  }
 
   connectedCallback() {
     this.shadowRoot.appendChild(flipCardTemplate.content.cloneNode(true))
@@ -114,16 +137,21 @@ class FlipCard extends HTMLElement {
     this.shadowRoot.appendChild(template.content)
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
-    this.element('front').onclick = event => this.clickOpen(event)
-    this.element('back').onclick = () => this.close()
+    this.element('open').onclick = event => { this.openRandom(event); event.stopPropagation() }
+    this.element('back').onclick = event => { this.close(); event.stopPropagation() }
   }
 
   resize() {
     const cw = this.clientWidth/100, ch = this.clientHeight/100
     this.style.setProperty('--cavg', `${(cw+ch)/1.6}px`)
   }
-
-  // source: https://github.com/hakimel/css/tree/master/flipside
+  
+  updateMirrored() {
+    const slots = Array.from(this.querySelectorAll('[slot]'))
+    slots.forEach(slot => slot.toggleAttribute('mirrored', this.mirrored))
+    const open = this.element('open')
+    if (open) open.classList.toggle('mirrored', this.mirrored)
+  }
 
   /**
    * flip open, taking the mouse position into account
@@ -134,8 +162,14 @@ class FlipCard extends HTMLElement {
     this.open(event.clientX, event.clientY)
   }
 
+  openRandom(event) {
+    const randomX = Math.random() * this.clientWidth
+    const randomY = Math.random() * this.clientHeight
+    this.open(randomX, randomY)
+  }
+
   /**
-   * open the closest element with CSS class 'flip' set
+   * flip open, taking mouse position into account
    *
    * @param {number} x mouse position x
    * @param {number} y mouse position y

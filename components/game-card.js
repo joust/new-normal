@@ -15,18 +15,13 @@ gameCardTemplate.innerHTML = `
     #previous, #next {
       position: absolute;
       font-size: calc(7 * var(--cavg));
-      color: grey;
-      opacity: .2;
+      color: lightgrey;
+      opacity: 0;
       right: 0;
       cursor: pointer;
-      width: 100%;
+      width: calc(7 * var(--cavg));
       text-align: center;
-      z-index: 1;
-    }
-
-    #previous.mirrored, #next.mirrored {
-      left: 0;
-      right: auto;
+      display: none;
     }
 
     #previous {
@@ -69,7 +64,6 @@ class GameCard extends HTMLElement {
 
   get idOnly() {
     const card = this.alt || this.card
-    if (!card) debugger
     return (this.hasTopic ? card.split(':')[1] : card).replace('*', '')
   }
 
@@ -162,26 +156,65 @@ class GameCard extends HTMLElement {
     if (next) next.classList.toggle('hidden', this.alternatives.length===1)
   }
 
+  /**
+   * generates an archive.is mirror anchor node for the given node 
+   *
+   * @param {HTMLElement} a the anchor node to mirror
+   */
+   mirrorNode(a) {
+    const mirror = a.cloneNode(true)
+    mirror.href = `https://archive.is/${a.href}` 
+    mirror.firstChild.textContent = 'Mirror'
+    return mirror
+  }
+
+  getSourcesHTML(id) {
+    const sources = document.querySelector(`${GameCard.contentRootSelector} > .sources`)
+    const links = Array.from(sources.querySelectorAll(`a.${id}`))
+    if (links.length > 0) {
+      const q = elementWithKids('q', [
+//        a.querySelector('h2').cloneNode(true),
+        elementWithKids('ul', links.map(
+        s => elementWithKids('li', [
+          s.cloneNode(true), ' (', this.mirrorNode(s), ')'
+        ])))
+      ])
+      return q.outerHTML
+    }
+    return undefined
+  }
+
+  cardWithSources(id, title, front) {
+    const sources = this.getSourcesHTML(id)
+    if (sources) {
+      const back = `<sources-back slot="back"><h2>${title}</h2>${sources}</sources-back>`
+      front = front.replace(' ', ' slot="front" ')
+      return `<flip-card id="card">${front}${back}</flip-card>`
+    } else
+      return front.replace(' ', ' id="card" ')
+  }
+                                                  
   getCardElement() {
-    const data = document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} a[id="${this.idOnly}"]`) || ''
+    const data = document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} a[id="${this.idOnly}"]`)
+    const title = data ? data.querySelector('h2').innerHTML : ''
     const type = this.idiot ? 'idiot' : ''
     const mirrored = this.mirrored ? 'mirrored' : ''
     const wildcard = this.isWildcard ? 'wildcard' : ''
-    switch ((this.alt || this.card)[0]) {
-      case 'L': return `<label-card id="card" ${type} ${mirrored} card="${this.card}">${data.outerHTML}</label-card>`
-      case 'A': return `<appeal-to-card id="card" ${type} ${mirrored} type="${data.type}" card="${this.card}">${data.outerHTML}</appeal-to-card>`
-      case 'F': return `<fallacy-card id="card" ${type} ${mirrored} card="${this.card}">${data.outerHTML}</fallacy-card>`
+    switch (this.idOnly[0]) {
+      case 'L': return `<label-card id="card" ${type} ${mirrored} card="${this.card}">${data ?data.outerHTML : ''}</label-card>`
+      case 'A': return this.cardWithSources(this.idOnly, title, `<appeal-to-card ${type} ${mirrored} type="${data.type}" card="${this.card}">${data ? data.outerHTML : ''}</appeal-to-card>`)
+      case 'F': return `<fallacy-card id="card" ${type} ${mirrored} card="${this.card}">${data ?data.outerHTML : ''}</fallacy-card>`
       case 'N': return `<strawman-card id="card" ${type} ${mirrored}></strawman-card>`
       case 'R': return `<research-card id="card" ${type} ${mirrored}></research-card>`
       case 'P': return `<pause-card id="card" ${type} ${mirrored}></pause-card>`
       case 'B': return `<banish-card id="card" ${type} ${mirrored}></banish-card>`
-      default: // argument id and discuss id will contain the topic too
+      default: // argument id and discuss id will have a topic
         const topicData = this.topic && document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} a[id="${this.topic}"]`)
         const topic = topicData ? topicData.firstElementChild.innerHTML : ''
         if (this.idOnly.startsWith('D'))
           return `<discuss-card id="card" ${type} ${mirrored} topicId="${this.topic}" topic="${topic}"></discuss-card>`
         else
-          return `<argument-card id="card" ${type} ${mirrored} ${wildcard} card="${this.idOnly}" topicId="${this.topic}" topic="${topic}">${data.innerHTML}</argument-card>`
+          return this.cardWithSources(this.idOnly, title, `<argument-card ${type} ${mirrored} ${wildcard} card="${this.idOnly}" topicId="${this.topic}" topic="${topic}">${data ? data.innerHTML : ''}</argument-card>`)
     }
   }
 }

@@ -56,7 +56,7 @@ argumentCardTemplate.innerHTML = `
       font-weight: 300;
       height: var(--topic-height);
       top: 0;
-      left: calc(var(--sidebar-width) + 6 * var(--cw));
+      left: calc(var(--sidebar-width) + 6 * var(--cavg));
       right: 0;
       color: var(--neutral);
     }

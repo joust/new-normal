@@ -15,6 +15,7 @@ async function load(locale) {
   if (!supported.includes(lang)) [lang, terr] = ['en', 'us']
   document.querySelector('#location').value = `${lang}-${terr}`
   document.body.lang = lang
+  await loadSources()
   await loadContent(lang)
   element('instructions').innerHTML = await fetchSilent(`${lang}/uno.html`)
   if (!element('game'))
@@ -93,6 +94,7 @@ async function playWithBot(idiot) {
   element('uno').classList.toggle('hidden', false)
   element('config').classList.toggle('hidden', true)
   const clients = await startLocal(lang, playerID)
+  await loadSources()
   await loadContent(lang)
   element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand" nr="${playerID}" cards="[]"></player-hand>`)
   addOpponentHand(botID, 'CPU')
@@ -181,6 +183,16 @@ function fixAnchors(html) {
   return html.replaceAll('</h2></a>', '</h2>').replaceAll('</p>', '</p></a>')
 }
 
+async function loadSources() {
+  const loaded = document.querySelector('#content > .sources')
+  if (!loaded) {
+    const sources = elementWithKids('div', null, { 'class': 'sources' })
+    document.querySelector('#content').appendChild(sources)
+    sources.innerHTML = await fetchSilent(`sources.html`)
+    Array.from(sources.querySelectorAll('a')).forEach(link => link.target = '_blank')
+  }
+}
+
 async function loadContent(lang) {
   const loaded = document.querySelector(`#content > #${lang}`)
   if (!loaded) {
@@ -193,7 +205,7 @@ async function loadContent(lang) {
       elementWithKids('div', null, { 'class': 'topics' })
     ], { id: lang })
     document.querySelector('#content').appendChild(root)
-    const [idiot, sheep, labels, appealTos, fallacies, topics] = await Promise.all([
+    const [idiot, sheep, labels, appealTos, fallacies, topics, sources] = await Promise.all([
       fetchSilent(`${lang}/idiot.html`),
       fetchSilent(`${lang}/sheep.html`),
       fetchSilent(`${lang}/labels.html`),
@@ -207,7 +219,9 @@ async function loadContent(lang) {
     root.querySelector('.appeal-tos').innerHTML = appealTos
     root.querySelector('.fallacies').innerHTML = fallacies
     root.querySelector('.topics').innerHTML = topics
+    return root
   }
+  return loaded
 }
 
 function replaceStatement(lang, content) {

@@ -23,8 +23,9 @@
     <script src="components/pause-card.js" type="text/javascript"></script>
     <script src="components/banish-card.js" type="text/javascript"></script>
     <script src="components/flip-card.js" type="text/javascript"></script>
-    <script src="components/source-back.js" type="text/javascript"></script>
+    <script src="components/sources-back.js" type="text/javascript"></script>
     <script src="common.js" type="text/javascript"></script>
+    <script src="uno.js" type="text/javascript"></script>
     <script src="fastclick.js" type="text/javascript"></script>
     <style>
       html, body, #uno {
@@ -37,6 +38,7 @@
       
       html {
         overflow: hidden;
+        background: lightgrey;
       }
         
       #uno {
@@ -100,49 +102,9 @@
         display: none;
       }
     </style>
-    <script>
-      function flagcheck() {
-        if (navigator.userAgent.indexOf('Windows') > 0)
-          document.head.innerHTML += '<link rel="stylesheet" href="noto.css">'
-      }
-
-      function fixAnchors(html) {
-        return html.replaceAll('</h2></a>', '</h2>').replaceAll('</p>', '</p></a>')
-      }
-
-      async function loadContent(lang) {
-        const loaded = document.querySelector(`#content > #${lang}`)
-        if (!loaded) {
-          const root = elementWithKids('div', [
-            elementWithKids('div', null, { 'class': 'idiot' }),
-            elementWithKids('div', null, { 'class': 'sheep' }),
-            elementWithKids('div', null, { 'class': 'labels' }),
-            elementWithKids('div', null, { 'class': 'appeal-tos' }),
-            elementWithKids('div', null, { 'class': 'fallacies' }),
-            elementWithKids('div', null, { 'class': 'topics' })
-          ], { id: lang })
-          document.querySelector('#content').appendChild(root)
-          const [idiot, sheep, labels, appealTos, fallacies, topics] = await Promise.all([
-            fetchSilent(`${lang}/idiot.html`),
-            fetchSilent(`${lang}/sheep.html`),
-            fetchSilent(`${lang}/labels.html`),
-            fetchSilent(`${lang}/appeal-tos.html`),
-            fetchSilent(`${lang}/fallacies.html`),
-            fetchSilent(`${lang}/topics.html`)
-          ])
-          root.querySelector('.idiot').innerHTML =  fixAnchors(idiot)
-          root.querySelector('.sheep').innerHTML = fixAnchors(sheep)
-          root.querySelector('.labels').innerHTML = labels
-          root.querySelector('.appeal-tos').innerHTML = appealTos
-          root.querySelector('.fallacies').innerHTML = fallacies
-          root.querySelector('.topics').innerHTML = topics
-          
-          return {idiot, sheep, labels, appealTos, fallacies, topics}
-        }
-      }
-      
-      function idsFrom(content, filter = '') {
-        return [...content.matchAll(/a id="([^"]*)"/g)].map(r => r[1]).filter(id => id.includes(filter))
+    <script>      
+      function idsFrom(content, block, filter = '') {
+        return [...Array.from(content.querySelectorAll(`.${block} a[id]`))].map(node => node.id).filter(id => id.includes(filter))
       }
       
       function setLang(loc) {
@@ -150,18 +112,19 @@
       }
       
       async function addHand() {
+        await loadSources()
         const content = await loadContent(document.body.lang)
         const cards = JSON.stringify([
-          {card: 'S1', alt: idsFrom(content.sheep), playable: true},
-          {card: 'I2', alt: idsFrom(content.idiot), playable: true},
-          {card: 'AS1', alt: idsFrom(content.appealTos, 'AS'), playable: true},
-          {card: 'AI1', alt: idsFrom(content.appealTos, 'AI'), playable: true},
-          {card: 'FS1', alt: idsFrom(content.fallacies, 'FS'), playable: true},
-          {card: 'FI1', alt: idsFrom(content.fallacies, 'FI'), playable: true},
-          {card: 'LS1', alt: idsFrom(content.labels, 'LS'), playable: true},
-          {card: 'LI1', alt: idsFrom(content.labels, 'LI'), playable: true},
-          {card: 'T1:DS', alt: idsFrom(content.topics).map(id => `${id}:DS`), playable: true},
-          {card: 'T2:DI', alt: idsFrom(content.topics).map(id => `${id}:DI`), playable: true},
+          {card: 'S1', alt: idsFrom(content, 'sheep'), playable: true},
+          {card: 'I2', alt: idsFrom(content, 'idiot'), playable: true},
+          {card: 'AS1', alt: idsFrom(content, 'appeal-tos', 'AS'), playable: true},
+          {card: 'AI1', alt: idsFrom(content, 'appeal-tos', 'AI'), playable: true},
+          {card: 'FS1', alt: idsFrom(content, 'fallacies', 'FS'), playable: true},
+          {card: 'FI1', alt: idsFrom(content, 'fallacies', 'FI'), playable: true},
+          {card: 'LS1', alt: idsFrom(content, 'labels', 'LS'), playable: true},
+          {card: 'LI1', alt: idsFrom(content, 'labels', 'LI'), playable: true},
+          {card: 'T1:DS', alt: idsFrom(content, 'topics').map(id => `${id}:DS`), playable: true},
+          {card: 'T2:DI', alt: idsFrom(content, 'topics').map(id => `${id}:DI`), playable: true},
           {card: 'NI', alt: ['NI'], playable: true},
           {card: 'NS', alt: ['NS'], playable: true},
           {card: 'RS', alt: ['RS'], playable: true},
@@ -174,14 +137,18 @@
         const existing = document.querySelector('#hand')
         if (existing) existing.parentElement.removeChild(existing)
         
-        //document.querySelector('#uno').insertAdjacentHTML('beforeEnd', '<player-hand nr="0" name="All Cards" id="hand" cards="[]"></player-hand>')
-        // document.querySelector('#hand').setAttribute('cards', cards)
-        document.querySelector('#uno').insertAdjacentHTML('beforeEnd', 
+        if (true) {
+          document.querySelector('#uno').insertAdjacentHTML('beforeEnd', '<player-hand nr="0" name="All Cards" id="hand" cards="[]"></player-hand>')
+          document.querySelector('#hand').setAttribute('cards', cards)
+          document.querySelector('#hand').onplay = event => console.log('play', event)
+        } else {
+          document.querySelector('#uno').insertAdjacentHTML('beforeEnd', 
           `<flip-card style="width: 20em; height: 30em;">
-            <argument-card slot="front" style="width: 20em; height: 30em;" card="I1" topicId="T1" topic="Infektion"><h2>Immunsystem?</h2>
+            <argument-card slot="front" card="I1" topicId="T1" topic="Infektion"><h2>Immunsystem?</h2>
               <p>Ich bin bei denen, die sagen, gegen Viren würde uns unser Immunsystem schützen. Und dass, wenn wir keines hätten, uns der liebe Gott doch gleich mit einer Alltagsmaske zur Welt kommen lassen würde.</p></argument-card>
-            <source-back slot="back" style="width: 20em; height: 30em;"></source-back>
+            <sources-back slot="back"></sources-back>
            </flip-card>`)
+        }
       }
     </script>
   </head>

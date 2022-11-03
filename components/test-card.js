@@ -10,7 +10,7 @@ testCardTemplate.innerHTML = `
       --green: #b1da96;
     }
 
-    #card, #reject, #like, #drag {
+    #card, #reject, #like {
       position: absolute;
       width: 100%;
       height: 100%;
@@ -20,6 +20,7 @@ testCardTemplate.innerHTML = `
     .reset {
       transition: transform 0.3s;
       transform: translateX(0) !important;
+      z-index: 0;
     }
 
     #like.reset, #reject.reset {
@@ -87,15 +88,9 @@ testCardTemplate.innerHTML = `
       background: var(--green);
     }
 
-    #drag {
-      z-index: 1;
-      cursor: grab;
-    }
-
   </style>
-  <div id="reject"></div>
   <div id="like"></div>
-  <div id="drag"></div>
+  <div id="reject"></div>
 `
 
 class TestCard extends HTMLElement {
@@ -143,7 +138,7 @@ class TestCard extends HTMLElement {
     this.shadowRoot.appendChild(template.content)
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
-    this.element('reject').insertAdjacentHTML('beforeBegin', this.getCardElement())
+    this.element('reject').insertAdjacentHTML('afterEnd', this.getCardElement())
     
     this.onmousedown = this.ontouchstart = e => {
       if (this.animating) return
@@ -172,16 +167,55 @@ class TestCard extends HTMLElement {
   updateCard() {
     const card = this.element('card')
     if (this.isConnected && card) {
-      card.insertAdjacentHTML('beforeBegin', this.getCardElement())
+      card.insertAdjacentHTML('afterEnd', this.getCardElement())
       this.shadowRoot.removeChild(card)
     }
   }
 
+  /**
+   * generates an archive.is mirror anchor node for the given node 
+   *
+   * @param {HTMLElement} a the anchor node to mirror
+   */
+   mirrorNode(a) {
+    const mirror = a.cloneNode(true)
+    mirror.href = `https://archive.is/${a.href}` 
+    mirror.firstChild.textContent = 'Mirror'
+    return mirror
+  }
+
+  getSourcesHTML(id) {
+    const sources = document.querySelector(`${GameCard.contentRootSelector} > .sources`)
+    const links = Array.from(sources.querySelectorAll(`a.${id}`))
+    if (links.length > 0) {
+      const q = elementWithKids('q', [
+//        a.querySelector('h2').cloneNode(true),
+        elementWithKids('ul', links.map(
+        s => elementWithKids('li', [
+          s.cloneNode(true), ' (', this.mirrorNode(s), ')'
+        ])))
+      ])
+      return q.outerHTML
+    }
+    return undefined
+  }
+
+  cardWithSources(id, title, front) {
+    const sources = this.getSourcesHTML(id)
+    if (sources) {
+      const back = `<sources-back slot="back"><h2>${title}</h2>${sources}</sources-back>`
+      front = front.replace(' ', ' slot="front" ')
+      return `<flip-card id="card">${front}${back}</flip-card>`
+    } else
+      return front.replace(' ', ' id="card" ')
+  }
+
   getCardElement() {
     const data = document.querySelector(`${TestCard.contentRootSelector} > #${this.lang} a[id="${this.idOnly}"]`) || ''
+    const title = data ? data.querySelector('h2').innerHTML : ''
     const topicData = this.topic && document.querySelector(`${TestCard.contentRootSelector} > #${this.lang} a[id="${this.topic}"]`)
     const topic = topicData ? topicData.firstElementChild.innerHTML : ''
-    return `<argument-card id="card" neutral card="${this.idOnly}" topicId="${this.topic}" topic="${topic}">${data.innerHTML}</argument-card>`
+    return this.cardWithSources(this.idOnly, title, `<argument-card neutral card="${this.idOnly}" topicId="${this.topic}" topic="${topic}">${data ? data.innerHTML : ''}</argument-card>`)
   }
   
   pullChange() {
@@ -195,6 +229,7 @@ class TestCard extends HTMLElement {
     const likeOpacity = (opacity <= 0) ? 0 : opacity
     this.element('reject').style.opacity = rejectOpacity
     this.element('like').style.opacity = likeOpacity
+    this.element('card').style.zIndex = -1
   }
 
   release() {
@@ -202,10 +237,12 @@ class TestCard extends HTMLElement {
       this.element('card').classList.add('to-right')
       this.element('like').classList.add('to-right')
       this.element('reject').classList.add('to-right')
+      this.dispatchEvent(new CustomEvent('choice', { detail: { like: true, card: this.top } }))
     } else if (this.pullDeltaX <= -this.decisionVal) {
       this.element('card').classList.add('to-left')
       this.element('like').classList.add('to-left')
       this.element('reject').classList.add('to-left')
+      this.dispatchEvent(new CustomEvent('choice', { detail: { like: false, card: this.top } }))
     }
 
     if (Math.abs(this.pullDeltaX) >= this.decisionVal) {

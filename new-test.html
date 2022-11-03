@@ -7,8 +7,13 @@
   <link rel="stylesheet" href="crocodile.css">
   <link rel="stylesheet" href="components/cards.css">
   <script src="dialog.js" type="text/javascript"></script>
+  <script src="components/flip-card.js" type="text/javascript"></script>
+  <script src="components/game-card.js" type="text/javascript"></script>
+  <script src="components/sources-back.js" type="text/javascript"></script>
   <script src="components/argument-card.js" type="text/javascript"></script>
   <script src="components/test-card.js" type="text/javascript"></script>
+  <script src="components/test-pile.js" type="text/javascript"></script>
+  <script src="components/no-card.js" type="text/javascript"></script>
   <script src="common.js" type="text/javascript"></script>
   <script src="fastclick.js" type="text/javascript"></script>
   <style>
@@ -32,7 +37,7 @@
       display: none;
     }
 
-    #test, test-card {
+    #test, test-pile {
       width: 420px;
       height: 600px;
     }
@@ -45,13 +50,29 @@
       if (locale) [lang, terr] = locale.split('-'); else [lang, terr] = browserLocale()
       if (!supported.includes(lang)) [lang, terr] = ['en', 'us']
       document.body.lang = lang
+      await loadSources()
       await loadContent(lang)
-      document.getElementById('test').insertAdjacentHTML('afterBegin', '<test-card card="T1:I1"></test-card>')
+      document.getElementById('test').insertAdjacentHTML('afterBegin', '<test-pile id="test-pile" cards="T1:I1,T2:S2,T3:I3,T4:S4"></test-card>')
+      document.getElementById('test-pile').addEventListener('finish', event => finish(event))
     }
 
+    function finish(event) {
+      console.log(event.detail)
+    }
+    
     function flagcheck() {
       if (navigator.userAgent.indexOf('Windows') > 0)
         document.head.innerHTML += '<link rel="stylesheet" href="noto.css">'
+    }
+
+    async function loadSources() {
+      const loaded = document.querySelector('#content > .sources')
+      if (!loaded) {
+        const sources = elementWithKids('div', null, { 'class': 'sources' })
+        document.querySelector('#content').appendChild(sources)
+        sources.innerHTML = await fetchSilent(`sources.html`)
+        Array.from(sources.querySelectorAll('a')).forEach(link => link.target = '_blank')
+      }
     }
 
     async function loadContent(lang) {
@@ -68,10 +89,59 @@
           fetchSilent(`${lang}/sheep.html`),
           fetchSilent(`${lang}/topics.html`)
         ])
-        root.querySelector('.idiot').innerHTML =  idiot
-        root.querySelector('.sheep').innerHTML = sheep
+        root.querySelector('.idiot').innerHTML =  replaceStatement(lang, idiot)
+        root.querySelector('.sheep').innerHTML = replaceStatement(lang, sheep)
         root.querySelector('.topics').innerHTML = topics
       }
+    }
+    
+    function replaceStatement(lang, content) {
+      const from1 = {
+        de: 'Die sagen<i> doch allen Ernstes</i>',
+        en: 'They say<i> in all seriousness</i>',
+        fr: 'Ils disent<i> en toute sincérité</i>',
+        es: 'Dicen<i> con toda seriedad</i>',
+        it: 'Dicono<i> in tutta serietà</i>',
+        da: 'De siger<i> med al alvor</i>',
+        pl: 'Twierdzą<i> z całą powagą</i>',
+        pt: 'Dizem<i> com toda a seriedade</i>',
+        'pt-br': 'Dizem<i> com toda a seriedade</i>'
+      }
+      const to1 = {
+        de: 'Ich bin bei denen, die sagen',
+        en: 'I am with those who say',
+        fr: 'Je suis avec ceux qui disent',
+        es: 'Estoy con quienes dicen',
+        it: 'Sono d\'accordo con chi dice',
+        da: 'Jeg er enig med dem, der siger',
+        pl: 'Jestem z tymi, którzy twierdzą',
+        pt: 'Estou com aqueles que dizem',
+        'pt-br': 'Estou com aqueles que dizem'
+      }
+      const from2 = {
+        de: 'Die fragen<i> doch allen Ernstes</i>',
+        en: 'They ask<i> in all seriousness</i>',
+        fr: 'Ils demandent<i> en toute sincérité</i>',
+        es: 'Preguntan<i> con toda seriedad</i>',
+        it: 'Chiedono<i> in tutta serietà</i>',
+        da: 'De spørger<i> med al alvor</i>',
+        pl: 'Pytają<i> z całą powagą</i>',
+        pt: 'Pergunta<i> com toda a seriedade</i>',
+        'pt-br': 'Pergunta<i> com toda a seriedade</i>'
+
+      }
+      const to2 = {
+        de: 'Ich bin bei denen, die fragen',
+        en: 'I am with those who ask',
+        fr: 'Je suis avec ceux qui demandent',
+        es: 'Estoy con quienes preguntan',
+        it: 'Sono d\'accordo con chi chiedono',
+        da: 'Jeg er enig med dem, der spørger',
+        pl: 'Jestem z tymi, którzy pytają',
+        pt: 'Estou com aqueles que perguntam',
+        'pt-br': 'Estou com aqueles que perguntam'
+      }
+      return content.replaceAll(from1[lang], to1[lang]).replaceAll(from2[lang], to2[lang])
     }
   </script>
   <div id="test">

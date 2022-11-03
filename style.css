@@ -363,22 +363,22 @@ div.bingo, .detail, .card {
   float: left;
 }
 
-.detail a[id].excluded, .detail a[id].excluded + p {
+.detail a[id].excluded, .detail a[id].excluded p {
   color: #aaa;
 }
 
 .detail.single a[id], 
-.detail.single a[id] + p, 
+.detail.single a[id] p, 
 .detail.single a[id] + ul, 
 .detail.single a[id] span,
 .detail.single .search,
 .detail.single input[type="checkbox"],
 .detail a[id].not-matching, 
-.detail a[id].not-matching + p {
+.detail a[id].not-matching p {
   display: none;
 }
 
-.detail.single a.single, .detail.single a.single + p {
+.detail.single a.single, .detail.single a.single p {
   display: block;
   transition: height 0.5s ease;
 }

@@ -73,7 +73,7 @@
           log(`translating arg ${arg.a.id} to ${target.lang}`)
           const a = await translateArgumentA(arg.a.cloneNode(true), target.lang)
           const p = await translateArgumentP(arg.p.cloneNode(true), target.lang)
-          const lower = target.div.querySelector(`a[id=${lowerId(arg.a.id)}] + p`)
+          const lower = target.div.querySelector(`a[id=${lowerId(arg.a.id)}] p`)
           const last = lower ? lower : target.div.querySelector('h1')
           last.after(a)
           a.after(p)
@@ -110,7 +110,7 @@
         const content = await load(handle)
         const div = document.createElement('div')
         div.innerHTML = content
-        const ps = Array.from(div.querySelectorAll('a + p'))
+        const ps = Array.from(div.querySelectorAll('a p'))
         const args = ps.map(p => ({ a: p.previousElementSibling, p }))
         return { handle, div, args, lang } 
       }

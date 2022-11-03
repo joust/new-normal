@@ -179,10 +179,6 @@ function flagcheck() {
     document.head.innerHTML += '<link rel="stylesheet" href="noto.css">'
 }
 
-function fixAnchors(html) {
-  return html.replaceAll('</h2></a>', '</h2>').replaceAll('</p>', '</p></a>')
-}
-
 async function loadSources() {
   const loaded = document.querySelector('#content > .sources')
   if (!loaded) {
@@ -213,8 +209,8 @@ async function loadContent(lang) {
       fetchSilent(`${lang}/fallacies.html`),
       fetchSilent(`${lang}/topics.html`)
     ])
-    root.querySelector('.idiot').innerHTML =  fixAnchors(replaceStatement(lang, idiot))
-    root.querySelector('.sheep').innerHTML = fixAnchors(replaceStatement(lang, sheep))
+    root.querySelector('.idiot').innerHTML =  replaceStatement(lang, idiot)
+    root.querySelector('.sheep').innerHTML = replaceStatement(lang, sheep)
     root.querySelector('.labels').innerHTML = labels
     root.querySelector('.appeal-tos').innerHTML = appealTos
     root.querySelector('.fallacies').innerHTML = fallacies

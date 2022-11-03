@@ -28,8 +28,6 @@ General
 
 * Implement card display on URL param e.g. https://new-normal.app#LI4
 * Draft arguments with only headlines (h2) will be displayed with placeholder content lines
-* have arguments files with the same format - remove fixAnchors
 * implement the new intro, remove the old
 * refactor dialog.js
 * refactor all redundant card local css to cards.css
-* implement flipping cards to display the sources

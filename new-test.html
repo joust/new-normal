@@ -54,10 +54,6 @@
         document.head.innerHTML += '<link rel="stylesheet" href="noto.css">'
     }
 
-    function fixAnchors(html) {
-      return html.replaceAll('</h2></a>', '</h2>').replaceAll('</p>', '</p></a>')
-    }
-
     async function loadContent(lang) {
       const loaded = document.querySelector(`#content > #${lang}`)
       if (!loaded) {
@@ -72,8 +68,8 @@
           fetchSilent(`${lang}/sheep.html`),
           fetchSilent(`${lang}/topics.html`)
         ])
-        root.querySelector('.idiot').innerHTML =  fixAnchors(idiot)
-        root.querySelector('.sheep').innerHTML = fixAnchors(sheep)
+        root.querySelector('.idiot').innerHTML =  idiot
+        root.querySelector('.sheep').innerHTML = sheep
         root.querySelector('.topics').innerHTML = topics
       }
     }

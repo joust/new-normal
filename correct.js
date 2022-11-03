@@ -48,7 +48,7 @@ function handleCorrection(event) {
 function toggleCorrectMode(wrapper) {
   if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
   const currentMode = wrapper.querySelector('.correct').classList.contains('active')
-  wrapper.querySelectorAll('a[id] + p, a[id] h2').forEach(e => {
+  wrapper.querySelectorAll('a[id] p, a[id] h2').forEach(e => {
     if (!currentMode)
       e.setAttribute('contenteditable', 'plaintext-only')
     else

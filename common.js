@@ -114,15 +114,13 @@ function mergeContent(content, local) {
   const args = elementWithKids('div'), largs = elementWithKids('div')
   args.innerHTML = content
   largs.innerHTML = local
-  const last = args.querySelector('p:last-of-type')
+  const last = args.querySelector('a:last-of-type')
   const lh1 = largs.querySelector('h1.local')
   Array.from(largs.querySelectorAll('a[id]')).reverse().forEach(la => {
     const a = args.querySelector(`a[id="${la.id}"]`)
     if (a) {
-      args.replaceChild(la.nextElementSibling, a.nextElementSibling)
       args.replaceChild(la, a)
     } else {
-      last.after(la.nextElementSibling)
       last.after(la)
     }
   })
@@ -260,7 +258,7 @@ function search(event) {
   const input = event.target.value.toLowerCase()
   const args = Array.from(wrapper.querySelectorAll('a[id]'))
   args.forEach(a => a.classList.remove('not-matching'))
-  const notMatching = input.length ? args.filter(a => !a.textContent.replace(/\u00ad/gi, '').toLowerCase().includes(input) && (!a.nextElementSibling || !a.nextElementSibling.textContent.replace(/\u00ad/gi, '').toLowerCase().includes(input))) : []
+  const notMatching = input.length ? args.filter(a => !a.textContent.replace(/\u00ad/gi, '').toLowerCase().includes(input)) : []
   notMatching.forEach(a => a.classList.add('not-matching'))  
 }
 
@@ -304,7 +302,7 @@ function getArguments(detail) {
   return Array.from(detail.querySelectorAll('a[id]')).map(
     a => ({id: a.id, 
            word: a.querySelector('h2').innerHTML, 
-           content: a.nextElementSibling.innerText}))
+           content: a.querySelector('p').innerText}))
 }
 
 /**
@@ -443,7 +441,7 @@ function singleDetails(wrapper, topicId, ids, selected = undefined, permalink = 
   if (anchor) {
     anchor.classList.add('single')
     detail.querySelectorAll('a[href=""]').forEach(e => e.classList.toggle('hidden',
-      !anchor.nextElementSibling.querySelector('q')))
+      !anchor.querySelector('q')))
   }
   setPermalink(wrapper, permalink ? ids : false)
 }

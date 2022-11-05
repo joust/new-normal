@@ -2,9 +2,8 @@
 if (!('fetch' in window)) alert('Please user a modern Browser to play New Normal!')
 
 // ServiceWorker is a progressive technology. Ignore unsupported browsers
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js')
-}
+if ('serviceWorker' in navigator)
+  navigator.serviceWorker.register('sw.js').then(registration => registration.update())      
 
 const supported = ['de', 'da', 'en', 'es', 'pl', 'it', 'pt', 'fr']
 const locals = [ 'de/de', 'de/ch', 'de/at', 'en/us', 'es/gb', 'pt/br']

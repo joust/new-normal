@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>New Normal - Git Access</title>
+    <meta charset="utf-8" />
+    <script src="https://unpkg.com/@isomorphic-git/lightning-fs"></script>
+    <script src="https://unpkg.com/isomorphic-git"></script>
+    <script type="module">
+      import http from 'https://unpkg.com/isomorphic-git/http/web/index.js'
+      
+      const fs = new LightningFS('fs', { wipe: true })
+      // const fs = new LightningFS('fs')
+      const pfs = fs.promises
+      const url = 'https://immer.international/artwork/new-normal.git'
+      const ref = 'master'
+      // not needed, only because of https://github.com/isomorphic-git/isomorphic-git/pull/1427
+      const corsProxy = 'https://cors.isomorphic-git.org'
+      const singleBranch = true
+      const dir = '/new-normal'
+
+      // if dir exists, pull, otherwise clone repo
+      try {
+        await pfs.readFile(`${dir}/.git/config`) // check if dir & config file is there
+        // pull seems to have a bug?
+        // await git.pull({ fs, http, dir, ref, corsProxy })
+      } catch (e) {
+        await pfs.mkdir(dir)
+        await git.clone({ fs, http, dir, url, ref, corsProxy, singleBranch, depth: 10 })
+      }
+      console.log(await pfs.readdir(dir))
+      console.log(await git.log({ fs, dir }))
+    </script>
+  </head>
+  <body>
+  </body>
+</html>

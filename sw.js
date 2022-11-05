@@ -37,7 +37,8 @@ const fromNetwork = (request, timeout) =>
     fetch(request).then(response => {
       clearTimeout(timeoutId)
       fulfill(response)
-      update(request)
+      if (request.method!=='POST') 
+        update(request)
     }, reject)
   })
 
@@ -65,5 +66,6 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     fromNetwork(event.request, 10000).catch(() => fromCache(event.request))
   )
-  event.waitUntil(update(event.request))
+  if (event.request.method!=='POST') 
+    event.waitUntil(update(event.request))
 })

@@ -169,6 +169,7 @@ class GameCard extends HTMLElement {
   }
 
   replaceStatement(lang, content) {
+    if (lang.includes('-')) lang = lang.split('-')[0]
     const from1 = {
       de: 'Die sagen<i> doch allen Ernstes</i>',
       en: 'They say<i> in all seriousness</i>',
@@ -249,6 +250,7 @@ class GameCard extends HTMLElement {
     const type = this.idiot ? 'idiot' : ''
     const mirrored = this.mirrored ? 'mirrored' : ''
     const wildcard = this.isWildcard ? 'wildcard' : ''
+    const spellcheck = data && data.hasAttribute('spellcheck') ? 'spellcheck ' : ''
     switch (this.idOnly[0]) {
       case 'L': return `<label-card id="card" ${type} ${mirrored} card="${this.card}">${data ?data.outerHTML : ''}</label-card>`
       case 'A': return this.cardWithSources(this.idOnly, title, `<appeal-to-card ${type} ${mirrored} type="${data.type}" card="${this.card}">${data ? data.outerHTML : ''}</appeal-to-card>`)
@@ -258,13 +260,13 @@ class GameCard extends HTMLElement {
       case 'P': return `<pause-card id="card" ${type} ${mirrored}></pause-card>`
       case 'B': return `<banish-card id="card" ${type} ${mirrored}></banish-card>`
       default: // argument id and discuss id will have a topic
-        const topicData = this.topic && document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} a[id="${this.topic}"]`)
-        const topic = topicData ? topicData.firstElementChild.innerHTML : ''
+        const topicData = this.topic && document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} > .topics > section[id="${this.topic}"]`)
+        const topic = topicData ? topicData.title : ''
         if (this.idOnly.startsWith('D'))
           return `<discuss-card id="card" ${type} ${mirrored} topicId="${this.topic}" topic="${topic}"></discuss-card>`
         else {
           const html = data ? this.replaceStatement(this.lang, data.innerHTML) : ''
-          return this.cardWithSources(this.idOnly, title, `<argument-card ${type} ${mirrored} ${wildcard} card="${this.idOnly}" topicId="${this.topic}" topic="${topic}">${html}</argument-card>`)
+          return this.cardWithSources(this.idOnly, title, `<argument-card ${type} ${mirrored} ${wildcard} ${spellcheck} card="${this.idOnly}" topicId="${this.topic}" topic="${topic}">${html}</argument-card>`)
         }
     }
   }

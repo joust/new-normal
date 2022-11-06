@@ -12,13 +12,18 @@ function randomMatchId() {
 
 async function load(locale) {
   FastClick.attach(document.body)
-  if (locale) [lang, terr] = locale.split('-'); else [lang, terr] = browserLocale()
-  if (!supported.includes(lang)) [lang, terr] = ['en', 'us']
+  if (locale) {
+    [lang, terr] = locale.split('-')
+  } else {
+    if (!supported.includes(lang)) [lang, terr] = ['en', 'us']
+    [lang, terr] = browserLocale()
+    locale = `${lang}-${terr}`
+  }
   document.querySelector('#location').value = locale
   document.body.lang = locales.includes(locale) ? locale : lang
   await loadSources()
   await loadContent(lang, terr)
-  element('instructions').innerHTML = await fetchSilent(`${lang}/uno.html`)
+  element('instructions').innerHTML = await fetchSilent(`content/${lang}/uno.html`)
   if (!element('game'))
     element('uno').insertAdjacentHTML('afterBegin', `
       <div id="game">

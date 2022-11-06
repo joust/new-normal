@@ -249,7 +249,7 @@ class DiscussCard extends HTMLElement {
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
       const type = this.idiot ? 'idiot' : 'sheep'
-      const key = Object.keys(DiscussCard.phrase(this.topic)).find(p => p.startsWith(this.lang)) || 'de'
+      const key = Object.keys(DiscussCard.phrase(this.topic)).find(p => this.lang.startsWith(p)) || 'de'
       const phrase = DiscussCard.phrase(this.topic)[key]
       Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = phrase)
     }

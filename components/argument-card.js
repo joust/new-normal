@@ -206,6 +206,24 @@ argumentCardTemplate.innerHTML = `
       content: '✱'
     }
 
+    #spellcheck {
+      position: absolute;
+      right: 0%;
+      top: 4%;
+      width: 8%;
+      height: 6%;
+      font-size: calc(5 * var(--cavg));
+    }
+
+    .mirrored #spellcheck {
+      left: 0%;
+      right: auto;
+    }
+
+    #spellcheck:after {
+      content: '🚧'
+    }
+
     .hidden {
       display: none;
     }
@@ -217,6 +235,7 @@ argumentCardTemplate.innerHTML = `
     <div id="content"><slot></div>
     <div id="side-title"></div>
     <div id="card"></div>
+    <div id="spellcheck" class="hidden"></div>
     <div id="wildcard" class="hidden"></div>
   </div>
 `
@@ -227,7 +246,7 @@ class ArgumentCard extends HTMLElement {
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = ['topic', 'neutral', 'topicId', 'card', 'wildcard', 'mirrored']
+  static observedAttributes = ['topic', 'neutral', 'topicId', 'card', 'wildcard', 'spellcheck', 'mirrored']
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
@@ -257,6 +276,10 @@ class ArgumentCard extends HTMLElement {
 
   get neutral() {
     return this.hasAttribute('neutral')
+  }
+
+  get spellcheck() {
+    return this.hasAttribute('spellcheck')
   }
 
   get mirrored() {
@@ -297,6 +320,7 @@ class ArgumentCard extends HTMLElement {
       root.classList.toggle('sheep', !this.neutral && !this.idiot)
       root.classList.toggle('mirrored', this.mirrored)
       this.element('wildcard').classList.toggle('hidden', !this.wildcard)
+      this.element('spellcheck').classList.toggle('hidden', !this.spellcheck)
       this.element('card').innerHTML = this.card
       this.element('card').classList.toggle('hidden', this.neutral)
       this.element('topic-icon').innerHTML = this.topicId ? this.topicId.substring(1) : '?'

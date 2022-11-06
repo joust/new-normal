@@ -238,10 +238,10 @@ class BanishCard extends HTMLElement {
     if (this.isConnected && root) {
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
-      const key = Object.keys(BanishCard.phrase).find(p => p.startsWith(this.lang)) || 'de'
+      const key = Object.keys(BanishCard.phrase).find(p => this.lang.startsWith(p)) || 'de'
       const phrase = BanishCard.phrase[key]
       Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = phrase)
-      const dkey = Object.keys(BanishCard.description).find(p => p.startsWith(this.lang)) || 'de'
+      const dkey = Object.keys(BanishCard.description).find(p => this.lang.startsWith(p)) || 'de'
       this.element('description').innerHTML = BanishCard.description[dkey]
     }
   }

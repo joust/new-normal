@@ -240,10 +240,10 @@ class StrawmanCard extends HTMLElement {
     if (this.isConnected && root) {
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
-      const key = Object.keys(StrawmanCard.phrase).find(p => p.startsWith(this.lang)) || 'de'
+      const key = Object.keys(StrawmanCard.phrase).find(p => this.lang.startsWith(p)) || 'de'
       const phrase = StrawmanCard.phrase[key]
       Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = phrase)
-      const dkey = Object.keys(StrawmanCard.description).find(p => p.startsWith(this.lang)) || 'de'
+      const dkey = Object.keys(StrawmanCard.description).find(p => this.lang.startsWith(p)) || 'de'
       this.element('description').innerHTML = StrawmanCard.description[dkey]
     }
   }

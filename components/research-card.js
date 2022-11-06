@@ -227,7 +227,7 @@ class ResearchCard extends HTMLElement {
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
       const type = this.idiot ? 'idiot' : 'sheep'
-      const key = Object.keys(ResearchCard.phrase[type]).find(p => p.startsWith(this.lang)) || 'de'
+      const key = Object.keys(ResearchCard.phrase[type]).find(p => this.lang.startsWith(p)) || 'de'
       const phrase = ResearchCard.phrase[type][key]
       Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = phrase)
     }

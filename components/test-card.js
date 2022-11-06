@@ -213,8 +213,8 @@ class TestCard extends HTMLElement {
   getCardElement() {
     const data = document.querySelector(`${TestCard.contentRootSelector} > #${this.lang} a[id="${this.idOnly}"]`) || ''
     const title = data ? data.querySelector('h2').innerHTML : ''
-    const topicData = this.topic && document.querySelector(`${TestCard.contentRootSelector} > #${this.lang} a[id="${this.topic}"]`)
-    const topic = topicData ? topicData.firstElementChild.innerHTML : ''
+    const topicData = this.topic && document.querySelector(`${TestCard.contentRootSelector} > #${this.lang} > .topics > section[id="${this.topic}"]`)
+    const topic = topicData ? topicData.title : ''
     return this.cardWithSources(this.idOnly, title, `<argument-card neutral card="${this.idOnly}" topicId="${this.topic}" topic="${topic}">${data ? data.innerHTML : ''}</argument-card>`)
   }
   

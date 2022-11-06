@@ -34,10 +34,10 @@ function load(locale) {
 async function show(page) {
   document.querySelector('.logo').style.display = page === 'intro' ? 'none' : 'block'
   document.querySelector('#menu').classList.add('hidden')
-  const local = `${lang}/${terr}`
+  const locale = `${lang}/${terr}`
   let content = ''
-  if (locals.includes(local)) content = await fetchSilent(`${local}/${page}.html`)
-  if (content === '') content = await fetchSilent(`${lang}/${page}.html`)
+  if (locals.includes(locale)) content = await fetchSilent(`content/${locale}/${page}.html`)
+  if (content === '') content = await fetchSilent(`content/${lang}/${page}.html`)
   if (page === 'intro') content = content.replace('NN_YEAR', ''+getNNYear())
   document.querySelector('#menu .content').innerHTML = content
   document.querySelector('#menu').scrollTop = 0
@@ -87,77 +87,13 @@ function stopPyro() {
 }
 
 /**
- * get localized content (topics + arguments)
+ * get localized arguments with edit wrapper
  *
  * @param {boolean} idiot whether to load the idiot or sheep arguments
  */
-async function getLocalizedContent(idiot) {
-  const file = idiot ? 'idiot.html' : 'sheep.html'
-  let content = await fetchSilent(`${lang}/${file}`)
-  setBaseContent(content, lang, idiot)
-  const local = `${lang}/${terr}`
-  if (locals.includes(local))
-    content = mergeContent(content, await fetchSilent(`${local}/${file}`))
-
-  return `<div lang="${lang}" class="tr">${content}</div>${(await getLocalizedTopics(content + local, idiot))}`
-}
-
-/**
- * merge territory local content into language specific content
- * replacing redefined arguments, adding unique local arguments
- *
- * @param {string} content language specific argument content
- * @param {string} local territory local argument content
- */
-function mergeContent(content, local) {
-  const args = elementWithKids('div'), largs = elementWithKids('div')
-  args.innerHTML = content
-  largs.innerHTML = local
-  const last = args.querySelector('a:last-of-type')
-  const lh1 = largs.querySelector('h1.local')
-  Array.from(largs.querySelectorAll('a[id]')).reverse().forEach(la => {
-    const a = args.querySelector(`a[id="${la.id}"]`)
-    if (a) {
-      args.replaceChild(la, a)
-    } else {
-      last.after(la)
-    }
-  })
-  if (lh1) last.after(lh1);
-
-  ['select', 'label', 'input', 'h1:not(.local)', 'center.bingo', 'center.test'].forEach(s => {
-    const replacement = largs.querySelector(s)
-    if (replacement) args.replaceChild(replacement, args.querySelector(s))
-  })
-
-  return args.innerHTML
-}
-
-/**
- * get topics data with localized topics, arguments, titles and labels
- */
-async function getLocalizedTopics(localizedArgs, idiot) {
-  const args = elementWithKids('div')
-  args.innerHTML = localizedArgs
-  const topics = elementWithKids('div')
-  const localTopics = elementWithKids('div')
-  topics.innerHTML = await fetchSilent('topics.html')
-  localTopics.innerHTML = await fetchSilent(`${lang}/topics.html`)
-  Array.from(localTopics.querySelectorAll('a')).forEach(la => {
-    const a = topics.querySelector(`#${la.id}`)
-    if (a) {
-      la.dataset.idiot = a.dataset.idiot + (la.dataset.idiot ? ` ${la.dataset.idiot}` : '')
-      la.dataset.sheep = a.dataset.sheep + (la.dataset.sheep ? ` ${la.dataset.sheep}` : '')
-    }
-    const ul = elementWithKids('ul')
-    const targs = idiot ? la.dataset.idiot : la.dataset.sheep
-    for (const targ of targs.split(' ')) if (targ.length) {
-      const title = args.querySelector(`#${targ}`)
-      title && ul.appendChild(elementWithKids('li', [elementWithKids('span', targ), elementWithKids('h3', [elementWithKids('a', title.innerText, { href: `#${targ}` })])]))
-    }
-    la.after(ul)
-  })
-  return localTopics.innerHTML
+function getLocalized(idiot) {
+  const content = getLocalizedContent(lang, terr, idiot)
+  return `<div lang="${lang}" class="tr">${content}</div>`
 }
 
 function getNNYear() {
@@ -292,21 +228,31 @@ function hideGame() {
 }
 
 /**
+ * Generate label select
+ * @param {boolean} idiot use idiot or sheep labels
+ * @return {string} select HTML
+ */
+function labelSelect(idiot) {
+  const labels = getLabels(lang, terr, idiot).map(label => `<option>${label.innerHTML}</option>`)
+  return htmlToElement(`<select id="label" class="needsclick">${labels}</select>`)
+}
+
+/**
  * extract topics from HTML content
  *
- * @param {HTMLElement} detail - content DOM node containing the arguments
  * @return {Array} the extracted topics
  */
-function getTopics(detail) {
-  return Array.from(detail.querySelectorAll('a[id^=T]:not(.excluded)')).map(a => ({
-    id: a.id,
-    idiot: a.dataset.idiot.split(' '),
-    sheep: a.dataset.sheep.split(' '),
-    idiotLabel: a.dataset.idiotLabel,
-    sheepLabel: a.dataset.sheepLabel,
-    idiotTitle: a.dataset.idiotTitle,
-    sheepTitle: a.dataset.sheepTitle,
-    title: a.querySelector('h2').innerHTML
+function getTopicsData() {
+  const topics = getTopics(lang, terr)
+  return Array.from(topics.querySelectorAll('section')).map(topic => ({
+      id: topic.id,
+      idiot: Array.from(topic.querySelectorAll('a[id^=I]')).map(a => a.id),
+      sheep: Array.from(topic.querySelectorAll('a[id^=S]')).map(a => a.id),
+      idiotLabel: topic.dataset.idiotLabel,
+      sheepLabel: topic.dataset.sheepLabel,
+      idiotTitle: topic.dataset.idiotTitle,
+      sheepTitle: topic.dataset.sheepTitle,
+      title: topic.title
     })
   )
 }
@@ -319,11 +265,11 @@ function getTopics(detail) {
  * @param {boolean} idiot - idiot or sheep
  * @return {string} the extracted arguments
  */
-function getArgumentsForTopic(detail, topicId, idiot) {
-  const topic = detail.querySelector(`a[id="${topicId}"]`)
-  const args = topic ? topic.dataset[idiot ? 'idiot' : 'sheep'].split(' ') : []
-  return args.map(argId => {
-    const arg = detail.querySelector(`a[id="${argId}"] h2`)
+function getArgumentsForTopic(topicId, idiot) {
+  const topic = getTopic(lang, terr, topicId)
+  const argsIds = Array.from(topic.querySelectorAll(idiot ? 'a[id^=I]' : 'a[id^=S]')).map(a => a.id)
+  return argsIds.map(argId => {
+    const arg = getArgument(lang, terr, argId).querySelector('h2')
     if (!arg) console.log(`no arg for id ${argId}`)
     return arg ? arg.innerHTML : ''
   }).join('\n')
@@ -334,9 +280,8 @@ function getArgumentsForTopic(detail, topicId, idiot) {
  *
  * @param {HTMLElement} detail content DOM node containing the arguments
  */
-async function addSources(detail) {
-  const sources = elementWithKids('div')
-  sources.innerHTML =  await fetchSilent('sources.html')
+function addSources(detail) {
+  const sources = getSources()
   Array.from(detail.querySelectorAll('a[id]')).forEach(a => {
     const links = sources.querySelectorAll(`a.${a.id}`)
     links.forEach(link => link.target = '_blank')
@@ -454,7 +399,7 @@ function updateCard(wrapper, topics, idiot = undefined) {
     const topic = topics.find(t => t.id === td.id)
     if (topic) {
       td.innerHTML = idiot === true ? topic.idiotTitle : idiot === false ? topic.sheepTitle : topic.title
-      td.title = getArgumentsForTopic(wrapper, topic.id, idiot)
+      td.title = getArgumentsForTopic(topic.id, idiot)
     }
   })
 }
@@ -502,6 +447,16 @@ function elementWithKids(tag, kids = undefined, attrs = undefined) {
     })
   }
   return node
+}
+
+/**
+ * @param {String} HTML representing a single element
+ * @return {Element}
+ */
+function htmlToElement(html) {
+  var template = document.createElement('template')
+  template.innerHTML = html
+  return template.content.firstChild
 }
 
 /**

@@ -4,8 +4,10 @@ let stats // test stats
  * create one idiot and one sheep and start the test with one of them visible
  */
 async function test(size1, size2 = 0) {
-  await loadTestCard('#wrapper-1', true, 0, size1)
-  await loadTestCard('#wrapper-2', false, size1*size1, size2)
+  await loadContent(lang, terr)
+  await loadSources()
+  loadTestCard('#wrapper-1', true, 0, size1)
+  loadTestCard('#wrapper-2', false, size1*size1, size2)
   initTestStats(size1, size2)
   if (size2) showWrapperTwo(); else hideWrapperTwo() 
   showGame()
@@ -19,23 +21,23 @@ async function test(size1, size2 = 0) {
  * @param {number} start start category for the test card to generate
  * @param {number} size size of test card (2,3,4,5,6) - >6 too large for mobile
  */
-async function loadTestCard(wrapper, idiot, start, size, update = false) {
+function loadTestCard(wrapper, idiot, start, size, update = false) {
   if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
-  wrapper.querySelector('.content').innerHTML = await getLocalizedContent(idiot)
+  wrapper.querySelector('.content').innerHTML = getLocalizedContent(lang, terr, idiot)
   wrapper.querySelector('.detail').onclick = event => handleTestClick(event)
   wrapper.classList.toggle('idiot', idiot)
   wrapper.classList.toggle('sheep', !idiot)
-  await addSources(wrapper, false)
+  addSources(wrapper, false)
   wrapper.querySelector('.buttons.bingo').remove()
   wrapper.querySelectorAll('i').forEach(e => e.remove())
   setPermalink(wrapper)
 
-  const topics = getTopics(wrapper)
+  const topics = getTopicsData()
   if (update)
     updateCard(wrapper, topics)
   else  
     prepareTestCard(wrapper, topics, start, size)
-  prepareTestCardTitle(wrapper)
+  prepareTestCardTitle(wrapper, idiot)
   addNavigationToCard(wrapper)
   copyLogoToTestCard(wrapper, idiot)
 }
@@ -45,11 +47,11 @@ async function loadTestCard(wrapper, idiot, start, size, update = false) {
  *
  * @param {HTMLElement} wrapper wrapper element to load the card into
  */
-function prepareTestCardTitle(wrapper) {
+function prepareTestCardTitle(wrapper, idiot) {
   // prepare card title
   const title = wrapper.querySelector('.title')
   while (title.firstChild) title.removeChild(title.firstChild)
-  const select = wrapper.querySelector('.detail select')
+  const select = labelSelect(idiot)
   title.appendChild(select)
   select.value = ''
   const label = wrapper.querySelector('.detail label')
@@ -209,6 +211,7 @@ async function testUpdate(wrapper, idiot, locale) {
   const nav = wrapper.querySelector('.navigation')
   const ids = Array.from(nav.querySelectorAll('span')).map(span => span.innerHTML)
   const id = nav.querySelector('span.selected').innerHTML 
+  await loadContent(lang, terr)
   await loadTestCard(wrapper, idiot, size, 0, true)
   if (ids.length) singleDetails(wrapper, nav.id, ids, id, false)
   wrapper.querySelector('.location').value = `${lang}-${terr}`

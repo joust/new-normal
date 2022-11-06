@@ -1,6 +1,7 @@
 function element(id) {
   return document.getElementById(id)
 }
+
 function elements(tag) {
   return Array.from(document.getElementsByTagName(tag))
 }
@@ -13,10 +14,10 @@ async function load(locale) {
   FastClick.attach(document.body)
   if (locale) [lang, terr] = locale.split('-'); else [lang, terr] = browserLocale()
   if (!supported.includes(lang)) [lang, terr] = ['en', 'us']
-  document.querySelector('#location').value = `${lang}-${terr}`
-  document.body.lang = lang
+  document.querySelector('#location').value = locale
+  document.body.lang = locales.includes(locale) ? locale : lang
   await loadSources()
-  await loadContent(lang)
+  await loadContent(lang, terr)
   element('instructions').innerHTML = await fetchSilent(`${lang}/uno.html`)
   if (!element('game'))
     element('uno').insertAdjacentHTML('afterBegin', `
@@ -93,9 +94,10 @@ async function playWithBot(idiot) {
   const botID = idiot ? '0' : '1'
   element('uno').classList.toggle('hidden', false)
   element('config').classList.toggle('hidden', true)
-  const clients = await startLocal(lang, playerID)
+  const content = extractContent(lang, terr)
+  const clients = await startLocal(lang, content, playerID)
   await loadSources()
-  await loadContent(lang)
+  await loadContent(lang, terr)
   element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand" nr="${playerID}" cards="[]"></player-hand>`)
   addOpponentHand(botID, 'CPU')
   clients[playerID].moves.setName(playerID, 'Me')
@@ -115,7 +117,8 @@ async function play(isHost, numPlayers) {
   element('uno').classList.toggle('hidden', false)
   element('config').classList.toggle('hidden', true)
   element('players').classList.add(`p${numPlayers}`)
-  let client = await startClient(lang, isHost, numPlayers, playerID, matchID)
+  const content = extractContent(lang, terr)
+  const client = await startClient(lang, content, isHost, numPlayers, playerID, matchID)
   if (isHost) {
     element('uno').insertAdjacentHTML('beforeEnd', '<player-hand id="hand" nr="0" cards="[]"></player-hand>')
     client.moves.setName(playerID, await prompt(`Name for Host Player?`, ''))
@@ -174,97 +177,61 @@ async function play(isHost, numPlayers) {
   unsubscribe = client.subscribe(stateHandler)
 }
 
+
+/** Extract all topics and arguments into a topics array and both a topics array and hash
+ * @return {Array} The topic id array and a hash argumentId => [topicId]
+ */
+function extractTopics(content) {
+  const topicIds = Array.from(content.querySelectorAll('section')).map(topic => topic.id)
+  const map = {}
+  for (const id of topicIds) {
+    const argIds = Array.from(content.querySelectorAll(`section[id="${id}"] a[id]`)).map(arg => arg.id)
+    for (const argId of argIds) if (map[argId]) map[argId].push(id); else map[argId] = [id]
+  }
+  return [topicIds, map]
+}
+
+/**
+ * Fetch ids from given content file, optionally filter by substring.
+ * @param {string} lang The language.
+ * @param {string} file The filename (without suffix).
+ * @param {string} filter An optional string filter.
+ * @return {Array} The content ids
+ */
+function extractContentIds(content, section, filter = undefined) {
+  filter = filter ? `^=${filter}` : ''
+  return Array.from(content.querySelectorAll(`.${section} a[id${filter}]`)).map(a => a.id)
+}
+
+/**
+ * helper for init, loading one side of the arguments
+ * @param {string} lang The language.
+ * @return {any} A content structure
+ */
+function extractContentForSide(content, topics, map, idiot) {
+  const topicMapped = id => map[id] ? map[id].map(topicId => `${topicId}:${id}`) : [`:${id}`]
+  const args = extractContentIds(content, idiot ? 'idiot' : 'sheep')
+  const labels = extractContentIds(content, 'labels', idiot ? 'LI' : 'LS')
+  const fallacies = extractContentIds(content, 'fallacies', idiot ? 'FI' : 'FS')
+  const appealTos = extractContentIds(content, 'appeal-tos', idiot ? 'AI' : 'AS')
+  const discusses = topics.map(topic => `${topic}:${idiot ? 'DI' : 'DS'}`)
+  return {args: args.flatMap(topicMapped), labels, fallacies, appealTos, discusses}
+}
+
+/**
+ * perform async initialization by loading all needed files so the game engine can run sync
+ * @param {string} lang The language.
+ * @return {any} A content structure
+ */
+function extractContent(lang, terr) {
+  const content = langBlock(lang, terr)
+  const [topics, map] = extractTopics(content)
+  const idiot = extractContentForSide(content, topics, map, true)
+  const sheep = extractContentForSide(content, topics, map, false)
+  return {idiot, sheep}
+}
+
 function flagcheck() {
   if (navigator.userAgent.indexOf('Windows') > 0)
     document.head.innerHTML += '<link rel="stylesheet" href="noto.css">'
-}
-
-async function loadSources() {
-  const loaded = document.querySelector('#content > .sources')
-  if (!loaded) {
-    const sources = elementWithKids('div', null, { 'class': 'sources' })
-    document.querySelector('#content').appendChild(sources)
-    sources.innerHTML = await fetchSilent(`sources.html`)
-    Array.from(sources.querySelectorAll('a')).forEach(link => link.target = '_blank')
-  }
-}
-
-async function loadContent(lang) {
-  const loaded = document.querySelector(`#content > #${lang}`)
-  if (!loaded) {
-    const root = elementWithKids('div', [
-      elementWithKids('div', null, { 'class': 'idiot' }),
-      elementWithKids('div', null, { 'class': 'sheep' }),
-      elementWithKids('div', null, { 'class': 'labels' }),
-      elementWithKids('div', null, { 'class': 'appeal-tos' }),
-      elementWithKids('div', null, { 'class': 'fallacies' }),
-      elementWithKids('div', null, { 'class': 'topics' })
-    ], { id: lang })
-    document.querySelector('#content').appendChild(root)
-    const [idiot, sheep, labels, appealTos, fallacies, topics, sources] = await Promise.all([
-      fetchSilent(`${lang}/idiot.html`),
-      fetchSilent(`${lang}/sheep.html`),
-      fetchSilent(`${lang}/labels.html`),
-      fetchSilent(`${lang}/appeal-tos.html`),
-      fetchSilent(`${lang}/fallacies.html`),
-      fetchSilent(`${lang}/topics.html`)
-    ])
-    root.querySelector('.idiot').innerHTML =  replaceStatement(lang, idiot)
-    root.querySelector('.sheep').innerHTML = replaceStatement(lang, sheep)
-    root.querySelector('.labels').innerHTML = labels
-    root.querySelector('.appeal-tos').innerHTML = appealTos
-    root.querySelector('.fallacies').innerHTML = fallacies
-    root.querySelector('.topics').innerHTML = topics
-    return root
-  }
-  return loaded
-}
-
-function replaceStatement(lang, content) {
-  const from1 = {
-    de: 'Die sagen<i> doch allen Ernstes</i>',
-    en: 'They say<i> in all seriousness</i>',
-    fr: 'Ils disent<i> en toute sincérité</i>',
-    es: 'Dicen<i> con toda seriedad</i>',
-    it: 'Dicono<i> in tutta serietà</i>',
-    da: 'De siger<i> med al alvor</i>',
-    pl: 'Twierdzą<i> z całą powagą</i>',
-    pt: 'Dizem<i> com toda a seriedade</i>',
-    'pt-br': 'Dizem<i> com toda a seriedade</i>'
-  }
-  const to1 = {
-    de: 'Ich bin bei denen, die sagen',
-    en: 'I am with those who say',
-    fr: 'Je suis avec ceux qui disent',
-    es: 'Estoy con quienes dicen',
-    it: 'Sono d\'accordo con chi dice',
-    da: 'Jeg er enig med dem, der siger',
-    pl: 'Jestem z tymi, którzy twierdzą',
-    pt: 'Estou com aqueles que dizem',
-    'pt-br': 'Estou com aqueles que dizem'
-  }
-  const from2 = {
-    de: 'Die fragen<i> doch allen Ernstes</i>',
-    en: 'They ask<i> in all seriousness</i>',
-    fr: 'Ils demandent<i> en toute sincérité</i>',
-    es: 'Preguntan<i> con toda seriedad</i>',
-    it: 'Chiedono<i> in tutta serietà</i>',
-    da: 'De spørger<i> med al alvor</i>',
-    pl: 'Pytają<i> z całą powagą</i>',
-    pt: 'Pergunta<i> com toda a seriedade</i>',
-    'pt-br': 'Pergunta<i> com toda a seriedade</i>'
-
-  }
-  const to2 = {
-    de: 'Ich bin bei denen, die fragen',
-    en: 'I am with those who ask',
-    fr: 'Je suis avec ceux qui demandent',
-    es: 'Estoy con quienes preguntan',
-    it: 'Sono d\'accordo con chi chiedono',
-    da: 'Jeg er enig med dem, der spørger',
-    pl: 'Jestem z tymi, którzy pytają',
-    pt: 'Estou com aqueles que perguntam',
-    'pt-br': 'Estou com aqueles que perguntam'
-  }
-  return content.replaceAll(from1[lang], to1[lang]).replaceAll(from2[lang], to2[lang])
 }

@@ -5,10 +5,12 @@
  * @param {?boolean} two create a second card, idiot if true, sheep if false
  */
 async function play(one, two) {
-  await loadCard('#wrapper-1', one)
+  await loadContent(lang, terr)
+  await loadSources()
+  loadCard('#wrapper-1', one)
   if (two !== undefined) {
     showWrapperTwo()
-    await loadCard('#wrapper-2', two)
+    loadCard('#wrapper-2', two)
   } else
     hideWrapperTwo()
 
@@ -22,12 +24,12 @@ async function play(one, two) {
  * @param {boolean} idiot load idiot content if true, otherwise sheep content
  * @param {boolean} update true if to update the card with a different locale
  */
-async function loadCard(wrapper, idiot, update = false) {
+function loadCard(wrapper, idiot, update = false) {
   if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
-  wrapper.querySelector('.content').innerHTML = await getLocalizedContent(idiot)
+  wrapper.querySelector('.content').innerHTML = getLocalized(idiot)
   wrapper.querySelector('.detail').onclick = event => handleClick(event)
   addIdTags(wrapper)
-  await addSources(wrapper)
+  addSources(wrapper)
   if (attitude.friendly)
     wrapper.querySelectorAll('i, .content button').forEach(e => e.remove())
 
@@ -36,9 +38,9 @@ async function loadCard(wrapper, idiot, update = false) {
   applyExclusions(wrapper)
   addCheckboxes(wrapper)
   addNavigationToCard(wrapper)
-  const topics = getTopics(wrapper)
-  await (update ? updateCard : prepareCard)(wrapper, topics, idiot)
-  prepareCardTitle(wrapper)
+  const topics = getTopicsData()
+  ;(update ? updateCard : prepareCard)(wrapper, topics, idiot)
+  prepareCardTitle(wrapper, idiot)
   copyLogoToCard(wrapper, idiot)
 }
 
@@ -111,6 +113,7 @@ async function update(wrapper, idiot, locale) {
   const nav = wrapper.querySelector('.navigation')
   const ids = Array.from(nav.querySelectorAll('span')).map(span => span.innerHTML)
   const id = nav.querySelector('span.selected').innerHTML
+  await loadContent(lang, terr)
   await loadCard(wrapper, idiot, true)
   if (ids.length) singleDetails(wrapper, nav.id, ids, id)
   wrapper.querySelector('.location').value = `${lang}-${terr}`
@@ -121,14 +124,18 @@ async function update(wrapper, idiot, locale) {
  * prepare the card title for the front side of the card wrapper
  *
  * @param {HTMLElement} wrapper wrapper element to load the card into
+ * @param {boolean} idiot idiot or sheep content
  */
-function prepareCardTitle(wrapper) {
+function prepareCardTitle(wrapper, idiot) {
   // prepare card title
   const title = wrapper.querySelector('.title')
   while (title.firstChild) title.removeChild(title.firstChild)
-  const select = wrapper.querySelector('.detail select')
-  if (!attitude.fair)
-    randomElement(Array.from(select.querySelectorAll('option')), 1).selected = true
+  const select = labelSelect(idiot)
+  const options = Array.from(select.querySelectorAll('option'))
+  if (!attitude.fair && options.length)
+    randomElement(options).selected = true
+  else
+    select.value = ''
   title.appendChild(select)
   const label = wrapper.querySelector('.detail label')
   if (label) {
@@ -292,7 +299,7 @@ function makeCard(wrapper, topics, size, idiot) {
         const topic = uniqueWord(topics)
         wordnode.id = topic.id
         wordnode.innerHTML = idiot ? topic.idiotTitle : topic.sheepTitle
-        wordnode.title = getArgumentsForTopic(wrapper, topic.id, idiot)
+        wordnode.title = getArgumentsForTopic(topic.id, idiot)
 
         wordnode.onclick = event => {
           const arguments = idiot ? topic.idiot : topic.sheep

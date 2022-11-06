@@ -13,8 +13,9 @@ const PERCENTAGE_PAUSES = 10
 const PERCENTAGE_BANISHES = 10
 const INVALID_MOVE = 'INVALID_MOVE'
 
-async function startLocal(lang, playerID) {
-  const game = await Uno(lang, playerID)
+async function startLocal(lang, content, playerID) {
+  console.log(content)
+  const game = await Uno(lang, content, playerID)
   const player = Client({ game, playerID, multiplayer: Local() })
   const bot = Client({ game, playerID: playerID==='0' ? '1' : '0', multiplayer: Local() })
   player.start()
@@ -22,8 +23,8 @@ async function startLocal(lang, playerID) {
   return playerID==='0' ? [player, bot] : [bot, player]
 }
 
-async function startClient(lang, isHost, numPlayers, playerID, matchID) {
-  const game = await Uno(lang, isHost ? playerID : undefined)
+async function startClient(lang, content, isHost, numPlayers, playerID, matchID) {
+  const game = await Uno(lang, content, isHost ? playerID : undefined)
   const peerOptions = { host: 'new-normal.app', port: 9443 }
   
   const client = Client({
@@ -53,11 +54,14 @@ Uno game engine. Game state: {
     hands: [[], ...],
     names: ['']
 }
+
+Content structure expected:
+content = {
+  idiot: {args, labels, fallacies, appealTos, discusses},
+  sheep: {args, labels, fallacies, appealTos, discusses}
+}
 */
-async function Uno(lang, host) {
-  const [topics, topicMap] = await fetchTopics()
-  const content = await init(lang)
- 
+function Uno(lang, content, host) {
   /**
    * adds wildcard argument cards for topic of card to every players hand, 
    * removing possible existing arguments of given topic
@@ -253,36 +257,6 @@ async function Uno(lang, host) {
   }
 
   /**
-   * helper for init, loading one side of the arguments
-   * @param {string} lang The language.
-   * @return {any} A content structure
-   */
-  async function fetchContent(lang, idiot) {
-    const topicMapped = id => topicMap[id] ? topicMap[id].map(topicId => `${topicId}:${id}`) : [`:${id}`]
-    const [args, labels, fallacies, appealTos]  = await Promise.all([
-      fetchContentIds(lang, idiot ? 'idiot' : 'sheep'),
-      fetchContentIds(lang, 'labels', idiot ? 'LI' : 'LS'),
-      fetchContentIds(lang, 'fallacies', idiot ? 'FI' : 'FS'),
-      fetchContentIds(lang, 'appeal-tos', idiot ? 'AI' : 'AS')
-      ])
-    const discusses = topics.map(topic => `${topic}:${idiot ? 'DI' : 'DS'}`)
-    return {args: args.flatMap(topicMapped), labels, fallacies, appealTos, discusses}
-  }
-  
-  /**
-   * perform async initialization by loading all needed files so the game engine can run sync
-   * @param {string} lang The language.
-   * @return {any} A content structure
-   */
-  async function init(lang) {
-    const [idiot, sheep] = await Promise.all([
-      fetchContent(lang, true),
-      fetchContent(lang, false),
-    ])
-    return {idiot, sheep}
-  }
-
-  /**
    * adjust the deck size of the smaller deck 
    * by duplicating labels, fallacies, appealTos, strawmans or researchs
    * side effect: directly changes the smaller array
@@ -333,33 +307,6 @@ async function Uno(lang, host) {
     })
   }
 
-  /**
-   * Fetch ids from given content file, optionally filter by substring.
-   * @param {string} lang The language.
-   * @param {string} file The filename (without suffix).
-   * @param {string} filter An optional string filter.
-   * @return {Array} The content ids
-   */
-  async function fetchContentIds(lang, file, filter = '') {
-    const content = await fetchSilent(`${lang}/${file}.html`)
-    return [...content.matchAll(/a id="([^"]*)"/g)].map(r => r[1]).filter(id => id.includes(filter))
-  }
-
-  /** Fetch all topics and arguments into a topics array and both a topics array and hash
-   * @return {Array} The topic id array and a hash argumentId => [topicId]
-   */
-  async function fetchTopics() {
-    const content = await fetchSilent(`topics-new.html`)
-    const topicIds = [...content.matchAll(/p id="([^"]*)"/g)].map(r => r[1])
-    const map = {}
-    for (const id of topicIds) {
-      const subcontent = content.match(`p id="${id}">((.|\n)*?)<\/p`)[1]
-      const argIds = [...subcontent.matchAll(/a id="([^"]*)"/g)].map(r => r[1])
-      for (const argId of argIds) if (map[argId]) map[argId].push(id); else map[argId] = [id]
-    }
-    return [topicIds, map]
-  }
-  
   return {
     name: 'newnormaluno',
     content,

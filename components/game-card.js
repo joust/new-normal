@@ -168,6 +168,55 @@ class GameCard extends HTMLElement {
     return mirror
   }
 
+  replaceStatement(lang, content) {
+    const from1 = {
+      de: 'Die sagen<i> doch allen Ernstes</i>',
+      en: 'They say<i> in all seriousness</i>',
+      fr: 'Ils disent<i> en toute sincérité</i>',
+      es: 'Dicen<i> con toda seriedad</i>',
+      it: 'Dicono<i> in tutta serietà</i>',
+      da: 'De siger<i> med al alvor</i>',
+      pl: 'Twierdzą<i> z całą powagą</i>',
+      pt: 'Dizem<i> com toda a seriedade</i>',
+      'pt-br': 'Dizem<i> com toda a seriedade</i>'
+    }
+    const to1 = {
+      de: 'Ich bin bei denen, die sagen',
+      en: 'I am with those who say',
+      fr: 'Je suis avec ceux qui disent',
+      es: 'Estoy con quienes dicen',
+      it: 'Sono d\'accordo con chi dice',
+      da: 'Jeg er enig med dem, der siger',
+      pl: 'Jestem z tymi, którzy twierdzą',
+      pt: 'Estou com aqueles que dizem',
+      'pt-br': 'Estou com aqueles que dizem'
+    }
+    const from2 = {
+      de: 'Die fragen<i> doch allen Ernstes</i>',
+      en: 'They ask<i> in all seriousness</i>',
+      fr: 'Ils demandent<i> en toute sincérité</i>',
+      es: 'Preguntan<i> con toda seriedad</i>',
+      it: 'Chiedono<i> in tutta serietà</i>',
+      da: 'De spørger<i> med al alvor</i>',
+      pl: 'Pytają<i> z całą powagą</i>',
+      pt: 'Pergunta<i> com toda a seriedade</i>',
+      'pt-br': 'Pergunta<i> com toda a seriedade</i>'
+
+    }
+    const to2 = {
+      de: 'Ich bin bei denen, die fragen',
+      en: 'I am with those who ask',
+      fr: 'Je suis avec ceux qui demandent',
+      es: 'Estoy con quienes preguntan',
+      it: 'Sono d\'accordo con chi chiedono',
+      da: 'Jeg er enig med dem, der spørger',
+      pl: 'Jestem z tymi, którzy pytają',
+      pt: 'Estou com aqueles que perguntam',
+      'pt-br': 'Estou com aqueles que perguntam'
+    }
+    return content.replaceAll(from1[lang], to1[lang]).replaceAll(from2[lang], to2[lang])
+  }
+
   getSourcesHTML(id) {
     const sources = document.querySelector(`${GameCard.contentRootSelector} > .sources`)
     const links = Array.from(sources.querySelectorAll(`a.${id}`))
@@ -213,8 +262,10 @@ class GameCard extends HTMLElement {
         const topic = topicData ? topicData.firstElementChild.innerHTML : ''
         if (this.idOnly.startsWith('D'))
           return `<discuss-card id="card" ${type} ${mirrored} topicId="${this.topic}" topic="${topic}"></discuss-card>`
-        else
-          return this.cardWithSources(this.idOnly, title, `<argument-card ${type} ${mirrored} ${wildcard} card="${this.idOnly}" topicId="${this.topic}" topic="${topic}">${data ? data.innerHTML : ''}</argument-card>`)
+        else {
+          const html = data ? this.replaceStatement(this.lang, data.innerHTML) : ''
+          return this.cardWithSources(this.idOnly, title, `<argument-card ${type} ${mirrored} ${wildcard} card="${this.idOnly}" topicId="${this.topic}" topic="${topic}">${html}</argument-card>`)
+        }
     }
   }
 }

@@ -138,7 +138,7 @@ class TestCard extends HTMLElement {
     this.shadowRoot.appendChild(template.content)
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
-    this.element('reject').insertAdjacentHTML('afterEnd', this.getCardElement())
+    this.element('like').insertAdjacentHTML('beforeBegin', this.getCardElement())
     
     this.onmousedown = this.ontouchstart = e => {
       if (this.animating) return
@@ -189,7 +189,6 @@ class TestCard extends HTMLElement {
     const links = Array.from(sources.querySelectorAll(`a.${id}`))
     if (links.length > 0) {
       const q = elementWithKids('q', [
-//        a.querySelector('h2').cloneNode(true),
         elementWithKids('ul', links.map(
         s => elementWithKids('li', [
           s.cloneNode(true), ' (', this.mirrorNode(s), ')'
@@ -224,12 +223,11 @@ class TestCard extends HTMLElement {
     this.element('reject').style.transform = `translateX(${this.pullDeltaX}px)`
     this.element('like').style.transform = `translateX(${this.pullDeltaX}px)`
 
-    const opacity = this.pullDeltaX / 100
+    const opacity = this.pullDeltaX / 180
     const rejectOpacity = (opacity >= 0) ? 0 : Math.abs(opacity)
     const likeOpacity = (opacity <= 0) ? 0 : opacity
     this.element('reject').style.opacity = rejectOpacity
     this.element('like').style.opacity = likeOpacity
-    this.element('card').style.zIndex = -1
   }
 
   release() {

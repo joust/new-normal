@@ -6,26 +6,29 @@ testPileTemplate.innerHTML = `
       position: relative;
     }
 
-    test-card, no-card {
+    #pile {
+      width: 100%;
+      height: 100%;
+    }
+
+    test-card {
       position: absolute;
-      width: 98%;
-      height: 98%;
-      z-index: 2;
+      width: 97%;
+      height: 97%;
       cursor: pointer;
     }
 
-    no-card#second {
-      left: 1%;
-      top: 1%;
-      z-index: 1;
-    }
-
-    no-card#third {
+    test-card:first-child {
       left: 2%;
       top: 2%;
-      z-index: 0;
+    }
+    
+    test-card:nth-child(2) {
+      left: 1%;
+      top: 1%;
     }
   </style>
+  <div id="pile"></div>
 `
 
 class TestPile extends HTMLElement {
@@ -39,51 +42,46 @@ class TestPile extends HTMLElement {
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
+  elements(parent, tag) {
+    return Array.from(parent.getElementsByTagName(tag))
+  }
+  
   get cards() {
     const cards = this.getAttribute('cards')
     return cards ? cards.split(',') : []
   }
 
-  get top() {
-    return this.cards.length>0 ? this.cards[this.cards.length-1] : undefined
-  }
-
   attributeChangedCallback(name) {
-    this.updateTop()
+    this.updateCards()
   }
 
   connectedCallback() {
     this.shadowRoot.appendChild(testPileTemplate.content.cloneNode(true))
     const template = document.createElement('template')
-    template.innerHTML = `${this.getTopElement()}<no-card id="second"></no-card><no-card id="third"></no-card>`
-
     this.shadowRoot.appendChild(template.content)
-    console.log(this.element('card'))
-    this.element('card').addEventListener('choice', event => this.choice(event))
+    this.updateCards()
   }
 
-  updateTop() {
-    const card = this.shadowRoot.querySelector('test-card') // select top element
-    if (this.isConnected && card) {
-      card.setAttribute('id', 'old')
-      setTimeout(() => this.shadowRoot.removeChild(card), 300)
-      card.insertAdjacentHTML('beforeBegin', this.getTopElement())
-      this.element('card').addEventListener('choice', event => this.choice(event))
+  updateCards() {
+    const pile = this.element('pile')
+    if (this.isConnected && pile) {
+      this.elements(pile, 'test-card').forEach(element => element.parentElement.removeChild(element))
+      this.cards.forEach(card => pile.insertAdjacentHTML('beforeEnd', this.getElement(card)))
+      this.elements(pile, 'test-card').forEach(element => element.addEventListener('choice', event => this.choice(event)))
     }
   }
 
-  getTopElement() {
-    return this.top ? `<test-card id="card" card="${this.top}"></test-card>` : '<no-card id="card"></no-card>'
+  getElement(card) {
+    return `<test-card card="${card}"></test-card>`
   }
 
   choice(event) {
-    console.log('cboice', event)
-    const cards = this.cards
-    const top = cards.pop()
+    const pile = this.element('pile')
+    const card = event.target
     if (event.detail.like) this.stats.likes.push(top); else this.stats.rejects.push(top)
-    this.setAttribute('cards', cards.join(','))
-    if (cards.length===0)
-      this.dispatchEvent(new CustomEvent('finish', { detail: { ...this.stats } }))
+    setTimeout(() => pile.removeChild(card), 300)
+    if (card.card === this.cards[0])
+      this.dispatchEvent(new CustomEvent('finish', { detail: this.stats }))
   }
 }
 

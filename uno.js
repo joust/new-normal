@@ -15,8 +15,8 @@ async function load(locale) {
   if (locale) {
     [lang, terr] = locale.split('-')
   } else {
-    if (!supported.includes(lang)) [lang, terr] = ['en', 'us']
     [lang, terr] = browserLocale()
+    if (!supported.includes(lang)) [lang, terr] = ['en', 'us']
     locale = `${lang}-${terr}`
   }
   document.querySelector('#location').value = locale

@@ -78,7 +78,7 @@ class TestPile extends HTMLElement {
   choice(event) {
     const pile = this.element('pile')
     const card = event.target
-    if (event.detail.like) this.stats.likes.push(top); else this.stats.rejects.push(top)
+    if (event.detail.like) this.stats.likes.push(card.card); else this.stats.rejects.push(card.card)
     setTimeout(() => pile.removeChild(card), 300)
     if (card.card === this.cards[0])
       this.dispatchEvent(new CustomEvent('finish', { detail: this.stats }))

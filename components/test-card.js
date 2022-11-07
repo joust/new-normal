@@ -235,12 +235,12 @@ class TestCard extends HTMLElement {
       this.element('card').classList.add('to-right')
       this.element('like').classList.add('to-right')
       this.element('reject').classList.add('to-right')
-      this.dispatchEvent(new CustomEvent('choice', { detail: { like: true, card: this.top } }))
+      this.dispatchEvent(new CustomEvent('choice', { detail: { like: true, card: this.card } }))
     } else if (this.pullDeltaX <= -this.decisionVal) {
       this.element('card').classList.add('to-left')
       this.element('like').classList.add('to-left')
       this.element('reject').classList.add('to-left')
-      this.dispatchEvent(new CustomEvent('choice', { detail: { like: false, card: this.top } }))
+      this.dispatchEvent(new CustomEvent('choice', { detail: { like: false, card: this.card } }))
     }
 
     if (Math.abs(this.pullDeltaX) >= this.decisionVal) {

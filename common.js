@@ -482,6 +482,37 @@ function randomElement(array, start = 0) {
   return array[start + Math.floor((Math.random() * (array.length-start)))]
 }
 
+/**
+ * Shuffles array in place (side effect).
+ * @param {Array} array An array containing the items.
+ * @return {Array} the shuffled array
+ */
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]]
+  }
+  return array
+}
+
+/**
+ * selects n elements from a list (which can be longer or shorter than n)
+ * if list has no entries, an empty array is returned
+ * @param {number} n number of cards to select.
+ * @param {Array} list the list to select from.
+ * @return {any} The selected elements
+ */
+function elementsFrom(n, list) {
+  const selection = []
+  if (!list.length) return selection
+  while (n >= list.length) {
+    selection.push(...list)
+    n -= list.length
+  }
+  const rest = shuffle([...list])
+  selection.push(...rest.slice(0, n))
+  return selection
+}
 
 /** Apply safari fix to force flex relayout on given div
  */

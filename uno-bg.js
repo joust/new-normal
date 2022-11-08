@@ -151,7 +151,7 @@ function Uno(lang, content, host) {
   }
 
   /**
-   * draw an a card from the given deck into the given hand
+   * draw a card from the given deck into the given hand
    * side effect: will modify both the given deck and hand
    * @param {Array} hand The hand.
    * @param {Array} deck The deck.
@@ -238,25 +238,6 @@ function Uno(lang, content, host) {
   }
 
   /**
-   * selects n elements from a list (which can be longer or shorter than n)
-   * if list has no entries, an empty array is returned
-   * @param {number} n number of cards to select.
-   * @param {Array} list the list to select from.
-   * @return {any} The selected elements
-   */
-  function elementsFrom(n, list) {
-    const selection = []
-    if (!list.length) return selection
-    while (n >= list.length) {
-      selection.push(...list)
-      n -= list.length
-    }
-    const rest = shuffle([...list])
-    selection.push(...rest.slice(0, n))
-    return selection
-  }
-
-  /**
    * adjust the deck size of the smaller deck 
    * by duplicating labels, fallacies, appealTos, strawmans or researchs
    * side effect: directly changes the smaller array
@@ -268,30 +249,6 @@ function Uno(lang, content, host) {
     let difference = larger.length - smaller.length
     const start = smaller.findIndex(c => c.startsWith('L')) // do not duplicate argument cards
     while(difference--) smaller.push(randomElement(smaller, start))
-  }
-
-  /**
-   * return a random element from an array, starting from element start
-   *
-   * @param {Array} array - Array to choose a random element from
-   * @param {number} start - Element to start with (default 0)
-   * @return {any} The random element selected
-   */
-  function randomElement(array, start = 0) {
-    return array[start + Math.floor((Math.random() * (array.length-start)))]
-  }
-
-  /**
-   * Shuffles array in place (side effect).
-   * @param {Array} array An array containing the items.
-   * @return {Array} the shuffled array
-   */
-  function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]]
-    }
-    return array
   }
   
   function removeFrom(deckOrHand, card) {

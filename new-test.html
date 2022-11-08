@@ -58,7 +58,16 @@
       document.body.lang = locale
       await loadSources()
       await loadContent(lang, terr)
-      document.getElementById('test').insertAdjacentHTML('afterBegin', '<test-pile id="test-pile" cards="T1:I1,T2:S2,T3:I3,T4:S4"></test-card>')
+      const content = extractContent(lang, terr)
+      shuffle(content.idiot.args)
+      shuffle(content.sheep.args)
+      const cycles = 42
+      const testCards = [
+        ...elementsFrom(cycles/2, content.idiot.args),
+        ...elementsFrom(cycles/2, content.sheep.args)
+      ]
+      shuffle(testCards)
+      document.getElementById('test').insertAdjacentHTML('afterBegin', `<test-pile id="test-pile" cards="${testCards.join(',')}"></test-card>`)
       document.getElementById('test-pile').addEventListener('finish', event => finish(event))
     }
 

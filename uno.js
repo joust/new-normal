@@ -100,9 +100,12 @@ async function playWithBot(idiot) {
   element('uno').classList.toggle('hidden', false)
   element('config').classList.toggle('hidden', true)
   const content = extractContent(lang, terr)
+  /* TODO: unassigned args => Move to maintenance section in future
+  const getTitle = id => document.querySelector(`#content a[id=${id}] h2`).innerHTML
+  const toHTML = id => `<a id="${id.substring(1)}"><!--${getTitle(id.substring(1))}--></a>`
+  console.log(content.idiot.args.filter(id => id.startsWith(':')).map(toHTML).join('\n'))
+  console.log(content.sheep.args.filter(id => id.startsWith(':')).map(toHTML).join('\n'))*/
   const clients = await startLocal(lang, content, playerID)
-  await loadSources()
-  await loadContent(lang, terr)
   element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand" nr="${playerID}" cards="[]"></player-hand>`)
   addOpponentHand(botID, 'CPU')
   clients[playerID].moves.setName(playerID, 'Me')
@@ -180,60 +183,6 @@ async function play(isHost, numPlayers) {
   }
 
   unsubscribe = client.subscribe(stateHandler)
-}
-
-
-/** Extract all topics and arguments into a topics array and both a topics array and hash
- * @return {Array} The topic id array and a hash argumentId => [topicId]
- */
-function extractTopics(content) {
-  const topicIds = Array.from(content.querySelectorAll('section')).map(topic => topic.id)
-  const map = {}
-  for (const id of topicIds) {
-    const argIds = Array.from(content.querySelectorAll(`section[id="${id}"] a[id]`)).map(arg => arg.id)
-    for (const argId of argIds) if (map[argId]) map[argId].push(id); else map[argId] = [id]
-  }
-  return [topicIds, map]
-}
-
-/**
- * Fetch ids from given content file, optionally filter by substring.
- * @param {string} lang The language.
- * @param {string} file The filename (without suffix).
- * @param {string} filter An optional string filter.
- * @return {Array} The content ids
- */
-function extractContentIds(content, section, filter = undefined) {
-  filter = filter ? `^=${filter}` : ''
-  return Array.from(content.querySelectorAll(`.${section} a[id${filter}]`)).map(a => a.id)
-}
-
-/**
- * helper for init, loading one side of the arguments
- * @param {string} lang The language.
- * @return {any} A content structure
- */
-function extractContentForSide(content, topics, map, idiot) {
-  const topicMapped = id => map[id] ? map[id].map(topicId => `${topicId}:${id}`) : [`:${id}`]
-  const args = extractContentIds(content, idiot ? 'idiot' : 'sheep')
-  const labels = extractContentIds(content, 'labels', idiot ? 'LI' : 'LS')
-  const fallacies = extractContentIds(content, 'fallacies', idiot ? 'FI' : 'FS')
-  const appealTos = extractContentIds(content, 'appeal-tos', idiot ? 'AI' : 'AS')
-  const discusses = topics.map(topic => `${topic}:${idiot ? 'DI' : 'DS'}`)
-  return {args: args.flatMap(topicMapped), labels, fallacies, appealTos, discusses}
-}
-
-/**
- * perform async initialization by loading all needed files so the game engine can run sync
- * @param {string} lang The language.
- * @return {any} A content structure
- */
-function extractContent(lang, terr) {
-  const content = langBlock(lang, terr)
-  const [topics, map] = extractTopics(content)
-  const idiot = extractContentForSide(content, topics, map, true)
-  const sheep = extractContentForSide(content, topics, map, false)
-  return {idiot, sheep}
 }
 
 function flagcheck() {

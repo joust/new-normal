@@ -11,7 +11,7 @@ function randomMatchId() {
 }
 
 async function load(locale) {
-  FastClick.attach(document.body)
+//  FastClick.attach(document.body)
   if (locale) {
     [lang, terr] = locale.split('-')
   } else {

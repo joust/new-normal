@@ -148,6 +148,7 @@ class FlipCard extends HTMLElement {
 
   updateMirrored() {
     const slots = Array.from(this.querySelectorAll('[slot]'))
+    console.log(slots)
     slots.forEach(slot => slot.toggleAttribute('mirrored', this.mirrored))
     const open = this.element('open')
     if (open) open.classList.toggle('mirrored', this.mirrored)

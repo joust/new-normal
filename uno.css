@@ -76,10 +76,19 @@ h1,h2,h3 {
 }
 
 #game {
+  flex: 1;
   position: relative;
   width: 100%;
+  transition: all 0.3s;
 }
 
+#game:hover {
+  flex: 4;
+}
+
+#game:hover #piles {
+  height: 80%;
+}
 
 #hand {
   flex: 2;
@@ -116,7 +125,7 @@ h1,h2,h3 {
   position: relative;
   flex: 1 1 0;
   width: 0;
-  height: 40%;
+  height: 15vh;
 }
 
 #players opponent-hand.selectable {
@@ -124,40 +133,10 @@ h1,h2,h3 {
 }
 
 #piles {
-  flex: 1;
+  position: absolute;
   width: 100%;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding-top: 10%;
-}
-
-#piles card-pile {
-  position: relative;
-  height: 200px;
-  width: 142px; 
-}
-
-@media (orientation: portrait) and (min-aspect-ratio: 1/2) {
-  #hand {
-    flex: 0.8;
-  }
-}
-
-@media (orientation: landscape) and (min-aspect-ratio: 2/1) {
-  #uno {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-  }
-  #hand {
-    order: 1;
-    height: 95%;
-  }
-  #deck {
-    order: 2;
-    height: 100%;
-  }
+  height: 60%;
+  bottom: 0;
 }
 
 #loader {

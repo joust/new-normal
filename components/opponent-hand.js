@@ -2,7 +2,6 @@ const opponentHandTemplate = document.createElement('template')
 opponentHandTemplate.innerHTML = `
   <style>
      :host {
-      --ratio: 0.71;
       display: inline-block;
     }
 
@@ -19,7 +18,7 @@ opponentHandTemplate.innerHTML = `
 
     #opponent-name {
       font-family: 'HVD Crocodile', Helvetica;
-      font-size: calc(5 * var(--cavg));
+      font-size: 2vh;
       font-weight: 300;
       text-align: center;
     }
@@ -111,8 +110,6 @@ class OpponentHand extends HTMLElement {
   }
   
   resize() {
-    const ch = this.clientHeight/100
-    this.style.setProperty('--ch', `${ch}px`)
     this.recalc()
   }
 

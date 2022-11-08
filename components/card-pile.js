@@ -3,6 +3,7 @@ cardPileTemplate.innerHTML = `
   <style>
     :host {
       display: inline-block;
+      position: relative;
     }
 
     no-card, card-back, game-card {

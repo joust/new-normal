@@ -2,13 +2,12 @@ const playerHandTemplate = document.createElement('template')
 playerHandTemplate.innerHTML = `
   <style>
      :host {
-      --ratio: 0.71;
       display: inline-block;
     }
 
     #player-name {
       font-family: 'HVD Crocodile', Helvetica;
-      font-size: calc(12 * var(--cavg));
+      font-size: 3vh;
       font-weight: 300;
       text-align: center;
     }
@@ -150,8 +149,6 @@ class PlayerHand extends HTMLElement {
   }
   
   resize() {
-    const ch = this.clientHeight/100
-    this.style.setProperty('--ch', `${ch}px`)
     this.recalc()
   }
 

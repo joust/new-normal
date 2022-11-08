@@ -29,10 +29,10 @@ async function load(locale) {
       <div id="game">
         <div id="players">
         </div>
-        <div id="piles">
+        <centered-cards id="piles">
           <card-pile id="draw-pile" top="I"></card-pile>
           <card-pile id="pile"></card-pile>
-        </div>
+        </centered-cards>
       </div>`)
 }
 

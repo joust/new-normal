@@ -36,16 +36,17 @@
         document.getElementById('message').innerHTML += msg + '<br>'
       }
 
-      async function translateTopicA(node, lang) {
+      async function translateTopicSection(node, lang) {
         const labels = ['idiotLabel', 'sheepLabel', 'idiotTitle', 'sheepTitle']
-        node.firstChild.innerHTML = await translate(node.firstChild.innerHTML, lang)
+        node.title = await translate(node.title, lang)
         Object.keys(node.dataset).forEach(key => !labels.includes(key) && delete node.dataset[key])
         for (const attr of labels)
           node.dataset[attr] = await translate(node.dataset[attr], lang)
         return node
       }
-      async function translateArgumentA(node, lang) {
+      async function translateArgument(node, lang) {
         node.firstChild.innerHTML = await translate(node.firstChild.innerHTML, lang)
+        await translateArgumentP(node.querySelector('p'), lang)
         return node
       }
       async function translateArgumentP(node, lang) {
@@ -68,40 +69,41 @@
       
       async function updateArguments(src, target) {
         const lowerId = id => `${id[0]}${(+id.substring(1)) - 1}`
-        const argstotranslate = src.args.filter(arg => !target.args.find(targ => targ.a.id === arg.a.id)).slice(0, LIMIT)
+        const argstotranslate = src.args.filter(arg => !target.args.find(targ => targ.id === arg.id)).slice(0, LIMIT)
         for (const arg of argstotranslate) {
-          log(`translating arg ${arg.a.id} to ${target.lang}`)
-          const a = await translateArgumentA(arg.a.cloneNode(true), target.lang)
-          const p = await translateArgumentP(arg.p.cloneNode(true), target.lang)
-          const lower = target.div.querySelector(`a[id=${lowerId(arg.a.id)}] p`)
+          log(`translating arg ${arg.id} to ${target.lang}`)
+          const a = await translateArgument(arg.cloneNode(true), target.lang)
+          const lower = target.div.querySelector(`a[id=${lowerId(arg.id)}]`)
           const last = lower ? lower : target.div.querySelector('h1')
           last.after(a)
-          a.after(p)
           last.after('\n')
-          a.after('\n')
         }
       }
       
       async function updateTopics(src, target) {
         const topstotranslate = src.tops.filter(top => !target.tops.find(ttop => ttop.id === top.id))
-        let last = target.tops.length > 0 ? target.tops[target.tops.length-1] : target.div.querySelector('p')
+        let last = target.tops.length > 0 ? target.tops[target.tops.length-1] : target.div.querySelector('section')
         for (const top of topstotranslate) {
           log(`translating top ${top.id} to ${target.lang}`)
-          const a = await translateTopicA(top.cloneNode(true), target.lang)
-          last.after(a)
+          const section = await translateTopicSection(top.cloneNode(true), target.lang)
+          last.after(section)
           last.after('\n')
-          last = a
+          last = section
         }
       }
       
       async function updateLang(lang) {
-        const shyfix = s => s.replace(/\xad/g, '&shy;')
+        const spellcheck = s => s.replace(/spellcheck=""/g, 'spellcheck')
+        const shy = s => s.replace(/\xad/g, '&shy;')
+        const rsquo = s => s.replace(/’/g, '&rsquo;')
+        const lsquo = s => s.replace(/‘/g, '&lsquo;')
+        const fix = s => spellcheck(shy(rsquo(lsquo(s))))
         await updateArguments(content.de.idiot, content[lang].idiot)
-        await save(content[lang].idiot.handle, shyfix(content[lang].idiot.div.innerHTML))
+        await save(content[lang].idiot.handle, fix(content[lang].idiot.div.innerHTML))
         await updateArguments(content.de.sheep, content[lang].sheep)
-        await save(content[lang].sheep.handle, shyfix(content[lang].sheep.div.innerHTML))
+        await save(content[lang].sheep.handle, fix(content[lang].sheep.div.innerHTML))
         await updateTopics(content.de.topics, content[lang].topics)
-        await save(content[lang].topics.handle, shyfix(content[lang].topics.div.innerHTML))
+        await save(content[lang].topics.handle, fix(content[lang].topics.div.innerHTML))
       }
       
       async function loadAndParseArguments(dir, name, lang) {
@@ -110,8 +112,7 @@
         const content = await load(handle)
         const div = document.createElement('div')
         div.innerHTML = content
-        const ps = Array.from(div.querySelectorAll('a p'))
-        const args = ps.map(p => ({ a: p.previousElementSibling, p }))
+        const args = Array.from(div.querySelectorAll('a[id]'))
         return { handle, div, args, lang } 
       }
       
@@ -121,7 +122,7 @@
         const content = await load(handle)
         const div = document.createElement('div')
         div.innerHTML = content
-        const tops = Array.from(div.querySelectorAll('a:not([id*=DE])'))
+        const tops = Array.from(div.querySelectorAll('section:not([id*=DE])'))
         return { handle, div, tops, lang } 
       }
       
@@ -142,6 +143,7 @@
       
       async function select() {
         project = await window.showDirectoryPicker()
+        project = await project.getDirectoryHandle('content')
         for (const lang of ['de', 'da', 'en', 'es', 'pl', 'it', 'fr', 'pt', 'pt-br']) 
           content[lang] = await check(lang)
         document.querySelectorAll('.run').forEach(node => node.disabled = false)

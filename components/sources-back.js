@@ -27,8 +27,8 @@ sourcesBackTemplate.innerHTML = `
       font-family: 'Open Sans', Helvetica;
       font-size: calc(3 * var(--cavg));
       text-align: justify;
-      hyphens: auto;
       -webkit-hyphens: auto;
+      hyphens: auto;
     }
 
     ::slotted(h2) {

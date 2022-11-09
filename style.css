@@ -2,6 +2,7 @@ body {
   font-family: 'Open Sans', Helvetica;
   text-align: center;
   user-select: none;
+  -webkit-hyphens: auto;
   hyphens: auto;
   
   display: flex;
@@ -18,8 +19,8 @@ body, html, #game, #menu, #pyro {
 }
 
 h1, h2, p, a, b, i, td {
-  hyphens: auto;
   -webkit-hyphens: auto;
+  hyphens: auto;
 }
 
 input[type="checkbox"] {

@@ -73,6 +73,7 @@ labelCardTemplate.innerHTML = `
       width: calc(100% - var(--sidebar-width));
       left: var(--sidebar-width);
       height: 100%;
+      -webkit-hyphens: auto;
       hyphens: auto;
     }
 

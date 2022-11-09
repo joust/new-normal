@@ -14,7 +14,7 @@ argumentCardTemplate.innerHTML = `
       --watermark-size: 50%;
       position: relative;
       background: linear-gradient(30deg, #fdfdfd 0%, #fff 100%);
-      font-family: 'Open Sans', Helvetica;
+      font-family: 'Open Sans', Helvetica, 'NotoColorEmojiLimited';
       font-size: calc(4 * var(--cavg));
       border: calc(0.1 * var(--cavg)) solid #aaa;
       border-radius: calc(2 * var(--cavg));
@@ -107,8 +107,8 @@ argumentCardTemplate.innerHTML = `
 
     ::slotted(*) {
       text-align: justify;
-      hyphens: auto;
       -webkit-hyphens: auto;
+      hyphens: auto;
     }
 
     ::slotted(h2) {

@@ -15,7 +15,7 @@ discussCardTemplate.innerHTML = `
       height: 100%;
       border: calc(0.1 * var(--cavg)) solid #aaa;
       border-radius: calc(2 * var(--cavg));
-    background: radial-gradient(
+      background: radial-gradient(
         circle,
         var(--blue) 0%,
         var(--blue) 40%,
@@ -82,7 +82,7 @@ discussCardTemplate.innerHTML = `
       heigt: calc(1.3 * var(--sidebar-width))
       top: 0;
       left: 0;
-      font-family: 'HVD Crocodile', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica, 'NotoColorEmojiLimited';
       font-weight: 600;
       font-stretch: condensed;
       font-size: calc(8 * var(--cavg));
@@ -116,6 +116,7 @@ discussCardTemplate.innerHTML = `
       width: calc(100% - var(--sidebar-width));
       left: var(--sidebar-width);
       height: 100%;
+      -webkit-hyphens: auto;
       hyphens: auto;
       padding: calc(7 * var(--cavg));
       box-sizing: border-box;

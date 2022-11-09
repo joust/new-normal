@@ -72,8 +72,8 @@ function Uno(lang, content, host) {
    */ 
   function resolveDiscuss(hands, decks, card) {
     const topic = topicOf(card)
-    const firstI = decks.idiot.findLast(c => isArgument(c) && hasTopic(c, topic))
-    const firstS = decks.sheep.findLast(c => isArgument(c) && hasTopic(c, topic))
+    const firstI = findLast(decks.idiot, c => isArgument(c) && hasTopic(c, topic))
+    const firstS = findLast(decks.sheep, c => isArgument(c) && hasTopic(c, topic))
     hands.forEach((hand, index) => {
       const idiot = isIdiot(index)
       // first remove all matching cards of this players hand
@@ -172,7 +172,7 @@ function Uno(lang, content, host) {
    * @param {Array} deck The deck.
    */
   function drawArgument(hand, deck) {
-    const index = deck.findLastIndex(isArgument)
+    const index = findLastIndex(deck, isArgument)
     const [card] = deck.splice(index, 1)
     hand.push(card)
   }
@@ -184,7 +184,7 @@ function Uno(lang, content, host) {
    * @param {Array} deck The deck.
    */
   function drawNonArgument(hand, deck) {
-    const index = deck.findLastIndex(c => !isArgument(c))
+    const index = findLastIndex(deck, c => !isArgument(c))
     const [card] = deck.splice(index, 1)
     hand.push(card)
   }
@@ -262,6 +262,15 @@ function Uno(lang, content, host) {
       const index = hand.findIndex(c => isDiscuss(c) && topicOf(c)===topicOf(card))
       if (index>=0) hand.splice(index, 1)
     })
+  }
+  
+  function findLastIndex(array, finder) {
+    return array.map(finder).map(result => !!result).lastIndexOf(true)
+  }
+
+  function findLast(array, finder) {
+    const index = findLastIndex(array, finder)
+    return index>=0 ? array[index] : undefined
   }
 
   return {

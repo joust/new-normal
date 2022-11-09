@@ -46,6 +46,7 @@ class GameCard extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
+    this.alternatives = []
     this.altIndex = 0
   }
 
@@ -83,10 +84,6 @@ class GameCard extends HTMLElement {
   get topic() {
     const card  = this.alt || this.card
     return this.hasTopic ? card.split(':')[0] : ''
-  }
-
-  get alternatives() {
-    return this.hasAttribute('alternatives') ? this.getAttribute('alternatives').split(',') : [this.card]
   }
 
   get mirrored() {
@@ -147,6 +144,8 @@ class GameCard extends HTMLElement {
   }
 
   updateAlternatives() {
+    this.alternatives = this.hasAttribute('alternatives') ? this.getAttribute('alternatives').split(',') : [this.card]
+    
     const card = this.alt || this.card
     this.altIndex = this.alternatives.indexOf(card.replace('*', ''))
     if (this.altIndex<0) { this.setAttribute('alt', this.alternatives[0]); this.altIndex = 0 }

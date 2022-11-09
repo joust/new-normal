@@ -224,7 +224,7 @@ class StrawmanCard extends HTMLElement {
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
     const langObserver = new MutationObserver(() => this.update())
-    langObserver.observe(document, { attributes: true, attributeFilter: ['lang'], subtree: true })
+    langObserver.observe(document, { attributes: true, attributeFilter: ['lang'] })
     this.update()
   }
 

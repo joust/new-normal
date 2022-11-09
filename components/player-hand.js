@@ -9,6 +9,7 @@ playerHandTemplate.innerHTML = `
       font-family: 'HVD Crocodile', Helvetica;
       font-size: 3vh;
       font-weight: 300;
+      font-weight: 300;
       text-align: center;
     }
 
@@ -35,7 +36,7 @@ playerHandTemplate.innerHTML = `
       transition: all .2s linear;
     }
   </style>
-  <div id="player-hand"><slot></div>
+  <div id="player-hand"></div>
   <div id="player-name"></div>
 `
 
@@ -43,6 +44,9 @@ class PlayerHand extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
+    this.cards = []
+    this.ownChildren = []
+    this.revChildren = []
   }
 
   static observedAttributes = ['cards', 'nr', 'name']
@@ -51,12 +55,6 @@ class PlayerHand extends HTMLElement {
 
   playable(index) {
     return this.cards[index].playable
-  }
-
-  // JSON array of id+alternative+playable elements in the format { id: '...', alt: ['...', '...'], playable: ...}
-  get cards() {
-    const cards = this.getAttribute('cards')
-    return !cards || !cards.length ? [] : JSON.parse(cards)
   }
 
   get nr() {
@@ -77,8 +75,6 @@ class PlayerHand extends HTMLElement {
     
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
-    //const mutationObserver = new MutationObserver(() => this.updateLayout())
-    //mutationObserver.observe(this, { subtree: true, childList: true, attributes: true, //attributeFilter: ['top', 'style', 'class']})
   }
   
   attributeChangedCallback(name) {
@@ -92,6 +88,10 @@ class PlayerHand extends HTMLElement {
   }
 
   updateCards() {
+    // JSON array of id+alternative+playable elements in the format { id: '...', alt: ['...', '...'], playable: ...}
+    const json = this.getAttribute('cards')
+    this.cards = !json || !json.length ? [] : JSON.parse(json)
+    
     const cards = this.cards.map(element => element.card)
     const alts = this.cards.map(element => element.alt || [element.card])
     const hand = this.element('player-hand')
@@ -107,26 +107,13 @@ class PlayerHand extends HTMLElement {
         elements[index].parentElement.removeChild(elements[index])
       }
     }
+    // update children
+    this.ownChildren = Array.from(hand.querySelectorAll('game-card'))
+    this.revChildren = [...this.ownChildren].reverse()
   }
 
   updateName() {
     this.element('player-name').innerHTML = this.name ? this.name : '?'
-  }
-
-  slotChildren() {
-    return this.element('player-hand').firstChild.assignedElements()
-  }
-
-  ownChildren() {
-    return Array.from(this.element('player-hand').querySelectorAll('game-card'))
-  }
-
-  slotVisible() {
-    return this.slotChildren().filter(node => !!node.offsetParent)
-  }
-
-  slotInvisible() {
-    return this.slotChildren().filter(node => !node.offsetParent)
   }
 
   columns(len, top) {
@@ -142,9 +129,8 @@ class PlayerHand extends HTMLElement {
   }
 
   recalc() {
-    const children = [ ...this.slotVisible(), ...this.ownChildren()]
-    const topIndex = children.findIndex(child => child.hasAttribute('top'))
-    const columns = this.columns(children.length, topIndex)
+    const topIndex = this.ownChildren.findIndex(child => child.hasAttribute('top'))
+    const columns = this.columns(this.ownChildren.length, topIndex)
     this.element('player-hand').style.gridTemplateColumns = `1fr ${columns} 1fr`
   }
   
@@ -153,21 +139,13 @@ class PlayerHand extends HTMLElement {
   }
 
   updateLayout() {
-    const invisible = this.slotChildren()
-    // reverse() to handle zIndex priorities on mouseover
-    const visible = [ ...this.slotVisible(), ...this.ownChildren()].reverse()
-    invisible.forEach(child => {
-      child.style.removeProperty('gridRow')
-      child.style.removeProperty('gridColumn')
-      child.style.removeProperty('zIndex')
-    })
-    let z = visible.length, after = false
-    visible.forEach((child, index) => {
+    let z = this.revChildren.length, after = false
+    this.revChildren.forEach((child, index) => {
       child.style.gridRow = 1
       child.style.gridColumn = `${index+2}/span 8`
       child.style.zIndex = z
       child.toggleAttribute('mirrored', after)
-      const idx = this.ownChildren().indexOf(child)
+      const idx = this.ownChildren.indexOf(child)
       child.classList.toggle('playable', this.playable(idx))
       if (child.hasAttribute('top')) after = true
       if (after) z--; else z++
@@ -183,7 +161,7 @@ class PlayerHand extends HTMLElement {
     const target = event.target
     if (target && target.id!=='player-hand') {
       this.show(target)
-      const index = this.ownChildren().indexOf(event.target)
+      const index = this.ownChildren.indexOf(event.target)
       const card = target.getAttribute('alt') || target.getAttribute('card')
       if (card && this.playable(index)) 
         this.dispatchEvent(new CustomEvent('play', { detail: { index, card } }))

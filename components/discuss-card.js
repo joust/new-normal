@@ -232,6 +232,8 @@ class DiscussCard extends HTMLElement {
     this.element('side-phrase').innerHTML = this.element('phrase').innerHTML // copy phrases
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
+    const langObserver = new MutationObserver(() => this.update())
+    langObserver.observe(document, { attributes: true, attributeFilter: ['lang'] })
     this.update()
   }
 

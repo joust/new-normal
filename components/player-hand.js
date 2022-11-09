@@ -154,7 +154,11 @@ class PlayerHand extends HTMLElement {
   }
 
   over(event) {
-    event.target && event.target.id!=='player-hand' && this.show(event.target)
+    const target = event.target
+    if (event.touches) {
+      target = document.elementFromPoint(event.touches[0].pageX, event.touches[0].pageY)
+    }
+    target && target.id!=='player-hand' && this.show(target)
   }
 
   down(event) {

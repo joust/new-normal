@@ -69,8 +69,8 @@ class PlayerHand extends HTMLElement {
     this.shadowRoot.appendChild(playerHandTemplate.content.cloneNode(true))
     const hand = this.element('player-hand')
     hand.onclick = e => this.down(e)
-    hand.ontouchmove = e => this.over(e)
-    hand.onmouseover = e => this.over(e)
+    hand.onpointerdown = e => this.start(e)
+    hand.onpointermove = e => this.over(e)
     this.updateCards()
     
     const resizeObserver = new ResizeObserver(() => this.resize())
@@ -153,12 +153,13 @@ class PlayerHand extends HTMLElement {
     this.recalc()
   }
 
+  start(event) {
+    if (event.target.hasPointerCapture(event.pointerId))
+      event.target.releasePointerCapture(event.pointerId)
+  }
+
   over(event) {
-    const target = event.target
-    if (event.touches) {
-      target = document.elementFromPoint(event.touches[0].pageX, event.touches[0].pageY)
-    }
-    target && target.id!=='player-hand' && this.show(target)
+    event.target && event.target.id!=='player-hand' && this.show(event.target)
   }
 
   down(event) {

@@ -313,6 +313,96 @@ class ArgumentCard extends HTMLElement {
     this.style.setProperty('--cavg', `${(cw+ch)/1.6}px`)
   }
 
+  flagMapped(s) {
+    const flagMap = {
+      de: '🇩🇪',
+      at: '🇦🇹',
+      ch: '🇨🇭',
+      ch: '🇨🇭',
+      ch: '🇨🇭',
+      da: '🇩🇰',
+      li: '🇱🇮',
+      it: '🇮🇹',
+      it: '🇮🇹',
+      sm: '🇸🇲',
+      va: '🇻🇦',
+      us: '🇺🇸',
+      gb: '🇬🇧',
+      au: '🇦🇺',
+      nz: '🇳🇿',
+      ca: '🇨🇦',
+      ca: '🇨🇦',
+      pl: '🇵🇱',
+      ag: '🇦🇬',
+      bs: '🇧🇸',
+      bb: '🇧🇧',
+      bz: '🇧🇿',
+      dm: '🇩🇲',
+      gd: '🇬🇩',
+      gy: '🇬🇾',
+      ie: '🇮🇪',
+      jm: '🇯🇲',
+      mt: '🇲🇹',
+      kn: '🇰🇳',
+      lc: '🇱🇨',
+      vc: '🇻🇨',
+      tt: '🇹🇹',
+      es: '🇪🇸',
+      cu: '🇨🇺',
+      pe: '🇵🇪',
+      cl: '🇨🇱',
+      mx: '🇲🇽',
+      pr: '🇵🇷',
+      ar: '🇦🇷',
+      bo: '🇧🇴',
+      co: '🇨🇴',
+      cr: '🇨🇷',
+      do: '🇩🇴',
+      ec: '🇪🇨',
+      sv: '🇸🇻',
+      gq: '🇬🇶',
+      gt: '🇬🇹',
+      hn: '🇭🇳',
+      ni: '🇳🇮',
+      pa: '🇵🇦',
+      py: '🇵🇾',
+      uy: '🇺🇾',
+      ve: '🇻🇪',
+      pt: '🇵🇹',
+      br: '🇧🇷',
+      ao: '🇦🇴',
+      mz: '🇲🇿',
+      gw: '🇬🇼',
+      st: '🇸🇹',
+      cv: '🇨🇻',
+      fr: '🇫🇷',
+      be: '🇧🇪',
+      be: '🇧🇪',
+      be: '🇧🇪',
+      cd: '🇨🇩',
+      cg: '🇨🇬',
+      ko: '🇨🇮',
+      ko: '🇲🇬',
+      cm: '🇨🇲',
+      cm: '🇨🇲',
+      bf: '🇧🇫',
+      ne: '🇳🇪',
+      ml: '🇲🇱',
+      sn: '🇸🇳',
+      ht: '🇭🇹',
+      bj: '🇧🇯'
+    }
+    if (!s || !s.length) return s
+    if ((s[0]==='I' || s[0]==='S') && s[1]>='A') { // argument id
+      const flag = flagMap[s.substring(1, 3).toLowerCase()]
+      return flag ? `${s[0]}${flag}${s.substring(3)}` : s
+    } else if (s[0]>='A') { // topic id
+      const flag = flagMap[s.substring(0, 2).toLowerCase()]
+      return flag ? `${s.substring(2)}${flag}` : s
+    }
+    return s
+  }
+
   update() {
     const root = this.element('argument-card')
     if (this.isConnected && root) {
@@ -321,9 +411,9 @@ class ArgumentCard extends HTMLElement {
       root.classList.toggle('mirrored', this.mirrored)
       this.element('wildcard').classList.toggle('hidden', !this.wildcard)
       this.element('spellcheck').classList.toggle('hidden', !this.spellcheck)
-      this.element('card').innerHTML = this.card
+      this.element('card').innerHTML = this.flagMapped(this.card)
       this.element('card').classList.toggle('hidden', this.neutral)
-      this.element('topic-icon').innerHTML = this.topicId ? this.topicId.substring(1) : '?'
+      this.element('topic-icon').innerHTML = this.flagMapped(this.topicId ? this.topicId.substring(1) : '?')
       this.element('topic-name').innerHTML = this.topic
       this.element('side-title').innerHTML = `${this.wildcard?'✱ ':''}${this.title}`
     }

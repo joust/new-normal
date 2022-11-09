@@ -132,6 +132,7 @@ class GameCard extends HTMLElement {
       card.insertAdjacentHTML('beforeBegin', this.getCardElement())
       this.shadowRoot.removeChild(card)
     }
+    if (!this.alternatives.length) this.alternatives = [this.card]
   }
 
   updateMirrored() {

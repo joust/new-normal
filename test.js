@@ -120,7 +120,7 @@ async function loadTestResult() {
   result.querySelector('.result .none').classList.toggle('hidden', 
     stats.idiot.count != stats.sheep.count)
   
-  const select = labelSelect(stats.idiot.count > stats.sheep.count)
+  const select = labelSelect(stats.idiot.count < stats.sheep.count)
   result.querySelector('.labels').appendChild(select)
   
   copyLogoToTestResult()

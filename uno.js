@@ -14,6 +14,7 @@ function setupTable() {
 function cleanupTable() {
   element('stop').classList.add('hidden')
   element('uno').classList.add('hidden')
+  element('pyro').classList.add('hidden')
   element('uno').removeChild(element('game'))
   element('uno').removeChild(element('hand'))
   show('start')
@@ -62,6 +63,7 @@ function updateTable(client, state) { // TODO move to uno/game-table.js componen
       hand.setAttribute('name', state.G.names[opponentIds[index]])
     hand.setAttribute('cards', state.G.hands[opponentIds[index]].length)
   })
+  element('pyro').classList.toggle('hidden', !(state.ctx.gameover && state.ctx.gameover.winner))
 }
 
 function makeBotMove(client, botID, state) {

@@ -82,13 +82,23 @@ function updateTable(client, state) { // TODO move to uno/game-table.js componen
 }
 
 function makeBotMove(client, botID, state) {
+  const strategicallyChooseMove = (hand, possibleMoves) => {
+    const wildcard = possibleMoves.findIndex(move => move.move==='playCard' && isWildcard(hand[move.args[0]]))
+    if (wildcard>=0) return wildcard
+    const argument = possibleMoves.findIndex(move => move.move==='playCard' && isArgument(hand[move.args[0]]))
+    if (argument>=0) return argument
+    const fallacy = possibleMoves.findIndex(move => move.move==='playCard' && isFallacy(hand[move.args[0]]))
+    if (fallacy>=0) return fallacy 
+    return Math.floor(Math.random()*possibleMoves.length) // random index
+  }
+  console.log(state.ctx, state.G.pile, state.ctx.currentPlayer===botID)
   if (state.ctx.currentPlayer===botID) {
     const idiot = isIdiot(botID)
     const hand = state.G.hands[botID]
     const top = state.G.pile.length ? state.G.pile[state.G.pile.length-1] : undefined
     const possibleMoves = allPossibleMoves(hand, idiot, top)
-    const randomMoveIndex = Math.floor(Math.random()*possibleMoves.length)
-    const move = possibleMoves[randomMoveIndex]
+    const index = strategicallyChooseMove(hand, possibleMoves)
+    const move = possibleMoves[index]
     setTimeout(() => client.moves[move.move](...move.args), 500)
   }
 }

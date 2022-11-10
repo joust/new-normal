@@ -6,7 +6,7 @@ if ('serviceWorker' in navigator)
   navigator.serviceWorker.register('sw.js').then(registration => registration.update())      
 
 const supported = ['de', 'da', 'en', 'es', 'pl', 'it', 'pt', 'fr']
-const locals = [ 'de/de', 'de/ch', 'de/at', 'en/us', 'es/gb', 'pt/br']
+const localDirs = [ 'de/de', 'de/ch', 'de/at', 'en/us', 'es/gb', 'pt/br']
 const attitude = { hasty: false, curious: true, open: false, fair: false, correct: false, friendly: false, exclusions: '' }
 let lang, terr
 
@@ -18,9 +18,15 @@ let lang, terr
 function load(locale) {
   FastClick.attach(document.body)
   loadAttitude()
-  if (locale) [lang, terr] = locale.split('-'); else [lang, terr] = browserLocale()
-  if (!supported.includes(lang)) [lang, terr] = ['en', 'us']
-  document.querySelector('.location').value = `${lang}-${terr}`
+  if (locale) {
+    [lang, terr] = locale.split('-')
+  } else {
+    [lang, terr] = browserLocale()
+    if (!supported.includes(lang)) [lang, terr] = ['en', 'us']
+    locale = `${lang}-${terr}`
+  }
+  document.querySelector('.location').value = locale
+  document.body.lang = locales.includes(locale) ? locale : lang
 
   if (!window.location.hash || !displayHash(window.location.hash.substring(1)))
     if (attitude.hasty) show('start'); else runIntro()
@@ -33,16 +39,17 @@ function load(locale) {
  */
 async function show(page) {
   document.querySelector('.logo').style.display = page === 'intro' ? 'none' : 'block'
-  document.querySelector('#menu').classList.add('hidden')
+  element('menu').classList.add('hidden')
   const locale = `${lang}/${terr}`
   let content = ''
-  if (locals.includes(locale)) content = await fetchSilent(`content/${locale}/${page}.html`)
+  if (localDirs.includes(locale)) content = await fetchSilent(`content/${locale}/${page}.html`)
   if (content === '') content = await fetchSilent(`content/${lang}/${page}.html`)
   if (page === 'intro') content = content.replace('NN_YEAR', ''+getNNYear())
   document.querySelector('#menu .content').innerHTML = content
-  document.querySelector('#menu').scrollTop = 0
+  document.querySelector('#menu .content').setAttribute('class', `content ${page}`)
+  element('menu').scrollTop = 0
   if (page==='attitude') initAttitude()
-  setTimeout(() => document.querySelector('#menu').classList.remove('hidden'), 50)
+  setTimeout(() => element('menu').classList.remove('hidden'), 50)
 }
 
 /**
@@ -51,8 +58,8 @@ async function show(page) {
 let timer = null
 async function runIntro() {
   await show('intro')
-  document.querySelector('#menu').classList.add('intro')
-  let frame = document.querySelector('#menu .frame')
+  element('menu').classList.add('intro')
+  let frame = element('menu .frame')
   const nextFrame = () => {
     frame.classList.toggle('show')
     frame = frame.nextElementSibling
@@ -61,7 +68,7 @@ async function runIntro() {
       timer = setTimeout(nextFrame, 60 * frame.textContent.length)
     } else {
       timer = null
-      document.querySelector('#menu').classList.remove('intro')
+      element('menu').classList.remove('intro')
       show('start')
     }
   }
@@ -75,7 +82,7 @@ async function runIntro() {
 function skipIntro() {
   if (timer) clearTimeout(timer)
   saveAttitude('hasty', true)
-  document.querySelector('#menu').classList.remove('intro')
+  element('menu').classList.remove('intro')
   show('start')
 }
 
@@ -83,17 +90,7 @@ function skipIntro() {
  * stop the pyro effect by setting CSS 'hidden' class
  */
 function stopPyro() {
-  document.querySelector('#pyro').classList.add('hidden')
-}
-
-/**
- * get localized arguments with edit wrapper
- *
- * @param {boolean} idiot whether to load the idiot or sheep arguments
- */
-function getLocalized(idiot) {
-  const content = getLocalizedContent(lang, terr, idiot)
-  return `<div lang="${lang}" class="tr">${content}</div>`
+  element('pyro').classList.add('hidden')
 }
 
 function getNNYear() {
@@ -111,8 +108,8 @@ async function displayHash(hash) {
   const idiot = ids.filter(v => v.startsWith('I'))
   const sheep = ids.filter(v => v.startsWith('S'))
   const test = ids.filter(v => v.startsWith('T'))
-  const wrapper1 = document.querySelector('#wrapper-1')
-  const wrapper2 = document.querySelector('#wrapper-2')
+  const wrapper1 = element('wrapper-1')
+  const wrapper2 = element('wrapper-2')
   if (test.length) {
     await loadTestCard(wrapper1, true, 0, 5)
     await loadTestCard(wrapper2, false, 25, 5)
@@ -134,7 +131,7 @@ async function displayHash(hash) {
     } else
       hideWrapperTwo()
   }
-  showGame()
+  showBingo()
   return true
 }
 
@@ -166,242 +163,6 @@ function loadAttitude() {
       if (localStorage.getItem(a) !== null)
         attitude[a] = a === 'exclusions' ? localStorage.getItem(a) : localStorage.getItem(a)==='true'
     }
-}
-
-/**
- * Hide second card wrapper to play with only one
- */
-function hideWrapperTwo() {
-  document.querySelector('#wrapper-2').classList.add('hidden')
-  document.querySelector('#game').classList.add('one')
-}
-
-/**
- * Show second card wrapper to play with two
- */
-function showWrapperTwo() {
-  document.querySelector('#wrapper-2').classList.remove('hidden')
-  document.querySelector('#game').classList.remove('one')
-}
-
-/**
- * handle change of the search input text
- * @param {MouseEvent} event - the input event
- */
-function search(event) {
-  const wrapper = event.target.closest('.card-wrapper')
-  const input = event.target.value.toLowerCase()
-  const args = Array.from(wrapper.querySelectorAll('a[id]'))
-  args.forEach(a => a.classList.remove('not-matching'))
-  const notMatching = input.length ? args.filter(a => !a.textContent.replace(/\u00ad/gi, '').toLowerCase().includes(input)) : []
-  notMatching.forEach(a => a.classList.add('not-matching'))
-}
-
-/**
- * stop the game: flipping cards, hiding the #game element and showing the #menu element
- */
-function stop() {
-  closeDetails('#wrapper-1', true)
-  closeDetails('#wrapper-2', true)
-
-  hideGame()
-  show('start')
-}
-
-/**
- * Show the game panel and stop button, hide the menu
- */
-function showGame() {
-  document.querySelector('#stop').classList.remove('hidden')
-  document.querySelector('#game').classList.remove('hidden')
-  document.querySelector('#menu').classList.add('hidden')
-}
-
-/**
- * Hide the game panel and stop button
- */
-function hideGame() {
-  document.querySelector('#stop').classList.add('hidden')
-  document.querySelector('#game').classList.add('hidden')
-  document.querySelector('#result').classList.add('hidden')
-  document.querySelector('#pyro').classList.add('hidden')
-}
-
-/**
- * Generate label select
- * @param {boolean} idiot use idiot or sheep labels
- * @return {string} select HTML
- */
-function labelSelect(idiot) {
-  const labels = getLabels(lang, terr, idiot).map(label => `<option>${label.innerHTML}</option>`)
-  return htmlToElement(`<select id="label" class="needsclick">${labels}</select>`)
-}
-
-/**
- * extract topics from HTML content
- *
- * @return {Array} the extracted topics
- */
-function getTopicsData() {
-  const topics = getTopics(lang, terr)
-  return Array.from(topics.querySelectorAll('section')).map(topic => ({
-      id: topic.id,
-      idiot: Array.from(topic.querySelectorAll('a[id^=I]')).map(a => a.id),
-      sheep: Array.from(topic.querySelectorAll('a[id^=S]')).map(a => a.id),
-      idiotLabel: topic.dataset.idiotLabel,
-      sheepLabel: topic.dataset.sheepLabel,
-      idiotTitle: topic.dataset.idiotTitle,
-      sheepTitle: topic.dataset.sheepTitle,
-      title: topic.title
-    })
-  )
-}
-
-/**
- * extract idiot/sheep arguments for a given topic for showing a tooltip
- *
- * @param {HTMLElement} detail - content DOM node containing the arguments
- * @param {string} topicId - the topic id
- * @param {boolean} idiot - idiot or sheep
- * @return {string} the extracted arguments
- */
-function getArgumentsForTopic(topicId, idiot) {
-  const topic = getTopic(lang, terr, topicId)
-  const argsIds = Array.from(topic.querySelectorAll(idiot ? 'a[id^=I]' : 'a[id^=S]')).map(a => a.id)
-  return argsIds.map(argId => {
-    const arg = getArgument(lang, terr, argId).querySelector('h2')
-    if (!arg) console.log(`no arg for id ${argId}`)
-    return arg ? arg.innerHTML : ''
-  }).join('\n')
-}
-
-/**
- * extend the arguments in detail with sources from sources if available
- *
- * @param {HTMLElement} detail content DOM node containing the arguments
- */
-function addSources(detail) {
-  const sources = getSources()
-  Array.from(detail.querySelectorAll('a[id]')).forEach(a => {
-    const links = sources.querySelectorAll(`a.${a.id}`)
-    links.forEach(link => link.target = '_blank')
-    if (links.length > 0) {
-      const q = elementWithKids('q', [
-        a.querySelector('h2').cloneNode(true),
-        elementWithKids('ul', Array.from(links).map(
-        s => elementWithKids('li', [
-          s.cloneNode(true), ' (', mirrorNode(s), ')'
-        ])))
-      ])
-      q.classList.add('hidden')
-      a.nextElementSibling.appendChild(q)
-    }
-  })
-}
-
-/**
- * Set the permalink for the details side of the given card wrapper
- *
- * @param {HTMLElement} wrapper the card wrapper
- * @param {string[]} ids list of ids to include in the permalink
- */
-function setPermalink(wrapper, ids) {
-  const permalink = wrapper.querySelector('.permalink')
-  if (ids) {
-    permalink.classList.remove('hidden')
-    permalink.href = `${window.location.origin}/#${ids.join('&')}`
-  } else
-    permalink.classList.add('hidden')
-}
-
-/**
- * add an empty navigation element to the card
- *
- * @param {HTMLElement} wrapper wrapper element to load the card into
- */
-function addNavigationToCard(wrapper) {
-  const navigation = elementWithKids('p')
-  navigation.classList.add('navigation')
-  wrapper.querySelector('.content').prepend(navigation)
-}
-
-/**
- * Setup argument navigation by id and selected
- *
- * @param {HTMLElement} wrapper the card wrapper
- * @param {string} topicId id of topic to save as navigation id
- * @param {string[]} ids list of ids to include in the navigation
- * @param {string} selected the id to select
- * @param {boolean} bingo if to show a permalink and counter navigation
- */
-function setNavigation(wrapper, topicId, ids, selected, bingo) {
-  const content = wrapper.querySelector('.content')
-  const navigation = elementWithKids('p', ids.flatMap(id => {
-    const idtag = elementWithKids('span', id)
-    idtag.onclick = () => singleDetails(wrapper, topicId, ids, id, bingo)
-    if (id === selected) idtag.classList.add('selected')
-    return ['\u00ad', idtag]
-  }))
-  navigation.id = topicId ? topicId : 'nav'
-  navigation.classList.add('navigation')
-  if (bingo && topicId) {
-    const countertag = elementWithKids('span', '►')
-    countertag.classList.add('counter')
-    countertag.onclick = event => showCounterArguments(event)
-    navigation.appendChild(countertag)
-  }
-  content.replaceChild(navigation, content.querySelector('.navigation'))
-}
-
-/**
- * show selected details, add the CSS 'single' classes if only one is shown
- * @param {HTMLElement|string} wrapper the event that triggered the open action
- * @param {string|null} topicId id of topic to save as navigation id
- * @param {string[]} ids list of ids to show
- * @param {string} selected id to select
- * @param {boolean} permalink if to show a permalink
- */
-function singleDetails(wrapper, topicId, ids, selected = undefined, permalink = true) {
-  if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
-  selected = selected || ids[0]
-  setNavigation(wrapper, topicId, ids, selected, permalink)
-  const detail = wrapper.querySelector('.detail')
-  detail.classList.add('single')
-  detail.querySelectorAll('a[id]').forEach(e => e.classList.remove('single'))
-  const anchor = wrapper.querySelector(`a[id=${selected}]`)
-  if (anchor) {
-    anchor.classList.add('single')
-    detail.querySelectorAll('a[href=""]').forEach(e => e.classList.toggle('hidden',
-      !anchor.querySelector('q')))
-  }
-  setPermalink(wrapper, permalink ? ids : false)
-}
-
-/**
- * show/hide all sources boxes if available
- *
- * @param {MouseEvent} event the Event triggering the action
- * @param {boolean} show true if the sources should be made visible false otherwise
- */
-function showSources(event, show = true) {
-  const wrapper = event.target.closest('.card-wrapper')
-  wrapper.querySelectorAll('q').forEach(q => q.classList.toggle('hidden', !show))
-}
-
-/**
- * update a topics based (test/bingo) card with a different language
- * @param {Array} topics true if the sources should be made visible false otherwise
- * @param {boolean} idiot true if idiot content
- * @param {HTMLElement} wrapper wrapper element of the card
- */
-function updateCard(wrapper, topics, idiot = undefined) {
-  wrapper.querySelectorAll('td[id]').forEach(td => {
-    const topic = topics.find(t => t.id === td.id)
-    if (topic) {
-      td.innerHTML = idiot === true ? topic.idiotTitle : idiot === false ? topic.sheepTitle : topic.title
-      td.title = getArgumentsForTopic(topic.id, idiot)
-    }
-  })
 }
 
 /**
@@ -457,6 +218,14 @@ function htmlToElement(html) {
   var template = document.createElement('template')
   template.innerHTML = html
   return template.content.firstChild
+}
+
+function element(id) {
+  return document.getElementById(id)
+}
+
+function elements(tag) {
+  return Array.from(document.getElementsByTagName(tag))
 }
 
 /**
@@ -530,10 +299,9 @@ function safariFix(div) {
  * @return {Promise<string>} the files content or '' on error
  */
 function fetchSilent(url) {
-  document.querySelector('#loader').classList.remove('hidden')
-  return fetchSilentNoSpinner(url).finally(() =>  document.querySelector('#loader').classList.add('hidden'))
+  element('loader').classList.remove('hidden')
+  return fetchSilentNoSpinner(url).finally(() =>  element('loader').classList.add('hidden'))
 }
-
 
 /**
  * fetch a file from server, suppressing all errors, no spinner

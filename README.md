@@ -1,10 +1,11 @@
 <h1>New Normal</h1>
 <center><img src="https://github.com/joust/new-normal/raw/master/images/new-normal.jpg"></center>
 <p>
-This browser app is a playground build around a huge collection of arguments used during Corona related discussions. The imaginary two sides are (technically) referred to as <b>Idiots</b> and <b>Sheep</b>. The two usages currently implemented are:
+This browser app is a playground build around a huge collection of arguments used during Corona related discussions. The imaginary two sides are (technically) referred to as <b>Idiots</b> and <b>Sheep</b>. The three usages currently implemented are:
 <ul>
-  <li>A <b>Corona Test</b>, which allows you to find out which "side" you are on. Choose your "cycles" and after that number of decisions on contradicting arguments you know if you're an <b>Idiot</b> or a <b>Sheep</b>.</li>
+  <li>An <b>UNO card game</b>, played strategically with arguments, ad hominem labelling and other game cards to simulate an actual discussion between up to 10 persons.</li>
   <li>A <b>Buzzword BINGO game</b>, played with arguments used in a discussion. Use it to have more fun in either your own discussions on the topic or that of others.</li>
+  <li>A <b>Corona TEST</b>, which allows you to find out which "side" you are on. Choose your "cycles" and after that number of Tinder like swipe left/right decisions on arguments presented you know if you're an <b>Idiot</b> or a <b>Sheep</b>.</li>
 </ul>
 </p><p>
 Aside from making sound fun of an imaginary either/or division that many people think is real these days, this little app has big things in store: It wants to build bridges, create awareness and knowledge. It is for people who really want to deal with the arguments of the other side of the discourse. It wants to make sure that people approach each other again. It wants to be a valuable source and enable an open and well-founded exchange about this ubiquitous topic.
@@ -14,14 +15,19 @@ Technically its a plain HTML/CSS/ES6 PWA app. The app is inter&shy;nationa&shy;l
 <h1>Content</h1>
 <h2>Menus and Arguments</h2>
 <p>
-All internationalized application content is stored in HTML format in language-directories:
+All internationalized application content is stored in HTML format in language-directories in the <code>content</code> directory:
 </p>
 <ul>
 <li><code>&lt;language code&gt;/intro.html</code>: the application intro</li>
 <li><code>&lt;language code&gt;/start.html</code>: main application menu</li>
-<li><code>&lt;language code&gt;/gameplay.html</code>: gameplay instructions</li>
+<li><code>&lt;language code&gt;/uno.html</code>: instructions for the uno game</li>
+<li><code>&lt;language code&gt;/bingo.html</code>: instructions for the bingo game</li>
+<li><code>&lt;language code&gt;/test.html</code>: instructions for the test</li>
 <li><code>&lt;language code&gt;/install.html</code>: PWA installation instructions</li>
 <li><code>&lt;language code&gt;/support.html</code>: Support instructions</li>
+<li><code>&lt;language code&gt;/labels.html</code>: labels used by idiots and sheep</li>
+<li><code>&lt;language code&gt;/appeal-tos.html</code>: appeal tos used by idiots and sheep</li>
+<li><code>&lt;language code&gt;/fallacies.html</code>: fallacies used by idiots and sheep</li>
 <li><code>&lt;language code&gt;/topics.html</code>: the local topics</li>
 <li><code>&lt;language code&gt;/result.html</code>: the test result template</li>
 <li><code>&lt;language code&gt;/credits.html</code>: the credits</li>
@@ -34,15 +40,15 @@ All internationalized argu&shy;ments are stored in HTML format in language- and 
 <ul>
 <li><code>&lt;language code&gt;/sheep.html</code>: Common core <b>Idiot</b> argu&shy;ments and labels</li>
 <li><code>&lt;language code&gt;/idiot.html</code>: Common core <b>Sheep</b> argu&shy;ments and labels</li>
-<li><code>&lt;language code&gt;/&lt;territory code&gt;/sheep.html</code>: Local <b>Sheep</b> argu&shy;ments</li>
-<li><code>&lt;language code&gt;/&lt;territory code&gt;/idiot.html</code>: Local <b>Idiot</b> argu&shy;ments</li>
+<li><code>&lt;language code&gt;/&lt;territory code&gt;/sheep.html</code>: Territory local <b>Sheep</b> argu&shy;ments</li>
+<li><code>&lt;language code&gt;/&lt;territory code&gt;/idiot.html</code>: Territory local <b>Idiot</b> argu&shy;ments</li>
 </ul>
 <p>The arguments of the Common core have a unique id across all languagues:</p>
 <ul>
 <li><code>I&lt;n&gt;</code> for the <b>Idiot</b> arguments</li>
 <li><code>S&lt;n&gt;</code> for the <b>Sheep</b> arguments</li>
 </ul>
-<p>The local arguments have a unique id with the territory code in it:</p>
+<p>The territory local arguments have a unique id with the territory code in it:</p>
 <ul>
 <li><code>I&lt;territory code&gt;&lt;n&gt;</code> for the <b>Idiot</b> arguments</li>
 <li><code>S&lt;territory code&gt;&lt;n&gt;</code> for the <b>Sheep</b> arguments</li>
@@ -56,7 +62,7 @@ All internationalized argu&shy;ments are stored in HTML format in language- and 
 <h2>Topics</h2>
 <p>
 Arguments and topics are linked to each other. This can also be supplemented by local arguments and topics. The base links can be found in the top-level file <code>topics.html</code>, additions are in the respective <code>topics.html</code> within the localized folders. The entries each represent a topic in the following format</p>
-<li><code>&lt;a id="T&lt;n&gt;" data-idiot="&lt;idiot argument ids&gt;" data-sheep="&lt;sheep argument ids&gt;&lt;/a&gt;</code></li>
+<li><code>&lt;section id="T&lt;n&gt;" title=""</code></li>
 
 <h2>Sources</h2>
 <p>
@@ -174,7 +180,7 @@ Pyro Effect: <a target="_blank" href="https://jsfiddle.net/elin/7m3bL">Eddie Lin
 </p><p>
 Jumping Virus Effect: Kuba Koischwitz 🐿️
 </p><p>
-<img width="100" style="float:left" src="https://github.com/joust/new-normal/raw/master/images/berlin.png">PROUDLY MADE IN BERLIN CHARLOTTENGRAD.
+<img width="100" style="float:left" src="https://github.com/joust/new-normal/raw/master/images/berlin.png">PROUDLY MADE IN BERLIN CHARLOTTENBURG.
 </p>
 
 <h1>License</h1>

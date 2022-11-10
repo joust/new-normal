@@ -10,16 +10,39 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="flipside.css">
     <link rel="stylesheet" href="pyro.css">
+    <link rel="stylesheet" href="uno.css">
+    <link rel="stylesheet" href="test.css">
     <title>New Normal</title>
-    <!--<script src="dmp.js" type="text/javascript"></script>-->
+    <script src="dialog.js" type="text/javascript"></script>
+    <script src="components/player-hand.js" type="text/javascript"></script>
+    <script src="components/opponent-hand.js" type="text/javascript"></script>
+    <script src="components/argument-card.js" type="text/javascript"></script>
+    <script src="components/no-card.js" type="text/javascript"></script>
+    <script src="components/card-pile.js" type="text/javascript"></script>
+    <script src="components/game-card.js" type="text/javascript"></script>
+    <script src="components/card-back.js" type="text/javascript"></script>
+    <script src="components/label-card.js" type="text/javascript"></script>
+    <script src="components/fallacy-card.js" type="text/javascript"></script>
+    <script src="components/strawman-card.js" type="text/javascript"></script>
+    <script src="components/appeal-to-card.js" type="text/javascript"></script>
+    <script src="components/research-card.js" type="text/javascript"></script>
+    <script src="components/discuss-card.js" type="text/javascript"></script>
+    <script src="components/pause-card.js" type="text/javascript"></script>
+    <script src="components/banish-card.js" type="text/javascript"></script>
+    <script src="components/flip-card.js" type="text/javascript"></script>
+    <script src="components/sources-back.js" type="text/javascript"></script>
+    <script src="components/centered-cards.js" type="text/javascript"></script>
+    <script src="components/test-card.js" type="text/javascript"></script>
+    <script src="components/test-pile.js" type="text/javascript"></script>
     <script src="flipside.js" type="text/javascript"></script>
     <script src="content.js" type="text/javascript"></script>
     <script src="common.js" type="text/javascript"></script>
     <script src="correct.js" type="text/javascript"></script>
     <script src="bingo.js" type="text/javascript"></script>
     <script src="test.js" type="text/javascript"></script>
-    <script src="card.js" type="text/javascript"></script>
-    <script src="hand.js" type="text/javascript"></script>
+    <script src="boardgame.js" type="text/javascript"></script>
+    <script src="uno-bg.js" type="text/javascript"></script>
+    <script src="uno.js" type="text/javascript"></script>
     <script src="fastclick.js" type="text/javascript"></script>
     <script type="text/javascript">
       function flagcheck() {
@@ -29,7 +52,7 @@
     </script>
   </head>
   <body onload="flagcheck(); load()">
-    <div><button id="stop" class="hidden" onclick="stop()">&#x274c;</button></div>
+    <div><button id="stop" class="hidden">&#x274c;</button></div>
     <div id="menu">
       <div class="game-logo menu">
         <div class="logo">
@@ -116,7 +139,9 @@
       </div>
       <div class="content"></div>
     </div>
-    <div id="game" class="flip-wrapper hidden">
+    <div id="uno" class="hidden"></div>
+    <div id="test" class="hidden"></div>
+    <div id="bingo" class="flip-wrapper hidden">
       <div id="wrapper-1" class="flip card-wrapper">
         <div class="card flip-front">
           <button class="reload">⟳</button>
@@ -146,7 +171,7 @@
       <div class="before"></div>
       <div class="after"></div>
     </div>
-    <div id="result" class="hidden" onclick="handleResultClick(event)"></div>
+    <div id="result" class="hidden"></div>
     <div id="content" class="hidden"></div>
     <div id="loader" class="hidden"></div>
   </body>

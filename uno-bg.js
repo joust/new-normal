@@ -13,18 +13,18 @@ const PERCENTAGE_PAUSES = 10
 const PERCENTAGE_BANISHES = 10
 const INVALID_MOVE = 'INVALID_MOVE'
 
-async function startLocal(lang, content, playerID) {
+async function startLocal(locale, content, playerID) {
   console.log(content)
-  const game = await Uno(lang, content, playerID)
-  const player = Client({ game, playerID, multiplayer: Local() })
+  const game = await Uno(locale, content, playerID)
+  const player = Client({ game, playerID, multiplayer: Local(), debug: { collapseOnLoad: true }})
   const bot = Client({ game, playerID: playerID==='0' ? '1' : '0', multiplayer: Local() })
   player.start()
   bot.start()
   return playerID==='0' ? [player, bot] : [bot, player]
 }
 
-async function startClient(lang, content, isHost, numPlayers, playerID, matchID) {
-  const game = await Uno(lang, content, isHost ? playerID : undefined)
+async function startClient(locale, content, isHost, numPlayers, playerID, matchID) {
+  const game = await Uno(locale, content, isHost ? playerID : undefined)
   const peerOptions = { host: 'new-normal.app', port: 9443 }
   
   const client = Client({
@@ -36,7 +36,8 @@ async function startClient(lang, content, isHost, numPlayers, playerID, matchID)
       isHost,
       peerOptions,
       onError: e => { console.log('P2P error', e) }
-    })
+    }),
+    debug: { collapseOnLoad: true }
   })
   client.start()
   return client
@@ -44,7 +45,7 @@ async function startClient(lang, content, isHost, numPlayers, playerID, matchID)
 
 /**
 Uno game engine. Game state: {
-    lang: 'de', // opponents have to use the same language!
+    locale: 'de-de', // opponents have to use the same locale!
     host: '0'/'1', 
     decks: {
       idiot: ['I1', 'I2', ...],
@@ -61,7 +62,7 @@ content = {
   sheep: {args, labels, fallacies, appealTos, discusses}
 }
 */
-function Uno(lang, content, host) {
+function Uno(locale, content, host) {
   /**
    * adds wildcard argument cards for topic of card to every players hand, 
    * removing possible existing arguments of given topic
@@ -206,10 +207,9 @@ function Uno(lang, content, host) {
 
   /**
    * generates decks for idiot and sheep
-   * @param {string} lang The language.
    * @return {{idiot: Array, sheep: Array}} The generated decks
    */
-  function generateDecks(lang, players) {
+  function generateDecks(players) {
     const decks = { idiot: initialDeck(true, players), sheep: initialDeck(false, players) }
     adjustDeckSize(decks)
     shuffle(decks.idiot)
@@ -281,7 +281,7 @@ function Uno(lang, content, host) {
       const hands = new Array(ctx.numPlayers).fill([]).map((p,i) => drawHand(decks, isIdiot(i)))
       const names = new Array(ctx.numPlayers).fill(undefined)
       const pile = [] // empty in the beginning
-      return { lang, host, decks, pile, hands, names }
+      return { locale, host, decks, pile, hands, names }
     },
     moves: {
       playCard: (G, ctx, index, alt) => { // alt = alternative card to put on the pile

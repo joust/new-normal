@@ -1,28 +1,56 @@
-<center>
-<p>
-  <span class="menu"><b>Test di Corona</b> (Cicli):</span><br>
+  <p>
+  <span class="menu"><b>Uno di Corona</b> (Impostazioni):</span><span class="info" onclick="show('uno')"></span><br>
   <span style="font-face: 'Open Sans'">(Nota: tradotto a macchina dal tedesco):</span><br>
-  <button class="menu t" onclick="test(2)">4</button>
-  <button class="menu t" onclick="test(3)">9</button>
-  <button class="menu t" onclick="test(4)">16</button>
-  <button class="menu t" onclick="test(5)">25</button>
-  <button class="menu t" onclick="test(4, 4)">32</button>
-  <button class="menu t" onclick="test(5, 5)">50</button>
+  <label>Gioco#:
+    <input id="matchID" type="text" value="0000" maxlength="4" minlength="4" size="5">
+  </label>
+  <label>- Ruolo:
+    <input type="radio" id="idiot" name="role" value="idiot" checked>
+    <label for="idiot">Idiota</label>
+    <input type="radio" id="sheep" name="role" value="sheep">
+    <label for="sheep">Pecora</label>
+  </label>
+  <table><tr>
+  <td><label>Host (Numero di giocatori):<br>
+    <button class="menu u" onclick="uno(true, 2)">2</button>
+    <button class="menu u" onclick="uno(true, 4)">4</button>
+    <button class="menu u" onclick="uno(true, 6)">6</button>
+    <button class="menu u" onclick="uno(true, 8)">8</button>
+    <button class="menu u" onclick="uno(true, 10)">10</button>
+  </label></td>
+  <td><label>Guest:<br>
+    <button class="menu u" onclick="uno(false)">Partecipa</button>
+  </label></td>
+  </tr></table>
+  <label>Locale:
+    <button class="menu u" onclick="unoWithBot()">Contro Bot</button>
+  </label>
+ </p>
+<hr>
+<p>
+  <span class="menu"><b>Bingo di Corona</b> (Tipo gioco):</span><span class="info" onclick="show('bingo')"></span><br>
+  <span style="font-face: 'Open Sans'">(Nota: tradotto a macchina dal tedesco):</span><br>
+  <button class="menu is" onclick="bingo(true, false)" alt="Idiota-Pecora"></button>
+  <button class="menu si" onclick="bingo(false, true)" alt="Pecora-Idiota"></button>
+  <button class="menu ss" onclick="bingo(false, false)" alt="Pecora-Pecora"></button>
+  <button class="menu ii" onclick="bingo(true, true)" alt="Idiota-Idiota"></button>
+  <button class="menu s" onclick="bingo(false)" alt="Pecora"></button>
+  <button class="menu i" onclick="bingo(true)" alt="Idiota"></button>
 </p>
+<hr>
 <p>
-  <span class="menu"><b>Bingo di Corona</b> (Tipo gioco):</span><br>
+  <span class="menu"><b>Test di Corona</b> (Cicli):</span><span class="info" onclick="show('test')"></span><br>
   <span style="font-face: 'Open Sans'">(Nota: tradotto a macchina dal tedesco):</span><br>
-  <button class="menu is" onclick="play(true, false)" alt="Idiota-Pecora"></button>
-  <button class="menu si" onclick="play(false, true)" alt="Pecora-Idiota"></button>
-  <button class="menu ss" onclick="play(false, false)" alt="Pecora-Pecora"></button>
-  <button class="menu ii" onclick="play(true, true)" alt="Idiota-Idiota"></button>
-  <button class="menu s" onclick="play(false)" alt="Pecora"></button>
-  <button class="menu i" onclick="play(true)" alt="Idiota"></button>
-</p><p>
+  <button class="menu t" onclick="test(5)">5</button>
+  <button class="menu t" onclick="test(15)">15</button>
+  <button class="menu t" onclick="test(25)">25</button>
+  <button class="menu t" onclick="test(35)">35</button>
+  <button class="menu t" onclick="test(45)">45</button>
+</p>
+<hr>
+<p>
   <button class="menu" onclick="show('install')">Installazione</button>
-  <button class="menu" onclick="show('gameplay')">Istruzioni</button>
   <button class="menu" onclick="show('support')">Supporto</button>
   <button class="menu" onclick="show('attitude')">Attitudine</button>
   <button class="menu" onclick="show('credits')">Crediti</button>
 </p>
-</center>

@@ -1,0 +1,68 @@
+#test centered-cards {
+  width: 100%;
+  height: 100%;
+}
+
+#result {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  font-size: 2.5vmin;
+  background-color: #fff;
+  padding-top: 2vmin;
+  text-align: center;
+}
+
+#result .logo::after {
+  content: '🎖️';
+}
+
+#result h1 {
+  font-family: 'HVD Crocodile';
+  font-weight: 300;
+}
+
+#result > * {
+  padding-left: 2vmin;
+  padding-right: 2vmin;
+}
+
+#result table {
+  border: 0.25vmax solid #aaa;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+  text-align: left;
+}
+
+#result .drawer, #result .result {
+  border: 0.5vmax solid #000;
+  margin-left: 3vmin;
+  margin-right: 3vmin;
+}
+
+#result .drawer {
+  border-bottom: none;
+  margin-top: 0;
+  margin-bottom: 0;
+  transform: perspective(20vmax) rotateX(40deg); 
+  transform-origin: bottom;
+  padding: 1vmax;
+  height: 5vmax;
+}
+
+#result .arrow {
+  display: block;
+  margin-top: -3vmax;
+  margin-bottom: -8vmax;
+}
+
+#result .arrow::before {
+  content: '⬇';
+  display: block;
+  font-size: 6vmax;
+}
+
+#result .result {
+  margin-top: 0;
+}

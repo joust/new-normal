@@ -4,7 +4,7 @@
  * @param {boolean} one create an idiot card if true, otherwise a sheep card
  * @param {?boolean} two create a second card, idiot if true, sheep if false
  */
-async function play(one, two) {
+async function bingo(one, two) {
   await loadContent(lang, terr)
   await loadSources()
   loadCard('#wrapper-1', one)
@@ -14,7 +14,7 @@ async function play(one, two) {
   } else
     hideWrapperTwo()
 
-  showGame()
+  showBingo()
 }
 
 /**
@@ -304,7 +304,7 @@ function makeCard(wrapper, topics, size, idiot) {
         wordnode.onclick = event => {
           const arguments = idiot ? topic.idiot : topic.sheep
           const set = event.target.closest('td').classList.toggle('set')
-          document.querySelector('#pyro').classList.toggle('hidden',
+          element('pyro').classList.toggle('hidden',
             !checkCard(event.target.closest('table'), size))
           if (set && attitude.curious) openDetails(event, topic.id, arguments)
         }
@@ -340,4 +340,231 @@ function checkCard(table, size) {
   complete.forEach(row => row.forEach(node => node.classList.add('complete')))
   return complete.length > 0
 }
+
+/**
+ * get localized arguments with edit wrapper
+ *
+ * @param {boolean} idiot whether to load the idiot or sheep arguments
+ */
+function getLocalized(idiot) {
+  const content = getLocalizedContent(lang, terr, idiot)
+  return `<div lang="${lang}" class="tr">${content}</div>`
+}
+
+/**
+ * Hide second card wrapper to play with only one
+ */
+function hideWrapperTwo() {
+  element('wrapper-2').classList.add('hidden')
+  element('bingo').classList.add('one')
+}
+
+/**
+ * Show second card wrapper to play with two
+ */
+function showWrapperTwo() {
+  element('wrapper-2').classList.remove('hidden')
+  element('bingo').classList.remove('one')
+}
+
+/**
+ * handle change of the search input text
+ * @param {MouseEvent} event - the input event
+ */
+function search(event) {
+  const wrapper = event.target.closest('.card-wrapper')
+  const input = event.target.value.toLowerCase()
+  const args = Array.from(wrapper.querySelectorAll('a[id]'))
+  args.forEach(a => a.classList.remove('not-matching'))
+  const notMatching = input.length ? args.filter(a => !a.textContent.replace(/\u00ad/gi, '').toLowerCase().includes(input)) : []
+  notMatching.forEach(a => a.classList.add('not-matching'))
+}
+
+/**
+ * stop the game: flipping cards, hiding the # element and showing the #menu element
+ */
+function stopBingo() {
+  closeDetails('#wrapper-1', true)
+  closeDetails('#wrapper-2', true)
+
+  hideBingo()
+  show('start')
+}
+
+/**
+ * Show the game panel and stop button, hide the menu
+ */
+function showBingo() {
+  element('stop').onclick = stopBingo
+  element('stop').classList.remove('hidden')
+  element('bingo').classList.remove('hidden')
+  element('menu').classList.add('hidden')
+}
+
+/**
+ * Hide the game panel and stop button
+ */
+function hideBingo() {
+  element('stop').classList.add('hidden')
+  element('bingo').classList.add('hidden')
+  element('pyro').classList.add('hidden')
+}
+
+/**
+ * Generate label select
+ * @param {boolean} idiot use idiot or sheep labels
+ * @return {string} select HTML
+ */
+function labelSelect(idiot) {
+  const labels = getLabels(lang, terr, idiot).map(label => `<option>${label.innerHTML}</option>`)
+  return htmlToElement(`<select id="label" class="needsclick">${labels}</select>`)
+}
+
+/**
+ * extract idiot/sheep arguments for a given topic for showing a tooltip
+ *
+ * @param {HTMLElement} detail - content DOM node containing the arguments
+ * @param {string} topicId - the topic id
+ * @param {boolean} idiot - idiot or sheep
+ * @return {string} the extracted arguments
+ */
+function getArgumentsForTopic(topicId, idiot) {
+  const topic = getTopic(lang, terr, topicId)
+  const argsIds = Array.from(topic.querySelectorAll(idiot ? 'a[id^=I]' : 'a[id^=S]')).map(a => a.id)
+  return argsIds.map(argId => {
+    const arg = getArgument(lang, terr, argId).querySelector('h2')
+    if (!arg) console.log(`no arg for id ${argId}`)
+    return arg ? arg.innerHTML : ''
+  }).join('\n')
+}
+
+/**
+ * extend the arguments in detail with sources from sources if available
+ *
+ * @param {HTMLElement} detail content DOM node containing the arguments
+ */
+function addSources(detail) {
+  const sources = getSources()
+  Array.from(detail.querySelectorAll('a[id]')).forEach(a => {
+    const links = sources.querySelectorAll(`a.${a.id}`)
+    links.forEach(link => link.target = '_blank')
+    if (links.length > 0) {
+      const q = elementWithKids('q', [
+        a.querySelector('h2').cloneNode(true),
+        elementWithKids('ul', Array.from(links).map(
+        s => elementWithKids('li', [
+          s.cloneNode(true), ' (', mirrorNode(s), ')'
+        ])))
+      ])
+      q.classList.add('hidden')
+      a.nextElementSibling.appendChild(q)
+    }
+  })
+}
+
+/**
+ * Set the permalink for the details side of the given card wrapper
+ *
+ * @param {HTMLElement} wrapper the card wrapper
+ * @param {string[]} ids list of ids to include in the permalink
+ */
+function setPermalink(wrapper, ids) {
+  const permalink = wrapper.querySelector('.permalink')
+  if (ids) {
+    permalink.classList.remove('hidden')
+    permalink.href = `${window.location.origin}/#${ids.join('&')}`
+  } else
+    permalink.classList.add('hidden')
+}
+
+/**
+ * add an empty navigation element to the card
+ *
+ * @param {HTMLElement} wrapper wrapper element to load the card into
+ */
+function addNavigationToCard(wrapper) {
+  const navigation = elementWithKids('p')
+  navigation.classList.add('navigation')
+  wrapper.querySelector('.content').prepend(navigation)
+}
+
+/**
+ * Setup argument navigation by id and selected
+ *
+ * @param {HTMLElement} wrapper the card wrapper
+ * @param {string} topicId id of topic to save as navigation id
+ * @param {string[]} ids list of ids to include in the navigation
+ * @param {string} selected the id to select
+ * @param {boolean} bingo if to show a permalink and counter navigation
+ */
+function setNavigation(wrapper, topicId, ids, selected, bingo) {
+  const content = wrapper.querySelector('.content')
+  const navigation = elementWithKids('p', ids.flatMap(id => {
+    const idtag = elementWithKids('span', id)
+    idtag.onclick = () => singleDetails(wrapper, topicId, ids, id, bingo)
+    if (id === selected) idtag.classList.add('selected')
+    return ['\u00ad', idtag]
+  }))
+  navigation.id = topicId ? topicId : 'nav'
+  navigation.classList.add('navigation')
+  if (bingo && topicId) {
+    const countertag = elementWithKids('span', '►')
+    countertag.classList.add('counter')
+    countertag.onclick = event => showCounterArguments(event)
+    navigation.appendChild(countertag)
+  }
+  content.replaceChild(navigation, content.querySelector('.navigation'))
+}
+
+/**
+ * show selected details, add the CSS 'single' classes if only one is shown
+ * @param {HTMLElement|string} wrapper the event that triggered the open action
+ * @param {string|null} topicId id of topic to save as navigation id
+ * @param {string[]} ids list of ids to show
+ * @param {string} selected id to select
+ * @param {boolean} permalink if to show a permalink
+ */
+function singleDetails(wrapper, topicId, ids, selected = undefined, permalink = true) {
+  if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
+  selected = selected || ids[0]
+  setNavigation(wrapper, topicId, ids, selected, permalink)
+  const detail = wrapper.querySelector('.detail')
+  detail.classList.add('single')
+  detail.querySelectorAll('a[id]').forEach(e => e.classList.remove('single'))
+  const anchor = wrapper.querySelector(`a[id=${selected}]`)
+  if (anchor) {
+    anchor.classList.add('single')
+    detail.querySelectorAll('a[href=""]').forEach(e => e.classList.toggle('hidden',
+      !anchor.querySelector('q')))
+  }
+  setPermalink(wrapper, permalink ? ids : false)
+}
+
+/**
+ * show/hide all sources boxes if available
+ *
+ * @param {MouseEvent} event the Event triggering the action
+ * @param {boolean} show true if the sources should be made visible false otherwise
+ */
+function showSources(event, show = true) {
+  const wrapper = event.target.closest('.card-wrapper')
+  wrapper.querySelectorAll('q').forEach(q => q.classList.toggle('hidden', !show))
+}
+
+/**
+ * update a topics based (test/bingo) card with a different language
+ * @param {Array} topics true if the sources should be made visible false otherwise
+ * @param {boolean} idiot true if idiot content
+ * @param {HTMLElement} wrapper wrapper element of the card
+ */
+function updateCard(wrapper, topics, idiot = undefined) {
+  wrapper.querySelectorAll('td[id]').forEach(td => {
+    const topic = topics.find(t => t.id === td.id)
+    if (topic) {
+      td.innerHTML = idiot === true ? topic.idiotTitle : idiot === false ? topic.sheepTitle : topic.title
+      td.title = getArgumentsForTopic(topic.id, idiot)
+    }
+  })
+}
+
 

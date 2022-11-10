@@ -1,28 +1,56 @@
-<center>
+  <p>
+  <span class="menu"><b>Corona Uno</b> (Settings):</span><span class="info" onclick="show('uno')"></span><br>
+  <span style="font-face: 'Open Sans'">(Note: Machine translated from german):</span><br>
+  <label>Match#:
+    <input id="matchID" type="text" value="0000" maxlength="4" minlength="4" size="5">
+  </label>
+  <label>- Role:
+    <input type="radio" id="idiot" name="role" value="idiot" checked>
+    <label for="idiot">Idiot</label>
+    <input type="radio" id="sheep" name="role" value="sheep">
+    <label for="sheep">Sheep</label>
+  </label>
+  <table><tr>
+  <td><label>Host (# of players):<br>
+    <button class="menu u" onclick="uno(true, 2)">2</button>
+    <button class="menu u" onclick="uno(true, 4)">4</button>
+    <button class="menu u" onclick="uno(true, 6)">6</button>
+    <button class="menu u" onclick="uno(true, 8)">8</button>
+    <button class="menu u" onclick="uno(true, 10)">10</button>
+  </label></td>
+  <td><label>Guest:<br>
+    <button class="menu u" onclick="uno(false)">Join</button>
+  </label></td>
+  </tr></table>
+  <label>Local:
+    <button class="menu u" onclick="unoWithBot()">Against Bot</button>
+  </label>
+ </p>
+<hr>
+<p>
+  <span class="menu"><b>Corona Bingo</b> (Game type):</span><span class="info" onclick="show('bingo')"></span><br>
+  <span style="font-face: 'Open Sans'">(Note: Machine translated from german):</span><br>
+  <button class="menu is" onclick="bingo(true, false)" alt="Idiot-Sheep"></button>
+  <button class="menu si" onclick="bingo(false, true)" alt="Sheep-Idiot"></button>
+  <button class="menu ss" onclick="bingo(false, false)" alt="Sheep-Sheep"></button>
+  <button class="menu ii" onclick="bingo(true, true)" alt="Idiot-Idiot"></button>
+  <button class="menu s" onclick="bingo(false)" alt="Sheep"></button>
+  <button class="menu i" onclick="bingo(true)" alt="Idiot"></button>
+</p>
+<hr>
 <p>
   <span class="menu"><b>Corona Test</b> (Cycles):</span><br>
-  <span style="font-face: 'Open Sans'">(Note: Machine translated from german):</span><br>
-  <button class="menu t" onclick="test(2)">4</button>
-  <button class="menu t" onclick="test(3)">9</button>
-  <button class="menu t" onclick="test(4)">16</button>
-  <button class="menu t" onclick="test(5)">25</button>
-  <button class="menu t" onclick="test(4, 4)">32</button>
-  <button class="menu t" onclick="test(5, 5)">50</button>
+  <span style="font-face: 'Open Sans'">(Note: Machine translated from german):</span><span class="info" onclick="show('test')"></span><br>
+  <button class="menu t" onclick="test(5)">5</button>
+  <button class="menu t" onclick="test(15)">15</button>
+  <button class="menu t" onclick="test(25)">25</button>
+  <button class="menu t" onclick="test(35)">35</button>
+  <button class="menu t" onclick="test(45)">45</button>
 </p>
+  <hr>
 <p>
-  <span class="menu"><b>Corona Bingo</b> (Game type):</span><br>
-  <span style="font-face: 'Open Sans'">(Note: Machine translated from german):</span><br>
-  <button class="menu is" onclick="play(true, false)" alt="Idiot-Sheep"></button>
-  <button class="menu si" onclick="play(false, true)" alt="Sheep-Idiot"></button>
-  <button class="menu ss" onclick="play(false, false)" alt="Sheep-Sheep"></button>
-  <button class="menu ii" onclick="play(true, true)" alt="Idiot-Idiot"></button>
-  <button class="menu s" onclick="play(false)" alt="Sheep"></button>
-  <button class="menu i" onclick="play(true)" alt="Idiot"></button>
-</p><p>
   <button class="menu" onclick="show('install')">Installation</button>
-  <button class="menu" onclick="show('gameplay')">Instructions</button>
   <button class="menu" onclick="show('support')">Support</button>
   <button class="menu" onclick="show('attitude')">Attitude</button>
   <button class="menu" onclick="show('credits')">Credits</button>
 </p>
-</center>

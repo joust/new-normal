@@ -187,6 +187,26 @@ function extractTopics(content) {
 }
 
 /**
+ * extract topics meta data
+ *
+ * @return {Array} the extracted topics meta data
+ */
+function getTopicsData() {
+  const topics = getTopics(lang, terr)
+  return Array.from(topics.querySelectorAll('section')).map(topic => ({
+      id: topic.id,
+      idiot: Array.from(topic.querySelectorAll('a[id^=I]')).map(a => a.id),
+      sheep: Array.from(topic.querySelectorAll('a[id^=S]')).map(a => a.id),
+      idiotLabel: topic.dataset.idiotLabel,
+      sheepLabel: topic.dataset.sheepLabel,
+      idiotTitle: topic.dataset.idiotTitle,
+      sheepTitle: topic.dataset.sheepTitle,
+      title: topic.title
+    })
+  )
+}
+
+/**
  * Fetch ids from given content file, optionally filter by substring.
  * @param {string} lang The language.
  * @param {string} file The filename (without suffix).

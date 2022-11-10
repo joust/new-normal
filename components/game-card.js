@@ -40,7 +40,7 @@ gameCardTemplate.innerHTML = `
   <div id="next">▼</div>
 `
 
-const ALTERNATIVES_STEP = 200
+const ALTERNATIVES_STEP = 300
 
 class GameCard extends HTMLElement {
   constructor() {

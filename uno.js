@@ -1,29 +1,4 @@
-function element(id) {
-  return document.getElementById(id)
-}
-
-function elements(tag) {
-  return Array.from(document.getElementsByTagName(tag))
-}
-
-function randomMatchId() {
-  element('matchID').value = Math.floor(1000+Math.random()*9000)
-}
-
-async function load(locale) {
-//  FastClick.attach(document.body)
-  if (locale) {
-    [lang, terr] = locale.split('-')
-  } else {
-    [lang, terr] = browserLocale()
-    if (!supported.includes(lang)) [lang, terr] = ['en', 'us']
-    locale = `${lang}-${terr}`
-  }
-  document.querySelector('#location').value = locale
-  document.body.lang = locales.includes(locale) ? locale : lang
-  await loadSources()
-  await loadContent(lang, terr)
-  element('instructions').innerHTML = await fetchSilent(`content/${lang}/uno.html`)
+function setupTable() {
   if (!element('game'))
     element('uno').insertAdjacentHTML('afterBegin', `
       <div id="game">
@@ -34,6 +9,14 @@ async function load(locale) {
           <card-pile id="pile"></card-pile>
         </centered-cards>
       </div>`)
+}
+
+function cleanupTable() {
+  element('stop').classList.add('hidden')
+  element('uno').classList.add('hidden')
+  element('uno').removeChild(element('game'))
+  element('uno').removeChild(element('hand'))
+  show('start')
 }
 
 let setNameRequestSent = false
@@ -91,7 +74,6 @@ function makeBotMove(client, botID, state) {
     if (fallacy>=0) return fallacy 
     return Math.floor(Math.random()*possibleMoves.length) // random index
   }
-  console.log(state.ctx, state.G.pile, state.ctx.currentPlayer===botID)
   if (state.ctx.currentPlayer===botID) {
     const idiot = isIdiot(botID)
     const hand = state.G.hands[botID]
@@ -103,20 +85,24 @@ function makeBotMove(client, botID, state) {
   }
 }
 
-async function playWithBot(idiot) {
-  const lang = document.body.lang
+async function unoWithBot() {
+  const idiot = element('idiot').checked
   const playerID = idiot ? '1' : '0'
   const botID = idiot ? '0' : '1'
+  await loadSources()
+  await loadContent(lang, terr)
+  setupTable()
+  element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand" nr="${playerID}" cards="[]"></player-hand>`)
+  element('stop').classList.toggle('hidden', false)
   element('uno').classList.toggle('hidden', false)
-  element('config').classList.toggle('hidden', true)
   const content = extractContent(lang, terr)
   /* TODO: unassigned args => Move to maintenance section in future
   const getTitle = id => document.querySelector(`#content a[id=${id}] h2`).innerHTML
   const toHTML = id => `<a id="${id.substring(1)}"><!--${getTitle(id.substring(1))}--></a>`
   console.log(content.idiot.args.filter(id => id.startsWith(':')).map(toHTML).join('\n'))
   console.log(content.sheep.args.filter(id => id.startsWith(':')).map(toHTML).join('\n'))*/
-  const clients = await startLocal(lang, content, playerID)
-  element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand" nr="${playerID}" cards="[]"></player-hand>`)
+  const locale = `${lang}-${terr}`
+  const clients = await startLocal(locale, content, playerID)
   addOpponentHand(botID, 'CPU')
   clients[playerID].moves.setName(playerID, 'Me')
   clients[playerID].moves.setName(botID, 'CPU')
@@ -124,19 +110,28 @@ async function playWithBot(idiot) {
   element('hand').onplay = event => clients[playerID].moves.playCard(event.detail.index, event.detail.card)
   clients[playerID].subscribe(state => updateTable(clients[playerID], state))
   clients[botID].subscribe(state => makeBotMove(clients[botID], botID, state))
+
+  element('stop').onclick = () => {
+    clients[0].stop()
+    clients[1].stop()
+    cleanupTable()
+  }
 }
 
-async function play(isHost, numPlayers) {
-  const lang = document.body.lang
+async function uno(isHost, numPlayers) {
   const idiot = element('idiot').checked
   const hostPlayerID = idiot ? '1' : '0'
   const playerID = isHost ? hostPlayerID : undefined
   const matchID = element('matchID').value
+  await loadSources()
+  await loadContent(lang, terr)
+  setupTable()
+  element('stop').classList.toggle('hidden', false)
   element('uno').classList.toggle('hidden', false)
-  element('config').classList.toggle('hidden', true)
   element('players').classList.add(`p${numPlayers}`)
   const content = extractContent(lang, terr)
-  const client = await startClient(lang, content, isHost, numPlayers, playerID, matchID)
+  const locale = `${lang}-${terr}`
+  const client = await startClient(locale, content, isHost, numPlayers, playerID, matchID)
   if (isHost) {
     element('uno').insertAdjacentHTML('beforeEnd', '<player-hand id="hand" nr="0" cards="[]"></player-hand>')
     client.moves.setName(playerID, await prompt(`Name for Host Player?`, ''))
@@ -176,7 +171,8 @@ async function play(isHost, numPlayers) {
 
         if (!element('players').children.length) { // first call in a guest (no playerID set)
           element('players').classList.add(`p${state.ctx.numPlayers}`)
-          await load(document.body.lang = state.G.lang)
+          await takeoverHostLocale(state.G.locale)
+          
           element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand"></opponent-hand>`)
           if (state.ctx.numPlayers===2) {
             addOpponentHand(hostPlayerID, state.G.names[hostPlayerID])
@@ -193,9 +189,20 @@ async function play(isHost, numPlayers) {
   }
 
   unsubscribe = client.subscribe(stateHandler)
+  element('stop').onclick = () => {
+    client.stop()
+    cleanupTable()
+  }
 }
 
-function flagcheck() {
-  if (navigator.userAgent.indexOf('Windows') > 0)
-    document.head.innerHTML += '<link rel="stylesheet" href="noto.css">'
+/**
+ * takeover host locale
+ *
+ * @param {string} locale optional locale string like 'de-de'.
+ */
+async function takeoverHostLocale(locale) {
+  [lang, terr] = locale.split('-')
+  document.body.lang = locales.includes(locale) ? locale : lang
+  await loadSources()
+  await loadContent(lang, terr)
 }

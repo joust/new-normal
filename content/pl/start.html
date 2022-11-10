@@ -1,29 +1,57 @@
-<center>
-<p>
-  <span class="menu"><b>Corona Test</b> (Cykle):</span><br>
+  <p>
+  <span class="menu"><b>Corona Uno</b> (Ustawienia):</span><span class="info" onclick="show('uno')"></span><br>
   <span style="font-face: 'Open Sans'">(Uwaga: tłumaczenie maszynowe z języka niemieckiego):</span><br>
-  <button class="menu t" onclick="test(2)">4</button>
-  <button class="menu t" onclick="test(3)">9</button>
-  <button class="menu t" onclick="test(4)">16</button>
-  <button class="menu t" onclick="test(5)">25</button>
-  <button class="menu t" onclick="test(4, 4)">32</button>
-  <button class="menu t" onclick="test(5, 5)">50</button>
+  <label>Gra#:
+    <input id="matchID" type="text" value="0000" maxlength="4" minlength="4" size="5">
+  </label>
+  <label>- Rola:
+    <input type="radio" id="idiot" name="role" value="idiot" checked>
+    <label for="idiot">Idiota</label>
+    <input type="radio" id="sheep" name="role" value="sheep">
+    <label for="sheep">Lemming</label>
+  </label>
+  <table><tr>
+  <td><label>Gospodarz (Liczba graczy):<br>
+    <button class="menu u" onclick="uno(true, 2)">2</button>
+    <button class="menu u" onclick="uno(true, 4)">4</button>
+    <button class="menu u" onclick="uno(true, 6)">6</button>
+    <button class="menu u" onclick="uno(true, 8)">8</button>
+    <button class="menu u" onclick="uno(true, 10)">10</button>
+  </label></td>
+  <td><label>Gość:<br>
+    <button class="menu u" onclick="uno(false)">Dołącz</button>
+  </label></td>
+  </tr></table>
+  <label>Lokalny:
+    <button class="menu u" onclick="unoWithBot()">Przeciw Botowi</button>
+  </label>
+ </p>
+<hr>
+<p>
+  <span class="menu"><b>Corona Bingo</b> (Typ gry):</span><span class="info" onclick="show('bingo')"></span><br>
+  <span style="font-face: 'Open Sans'">(Uwaga: tłumaczenie maszynowe z języka niemieckiego):</span><br>
+  <button class="menu is" onclick="bingo(true, false)" alt="Idiota-Lemming"></button>
+  <button class="menu si" onclick="bingo(false, true)" alt="Lemming-Idiota"></button>
+  <button class="menu ss" onclick="bingo(false, false)" alt="Lemming-Lemming"></button>
+  <button class="menu ii" onclick="bingo(true, true)" alt="Idiota-Idiota"></button>
+  <button class="menu s" onclick="bingo(false)" alt="Lemming"></button>
+  <button class="menu i" onclick="bingo(true)" alt="Idiota"></button>
 </p>
+<hr>
 <p>
-  <span class="menu"><b>Corona Bingo</b> (Typ gry):</span><br>
+  <span class="menu"><b>Corona Test</b> (Cykle):</span><span class="info" onclick="show('test')"></span><br>
   <span style="font-face: 'Open Sans'">(Uwaga: tłumaczenie maszynowe z języka niemieckiego):</span><br>
-  <button class="menu is" onclick="play(true, false)" alt="Idiota-Lemming"></button>
-  <button class="menu si" onclick="play(false, true)" alt="Lemming-Idiota"></button>
-  <button class="menu ss" onclick="play(false, false)" alt="Lemming-Lemming"></button>
-  <button class="menu ii" onclick="play(true, true)" alt="Idiota-Idiota"></button>
-  <button class="menu s" onclick="play(false)" alt="Lemming"></button>
-  <button class="menu i" onclick="play(true)" alt="Idiota"></button>
-</p><p>
+  <button class="menu t" onclick="test(5)">5</button>
+  <button class="menu t" onclick="test(15)">15</button>
+  <button class="menu t" onclick="test(25)">25</button>
+  <button class="menu t" onclick="test(35)">35</button>
+  <button class="menu t" onclick="test(45)">45</button>
+</p>
+<hr>
+<p>
   <button class="menu" onclick="show('install')">Instalacja</button>
-  <button class="menu" onclick="show('gameplay')">Instrukcje</button>
   <button class="menu" onclick="show('legal')">Odcisk</button>
   <button class="menu" onclick="show('support')">Wsparcie</button>
   <button class="menu" onclick="show('attitude')">Postawa</button>
   <button class="menu" onclick="show('credits')">Podziekowania</button>
 </p>
-</center>

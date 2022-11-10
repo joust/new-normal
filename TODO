@@ -7,21 +7,15 @@ Uno
 * implement game end for >2 players => game ends when *all* players of one side got rid of their cards
 * implement game-table component
 * implement bot players in multiplayer game (which take the free seats)
-* integrate into main app
-* add example cards to gameplay text
 * implement flash up messages without buttons like "Everythings ready, lets go!", "Finding your connection", "Choose your seat!"
-* add info about how many idiot/sheep arguments remain on the given topic to a discuss (and banish) card
 
 Bingo
 
 * use a player-hand on the bingo backside to display topic arguments(?)
 * implement bingo-card component
-* use the same (parallel) content loading as the uno game
 
 Test
 
-* use random topics
-* switch test to display random cards of the common topic of both sides (using the backsides of the bingo cards)
 * implement test-cert component
 
 General

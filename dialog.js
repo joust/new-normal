@@ -14,6 +14,7 @@ class MessageBoxElement extends HTMLElement {
         //---------- Build the modal window
       const modalWindow = document.createElement('div')
       modalWindow.classList.add('msg-box-modal')
+      modalWindow.classList.add('needsclick')
         //---------- Build the dialog window
       const dialogElm = document.createElement('div')
       const dialogHeaderElm = document.createElement('div')

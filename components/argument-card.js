@@ -232,7 +232,7 @@ argumentCardTemplate.innerHTML = `
     <div id="watermark"></div>
     <div id="topic-icon"></div>
     <div id="topic-name"></div>
-    <div id="content"><slot></div>
+    <div id="content"><slot></slot></div>
     <div id="side-title"></div>
     <div id="card"></div>
     <div id="spellcheck" class="hidden"></div>

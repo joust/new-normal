@@ -50,7 +50,7 @@ sourcesBackTemplate.innerHTML = `
       content: close-quote;
     }
   </style>
-  <div id="sources-back"><slot></div>
+  <div id="sources-back"><slot></slot></div>
 `
 
 class SourcesBack extends HTMLElement {

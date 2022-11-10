@@ -20,7 +20,7 @@ centeredCardsTemplate.innerHTML = `
       width: calc(var(--ratio) * 100 * var(--ch));
     }
   </style>
-  <div id="centered"><slot></div>
+  <div id="centered"><slot></slot></div>
 `
 
 class CenteredCards extends HTMLElement {

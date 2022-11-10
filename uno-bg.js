@@ -14,8 +14,7 @@ const PERCENTAGE_BANISHES = 10
 const INVALID_MOVE = 'INVALID_MOVE'
 
 async function startLocal(locale, content, playerID) {
-  console.log(content)
-  const game = await Uno(locale, content, playerID)
+  const game = Uno(locale, content, playerID)
   const player = Client({ game, playerID, multiplayer: Local(), debug: { collapseOnLoad: true }})
   const bot = Client({ game, playerID: playerID==='0' ? '1' : '0', multiplayer: Local() })
   player.start()
@@ -24,7 +23,7 @@ async function startLocal(locale, content, playerID) {
 }
 
 async function startClient(locale, content, isHost, numPlayers, playerID, matchID) {
-  const game = await Uno(locale, content, isHost ? playerID : undefined)
+  const game = Uno(locale, content, isHost ? playerID : undefined)
   const peerOptions = { host: 'new-normal.app', port: 9443 }
   
   const client = Client({

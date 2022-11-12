@@ -44,7 +44,7 @@ async function show(page) {
   let content = ''
   if (localDirs.includes(locale)) content = await fetchSilent(`content/${locale}/${page}.html`)
   if (content === '') content = await fetchSilent(`content/${lang}/${page}.html`)
-  if (page === 'intro') content = content.replace('NN_YEAR', ''+getNNYear())
+  if (page === 'intro') content = content.replace('NN_YEAR', `<b>${getNNYear()}</b>`)
   document.querySelector('#menu .content').innerHTML = content
   document.querySelector('#menu .content').setAttribute('class', `content ${page}`)
   element('menu').scrollTop = 0
@@ -58,8 +58,8 @@ async function show(page) {
 let timer = null
 async function runIntro() {
   await show('intro')
-  element('menu').classList.add('intro')
-  let frame = element('menu .frame')
+  element('menu').classList.add('intro-mod')
+  let frame = document.querySelector('#menu .frame')
   const nextFrame = () => {
     frame.classList.toggle('show')
     frame = frame.nextElementSibling
@@ -82,7 +82,7 @@ async function runIntro() {
 function skipIntro() {
   if (timer) clearTimeout(timer)
   saveAttitude('hasty', true)
-  element('menu').classList.remove('intro')
+  element('menu').classList.remove('intro-mod')
   show('start')
 }
 

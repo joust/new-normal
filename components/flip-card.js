@@ -22,18 +22,10 @@ flipCardTemplate.innerHTML = `
       right: 0;
       width: 10%;
       height: 7%;
-      color: white;
-      background: lightgrey;
+      color: lightgrey;
       text-align: center;
       font-size: calc(5 * var(--cavg));
-      cursor: pointer;
-      border-radius: 50%;
       font-family: 'Open Sans', Helvetica;
-    }
-
-    #open:hover {
-      color: white;
-      background: grey;
     }
 
     #open.mirrored {
@@ -137,7 +129,7 @@ class FlipCard extends HTMLElement {
     this.shadowRoot.appendChild(template.content)
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
-    this.element('open').onclick = event => { this.openRandom(event); event.stopPropagation() }
+    this.element('front').onclick = event => { this.openRandom(event); event.stopPropagation() }
     this.element('back').onclick = event => { this.close(); event.stopPropagation() }
   }
 

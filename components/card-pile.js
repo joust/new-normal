@@ -25,6 +25,10 @@ cardPileTemplate.innerHTML = `
       top: 2%;
       z-index: 0;
     }
+    
+    .dropping {
+      border: 5px solid blue;
+    }
   </style>
 `
 
@@ -35,7 +39,7 @@ class CardPile extends HTMLElement {
   }
 
   // no top given means empty stack, top given as 'I' or 'S' means facing down pile with idiot or sheep card-back
-  static observedAttributes = ['top', 'mirrored']
+  static observedAttributes = ['top', 'mirrored', 'draggable', 'droppable']
 
   get top() {
     return this.getAttribute('top')
@@ -49,6 +53,14 @@ class CardPile extends HTMLElement {
     return this.hasAttribute('mirrored')
   }
 
+  get draggable() {
+    return this.hasAttribute('draggable')
+  }
+
+  get droppable() {
+    return this.hasAttribute('droppable')
+  }
+
   attributeChangedCallback(name) {
     if (name==='top') this.updateTop()
     if (name==='mirrored') this.updateMirrored()
@@ -58,8 +70,9 @@ class CardPile extends HTMLElement {
     this.shadowRoot.appendChild(cardPileTemplate.content.cloneNode(true))
     const template = document.createElement('template')
     template.innerHTML = `${this.getTopElement()}<no-card id="second"></no-card><no-card id="third"></no-card>`
-
     this.shadowRoot.appendChild(template.content)
+    this.updateDraggable()
+    this.updateDroppable()
   }
 
   updateTop() {
@@ -67,6 +80,7 @@ class CardPile extends HTMLElement {
     if (this.isConnected && card) {
       card.insertAdjacentHTML('beforeBegin', this.getTopElement())
       this.shadowRoot.removeChild(card)
+      this.updateDraggable()
     }
   }
 
@@ -75,6 +89,59 @@ class CardPile extends HTMLElement {
       const card = this.querySelector('game-card')
       if (card) card.toggleAttribute('mirrored', this.mirrored)
     }
+  }
+
+  updateDraggable() {
+    const card = this.shadowRoot.querySelector('card-back, game-card')
+    if (this.draggable && card) {
+      card.setAttribute('draggable', 'true')
+      card.addEventListener('dragstart', event => this.dragstart(event))
+      card.addEventListener('dragend', event => this.dragend(event))
+    }
+  }
+
+  dragstart(event) {
+    event.dataTransfer.setData('text/plain', JSON.stringify({draw: true}))
+    console.log('dragstart', event.dataTransfer.getData('text/plain'))
+  }
+
+  dragend(event) {
+    event.preventDefault()
+  }
+
+  updateDroppable() {
+    if (this.droppable) {
+      this.addEventListener('dragenter', event => this.dragenter(event))
+      this.addEventListener('dragleave', event => this.dragleave(event))
+      this.addEventListener('dragover', event => this.dragover(event))
+      this.addEventListener('drop', event => this.drop(event))
+    }
+  }
+
+  dragenter(event) {
+    const card = this.shadowRoot.querySelector('no-card, card-back, game-card')
+    if (card) card.classList.add('dropping')
+    event.preventDefault()
+  }
+
+  dragleave(event) {
+    const card = this.shadowRoot.querySelector('no-card, card-back, game-card')
+    if (card) card.classList.remove('dropping')
+    event.preventDefault()
+  }
+
+  dragover(event) {
+    event.preventDefault()
+  }
+
+  drop(event) {
+    const detail = JSON.parse(event.dataTransfer.getData('text/plain'))
+    console.log('drop!', detail)
+    this.dispatchEvent(new CustomEvent('dropped', {detail}))
+    const card = this.shadowRoot.querySelector('no-card, card-back, game-card')
+    if (card) card.classList.remove('dropping')
+    event.stopPropagation()
+    event.preventDefault()
   }
 
   getTopElement() {

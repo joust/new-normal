@@ -28,9 +28,18 @@ playerHandTemplate.innerHTML = `
     }
 
     #player-hand .playable {
-      cursor: pointer;
+      cursor: grab;
     }
 
+    .dropping {
+      border: 5px solid blue;
+    }
+
+    .dragged {
+      transition: transform 0.01s;
+      transform: translateX(-9999px);
+    }
+    
     #player-hand > .playable[top] {
       transform: scale(1.03) translateY(-1vh);
       transition: all .2s linear;
@@ -49,7 +58,7 @@ class PlayerHand extends HTMLElement {
     this.revChildren = []
   }
 
-  static observedAttributes = ['cards', 'nr', 'name']
+  static observedAttributes = ['cards', 'nr', 'name', 'droppable']
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
@@ -65,13 +74,16 @@ class PlayerHand extends HTMLElement {
     return this.getAttribute('name')
   }
 
+  get droppable() {
+    return this.hasAttribute('droppable')
+  }
+
   connectedCallback() {
     this.shadowRoot.appendChild(playerHandTemplate.content.cloneNode(true))
     const hand = this.element('player-hand')
-    hand.onclick = e => this.down(e)
-    hand.onpointerdown = e => this.start(e)
+    // hand.onpointerdown = e => this.start(e)
     hand.onpointermove = e => this.over(e)
-    this.updateCards()
+    this.updateDroppable()
     
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
@@ -79,10 +91,8 @@ class PlayerHand extends HTMLElement {
   
   attributeChangedCallback(name) {
     if (this.isConnected && this.element('player-hand')) {
-      if (name=='cards') {
-        this.updateCards()
-      }
-      this.updateName()
+      if (name==='cards') this.updateCards()
+      if (name==='name') this.updateName()
       this.updateLayout()
     }
   }
@@ -101,8 +111,9 @@ class PlayerHand extends HTMLElement {
         elements[index].setAttribute('alternatives', alts[index].join(','))
         elements[index].setAttribute('card', cards[index])
       } else if (index < cards.length) {
-        hand.insertAdjacentHTML('beforeEnd', `<game-card card="${cards[index]}" alternatives="${alts[index].join(',')}"></game-card>`);
+        this.addCard(hand, cards[index], alts[index].join(','))
         elements = Array.from(hand.querySelectorAll('game-card'))
+        this.addDragListeners(elements[elements.length-1])
       } else {
         elements[index].parentElement.removeChild(elements[index])
       }
@@ -110,6 +121,10 @@ class PlayerHand extends HTMLElement {
     // update children
     this.ownChildren = Array.from(hand.querySelectorAll('game-card'))
     this.revChildren = [...this.ownChildren].reverse()
+  }
+
+  addCard(hand, card, alternatives) {
+    hand.insertAdjacentHTML('beforeEnd', `<game-card card="${card}" alternatives="${alternatives}"></game-card>`)
   }
 
   updateName() {
@@ -146,7 +161,7 @@ class PlayerHand extends HTMLElement {
       child.style.zIndex = z
       child.toggleAttribute('mirrored', after)
       const idx = this.ownChildren.indexOf(child)
-      child.classList.toggle('playable', this.playable(idx))
+      this.toggleDraggable(child, this.playable(idx))
       if (child.hasAttribute('top')) after = true
       if (after) z--; else z++
     })
@@ -162,15 +177,63 @@ class PlayerHand extends HTMLElement {
     event.target && event.target.id!=='player-hand' && this.show(event.target)
   }
 
-  down(event) {
-    const target = event.target
-    if (target && target.id!=='player-hand') {
-      this.show(target)
-      const index = this.ownChildren.indexOf(event.target)
-      const card = target.getAttribute('alt') || target.getAttribute('card')
-      if (card && this.playable(index)) 
-        this.dispatchEvent(new CustomEvent('play', { detail: { index, card } }))
+  updateDroppable() {
+    const hand = this.element('player-hand')
+    if (this.droppable && hand) {
+      hand.addEventListener('dragenter', event => this.dragenter(event))
+      hand.addEventListener('dragleave', event => this.dragleave(event))
+      hand.addEventListener('dragover', event => this.dragover(event))
+      hand.addEventListener('drop', event => this.drop(event))
     }
+  }
+
+  dragenter(event) {
+    this.element('player-hand').classList.add('dropping')
+    event.preventDefault()
+  }
+
+  dragleave(event) {
+    this.element('player-hand').classList.remove('dropping')
+    event.preventDefault()
+  }
+
+  dragover(event) {
+    event.preventDefault()
+  }
+
+  drop(event) {
+    const detail = JSON.parse(event.dataTransfer.getData('text/plain'))
+    console.log('drop!', detail)
+    this.dispatchEvent(new CustomEvent('dropped', {detail}))
+    this.element('player-hand').classList.remove('dropping')
+    event.stopPropagation()
+    event.preventDefault()
+  }
+
+  addDragListeners(child) {
+    child.addEventListener('dragstart', event => this.dragstart(event))
+    child.addEventListener('dragend', event => this.dragend(event))
+  }
+
+  toggleDraggable(child, draggable) {
+    child.classList.toggle('playable', draggable)
+    child.setAttribute('draggable', draggable)
+  }
+
+  dragstart(event) {
+    const index = this.ownChildren.indexOf(event.target)
+    const card = event.target.getAttribute('alt') || event.target.getAttribute('card')
+    if (card && this.playable(index)) { 
+      event.target.classList.add('dragged')
+      event.dataTransfer.setData('text/plain', JSON.stringify({card, index}))
+      event.dataTransfer.setData('url', `https://new-normal.app#${card}`)
+    } else
+      event.preventDefault()
+  }
+
+  dragend(event) {
+    event.target.classList.remove('dragged')
+    event.preventDefault()
   }
 
   show(element) {

@@ -4,11 +4,15 @@ function setupTable() {
       <div id="game">
         <div id="players">
         </div>
-        <centered-cards id="piles">
-          <card-pile id="draw-pile" top="I"></card-pile>
-          <card-pile id="pile"></card-pile>
+        <centered-cards id="piles" onclick="toggleZoomPiles()">
+          <card-pile id="draw-pile" top="I" draggable></card-pile>
+          <card-pile id="pile" droppable></card-pile>
         </centered-cards>
       </div>`)
+}
+
+function toggleZoomPiles() {
+  element('game').classList.toggle('zoomed')
 }
 
 function cleanupTable() {
@@ -87,6 +91,11 @@ function makeBotMove(client, botID, state) {
   }
 }
 
+function activateDrag(client) {
+  element('hand').addEventListener('dropped', event => event.detail.draw && client.moves.drawCard())
+  element('pile').addEventListener('dropped', event => event.detail.card && client.moves.playCard(event.detail.index, event.detail.card))
+}
+
 async function unoWithBot() {
   const idiot = element('idiot').checked
   const playerID = idiot ? '1' : '0'
@@ -94,7 +103,7 @@ async function unoWithBot() {
   await loadSources()
   await loadContent(lang, terr)
   setupTable()
-  element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand" nr="${playerID}" cards="[]"></player-hand>`)
+  element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand" nr="${playerID}" cards="[]" droppable></player-hand>`)
   element('stop').classList.toggle('hidden', false)
   element('uno').classList.toggle('hidden', false)
   const content = extractContent(lang, terr)
@@ -108,8 +117,7 @@ async function unoWithBot() {
   addOpponentHand(botID, 'CPU')
   clients[playerID].moves.setName(playerID, 'Me')
   clients[playerID].moves.setName(botID, 'CPU')
-  element('draw-pile').onclick = event => clients[playerID].moves.drawCard()
-  element('hand').onplay = event => clients[playerID].moves.playCard(event.detail.index, event.detail.card)
+  activateDrag(clients[playerID])
   clients[playerID].subscribe(state => updateTable(clients[playerID], state))
   clients[botID].subscribe(state => makeBotMove(clients[botID], botID, state))
 
@@ -135,10 +143,9 @@ async function uno(isHost, numPlayers) {
   const locale = `${lang}-${terr}`
   const client = await startClient(locale, content, isHost, numPlayers, playerID, matchID)
   if (isHost) {
-    element('uno').insertAdjacentHTML('beforeEnd', '<player-hand id="hand" nr="0" cards="[]"></player-hand>')
+    element('uno').insertAdjacentHTML('beforeEnd', '<player-hand id="hand" nr="0" cards="[]" droppable></player-hand>')
     client.moves.setName(playerID, await prompt(`Name for Host Player?`, ''))
-    element('draw-pile').onclick = event => client.moves.drawCard()
-    element('hand').onplay = event => client.moves.playCard(event.detail.index, event.detail.card)
+    activateDrag(client)
     const opponentPlayerIds = [...Array(numPlayers).keys()].filter(id => id!=playerID)
     opponentPlayerIds.forEach(id => addOpponentHand(id, '?'))
   }
@@ -167,15 +174,14 @@ async function uno(isHost, numPlayers) {
           elements('opponent-hand').forEach(child => child.classList.remove('selectable'))
           client.updatePlayerID(playerID)
           updateTable(client, state)              
-          element('draw-pile').onclick = event => client.moves.drawCard()
-          element('hand').onplay = event => client.moves.playCard(event.detail.index, event.detail.card)
+          activateDrag(cient)
         }
 
         if (!element('players').children.length) { // first call in a guest (no playerID set)
           element('players').classList.add(`p${state.ctx.numPlayers}`)
           await takeoverHostLocale(state.G.locale)
           
-          element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand"></opponent-hand>`)
+          element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand"></player-hand>`)
           if (state.ctx.numPlayers===2) {
             addOpponentHand(hostPlayerID, state.G.names[hostPlayerID])
             takeSeat(client, hostPlayerID==='0' ? '1' : '0')

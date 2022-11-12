@@ -22,11 +22,11 @@ dialog {
   transition: all 0.3s;
 }
 
-#uno #game:hover {
+#uno #game.zoomed {
   flex: 4;
 }
 
-#uno #game:hover #piles {
+#uno #game.zoomed #piles {
   height: 80%;
 }
 

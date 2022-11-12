@@ -79,10 +79,6 @@ The Sources for all Arguments are stored language-mixed in the top-level file <c
 
 <p>The app will only work on modern browsers as it relies on things like css animations, fetch and native es6 features like async/await, arrow functions, template strings and deconstruction. When Service Workers are available, it will also offline its content.</p>
 
-<h2>FastClick</h2>
-
-<p>FastClick is (still) included to supress click delays on mobile platforms. I am aware that it is long deprecated &amp; unsupported and that there are viewport settings and platform specific css <code>touch-action: manipulation</code> to fix most issues in modern OS versions.</p>
-
 <h1>Attitude</h1>
 
 <p>The App allows to configure your attitude. It will be stored in the local storage of your browser:</p>

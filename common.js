@@ -5,7 +5,7 @@ if (!('fetch' in window)) alert('Please user a modern Browser to play New Normal
 if ('serviceWorker' in navigator)
   navigator.serviceWorker.register('sw.js').then(registration => registration.update())      
 
-const supported = ['de', 'da', 'en', 'es', 'pl', 'it', 'pt', 'fr']
+const supported = ['de', 'da', 'en', 'es', 'pl', 'it', 'pt', 'fr', 'nl']
 const localDirs = [ 'de/de', 'de/ch', 'de/at', 'en/us', 'es/gb', 'pt/br']
 const attitude = { hasty: false, curious: true, open: false, fair: false, correct: false, friendly: false, exclusions: '' }
 let lang, terr
@@ -16,7 +16,6 @@ let lang, terr
  * @param {?string} locale optional locale string like 'de-de'. if not present, browser locale is used
  */
 function load(locale) {
-  FastClick.attach(document.body)
   loadAttitude()
   if (locale) {
     [lang, terr] = locale.split('-')

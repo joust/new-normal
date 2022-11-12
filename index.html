@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
   <head>
+    <meta name="viewport" content="width=device-width">
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <link rel="apple-touch-icon" href="images/nn-icon.png">
     <link rel="icon" type="image/png" href="images/nn-icon.png">
@@ -43,7 +44,6 @@
     <script src="boardgame.js" type="text/javascript"></script>
     <script src="uno-bg.js" type="text/javascript"></script>
     <script src="uno.js" type="text/javascript"></script>
-    <script src="fastclick.js" type="text/javascript"></script>
     <script type="text/javascript">
       function flagcheck() {
         if (navigator.userAgent.indexOf('Windows') > 0)
@@ -57,7 +57,7 @@
       <div class="game-logo menu">
         <div class="logo">
           <span class="red">New N</span><span class="jump virus" onclick="event.target.classList.toggle('jump')"></span><span class="blue">rmal</span>
-          <select class="location needsclick" onchange="load(event.target.value)">
+          <select class="location" onchange="load(event.target.value)">
             <option title="Deutschland" value="de-de">🇩🇪</option>
             <option title="Österreich" value="de-at">🇦🇹</option>
             <option title="Schweiz" value="de-ch">🇨🇭</option>
@@ -119,6 +119,7 @@
             <option title="São Tomé &amp; Príncipe" value="pt-st">🇸🇹</option>
             <option title="Cabo Verde" value="pt-cv">🇨🇻</option>
             <option title="France" value="fr-fr">🇫🇷</option>
+            <option title="Nederlands" value="nl-nl">🇳🇱</option>
             <option title="België" value="nl-be">🇧🇪</option>
             <option title="Belgien" value="de-be">🇧🇪</option>
             <option title="Belgique" value="fr-be">🇧🇪</option>
@@ -139,8 +140,8 @@
       </div>
       <div class="content"></div>
     </div>
-    <div id="uno" class="hidden needsclick"></div>
-    <div id="test" class="hidden needsclick"></div>
+    <div id="uno" class="hidden"></div>
+    <div id="test" class="hidden"></div>
     <div id="bingo" class="flip-wrapper hidden">
       <div id="wrapper-1" class="flip card-wrapper">
         <div class="card flip-front">

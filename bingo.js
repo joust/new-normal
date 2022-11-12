@@ -417,7 +417,7 @@ function hideBingo() {
  */
 function labelSelect(idiot) {
   const labels = getLabels(lang, terr, idiot).map(label => `<option>${label.innerHTML}</option>`)
-  return htmlToElement(`<select id="label" class="needsclick">${labels}</select>`)
+  return htmlToElement(`<select id="label">${labels}</select>`)
 }
 
 /**

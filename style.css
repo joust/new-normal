@@ -766,12 +766,12 @@ button:hover {
 }
 
 #menu .info {
-  width: 4rem;
-  height: 4rem;
+  width: 4vmax;
+  height: 4vmax;
   color: white;
   background: palevioletred;
   text-align: center;
-  font-size: 3rem;
+  font-size: 3vmax;
   cursor: pointer;
   border-radius: 50%;
   font-family: 'Open Sans', Helvetica;

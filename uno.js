@@ -174,7 +174,7 @@ async function uno(isHost, numPlayers) {
           elements('opponent-hand').forEach(child => child.classList.remove('selectable'))
           client.updatePlayerID(playerID)
           updateTable(client, state)              
-          activateDrag(cient)
+          activateDrag(client)
         }
 
         if (!element('players').children.length) { // first call in a guest (no playerID set)

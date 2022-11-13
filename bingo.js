@@ -33,8 +33,6 @@ function loadCard(wrapper, idiot, update = false) {
   if (attitude.friendly)
     wrapper.querySelectorAll('i, .content button').forEach(e => e.remove())
 
-  wrapper.querySelector('.buttons.test').remove()
-
   applyExclusions(wrapper)
   addCheckboxes(wrapper)
   addNavigationToCard(wrapper)
@@ -95,7 +93,6 @@ function copyLogoToCard(wrapper, idiot) {
  */
 function prepareCard(wrapper, topics, idiot) {
   makeCard(wrapper, topics, 5, idiot)
-  wrapper.classList.remove('test')
   wrapper.classList.toggle('idiot', idiot)
   wrapper.classList.toggle('sheep', !idiot)
   wrapper.querySelector('.reload').onclick = () => makeCard(wrapper, topics, 5, idiot)
@@ -224,9 +221,8 @@ async function showCounterArguments(event) {
     }
 
     if (otherWrapper.classList.contains(type)) {
-      const topic = otherWrapper.querySelector(`a[id="${nav.id}"]`)
-      const counterIds = topic ? topic.dataset[type].split(' ') : []
-      singleDetails(otherWrapper, nav.id, counterIds)
+      const topic = getTopicsData().find(t => t.id === nav.id)
+      singleDetails(otherWrapper, nav.id, topic[type])
       open(otherWrapper)
     }
   }
@@ -552,7 +548,7 @@ function showSources(event, show = true) {
 }
 
 /**
- * update a topics based (test/bingo) card with a different language
+ * update a topics based bingo card with a different language
  * @param {Array} topics true if the sources should be made visible false otherwise
  * @param {boolean} idiot true if idiot content
  * @param {HTMLElement} wrapper wrapper element of the card
@@ -566,5 +562,3 @@ function updateCard(wrapper, topics, idiot = undefined) {
     }
   })
 }
-
-

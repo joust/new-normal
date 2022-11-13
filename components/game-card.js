@@ -173,6 +173,7 @@ class GameCard extends HTMLElement {
     const from1 = {
       de: 'Die sagen<i> doch allen Ernstes</i>',
       en: 'They say<i> in all seriousness</i>',
+      nl: 'Ze zeggen<i> in alle ernst</i>',
       fr: 'Ils disent<i> en toute sincérité</i>',
       es: 'Dicen<i> con toda seriedad</i>',
       it: 'Dicono<i> in tutta serietà</i>',
@@ -184,6 +185,7 @@ class GameCard extends HTMLElement {
     const to1 = {
       de: 'Ich bin bei denen, die sagen',
       en: 'I am with those who say',
+      nl: 'Ik ben met hen die zeggen',
       fr: 'Je suis avec ceux qui disent',
       es: 'Estoy con quienes dicen',
       it: 'Sono d\'accordo con chi dice',
@@ -195,6 +197,7 @@ class GameCard extends HTMLElement {
     const from2 = {
       de: 'Die fragen<i> doch allen Ernstes</i>',
       en: 'They ask<i> in all seriousness</i>',
+      nl: 'Ze vragen<i> in alle ernst</i>',
       fr: 'Ils demandent<i> en toute sincérité</i>',
       es: 'Preguntan<i> con toda seriedad</i>',
       it: 'Chiedono<i> in tutta serietà</i>',
@@ -207,6 +210,7 @@ class GameCard extends HTMLElement {
     const to2 = {
       de: 'Ich bin bei denen, die fragen',
       en: 'I am with those who ask',
+      nl: 'Ik ben met hen die vragen',
       fr: 'Je suis avec ceux qui demandent',
       es: 'Estoy con quienes preguntan',
       it: 'Sono d\'accordo con chi chiedono',

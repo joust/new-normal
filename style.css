@@ -637,7 +637,7 @@ button.hidden, q.hidden:after, a.hidden, span.hidden {
   color: #f72d5d;
 }
 
-:not(.test).idiot .card {
+.idiot .card {
   background: #f72d5d;
 }
 
@@ -645,7 +645,7 @@ button.hidden, q.hidden:after, a.hidden, span.hidden {
   color: #2d60f6;
 }
 
-:not(.test).sheep .card {
+.sheep .card {
   background: #2d60f6;
 }
 
@@ -668,10 +668,6 @@ button.hidden, q.hidden:after, a.hidden, span.hidden {
   text-align: center;
   cursor: pointer;
   padding: 0.5vmax;
-}
-
-.test .card td {
-  border-radius: 50%;
 }
 
 #bingo table td.set {

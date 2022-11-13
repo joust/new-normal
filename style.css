@@ -198,10 +198,12 @@ q::after {
   color: #ccc;
   cursor: pointer;
   font-size: 13vmin;
+  max-width: 18vmin;
 }
 
 .detail .location {
   font-size: 7vmin;
+  max-width: 10vmin;
 }
 
 #menu .intro-mod {

@@ -81,7 +81,7 @@ class PlayerHand extends HTMLElement {
   connectedCallback() {
     this.shadowRoot.appendChild(playerHandTemplate.content.cloneNode(true))
     const hand = this.element('player-hand')
-    // hand.onpointerdown = e => this.start(e)
+    hand.onpointerdown = e => this.start(e)
     hand.onpointermove = e => this.over(e)
     this.updateDroppable()
     
@@ -171,6 +171,7 @@ class PlayerHand extends HTMLElement {
   start(event) {
     if (event.target.hasPointerCapture(event.pointerId))
       event.target.releasePointerCapture(event.pointerId)
+    this.over(event)
   }
 
   over(event) {

@@ -1,0 +1,62 @@
+html, body {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+}
+
+#navigation {
+  font-family: 'Open Sans', Helvetica;
+  position: absolute;
+  left: 0;
+  height: 100%;
+  width: 50%;
+  background: lightgrey;
+  overflow-y: auto;
+}
+
+#details {
+  position: absolute;
+  right: 0;
+  height: 100%;
+  width: 50%;
+}
+
+#details centered-cards {
+  width: 100%;
+  height: 100%;
+}
+
+.list {
+  width: 100%;
+  height: auto;
+}
+
+.list tr {
+  cursor: pointer;
+}
+
+.list tr:nth-child(odd) {
+  background-color: #f2f2f2;
+}
+
+.list tr.selected {
+  background-color: white;
+  color: black;
+}
+
+.list tr:hover {
+  background-color: coral;
+  color: white;
+}
+
+.list th {
+  background-color: darkgrey;
+  color: white;
+  position: sticky;
+  top: 0;
+}
+
+.hidden {
+  display: none;
+  visibility: collapse;
+}

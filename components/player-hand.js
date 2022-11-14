@@ -26,7 +26,6 @@ playerHandTemplate.innerHTML = `
     #player-hand * {
       cursor: not-allowed;
       touch-action: none;
-      user-select: none;
     }
 
     #player-hand .playable {

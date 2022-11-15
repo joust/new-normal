@@ -24,7 +24,7 @@ async function startLocal(locale, content, playerID) {
 
 async function startClient(locale, content, isHost, numPlayers, playerID, matchID) {
   const game = Uno(locale, content, isHost ? playerID : undefined)
-  const peerOptions = { host: 'new-normal.app', port: 9443 }
+  const peerOptions = { host: 'new-normal.app', port: 443 }
   
   const client = Client({
     game,

@@ -183,9 +183,9 @@ class StrawmanCard extends HTMLElement {
 
   static phrase = {
     da: 'Lad mig lægge det her i din mund!',
-    de: 'Laat me dit in je mond steken!',
+    de: 'Lass mich Dir das in den Mund legen!',	
     en: 'Let me put this in your mouth!',
-    nl: 'Let me put this in your mouth!',
+    nl: 'Laat me dit in je mond steken!',
     es: '¡Déjame poner esto en tu boca!',
     fr: 'Laisse-moi te mettre ça en bouche !',
     it: 'Lasciate che ve lo metta in bocca!',
@@ -196,9 +196,9 @@ class StrawmanCard extends HTMLElement {
 
   static description = {
     da: 'At pådutte den anden side et argument, der passer til mine kort',
-    de: 'Om de andere kant een argument op te dringen dat bij mijn kaarten past',
+    de: 'Der Gegenseite ein zu meinen Karten passendes Argument unterschieben',
     en: 'Foist an argument on the other side that fits my cards',
-    nl: 'Foist an argument on the other side that fits my cards',
+    nl: 'Om de andere kant een argument op te dringen dat bij mijn kaarten past',
     es: 'Para endilgar un argumento a la otra parte que se ajuste a mis cartas',
     fr: 'Donner à l\'autre partie un argument qui correspond à mes cartes',
     it: 'Per imporre all\'altra parte un\'argomentazione che si adatti alle mie carte',

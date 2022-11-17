@@ -121,6 +121,7 @@ class EditableCard extends HTMLElement {
     const spellcheck = data && data.hasAttribute('spellcheck') ? 'spellcheck ' : ''
     const content = this.makeEditable(data)
     switch (this.card[0]) {
+      case 'C': return `<cancel-card id="card" ${type} ${mirrored} card="${this.card}">${data ?data.outerHTML : ''}</cancel-card>`
       case 'L': return `<label-card id="card" ${type} card="${this.card}">${content.outerHTML}</label-card>`
       case 'A': return this.card, title, `<appeal-to-card id="card" ${type} type="${data.type}" card="${this.card}">${content.outerHTML}</appeal-to-card>`
       case 'F': return `<fallacy-card id="card" ${type} card="${this.card}">${content.outerHTML}</fallacy-card>`

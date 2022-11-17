@@ -22,6 +22,27 @@ appealToCardTemplate.innerHTML = `
       user-select: none;
     }
 
+    #icon {
+      position: absolute;
+      width: calc(1.3 * var(--sidebar-width));
+      heigt: calc(1.3 * var(--sidebar-width))
+      top: 0;
+      left: 0;
+      font-size: calc(8 * var(--cavg));
+      text-align: center;
+      color: white;
+      opacity: .8;
+    }
+
+    #icon:before {
+      content: '🗣';
+    }
+
+    .mirrored #icon {
+      right: 0;
+      left: auto;
+    }
+
     #watermark {
       position: absolute;
       width: var(--watermark-size);
@@ -181,6 +202,7 @@ appealToCardTemplate.innerHTML = `
     }
   </style>
   <div id="appeal-to-card">
+    <div id="icon"></div>
     <div id="watermark"></div>
     <div id="new">New</div>
     <div id="phrase"><span id="fallacy"></span><span class="quoted"><span class="to"></span> <span class="phrase"></span></span></div>

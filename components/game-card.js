@@ -256,6 +256,7 @@ class GameCard extends HTMLElement {
     const wildcard = this.isWildcard ? 'wildcard' : ''
     const spellcheck = data && data.hasAttribute('spellcheck') ? 'spellcheck ' : ''
     switch (this.idOnly[0]) {
+      case 'C': return `<cancel-card id="card" ${type} ${mirrored} card="${this.card}">${data ?data.outerHTML : ''}</cancel-card>`
       case 'L': return `<label-card id="card" ${type} ${mirrored} card="${this.card}">${data ?data.outerHTML : ''}</label-card>`
       case 'A': return this.cardWithSources(this.idOnly, title, `<appeal-to-card ${type} ${mirrored} type="${data.type}" card="${this.card}">${data ? data.outerHTML : ''}</appeal-to-card>`)
       case 'F': return `<fallacy-card id="card" ${type} ${mirrored} card="${this.card}">${data ?data.outerHTML : ''}</fallacy-card>`

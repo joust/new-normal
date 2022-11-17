@@ -6,9 +6,7 @@ const locales = ['de-de', 'de-ch', 'de-at', 'en-us', 'es-gb', 'pt-br']
 async function loadSources() {
   const loaded = document.querySelector('#content > .sources')
   if (!loaded) {
-    const sources = elementWithKids('div', null, {
-      'class': 'sources'
-    })
+    const sources = elementWithKids('div', null, { 'class': 'sources' })
     document.querySelector('#content').appendChild(sources)
     sources.innerHTML = await fetchSilent(`content/sources.html`)
     Array.from(sources.querySelectorAll('a')).forEach(link => link.target = '_blank')
@@ -79,7 +77,7 @@ function mergeContent(content, local) {
   if (lh1) last.after(lh1)
 
   ;
-  ['label', 'input', 'h1:not(.local)', 'center.bingo', 'center.test'].forEach(s => {
+  ['label', 'input', 'h1:not(.local)', 'center.bingo'].forEach(s => {
     const replacement = largs.querySelector(s)
     if (replacement) args.replaceChild(replacement, args.querySelector(s))
   })
@@ -94,32 +92,20 @@ async function loadContent(lang, terr) {
     const locale = `${lang}-${terr}`
     const id = locales.includes(locale) ? locale : lang
     const root = elementWithKids('div', [
-      elementWithKids('div', null, {
-        'class': 'idiot'
-      }),
-      elementWithKids('div', null, {
-        'class': 'sheep'
-      }),
-      elementWithKids('div', null, {
-        'class': 'labels'
-      }),
-      elementWithKids('div', null, {
-        'class': 'appeal-tos'
-      }),
-      elementWithKids('div', null, {
-        'class': 'fallacies'
-      }),
-      elementWithKids('div', null, {
-        'class': 'topics'
-      })
-    ], {
-      id
-    })
+      elementWithKids('div', null, { 'class': 'idiot' }),
+      elementWithKids('div', null, { 'class': 'sheep' }),
+      elementWithKids('div', null, { 'class': 'labels' }),
+      elementWithKids('div', null, { 'class': 'cancels' }),
+      elementWithKids('div', null, { 'class': 'appeal-tos' }),
+      elementWithKids('div', null, { 'class': 'fallacies' }),
+      elementWithKids('div', null, { 'class': 'topics' })
+    ], { id })
     document.querySelector('#content').appendChild(root)
-    const [idiot, sheep, labels, appealTos, fallacies, topics, sources] = await Promise.all([
+    const [idiot, sheep, labels, cancels, appealTos, fallacies, topics] = await Promise.all([
       fetchLocalizedContent(lang, terr, true),
       fetchLocalizedContent(lang, terr, false),
       fetchSilent(`content/${lang}/labels.html`),
+      fetchSilent(`content/${lang}/cancels.html`),
       fetchSilent(`content/${lang}/appeal-tos.html`),
       fetchSilent(`content/${lang}/fallacies.html`),
       fetchLocalizedTopics(lang, terr)
@@ -127,6 +113,7 @@ async function loadContent(lang, terr) {
     root.querySelector('.idiot').innerHTML = idiot
     root.querySelector('.sheep').innerHTML = sheep
     root.querySelector('.labels').innerHTML = labels
+    root.querySelector('.cancels').innerHTML = cancels
     root.querySelector('.appeal-tos').innerHTML = appealTos
     root.querySelector('.fallacies').innerHTML = fallacies
     root.querySelector('.topics').innerHTML = topics
@@ -225,12 +212,13 @@ function extractContentIds(content, section, filter = undefined) {
  */
 function extractContentForSide(content, topics, map, idiot) {
   const topicMapped = id => map[id] ? map[id].map(topicId => `${topicId}:${id}`) : [`:${id}`]
-  const args = extractContentIds(content, idiot ? 'idiot' : 'sheep')
+  const args = extractContentIds(content, idiot ? 'idiot' : 'sheep').flatMap(topicMapped)
   const labels = extractContentIds(content, 'labels', idiot ? 'LI' : 'LS')
+  const cancels = extractContentIds(content, 'cancels', idiot ? 'CI' : 'CS')
   const fallacies = extractContentIds(content, 'fallacies', idiot ? 'FI' : 'FS')
   const appealTos = extractContentIds(content, 'appeal-tos', idiot ? 'AI' : 'AS')
   const discusses = topics.map(topic => `${topic}:${idiot ? 'DI' : 'DS'}`)
-  return {args: args.flatMap(topicMapped), labels, fallacies, appealTos, discusses}
+  return { args, labels, cancels, fallacies, appealTos, discusses }
 }
 
 /**
@@ -243,5 +231,6 @@ function extractContent(lang, terr) {
   const [topics, map] = extractTopics(content)
   const idiot = extractContentForSide(content, topics, map, true)
   const sheep = extractContentForSide(content, topics, map, false)
+  console.log({idiot, sheep})
   return {idiot, sheep}
 }

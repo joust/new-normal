@@ -33,6 +33,27 @@ banishCardTemplate.innerHTML = `
       );
     }
 
+    #icon {
+      position: absolute;
+      width: calc(1.3 * var(--sidebar-width));
+      heigt: calc(1.3 * var(--sidebar-width))
+      top: 0;
+      left: 0;
+      font-size: calc(8 * var(--cavg));
+      text-align: center;
+      color: white;
+      opacity: .8;
+    }
+
+    #icon:before {
+      content: '🗑️';
+    }
+
+    .mirrored #icon {
+      right: 0;
+      left: auto;
+    }
+
     #watermark {
       position: absolute;
       width: var(--watermark-size);
@@ -163,6 +184,7 @@ banishCardTemplate.innerHTML = `
     }
   </style>
   <div id="banish-card">
+    <div id="icon"></div>
     <div id="watermark"></div>
     <div id="new">New</div>
     <div id="phrase"><span class="quoted"><span class="phrase"></span></span><span id="description"></span></div>

@@ -8,10 +8,10 @@ Uno
 * implement game-table component
 * implement bot players in multiplayer game (which take the free seats)
 * implement flash up messages without buttons like "Everythings ready, lets go!", "Finding your connection", "Choose your seat!"
+* Random bot names taken from Appeal to cards
 
 Bingo
 
-* use a player-hand on the bingo backside to display topic arguments(?)
 * implement bingo-card component
 
 Test
@@ -20,7 +20,9 @@ Test
 
 General
 
-* Implement card display on URL param e.g. https://new-normal.app#LI4
+* Implement card display on URL param e.g. https://new-normal.app#bingo/I4
+* Implement card display on URL param e.g. https://new-normal.app#uno/LI4
+* Implement card display on URL param e.g. https://new-normal.app#test/LI4
 * Draft arguments with only headlines (h2) will be displayed with placeholder content lines
 * implement the new intro, remove the old
 * refactor dialog.js

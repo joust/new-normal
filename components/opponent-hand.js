@@ -46,7 +46,7 @@ class OpponentHand extends HTMLElement {
   }
 
   get cards() {
-    return parseInt(this.getAttribute('cards')) || 8
+    return parseInt(this.getAttribute('cards'))
   }
 
   get idiot() {

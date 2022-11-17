@@ -48,7 +48,7 @@ function updateTable(client, state) { // TODO move to uno/game-table.js componen
   const top = state.G.pile[state.G.pile.length-1]
   element('draw-pile').setAttribute('top', '')
   element('pile').setAttribute('top', top)
-  const opponentIds = [...Array(state.ctx.numPlayers).keys()].filter(id => id!=client.playerID) // number!=string
+  const opponentIds = [...Array(state.ctx.numPlayers).keys()].map(String).filter(id => id!==client.playerID)
   const name = state.G.names[client.playerID]
   const hand = state.G.hands[client.playerID]
   const idiot = !!(client.playerID%2)
@@ -70,7 +70,7 @@ function updateTable(client, state) { // TODO move to uno/game-table.js componen
   element('pyro').classList.toggle('hidden', !(state.ctx.gameover && state.ctx.gameover.winner))
 }
 
-function makeBotMove(client, botID, state) {
+function makeBotMove(client, state) {
   const strategicallyChooseMove = (hand, possibleMoves) => {
     const wildcard = possibleMoves.findIndex(move => move.move==='playCard' && isWildcard(hand[move.args[0]]))
     if (wildcard>=0) return wildcard
@@ -80,10 +80,11 @@ function makeBotMove(client, botID, state) {
     if (fallacy>=0) return fallacy 
     return Math.floor(Math.random()*possibleMoves.length) // random index
   }
-  if (state.ctx.currentPlayer===botID) {
-    const idiot = isIdiot(botID)
+  const botID = client.playerID
+  const top = state.G.pile.length ? state.G.pile[state.G.pile.length-1] : undefined
+  const idiot = isIdiot(botID)
+  if (botID == state.ctx.currentPlayer && allowedToPlay(top, idiot)) {
     const hand = state.G.hands[botID]
-    const top = state.G.pile.length ? state.G.pile[state.G.pile.length-1] : undefined
     const possibleMoves = allPossibleMoves(hand, idiot, top)
     const index = strategicallyChooseMove(hand, possibleMoves)
     const move = possibleMoves[index]
@@ -96,34 +97,31 @@ function activateDrag(client) {
   element('pile').addEventListener('dropped', event => event.detail.card && client.moves.playCard(event.detail.index, event.detail.card))
 }
 
-async function unoWithBot() {
+async function unoWithBots(bots) {
+  const numPlayers = 1+bots
   const idiot = element('idiot').checked
   const playerID = idiot ? '1' : '0'
-  const botID = idiot ? '0' : '1'
+  const botPlayerIds = [...Array(numPlayers).keys()].map(String).filter(id => id!==playerID)
   await loadSources()
   await loadContent(lang, terr)
   setupTable()
-  element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand" nr="${playerID}" cards="[]" droppable></player-hand>`)
+  element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand" nr="${playerID}" cards="[]" name="Me" droppable></player-hand>`)
   element('stop').classList.toggle('hidden', false)
   element('uno').classList.toggle('hidden', false)
+  element('players').classList.add(`p${numPlayers}`)
   const content = extractContent(lang, terr)
-  /* TODO: unassigned args => Move to maintenance section in future
-  const getTitle = id => document.querySelector(`#content a[id=${id}] h2`).innerHTML
-  const toHTML = id => `<a id="${id.substring(1)}"><!--${getTitle(id.substring(1))}--></a>`
-  console.log(content.idiot.args.filter(id => id.startsWith(':')).map(toHTML).join('\n'))
-  console.log(content.sheep.args.filter(id => id.startsWith(':')).map(toHTML).join('\n'))*/
+  // extractUnassigned()
   const locale = `${lang}-${terr}`
-  const clients = await startLocal(locale, content, playerID)
-  addOpponentHand(botID, 'CPU')
+  const clients = await startLocal(locale, content, numPlayers, playerID)
+  botPlayerIds.forEach(botID => addOpponentHand(botID, `CPU${botID}`))
+  botPlayerIds.forEach(botID => clients[playerID].moves.setName(botID, `CPU${botID}`))
   clients[playerID].moves.setName(playerID, 'Me')
-  clients[playerID].moves.setName(botID, 'CPU')
   activateDrag(clients[playerID])
   clients[playerID].subscribe(state => updateTable(clients[playerID], state))
-  clients[botID].subscribe(state => makeBotMove(clients[botID], botID, state))
+  botPlayerIds.forEach(botID => clients[botID].subscribe(state => makeBotMove(clients[botID], state)))
 
   element('stop').onclick = () => {
-    clients[0].stop()
-    clients[1].stop()
+    clients.forEach(client => client.stop())
     cleanupTable()
   }
 }
@@ -146,7 +144,7 @@ async function uno(isHost, numPlayers) {
     element('uno').insertAdjacentHTML('beforeEnd', '<player-hand id="hand" nr="0" cards="[]" droppable></player-hand>')
     client.moves.setName(playerID, await prompt(`Name for Host Player?`, ''))
     activateDrag(client)
-    const opponentPlayerIds = [...Array(numPlayers).keys()].filter(id => id!=playerID)
+    const opponentPlayerIds = [...Array(numPlayers).keys()].map(String).filter(id => id!==playerID)
     opponentPlayerIds.forEach(id => addOpponentHand(id, '?'))
   }
 
@@ -213,4 +211,12 @@ async function takeoverHostLocale(locale) {
   document.body.lang = locales.includes(locale) ? locale : lang
   await loadSources()
   await loadContent(lang, terr)
+}
+
+function extractUnassigned() {
+  // TODO: unassigned args => Move to maintenance section in future
+  const getTitle = id => document.querySelector(`#content a[id=${id}] h2`).innerHTML
+  const toHTML = id => `<a id="${id.substring(1)}"><!--${getTitle(id.substring(1))}--></a>`
+  console.log(content.idiot.args.filter(id => id.startsWith(':')).map(toHTML).join('\n'))
+  console.log(content.sheep.args.filter(id => id.startsWith(':')).map(toHTML).join('\n'))
 }

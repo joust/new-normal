@@ -240,10 +240,9 @@ p.frame.show {
 }
 
 #menu input {
-  border: solid 0.5vmax #777;
+  border: none;
   outline: none;
   text-align: center;
-  box-shadow: 3vmax 6vmax 5vmax -4vmax rgba(0, 0, 0, 0.2);
 }
 
 button, button.menu, span.menu, select.menu {

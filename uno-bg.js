@@ -13,13 +13,12 @@ const PERCENTAGE_PAUSES = 10
 const PERCENTAGE_BANISHES = 10
 const INVALID_MOVE = 'INVALID_MOVE'
 
-async function startLocal(locale, content, playerID) {
-  const game = Uno(locale, content, playerID)
-  const player = Client({ game, playerID, multiplayer: Local(), debug: { collapseOnLoad: true }})
-  const bot = Client({ game, playerID: playerID==='0' ? '1' : '0', multiplayer: Local() })
-  player.start()
-  bot.start()
-  return playerID==='0' ? [player, bot] : [bot, player]
+async function startLocal(locale, content, numPlayers, humanID) {
+  const game = Uno(locale, content, humanID)
+  const clients = [...Array(numPlayers).keys()].map(String).map(playerID => 
+    Client({ game, playerID, numPlayers, multiplayer: Local(), debug: playerID==humanID ? { collapseOnLoad: true } : undefined }))
+  clients.forEach(client => client.start())
+  return clients
 }
 
 async function startClient(locale, content, isHost, numPlayers, playerID, matchID) {
@@ -406,7 +405,7 @@ function canBePlayedOn(top, card, idiot) {
     case 'A': // Appeal to
       return isOfType(card, !idiot) && isStrawman(top) 
       || isOfType(card, idiot) && 
-        (!top || isArgument(top) || isAppealTo(top) || isFallacy(top) || isLabel(top) || isBanish(top))
+        (!top || isArgument(top) || isAppealTo(top) || isFallacy(top) || isLabel(top) || isPause(top) || isBanish(top))
     case 'I': // Idiot argument
     case 'S': // Sheep argument
       return top && isStrawman(top) && (isArgument(card) || isAppealTo(card)) && isOfType(card, !idiot)
@@ -414,6 +413,7 @@ function canBePlayedOn(top, card, idiot) {
           || isAppealTo(top) 
           || ((isArgument(top) || isDiscuss(top)) && topicOf(card)===topicOf(top))
           || isFallacy(top) 
+          || isPause(top) 
           || isLabel(top)
           || isBanish(top))
   }
@@ -478,4 +478,8 @@ function isWildcard(id) {
 /** remove wildcard */
 function argumentOnly(id) {
   return id.replace('*', '')
+}
+
+function allowedToPlay(top, idiot) {
+  return !top || top && (isOfType(top, !idiot) || isStrawman(top) || isFallacy(top) || isLabel(top) || isBanish(top) || isPause(top))
 }

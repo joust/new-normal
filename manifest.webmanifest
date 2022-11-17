@@ -4,7 +4,7 @@
   "display": "fullscreen",
   "icons": [
     {
-      "src": "images/nn-icon.png",
+      "src": "styles/images/nn-icon.png",
       "sizes": "180x180",
       "type": "image/png"
     }

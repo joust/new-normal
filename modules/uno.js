@@ -1,3 +1,8 @@
+import { prompt } from '../components/dialog.js' 
+import { language, territory, locales, element, elements } from './common.js'
+import { loadSources, loadContent, extractContent } from './content.js'
+import { startLocal, startClient, getAlternatives, canBePlayedOn, isIdiot, allowedToPlay, allPossibleMoves, isArgument, isWildcard, isFallacy } from './uno-bg.js'
+       
 function setupTable() {
   if (!element('game'))
     element('uno').insertAdjacentHTML('afterBegin', `
@@ -97,21 +102,21 @@ function activateDrag(client) {
   element('pile').addEventListener('dropped', event => event.detail.card && client.moves.playCard(event.detail.index, event.detail.card))
 }
 
-async function unoWithBots(bots) {
+window.unoWithBots = async function(bots) {
   const numPlayers = 1+bots
   const idiot = element('idiot').checked
   const playerID = idiot ? '1' : '0'
   const botPlayerIds = [...Array(numPlayers).keys()].map(String).filter(id => id!==playerID)
   await loadSources()
-  await loadContent(lang, terr)
+  await loadContent()
   setupTable()
   element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand" nr="${playerID}" cards="[]" name="Me" droppable></player-hand>`)
   element('stop').classList.toggle('hidden', false)
   element('uno').classList.toggle('hidden', false)
   element('players').classList.add(`p${numPlayers}`)
-  const content = extractContent(lang, terr)
+  const content = extractContent()
   // extractUnassigned()
-  const locale = `${lang}-${terr}`
+  const locale = `${language}-${territory}`
   const clients = await startLocal(locale, content, numPlayers, playerID)
   botPlayerIds.forEach(botID => addOpponentHand(botID, `CPU${botID}`))
   botPlayerIds.forEach(botID => clients[playerID].moves.setName(botID, `CPU${botID}`))
@@ -126,19 +131,19 @@ async function unoWithBots(bots) {
   }
 }
 
-async function uno(isHost, numPlayers) {
+window.uno = async function(isHost, numPlayers) {
   const idiot = element('idiot').checked
   const hostPlayerID = idiot ? '1' : '0'
   const playerID = isHost ? hostPlayerID : undefined
   const matchID = element('matchID').value
   await loadSources()
-  await loadContent(lang, terr)
+  await loadContent()
   setupTable()
   element('stop').classList.toggle('hidden', false)
   element('uno').classList.toggle('hidden', false)
   element('players').classList.add(`p${numPlayers}`)
-  const content = extractContent(lang, terr)
-  const locale = `${lang}-${terr}`
+  const content = extractContent()
+  const locale = `${language}-${territory}`
   const client = await startClient(locale, content, isHost, numPlayers, playerID, matchID)
   if (isHost) {
     element('uno').insertAdjacentHTML('beforeEnd', '<player-hand id="hand" nr="0" cards="[]" droppable></player-hand>')
@@ -207,10 +212,10 @@ async function uno(isHost, numPlayers) {
  * @param {string} locale optional locale string like 'de-de'.
  */
 async function takeoverHostLocale(locale) {
-  [lang, terr] = locale.split('-')
-  document.body.lang = locales.includes(locale) ? locale : lang
+  const [language] = locale.split('-')
+  document.body.lang = locales.includes(locale) ? locale : language
   await loadSources()
-  await loadContent(lang, terr)
+  await loadContent()
 }
 
 function extractUnassigned() {

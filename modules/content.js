@@ -1,9 +1,9 @@
-const locales = ['de-de', 'de-ch', 'de-at', 'en-us', 'es-gb', 'pt-br']
+import { language, territory, locales, elementWithKids, htmlToElement, fetchSilent } from './common.js' 
 
 /**
  * load all sources
  */
-async function loadSources() {
+export async function loadSources() {
   const loaded = document.querySelector('#content > .sources')
   if (!loaded) {
     const sources = elementWithKids('div', null, { 'class': 'sources' })
@@ -13,42 +13,36 @@ async function loadSources() {
   }
 }
 
-function langBlock(lang, terr) {
-  const locale = `${lang}-${terr}`
-  const id = locales.includes(locale) ? locale : lang
+function localeBlock() {
+  const locale = `${language}-${territory}`
+  const id = locales.includes(locale) ? locale : language
   return document.querySelector(`#content > #${id}`)
 }
 
-// public
-function getSources() {
+export function getSources() {
   return document.querySelector('#content .sources')
 }
 
-// public
-function getTopics(lang, terr) {
-  return langBlock(lang, terr).querySelector('.topics')
+export function getTopics() {
+  return localeBlock().querySelector('.topics')
 }
 
-// public
-function getTopic(lang, terr, topicId) {
-  return getTopics(lang, terr).querySelector(`section[id="${topicId}"]`)
+export function getTopic(topicId) {
+  return getTopics().querySelector(`section[id="${topicId}"]`)
 }
 
-// public
-function getArgument(lang, terr, id) {
-  return langBlock(lang, terr).querySelector(`a[id="${id}"]`)
+export function getArgument(id) {
+  return localeBlock().querySelector(`a[id="${id}"]`)
 }
 
-// public
-function getLabels(lang, terr, idiot) {
+export function getLabels(idiot) {
   const filter = idiot ? 'a[id^=LI]' : 'a[id^=LS]'
-  return Array.from(langBlock(lang, terr).querySelectorAll(`.labels > ${filter} h2`))
+  return Array.from(localeBlock().querySelectorAll(`.labels > ${filter} h2`))
 }
 
-// public
-function getLocalizedContent(lang, terr, idiot) {
+export function getLocalizedContent(idiot) {
   const type = idiot ? 'idiot' : 'sheep'
-  const content = langBlock(lang, terr).querySelector(`.${type}`)
+  const content = localeBlock().querySelector(`.${type}`)
   return content.innerHTML
 }
 
@@ -86,11 +80,11 @@ function mergeContent(content, local) {
 }
 
 // public
-async function loadContent(lang, terr) {
-  const loaded = langBlock(lang, terr)
+export async function loadContent() {
+  const loaded = localeBlock()
   if (!loaded) {
-    const locale = `${lang}-${terr}`
-    const id = locales.includes(locale) ? locale : lang
+    const locale = `${language}-${territory}`
+    const id = locales.includes(locale) ? locale : language
     const root = elementWithKids('div', [
       elementWithKids('div', null, { 'class': 'idiot' }),
       elementWithKids('div', null, { 'class': 'sheep' }),
@@ -102,13 +96,13 @@ async function loadContent(lang, terr) {
     ], { id })
     document.querySelector('#content').appendChild(root)
     const [idiot, sheep, labels, cancels, appealTos, fallacies, topics] = await Promise.all([
-      fetchLocalizedContent(lang, terr, true),
-      fetchLocalizedContent(lang, terr, false),
-      fetchSilent(`content/${lang}/labels.html`),
-      fetchSilent(`content/${lang}/cancels.html`),
-      fetchSilent(`content/${lang}/appeal-tos.html`),
-      fetchSilent(`content/${lang}/fallacies.html`),
-      fetchLocalizedTopics(lang, terr)
+      fetchLocalizedContent(true),
+      fetchLocalizedContent(false),
+      fetchSilent(`content/${language}/labels.html`),
+      fetchSilent(`content/${language}/cancels.html`),
+      fetchSilent(`content/${language}/appeal-tos.html`),
+      fetchSilent(`content/${language}/fallacies.html`),
+      fetchLocalizedTopics()
     ])
     root.querySelector('.idiot').innerHTML = idiot
     root.querySelector('.sheep').innerHTML = sheep
@@ -125,16 +119,14 @@ async function loadContent(lang, terr) {
 /**
  * get localized content arguments
  *
- * @param {lang} lang the language
- * @param {terr} terr the territory
  * @param {boolean} idiot whether to load the idiot or sheep arguments
  */
-async function fetchLocalizedContent(lang, terr, idiot) {
+async function fetchLocalizedContent(idiot) {
   const file = idiot ? 'idiot.html' : 'sheep.html'
-  let content = await fetchSilent(`content/${lang}/${file}`)
-  const locale = `${lang}-${terr}`
+  let content = await fetchSilent(`content/${language}/${file}`)
+  const locale = `${language}-${territory}`
   if (locales.includes(locale))
-    content = mergeContent(content, await fetchSilent(`content/${lang}/${terr}/${file}`))
+    content = mergeContent(content, await fetchSilent(`content/${language}/${territory}/${file}`))
 
   return content
 }
@@ -142,14 +134,14 @@ async function fetchLocalizedContent(lang, terr, idiot) {
 /**
  * get topics data with localized topics, arguments, titles and labels
  */
-async function fetchLocalizedTopics(lang, terr) {
-  const locale = `${lang}-${terr}`
-  const id = locales.includes(locale) ? locale : lang
+async function fetchLocalizedTopics() {
+  const locale = `${language}-${territory}`
+  const id = locales.includes(locale) ? locale : language
   const topics = elementWithKids('div')
   const localTopics = elementWithKids('div')
   topics.innerHTML = await fetchSilent('content/topics.html')
   let localHTML = await fetchSilent(`content/${id}/topics.html`)
-  if (!localHTML.length && id !== lang) localHTML = await fetchSilent(`content/${lang}/topics.html`)
+  if (!localHTML.length && id !== language) localHTML = await fetchSilent(`content/${language}/topics.html`)
   localTopics.innerHTML = localHTML
   Array.from(localTopics.querySelectorAll('section')).forEach(localSection => {
     const section = topics.querySelector(`#${localSection.id}`)
@@ -178,8 +170,8 @@ function extractTopics(content) {
  *
  * @return {Array} the extracted topics meta data
  */
-function getTopicsData() {
-  const topics = getTopics(lang, terr)
+export function getTopicsData() {
+  const topics = getTopics()
   return Array.from(topics.querySelectorAll('section')).map(topic => ({
       id: topic.id,
       idiot: Array.from(topic.querySelectorAll('a[id^=I]')).map(a => a.id),
@@ -195,7 +187,6 @@ function getTopicsData() {
 
 /**
  * Fetch ids from given content file, optionally filter by substring.
- * @param {string} lang The language.
  * @param {string} file The filename (without suffix).
  * @param {string} filter An optional string filter.
  * @return {Array} The content ids
@@ -207,7 +198,6 @@ function extractContentIds(content, section, filter = undefined) {
 
 /**
  * helper for init, loading one side of the arguments
- * @param {string} lang The language.
  * @return {any} A content structure
  */
 function extractContentForSide(content, topics, map, idiot) {
@@ -222,15 +212,26 @@ function extractContentForSide(content, topics, map, idiot) {
 }
 
 /**
- * perform async initialization by loading all needed files so the game engine can run sync
- * @param {string} lang The language.
+ * perform initialization by extracting all needed files so the game engine can run sync
  * @return {any} A content structure
  */
-function extractContent(lang, terr) {
-  const content = langBlock(lang, terr)
+export function extractContent() {
+  const content = localeBlock()
   const [topics, map] = extractTopics(content)
   const idiot = extractContentForSide(content, topics, map, true)
   const sheep = extractContentForSide(content, topics, map, false)
   console.log({idiot, sheep})
   return {idiot, sheep}
 }
+
+
+/**
+ * Generate label select
+ * @param {boolean} idiot use idiot or sheep labels
+ * @return {string} select HTML
+ */
+export function labelSelect(idiot) {
+  const labels = getLabels(idiot).map(label => `<option>${label.innerHTML}</option>`)
+  return htmlToElement(`<select id="label">${labels}</select>`)
+}
+

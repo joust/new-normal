@@ -8,27 +8,29 @@
     <link rel="stylesheet" href="styles/opensans.css">
     <link rel="stylesheet" href="styles/crocodile.css">
     <title>New Normal - Corona-Uno</title>
-    <script src="components/player-hand.js" type="text/javascript"></script>
-    <script src="components/centered-cards.js" type="text/javascript"></script>
-    <script src="components/no-card.js" type="text/javascript"></script>
-    <script src="components/card-pile.js" type="text/javascript"></script>
-    <script src="components/argument-card.js" type="text/javascript"></script>
-    <script src="components/game-card.js" type="text/javascript"></script>
-    <script src="components/card-back.js" type="text/javascript"></script>
-    <script src="components/label-card.js" type="text/javascript"></script>
-    <script src="components/cancel-card.js" type="text/javascript"></script>
-    <script src="components/fallacy-card.js" type="text/javascript"></script>
-    <script src="components/strawman-card.js" type="text/javascript"></script>
-    <script src="components/appeal-to-card.js" type="text/javascript"></script>
-    <script src="components/research-card.js" type="text/javascript"></script>
-    <script src="components/discuss-card.js" type="text/javascript"></script>
-    <script src="components/pause-card.js" type="text/javascript"></script>
-    <script src="components/banish-card.js" type="text/javascript"></script>
-    <script src="components/flip-card.js" type="text/javascript"></script>
-    <script src="components/sources-back.js" type="text/javascript"></script>
-    <script src="modules/content.js" type="text/javascript"></script>
-    <script src="modules/common.js" type="text/javascript"></script>
-    <script src="modules/uno.js" type="text/javascript"></script>
+    <script src="libs/boardgame.js" type="text/javascript"></script>
+    <script src="components/player-hand.js" type="module"></script>
+    <script src="components/centered-cards.js" type="module"></script>
+    <script src="components/no-card.js" type="module"></script>
+    <script src="components/card-pile.js" type="module"></script>
+    <script src="components/argument-card.js" type="module"></script>
+    <script src="components/game-card.js" type="module"></script>
+    <script src="components/card-back.js" type="module"></script>
+    <script src="components/label-card.js" type="module"></script>
+    <script src="components/cancel-card.js" type="module"></script>
+    <script src="components/fallacy-card.js" type="module"></script>
+    <script src="components/strawman-card.js" type="module"></script>
+    <script src="components/appeal-to-card.js" type="module"></script>
+    <script src="components/research-card.js" type="module"></script>
+    <script src="components/discuss-card.js" type="module"></script>
+    <script src="components/pause-card.js" type="module"></script>
+    <script src="components/banish-card.js" type="module"></script>
+    <script src="components/flip-card.js" type="module"></script>
+    <script src="components/sources-back.js" type="module"></script>
+    <script src="modules/content.js" type="module"></script>
+    <script src="modules/common.js" type="module"></script>
+    <script src="modules/uno-bg.js" type="module"></script>
+    <script src="modules/uno.js" type="module"></script>
     <style>
       html, body, #uno {
         width: 100%;
@@ -85,7 +87,9 @@
         display: none;
       }
     </style>
-    <script>
+    <script type="module">
+      import { loadSources, loadContent } from './modules/content.js'
+      
       function idsFrom(content, block, filter = '') {
         return [...Array.from(content.querySelectorAll(`.${block} a[id]`))].map(node => node.id).filter(id => id.includes(filter))
       }
@@ -94,7 +98,7 @@
         document.body.lang = loc.split('-')[0]
       }
 
-      async function addHand() {
+      window.addHand = async function() {
         await loadSources()
         const content = await loadContent(document.body.lang)
         const cards = JSON.stringify([

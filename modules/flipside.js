@@ -5,7 +5,7 @@
  *
  * @param {MouseEvent} event event that triggered the open action
  */
-function flipOpen(event) {
+export function flipOpen(event) {
   open(event.target, event.clientX, event.clientY)
 }
 
@@ -16,7 +16,7 @@ function flipOpen(event) {
  * @param {number} x mouse position x
  * @param {number} y mouse position y
  */
-function open(wrapper, x = 0, y = 0) {
+export function open(wrapper, x = 0, y = 0) {
   const flip = wrapper.closest('.flip')
   const w = flip.offsetWidth, h = flip.offsetHeight
 
@@ -47,7 +47,7 @@ function open(wrapper, x = 0, y = 0) {
  *
  * @param {MouseEvent} event event that triggered the close action
  */
-function flipClose(event) {
+export function flipClose(event) {
   const flip = event.target.closest('.flip')
   flip.classList.remove('is-open')
 }
@@ -57,7 +57,7 @@ function flipClose(event) {
  *
  * @param {HTMLElement} wrapper wrapper to close
  */
-function close(wrapper) {
+export function close(wrapper) {
   const flip = wrapper.closest('.flip')
   flip.classList.remove('is-open')
 }

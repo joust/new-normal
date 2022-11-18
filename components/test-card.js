@@ -185,12 +185,12 @@ class TestCard extends HTMLElement {
   }
 
   getSourcesHTML(id) {
-    const sources = document.querySelector(`${GameCard.contentRootSelector} > .sources`)
+    const sources = document.querySelector(`${TestCard.contentRootSelector} > .sources`)
     const links = Array.from(sources.querySelectorAll(`a.${id}`))
     if (links.length > 0) {
-      const q = elementWithKids('q', [
-        elementWithKids('ul', links.map(
-        s => elementWithKids('li', [
+      const q = this.elementWithKids('q', [
+        this.elementWithKids('ul', links.map(
+        s => this.elementWithKids('li', [
           s.cloneNode(true), ' (', this.mirrorNode(s), ')'
         ])))
       ])
@@ -207,6 +207,18 @@ class TestCard extends HTMLElement {
       return `<flip-card id="card">${front}${back}</flip-card>`
     } else
       return front.replace(' ', ' id="card" ')
+  }
+
+  elementWithKids(tag, kids = undefined) {
+    const node = document.createElement(tag)
+    if (kids) {
+      if (!(kids instanceof Array)) kids = [kids]
+      kids.forEach(kid => {
+        if (!(kid instanceof HTMLElement)) kid = document.createTextNode(kid)
+        node.appendChild(kid)
+      })
+    }
+    return node
   }
 
   getCardElement() {

@@ -1,13 +1,18 @@
 <html>
-  <script src="boardgame.js"></script>
-  <script src="content.js"></script>
-  <script src="common.js"></script>
-  <script src="tinytest.js"></script>
-  <script src="uno-bg.js"></script>
-  <script>
-    async function run() {
-      await loadContent('de', 'de')
-      const content = extractContent('de', 'de')
+  <script src="libs/boardgame.js" type="text/javascript"></script>
+  <script src="libs/tinytest.js" type="text/javascript"></script>
+  <script src="modules/content.js" type="module"></script>
+  <script src="modules/common.js" type="module"></script>
+  <script src="modules/uno-bg.js" type="module"></script>
+  <script type="module">
+    import { loadContent, extractContent } from './modules/content.js'
+    import { Uno, isWildcard, hasTopic } from './modules/uno-bg.js'
+    
+    const { Client } = require('boardgame.io/client')
+    
+    window.run = async function() {
+      await loadContent()
+      const content = extractContent()
       const uno = Uno('de-de', content, '0')
       // scenarios
       const easy = {

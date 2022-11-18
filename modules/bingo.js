@@ -1,11 +1,15 @@
+import { loadSources, loadContent, getLocalizedContent, getSources, getTopic, getTopicsData, getArgument, getLabels, labelSelect } from './content.js'
+import { close, open, flipClose, flipOpen } from './flipside.js'
+import { language, territory, supported, setLocale, attitude, element, elementWithKids, htmlToElement, mirrorNode, uniqueWord, randomElement, safariFix, debounce } from './common.js'
+
 /**
  * create one or two idiot or sheep cards and start the game
  *
  * @param {boolean} one create an idiot card if true, otherwise a sheep card
  * @param {?boolean} two create a second card, idiot if true, sheep if false
  */
-async function bingo(one, two) {
-  await loadContent(lang, terr)
+window.bingo = async function(one, two) {
+  await loadContent()
   await loadSources()
   loadCard('#wrapper-1', one)
   if (two !== undefined) {
@@ -79,7 +83,7 @@ function addCheckboxes(wrapper) {
 function copyLogoToCard(wrapper, idiot) {
   wrapper.querySelector('.content').prepend(
     document.querySelector('.logo').cloneNode(true))
-  wrapper.querySelector('.logo select').value = `${lang}-${terr}`
+  wrapper.querySelector('.logo select').value = `${language}-${territory}`
   wrapper.querySelector('.logo select').onchange =
     event => update(wrapper, idiot, event.target.value)
 }
@@ -106,15 +110,15 @@ function prepareCard(wrapper, topics, idiot) {
  * @param {string} locale the new locale to switch to
  */
 async function update(wrapper, idiot, locale) {
-  [lang, terr] = locale.split('-')
+  setLocale(locale)
   const nav = wrapper.querySelector('.navigation')
   const ids = Array.from(nav.querySelectorAll('span')).map(span => span.innerHTML)
   const id = nav.querySelector('span.selected').innerHTML
-  await loadContent(lang, terr)
+  await loadContent()
   await loadCard(wrapper, idiot, true)
   if (ids.length) singleDetails(wrapper, nav.id, ids, id)
-  wrapper.querySelector('.location').value = `${lang}-${terr}`
-  document.querySelector('.location').value = `${lang}-${terr}`
+  wrapper.querySelector('.location').value = `${language}-${territory}`
+  document.querySelector('.location').value = `${language}-${territory}`
 }
 
 /**
@@ -175,9 +179,9 @@ function handleClick(event) {
  * @param {string} topicId id of the topic to open
  * @param {string[]} arguments argument ids to show
  */
-function openDetails(event, topicId, arguments) {
+function openDetails(event, topicId, args) {
   const wrapper = event.target.closest('.card-wrapper')
-  singleDetails(wrapper, topicId, arguments, arguments[0])
+  singleDetails(wrapper, topicId, args, args[0])
   flipOpen(event)
 }
 
@@ -298,18 +302,18 @@ function makeCard(wrapper, topics, size, idiot) {
         wordnode.title = getArgumentsForTopic(topic.id, idiot)
 
         wordnode.onclick = event => {
-          const arguments = idiot ? topic.idiot : topic.sheep
+          const args = idiot ? topic.idiot : topic.sheep
           const set = event.target.closest('td').classList.toggle('set')
           element('pyro').classList.toggle('hidden',
             !checkCard(event.target.closest('table'), size))
-          if (set && attitude.curious) openDetails(event, topic.id, arguments)
+          if (set && attitude.curious) openDetails(event, topic.id, args)
         }
       }
       cells.push(wordnode)
     }
     rows.push(elementWithKids('tr', cells))
   }
-  const table = elementWithKids('table', elementWithKids('tbody', rows), { lang })
+  const table = elementWithKids('table', elementWithKids('tbody', rows), { lang: language })
   div.appendChild(table)
   safariFix(div)
 }
@@ -343,8 +347,8 @@ function checkCard(table, size) {
  * @param {boolean} idiot whether to load the idiot or sheep arguments
  */
 function getLocalized(idiot) {
-  const content = getLocalizedContent(lang, terr, idiot)
-  return `<div lang="${lang}" class="tr">${content}</div>`
+  const content = getLocalizedContent(idiot)
+  return `<div lang="${language}" class="tr">${content}</div>`
 }
 
 /**
@@ -407,16 +411,6 @@ function hideBingo() {
 }
 
 /**
- * Generate label select
- * @param {boolean} idiot use idiot or sheep labels
- * @return {string} select HTML
- */
-function labelSelect(idiot) {
-  const labels = getLabels(lang, terr, idiot).map(label => `<option>${label.innerHTML}</option>`)
-  return htmlToElement(`<select id="label">${labels}</select>`)
-}
-
-/**
  * extract idiot/sheep arguments for a given topic for showing a tooltip
  *
  * @param {HTMLElement} detail - content DOM node containing the arguments
@@ -425,10 +419,10 @@ function labelSelect(idiot) {
  * @return {string} the extracted arguments
  */
 function getArgumentsForTopic(topicId, idiot) {
-  const topic = getTopic(lang, terr, topicId)
+  const topic = getTopic(topicId)
   const argsIds = Array.from(topic.querySelectorAll(idiot ? 'a[id^=I]' : 'a[id^=S]')).map(a => a.id)
   return argsIds.map(argId => {
-    const arg = getArgument(lang, terr, argId).querySelector('h2')
+    const arg = getArgument(argId).querySelector('h2')
     if (!arg) console.log(`no arg for id ${argId}`)
     return arg ? arg.innerHTML : ''
   }).join('\n')
@@ -561,4 +555,92 @@ function updateCard(wrapper, topics, idiot = undefined) {
       td.title = getArgumentsForTopic(topic.id, idiot)
     }
   })
+}
+
+
+/**
+ * show idiot or sheep cards corresponding to the id(s) given in the hash
+ *
+ * @param {string} hash with comma separated ids of argument(s) to show
+ * @return {boolean} true if success false otherwise
+ */
+async function displayHash(hash) {
+  const ids = hash.toUpperCase().split('&').map(v => v.split('=')[0])
+  const idiot = ids.filter(v => v.startsWith('I'))
+  const sheep = ids.filter(v => v.startsWith('S'))
+  const test = ids.filter(v => v.startsWith('T'))
+  const wrapper1 = element('wrapper-1')
+  const wrapper2 = element('wrapper-2')
+  if (test.length) {
+    await loadTestCard(wrapper1, true, 0, 5)
+    await loadTestCard(wrapper2, false, 25, 5)
+    initTestStats(5, 5)
+    const td = document.querySelector(`td[id="${test[0]}"]`)
+    if (td) td.click(); else console.error('no element', test[0])
+  } else {
+  if (!idiot.length && !sheep.length) return false // nothing to evaluate
+    const one = idiot.length > 0
+    const two = (one ? sheep : idiot).length > 0 ? !one : undefined
+    await loadCard(wrapper1, one)
+    singleDetails(wrapper1, null, one ? idiot : sheep)
+    open(wrapper1)
+    if (two !== undefined) {
+      await loadCard(wrapper2, two)
+      singleDetails(wrapper2, null, two ? idiot : sheep)
+      open(wrapper2)
+      showWrapperTwo()
+    } else
+      hideWrapperTwo()
+  }
+  showBingo()
+  return true
+}
+
+// Maintenance code
+
+const patchFiles = supported.reduce((files, lang) => {
+  files[lang] = { idiot: {}, sheep: {}}
+  return files
+}, {}) 
+
+export function setBaseContent(content, lang, idiot) {
+  patchFiles[lang][idiot? 'idiot' : 'sheep'].base = content
+}
+
+/**
+ * update patch file and html formatted representing the users text corrections for wrapper
+ *
+ * @param {wrapper} target wrapper
+ */
+export function handleCorrection(event) {
+  const wrapper = event.target.closest('.card-wrapper')
+  const lang = wrapper.querySelector('.location').value.split('-')[0] // ${lang}-${terr}
+  const idiot = !wrapper.classList.contains('idiot')
+  const type = idiot? 'idiot' : 'sheep'
+  const edited = wrapper.querySelector('.tr').innerHTML
+  /*
+  const base = patchFiles[lang][type].base
+  const diff = getDiff(base, edited)
+  patchFiles[lang][type].file = patchFile(base, edited, diff)
+  patchFiles[lang][type].html = htmlFormatted(diff)
+  console.log(patchFiles)
+  */
+}
+
+/**
+ * toggle correct mode for current card
+ *
+ * @param {wrapper} target wrapper
+ */
+window.toggleCorrectMode = function(wrapper) {
+  if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
+  const currentMode = wrapper.querySelector('.correct').classList.contains('active')
+  wrapper.querySelectorAll('a[id] p, a[id] h2').forEach(e => {
+    if (!currentMode)
+      e.setAttribute('contenteditable', 'plaintext-only')
+    else
+      e.removeAttribute('contenteditable')
+    e.oninput = debounce(handleCorrection, 1000)
+  })
+  wrapper.querySelector('.correct').classList.toggle('active', !currentMode)
 }

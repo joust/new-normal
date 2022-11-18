@@ -355,19 +355,19 @@ class MessageBoxElement extends HTMLElement {
 // Define the custom element as a web component
 customElements.define('msg-box', MessageBoxElement)
 
-function alert(content, title = null) {
+export function alert(content, title = null) {
   const dialogBox = document.createElement('msg-box')
   document.body.appendChild(dialogBox)
   return dialogBox.setAlert(content, title)
 }
 
-function confirm(content, title = null) {
+export function confirm(content, title = null) {
   const dialogBox = document.createElement('msg-box')
   document.body.appendChild(dialogBox)
   return dialogBox.setConfirm(content, title)
 }
 
-function prompt(content, title = null) {
+export function prompt(content, title = null) {
   const dialogBox = document.createElement('msg-box')
   document.body.appendChild(dialogBox)
   return dialogBox.setPrompt(content, title)

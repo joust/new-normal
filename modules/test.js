@@ -1,13 +1,17 @@
+import { language, territory, fetchSilent, shuffle, element, elementsFrom } from './common.js'
+import { loadSources, loadContent, extractContent, getTopicsData, labelSelect } from './content.js'
+import { topicOf } from './uno-bg.js'
+
 let stats // test stats
 
 /**
  * create one idiot and one sheep and start the test with one of them visible
  */
-async function test(cycles) {
+window.test = async function(cycles) {
   initTestStats(cycles)
   await loadSources()
-  await loadContent(lang, terr)
-  const content = extractContent(lang, terr)
+  await loadContent()
+  const content = extractContent()
   shuffle(content.idiot.args)
   shuffle(content.sheep.args)
   const idiotArgs = Math.random()>=0.5 ? Math.floor(cycles/2) : Math.ceil(cycles/2)
@@ -48,7 +52,7 @@ function hideTest() {
   element('stop').classList.add('hidden')
   element('test').classList.add('hidden')
   element('result').classList.add('hidden')
-  show('start')
+  window.show('start')
 }
 
 /**
@@ -94,8 +98,8 @@ function updateTestStats(choices) {
  */
 async function loadTestResult() {
   const start = new Date(stats.begin)
-  const locale = `${lang}-${terr}`
-  const template = await fetchSilent(`content/${lang}/result.html`)
+  const locale = `${language}-${territory}`
+  const template = await fetchSilent(`content/${language}/result.html`)
   const result = element('result')
   result.innerHTML = template
   result.querySelector('.date-time').innerHTML = `Berlin, ${start.toLocaleDateString(locale)} ${start.toLocaleTimeString(locale)}`

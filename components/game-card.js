@@ -226,16 +226,28 @@ class GameCard extends HTMLElement {
     const sources = document.querySelector(`${GameCard.contentRootSelector} > .sources`)
     const links = Array.from(sources.querySelectorAll(`a.${id}`))
     if (links.length > 0) {
-      const q = elementWithKids('q', [
+      const q = this.elementWithKids('q', [
 //        a.querySelector('h2').cloneNode(true),
-        elementWithKids('ul', links.map(
-        s => elementWithKids('li', [
+        this.elementWithKids('ul', links.map(
+        s => this.elementWithKids('li', [
           s.cloneNode(true), ' (', this.mirrorNode(s), ')'
         ])))
       ])
       return q.outerHTML
     }
     return undefined
+  }
+
+  elementWithKids(tag, kids = undefined) {
+    const node = document.createElement(tag)
+    if (kids) {
+      if (!(kids instanceof Array)) kids = [kids]
+      kids.forEach(kid => {
+        if (!(kid instanceof HTMLElement)) kid = document.createTextNode(kid)
+        node.appendChild(kid)
+      })
+    }
+    return node
   }
 
   cardWithSources(id, title, front) {

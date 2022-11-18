@@ -3,29 +3,34 @@ if (!('fetch' in window)) alert('Please user a modern Browser to play New Normal
 
 // ServiceWorker is a progressive technology. Ignore unsupported browsers
 if ('serviceWorker' in navigator)
-  navigator.serviceWorker.register('sw.js').then(registration => registration.update())      
+  navigator.serviceWorker.register('../sw.js').then(registration => registration.update())      
 
-const supported = ['de', 'da', 'en', 'es', 'pl', 'it', 'pt', 'fr', 'nl']
+export const supported = ['de', 'da', 'en', 'es', 'pl', 'it', 'pt', 'fr', 'nl']
+export const locales = ['de-de', 'de-ch', 'de-at', 'en-us', 'es-gb', 'pt-br']
 const localDirs = [ 'de/de', 'de/ch', 'de/at', 'en/us', 'es/gb', 'pt/br']
-const attitude = { hasty: false, curious: true, open: false, fair: false, correct: false, friendly: false, exclusions: '' }
-let lang, terr
+export const attitude = { hasty: false, curious: true, open: false, fair: false, correct: false, friendly: false, exclusions: '' }
+export let language, territory
+
+export function setLocale(locale) {
+  [language, territory] = locale.split('-').map(s => s.toLowerCase())
+}
 
 /**
  * start the app with the given locale and start the matching intro
  *
  * @param {?string} locale optional locale string like 'de-de'. if not present, browser locale is used
  */
-function load(locale) {
+window.load = function(locale) {
   loadAttitude()
   if (locale) {
-    [lang, terr] = locale.split('-')
+    [language, territory] = locale.split('-')
   } else {
-    [lang, terr] = browserLocale()
-    if (!supported.includes(lang)) [lang, terr] = ['en', 'us']
-    locale = `${lang}-${terr}`
+    [language, territory] = browserLocale()
+    if (!supported.includes(language)) [language, territory] = ['en', 'us']
+    locale = `${language}-${territory}`
   }
   document.querySelector('.location').value = locale
-  document.body.lang = locales.includes(locale) ? locale : lang
+  document.body.lang = locales.includes(locale) ? locale : language
 
   if (!window.location.hash || !displayHash(window.location.hash.substring(1)))
     if (attitude.hasty) show('start'); else runIntro()
@@ -36,13 +41,13 @@ function load(locale) {
  *
  * @param {string} page name of the page to load
  */
-async function show(page) {
+window.show = async function(page) {
   document.querySelector('.logo').style.display = page === 'intro' ? 'none' : 'block'
   element('menu').classList.add('hidden')
-  const locale = `${lang}/${terr}`
+  const locale = `${language}/${territory}`
   let content = ''
   if (localDirs.includes(locale)) content = await fetchSilent(`content/${locale}/${page}.html`)
-  if (content === '') content = await fetchSilent(`content/${lang}/${page}.html`)
+  if (content === '') content = await fetchSilent(`content/${language}/${page}.html`)
   if (page === 'intro') content = content.replace('NN_YEAR', `<b>${getNNYear()}</b>`)
   document.querySelector('#menu .content').innerHTML = content
   document.querySelector('#menu .content').setAttribute('class', `content ${page}`)
@@ -97,47 +102,9 @@ function getNNYear() {
 }
 
 /**
- * show idiot, sheep or test cards corresponding to the id(s) given in the hash
- *
- * @param {string} hash with comma separated ids of argument(s) to show
- * @return {boolean} true if success false otherwise
- */
-async function displayHash(hash) {
-  const ids = hash.toUpperCase().split('&').map(v => v.split('=')[0])
-  const idiot = ids.filter(v => v.startsWith('I'))
-  const sheep = ids.filter(v => v.startsWith('S'))
-  const test = ids.filter(v => v.startsWith('T'))
-  const wrapper1 = element('wrapper-1')
-  const wrapper2 = element('wrapper-2')
-  if (test.length) {
-    await loadTestCard(wrapper1, true, 0, 5)
-    await loadTestCard(wrapper2, false, 25, 5)
-    initTestStats(5, 5)
-    const td = document.querySelector(`td[id="${test[0]}"]`)
-    if (td) td.click(); else console.error('no element', test[0])
-  } else {
-  if (!idiot.length && !sheep.length) return false // nothing to evaluate
-    const one = idiot.length > 0
-    const two = (one ? sheep : idiot).length > 0 ? !one : undefined
-    await loadCard(wrapper1, one)
-    singleDetails(wrapper1, null, one ? idiot : sheep)
-    open(wrapper1)
-    if (two !== undefined) {
-      await loadCard(wrapper2, two)
-      singleDetails(wrapper2, null, two ? idiot : sheep)
-      open(wrapper2)
-      showWrapperTwo()
-    } else
-      hideWrapperTwo()
-  }
-  showBingo()
-  return true
-}
-
-/**
  * transfer the current attitude to the attitude page for editing
  */
-function initAttitude() {
+export function initAttitude() {
   for (let a in attitude)
     if (a !== 'exclusions')
       document.querySelector(`#menu #${a}`).checked = attitude[a]
@@ -146,7 +113,7 @@ function initAttitude() {
 /**
  * save a single attitude locally and to local storage if available
  */
-function saveAttitude(a, value) {
+export function saveAttitude(a, value) {
   attitude[a] = value
   if (localStorage)
     localStorage.setItem(a, a==='exclusions' ? value : value ? 'true' : 'false')
@@ -156,7 +123,7 @@ function saveAttitude(a, value) {
 /**
  * load all attitudes from local storage if available
  */
-function loadAttitude() {
+export function loadAttitude() {
   if (localStorage)
     for (let a in attitude) {
       if (localStorage.getItem(a) !== null)
@@ -169,7 +136,7 @@ function loadAttitude() {
  *
  * @param {HTMLElement} a the anchor node to mirror
  */
-function mirrorNode(a) {
+export function mirrorNode(a) {
   const mirror = a.cloneNode(true)
   mirror.href = `https://archive.is/${a.href}`
   mirror.firstChild.textContent = 'Mirror'
@@ -177,9 +144,9 @@ function mirrorNode(a) {
 }
 
 /**
- * get browser two-character-codes for language and territory in lower case
+ * get browser two-character-codes for languageuage and territoryitory in lower case
  *
- * @return {string[]} an 2-entry-array with the browser language and territory
+ * @return {string[]} an 2-entry-array with the browser languageuage and territoryitory
  */
 function browserLocale() {
   let [language, territory] = navigator.language.split('-')
@@ -196,9 +163,9 @@ function browserLocale() {
  * @param {Object} attrs - optional attributes to set
  * @return {HTMLElement} The created element
  */
-function elementWithKids(tag, kids = undefined, attrs = undefined) {
+export function elementWithKids(tag, kids = undefined, attrs = undefined) {
   const node = document.createElement(tag)
-  if (attrs) for (attr in attrs) node.setAttribute(attr, attrs[attr])
+  if (attrs) for (const attr in attrs) node.setAttribute(attr, attrs[attr])
   if (kids) {
     if (!(kids instanceof Array)) kids = [kids]
     kids.forEach(kid => {
@@ -213,17 +180,17 @@ function elementWithKids(tag, kids = undefined, attrs = undefined) {
  * @param {String} HTML representing a single element
  * @return {Element}
  */
-function htmlToElement(html) {
+export function htmlToElement(html) {
   var template = document.createElement('template')
   template.innerHTML = html
   return template.content.firstChild
 }
 
-function element(id) {
+export function element(id) {
   return document.getElementById(id)
 }
 
-function elements(tag) {
+export function elements(tag) {
   return Array.from(document.getElementsByTagName(tag))
 }
 
@@ -234,7 +201,7 @@ function elements(tag) {
  * @param {Array} wordset - Array to choose a random element from
  * @return {any} The random element selected
  */
-function uniqueWord(wordset) {
+export function uniqueWord(wordset) {
   const index = Math.floor((Math.random() * wordset.length))
   return wordset.splice(index, 1)[0]
 }
@@ -246,7 +213,7 @@ function uniqueWord(wordset) {
  * @param {number} start - Element to start with (default 0)
  * @return {any} The random element selected
  */
-function randomElement(array, start = 0) {
+export function randomElement(array, start = 0) {
   return array[start + Math.floor((Math.random() * (array.length-start)))]
 }
 
@@ -255,7 +222,7 @@ function randomElement(array, start = 0) {
  * @param {Array} array An array containing the items.
  * @return {Array} the shuffled array
  */
-function shuffle(array) {
+export function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]]
@@ -270,7 +237,7 @@ function shuffle(array) {
  * @param {Array} list the list to select from.
  * @return {any} The selected elements
  */
-function elementsFrom(n, list) {
+export function elementsFrom(n, list) {
   const selection = []
   if (!list.length) return selection
   while (n >= list.length) {
@@ -284,7 +251,7 @@ function elementsFrom(n, list) {
 
 /** Apply safari fix to force flex relayout on given div
  */
-function safariFix(div) {
+export function safariFix(div) {
   div.parentElement.style.display = 'none'
   div.parentElement.offsetHeight
   div.parentElement.style.display = ''
@@ -297,7 +264,7 @@ function safariFix(div) {
  * @param {string} url - the url to fetch
  * @return {Promise<string>} the files content or '' on error
  */
-function fetchSilent(url) {
+export function fetchSilent(url) {
   element('loader').classList.remove('hidden')
   return fetchSilentNoSpinner(url).finally(() =>  element('loader').classList.add('hidden'))
 }
@@ -308,6 +275,16 @@ function fetchSilent(url) {
  * @param {string} url - the url to fetch
  * @return {Promise<string>} the files content or '' on error
  */
-function fetchSilentNoSpinner(url) {
+export function fetchSilentNoSpinner(url) {
   return fetch(url).then(async response => response.status >= 400 && response.status < 600 ? '' : await response.text()).catch(() => '')
+}
+
+export function debounce(callback, wait) {
+  let timeoutId = null
+  return (...args) => {
+    window.clearTimeout(timeoutId)
+    timeoutId = window.setTimeout(() => {
+      callback.apply(null, args)
+    }, wait)
+  }
 }

@@ -1,3 +1,5 @@
+import { shuffle, elementsFrom, randomElement } from './common.js'
+
 const { Client } = require('boardgame.io/client')
 const { Local } = require('boardgame.io/multiplayer')
 const { P2P } = require('@boardgame.io/p2p')
@@ -15,7 +17,7 @@ const PERCENTAGE_PAUSES = 6
 const PERCENTAGE_BANISHES = 10
 const INVALID_MOVE = 'INVALID_MOVE'
 
-async function startLocal(locale, content, numPlayers, humanID) {
+export async function startLocal(locale, content, numPlayers, humanID) {
   const game = Uno(locale, content, humanID)
   const clients = [...Array(numPlayers).keys()].map(String).map(playerID => 
     Client({ game, playerID, numPlayers, multiplayer: Local(), debug: { collapseOnLoad: true } }))
@@ -23,7 +25,7 @@ async function startLocal(locale, content, numPlayers, humanID) {
   return clients
 }
 
-async function startClient(locale, content, isHost, numPlayers, playerID, matchID) {
+export async function startClient(locale, content, isHost, numPlayers, playerID, matchID) {
   const game = Uno(locale, content, isHost ? playerID : undefined)
   const peerOptions = { host: 'new-normal.app', port: 9443 }
   
@@ -62,7 +64,7 @@ content = {
   sheep: {args, labels, cancels, fallacies, appealTos, discusses}
 }
 */
-function Uno(locale, content, host) {
+export function Uno(locale, content, host) {
   /**
    * adds wildcard argument cards for topic of card to every players hand, 
    * removing possible existing arguments of given topic
@@ -412,7 +414,7 @@ function Uno(locale, content, host) {
   }
 }
 
-function canBePlayedOn(top, card, idiot) {
+export function canBePlayedOn(top, card, idiot) {
   if (top && !top.length) top = false // empty string or array
   switch(cardType(card)) {
     case 'D': // Discuss
@@ -445,13 +447,13 @@ function canBePlayedOn(top, card, idiot) {
   }
 }
 
-function allPossibleMoves(hand, idiot, top) {
+export function allPossibleMoves(hand, idiot, top) {
   const toPlayMove = (card, index) => ({ move: 'playCard', args: [index]})
   const canBePlayed = move => canBePlayedOn(top, hand[move.args[0]], idiot)
   return [ { move: 'drawCard', args: [] }, ...hand.map(toPlayMove).filter(canBePlayed) ]
 }
 
-function getAlternatives(id, decks, content) {
+export function getAlternatives(id, decks, content) {
   const type = isOfType(id, true) ? 'idiot' : 'sheep'
   const deck = decks[type]
   const cards = content[type]
@@ -466,53 +468,53 @@ function getAlternatives(id, decks, content) {
     
 
 /** check player for idiot */
-function isIdiot(player) {
+export function isIdiot(player) {
   return !!(player%2) // every second player is an idiot
 }
 
-function previousPlayer(ctx) {
+export function previousPlayer(ctx) {
   const prevPos = ctx.playOrderPos===0 ? playOrder.length-1 : ctx.playOrderPos-1
   return ctx.playOrder[prevPos]
 }
 
 /** check for all types of cards */
-function cardType(id) { return id.includes(':') ? id.split(':')[1][0] : id[0] }
-function isArgument(id) { return id.includes(':I') || id.includes(':S') }
-function isAppealTo(id) { return id.startsWith('A') }
-function isFallacy(id) { return id.startsWith('F') }
-function isLabel(id) { return id.startsWith('L') }
-function isCancel(id) { return id.startsWith('C') }
-function isStrawman(id) { return id.startsWith('N') }
-function isResearch(id) { return id.startsWith('R') }
-function isDiscuss(id) { return id.includes('D') }
-function isPause(id) { return id.startsWith('P') }
-function isBanish(id) { return id.startsWith('B') }
+export function cardType(id) { return id.includes(':') ? id.split(':')[1][0] : id[0] }
+export function isArgument(id) { return id.includes(':I') || id.includes(':S') }
+export function isAppealTo(id) { return id.startsWith('A') }
+export function isFallacy(id) { return id.startsWith('F') }
+export function isLabel(id) { return id.startsWith('L') }
+export function isCancel(id) { return id.startsWith('C') }
+export function isStrawman(id) { return id.startsWith('N') }
+export function isResearch(id) { return id.startsWith('R') }
+export function isDiscuss(id) { return id.includes('D') }
+export function isPause(id) { return id.startsWith('P') }
+export function isBanish(id) { return id.startsWith('B') }
 
 /** check if type of card matches input */
-function isOfType(id, idiot) {
+export function isOfType(id, idiot) {
   return (id.includes('I') && idiot) || (id.includes('S') && !idiot)
 }
 
 /** find topic of card */
-function topicOf(id) {
+export function topicOf(id) {
   return isArgument(id)||isDiscuss(id) ? id.split(':')[0] : undefined
 }
 
 /** check for topic match */
-function hasTopic(id, topic) {
+export function hasTopic(id, topic) {
   return isArgument(id)||isDiscuss(id) ? id.split(':')[0]===topic : false
 }
 
 /** check for wildcard */
-function isWildcard(id) {
+export function isWildcard(id) {
   return isArgument(id) && id.endsWith('*')
 }
 
 /** remove wildcard */
-function argumentOnly(id) {
+export function argumentOnly(id) {
   return id.replace('*', '')
 }
 
-function allowedToPlay(top, idiot) {
+export function allowedToPlay(top, idiot) {
   return !top || top && (isOfType(top, !idiot) || isStrawman(top) || isFallacy(top) || isLabel(top) || isBanish(top) || isPause(top))
 }

@@ -1,5 +1,5 @@
 <h1>New Normal</h1>
-<center><img src="https://github.com/joust/new-normal/raw/master/images/new-normal.jpg"></center>
+<center><img src="https://github.com/joust/new-normal/raw/master/styles/images/new-normal.jpg"></center>
 <p>
 This browser app is a playground build around a huge collection of arguments used during Corona related discussions. The imaginary two sides are (technically) referred to as <b>Idiots</b> and <b>Sheep</b>. The three usages currently implemented are:
 <ul>
@@ -176,7 +176,7 @@ Pyro Effect: <a target="_blank" href="https://jsfiddle.net/elin/7m3bL">Eddie Lin
 </p><p>
 Jumping Virus Effect: Kuba Koischwitz 🐿️
 </p><p>
-<img width="100" style="float:left" src="https://github.com/joust/new-normal/raw/master/images/berlin.png">PROUDLY MADE IN BERLIN CHARLOTTENBURG.
+<img width="100" style="float:left" src="https://github.com/joust/new-normal/raw/master/styles/images/berlin.png">PROUDLY MADE IN BERLIN CHARLOTTENBURG.
 </p>
 
 <h1>License</h1>

@@ -49,7 +49,7 @@ strawmanCardTemplate.innerHTML = `
       top: 4%;
       right: 0;
       opacity: 0.15;
-      background-image: url('images/virus.png');
+      background-image: url('/styles/images/virus.png');
       background-size: contain;
       background-repeat: no-repeat;
     }

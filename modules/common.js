@@ -72,7 +72,7 @@ async function runIntro() {
       timer = setTimeout(nextFrame, 60 * frame.textContent.length)
     } else {
       timer = null
-      element('menu').classList.remove('intro')
+      element('menu').classList.remove('intro-mod')
       show('start')
     }
   }
@@ -83,7 +83,7 @@ async function runIntro() {
 /**
  * skip intro by stopping its timer and show the start menu
  */
-function skipIntro() {
+window.skipIntro = function() {
   if (timer) clearTimeout(timer)
   saveAttitude('hasty', true)
   element('menu').classList.remove('intro-mod')
@@ -93,7 +93,7 @@ function skipIntro() {
 /**
  * stop the pyro effect by setting CSS 'hidden' class
  */
-function stopPyro() {
+window.stopPyro = function() {
   element('pyro').classList.add('hidden')
 }
 

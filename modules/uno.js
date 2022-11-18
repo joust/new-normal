@@ -112,7 +112,7 @@ window.unoWithBots = async function(bots) {
   setupTable()
   element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand" nr="${playerID}" cards="[]" name="Me" droppable></player-hand>`)
   element('stop').classList.toggle('hidden', false)
-  element('uno').classList.toggle('hidden', false)
+  setTimeout(() => element('uno').classList.toggle('hidden', false), 50)
   element('players').classList.add(`p${numPlayers}`)
   const content = extractContent()
   // extractUnassigned()
@@ -140,7 +140,7 @@ window.uno = async function(isHost, numPlayers) {
   await loadContent()
   setupTable()
   element('stop').classList.toggle('hidden', false)
-  element('uno').classList.toggle('hidden', false)
+  setTimeout(() => element('uno').classList.toggle('hidden', false), 50)
   element('players').classList.add(`p${numPlayers}`)
   const content = extractContent()
   const locale = `${language}-${territory}`

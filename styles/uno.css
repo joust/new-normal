@@ -20,7 +20,13 @@ dialog {
   position: relative;
   width: 100%;
   transition: all 0.3s;
+  transition: margin ease 0.5s;
 }
+
+#uno.hidden #game {
+  margin-top: -150%;
+}
+
 
 #uno #game.zoomed {
   flex: 8;
@@ -33,6 +39,11 @@ dialog {
 #uno #hand {
   flex: 2;
   width: 100%;
+  transition: margin ease 0.5s;
+}
+
+#uno.hidden #hand {
+  margin-bottom: -150%;
 }
 
 #players {

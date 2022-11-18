@@ -41,7 +41,7 @@ function finish(event) {
 function showTest() {
   element('stop').onclick = hideTest
   element('stop').classList.remove('hidden')
-  element('test').classList.remove('hidden')
+  setTimeout(() => element('test').classList.remove('hidden'), 50)
   element('menu').classList.add('hidden')
 }
 

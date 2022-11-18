@@ -16,7 +16,7 @@ function setupTable() {
       </div>`)
 }
 
-function toggleZoomPiles() {
+window.toggleZoomPiles = function() {
   element('game').classList.toggle('zoomed')
 }
 

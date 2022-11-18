@@ -23,7 +23,7 @@ dialog {
 }
 
 #uno #game.zoomed {
-  flex: 4;
+  flex: 8;
 }
 
 #uno #game.zoomed #piles {

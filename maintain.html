@@ -1,41 +1,45 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html lang="en">
+<html lang="en" class="notranslate" translate="no">
   <head>
     <meta name="viewport" content="width=device-width">
+    <meta name="google" content="notranslate" />
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <title>New Normal - Maintainance</title>
     <link rel="stylesheet" href="styles/opensans.css">
     <link rel="stylesheet" href="styles/crocodile.css">
     <link rel="stylesheet" href="styles/maintain.css">
     <script src="libs/table-sort.js" type="text/javascript"></script>
-    <script src="components/centered-cards.js" type="text/javascript"></script>
-    <script src="components/editable-card.js" type="text/javascript"></script>
-    <script src="components/argument-card.js" type="text/javascript"></script>
-    <script src="components/fallacy-card.js" type="text/javascript"></script>
-    <script src="components/appeal-to-card.js" type="text/javascript"></script>
-    <script src="components/discuss-card.js" type="text/javascript"></script>
-    <script src="components/label-card.js" type="text/javascript"></script>
-    <script src="modules/content.js" type="text/javascript"></script>
-    <script src="modules/common.js" type="text/javascript"></script>
-    <script src="modules/maintain.js" type="text/javascript"></script>
+    <script src="components/centered-cards.js" type="module"></script>
+    <script src="components/editable-card.js" type="module"></script>
+    <script src="components/argument-card.js" type="module"></script>
+    <script src="components/fallacy-card.js" type="module"></script>
+    <script src="components/appeal-to-card.js" type="module"></script>
+    <script src="components/discuss-card.js" type="module"></script>
+    <script src="components/label-card.js" type="module"></script>
+    <script src="components/cancel-card.js" type="module"></script>
+    <script src="modules/content.js" type="module"></script>
+    <script src="modules/common.js" type="module"></script>
+    <script src="modules/maintain.js" type="module"></script>
   </head>
-  <body lang="fr" onload="load()">
+  <body lang="fr" onload="loadMaintain()">
     <div id="navigation">
       <div id="header">
-        <input id="_topics" type="radio" name="type" value="topics" onclick="navigate(event)">
+        <input id="_topics" type="radio" name="type" value="topics" onclick="navigateMaintain(event)">
         <label for="_topics">Topics</label>
-        <input id="_arguments" type="radio" name="type" value="arguments" checked onclick="navigate(event)">
+        <input id="_arguments" type="radio" name="type" value="arguments" checked onclick="navigateMaintain(event)">
         <label for="_arguments">Arguments</label>
-        <input id="_fallacies" type="radio" name="type" value="fallacies" onclick="navigate(event)">
+        <input id="_fallacies" type="radio" name="type" value="fallacies" onclick="navigateMaintain(event)">
         <label for="_fallacies">Fallacies</label>
-        <input id="_appeal-tos" type="radio" name="type" value="appeal-tos" onclick="navigate(event)">
+        <input id="_appeal-tos" type="radio" name="type" value="appeal-tos" onclick="navigateMaintain(event)">
         <label for="_appeal-tos">Appeal Tos</label>
-        <input id="_labels" type="radio" name="type" value="labels" onclick="navigate(event)">
+        <input id="_labels" type="radio" name="type" value="labels" onclick="navigateMaintain(event)">
         <label for="_labels">Labels</label>
+        <input id="_cancels" type="radio" name="type" value="cancels" onclick="navigateMaintain(event)">
+        <label for="_cancels">Cancels</label>
       </div>
       <div id="topics" class="tab hidden">
         <button disabled>New Topic</button>
-        <table class="list table-sort" onclick="select(event)">
+        <table class="list table-sort" onclick="selectCard(event)">
           <thead>
             <tr>
               <th>Id</th>
@@ -65,7 +69,7 @@
           <option value="assign-topics">Change topic assignment</option>
           <option value="assign-unassigned">Assign unassigned to topic</option>
         </select>
-        <table class="list table-sort" onclick="select(event)">
+        <table class="list table-sort" onclick="selectCard(event)">
           <thead>
             <tr>            
               <th>Id</th>
@@ -85,7 +89,7 @@
           <option value="sheep">Sheep</option>
         </select>
         <button disabled>New Appeal-to Card</button>
-        <table class="list table-sort" onclick="select(event)">
+        <table class="list table-sort" onclick="selectCard(event)">
           <thead>
             <tr>
               <th>Id</th>
@@ -104,7 +108,7 @@
           <option value="sheep">Sheep</option>
         </select>
         <button disabled>New Fallacy Card</button>
-        <table class="list table-sort" onclick="select(event)">
+        <table class="list table-sort" onclick="selectCard(event)">
           <thead>
             <tr>
               <th>Id</th>
@@ -123,7 +127,25 @@
           <option value="sheep">Sheep</option>
         </select>
         <button disabled>New Label Card</button>
-        <table class="list table-sort" onclick="select(event)">
+        <table class="list table-sort" onclick="selectCard(event)">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Title</th>
+              <th>Length</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+      <div id="cancels" class="tab hidden">
+        <select class="type" onchange="updateCancels()">
+          <option value="idiot" checked>Idiot</option>
+          <option value="sheep">Sheep</option>
+        </select>
+        <button disabled>New Cancel Card</button>
+        <table class="list table-sort" onclick="selectCard(event)">
           <thead>
             <tr>
               <th>Id</th>
@@ -136,7 +158,9 @@
         </table>
       </div>
     </div>
-    <div id="details"></div>
+    <div id="details">
+      <div id="edit-bar"><button>Single-Quote</button><button>Bold</button><button>Shy</button></div>
+    </div>
     <div id="content" class="hidden"></div>
     <div id="loader" class="hidden"></div>
   </body>

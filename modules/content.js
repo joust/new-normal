@@ -155,7 +155,7 @@ async function fetchLocalizedTopics() {
 /** Extract all topics and arguments into a topics array and both a topics array and hash
  * @return {Array} The topic id array and a hash argumentId => [topicId]
  */
-function extractTopics(content) {
+export function extractTopics(content) {
   const topicIds = Array.from(content.querySelectorAll('section')).map(topic => topic.id)
   const map = {}
   for (const id of topicIds) {

@@ -2,6 +2,8 @@ html, body {
   position: fixed;
   height: 100%;
   width: 100%;
+  padding: 0;
+  margin: 0;
 }
 
 #navigation {
@@ -12,6 +14,8 @@ html, body {
   width: 50%;
   background: lightgrey;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 #details {
@@ -19,6 +23,19 @@ html, body {
   right: 0;
   height: 100%;
   width: 50%;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5em;
+  box-sizing: border-box;
+}
+
+#details #edit-bar {
+  width: 100%;
+  margin-bottom: 0.5em;
+}
+
+#details #edit-bar * {
+  margin-left: 0.5em;
 }
 
 #details centered-cards {
@@ -28,7 +45,7 @@ html, body {
 
 .list {
   width: 100%;
-  height: auto;
+  height: 100%;
 }
 
 .list tr {

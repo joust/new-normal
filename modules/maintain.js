@@ -1,5 +1,9 @@
-async function load() {
-  const content = await loadContent(document.body.lang) 
+import { setLocale } from './common.js'
+import { loadContent, extractTopics } from './content.js'
+
+window.loadMaintain = async function() {
+  setLocale(document.body.lang = 'de')
+  const content = await loadContent() 
   document.querySelector('#details').insertAdjacentHTML('beforeEnd', '<centered-cards><editable-card id="card"></editable-card></centered-cards>')
   updateAll()
 }
@@ -48,7 +52,17 @@ function toLabelData(label) {
   }
 }
 
-function select(event) {
+function toCancelData(cancel) {
+  return {
+    cancel,
+    id: cancel.id,
+    type: cancel.id.includes('I') ? 'idiot' : 'sheep',
+    text: cancel.querySelector('h2').innerHTML,
+    length: cancel.querySelector('h2').innerText.length
+  }
+}
+
+window.selectCard = function(event) {
   const card = event && event.target.closest('tr') ? event.target.closest('tr').firstElementChild.innerText : ''
   document.querySelector('#card').setAttribute('card', card)
   document.querySelectorAll('tr').forEach(tr => tr.classList.remove('selected'))
@@ -65,11 +79,11 @@ function updateArgumentTable(args) {
     const row = `<tr><td class="id">${arg.id}</td><td>${arg.title}</td><td>${arg.length}</td><td>${arg.textLength}</td><td>${arg.topics.join(', ')}</td></tr>`
     tbody.insertAdjacentHTML('beforeEnd', row)
   })
-  select()
+  selectCard()
   return args
 }
 
-function updateArguments() {
+window.updateArguments = function() {
   const LONG_THRESHOLD = 320
   const SHORT_THRESHOLD = 245
   const LONG_TITLE_THRESHOLD = 34
@@ -106,7 +120,7 @@ function updateTopicsTable(topics) {
   return topics
 }
 
-function updateTopics() {
+window.updateTopics = function() {
   const topics = extractTopicsData(document.querySelector('#content .topics'))
   return updateTopicsTable(topics)
 }
@@ -134,7 +148,7 @@ function updateAppealTosTable(appealTos) {
   return appealTos
 }
 
-function updateAppealTos() {
+window.updateAppealTos = function() {
   const type = document.querySelector('#appeal-tos .type').value
   const appealTos = extractAppealTos(document.querySelector('#content .appeal-tos'))
   return updateAppealTosTable(appealTos.filter(appealTo => appealTo.type===type))
@@ -154,7 +168,7 @@ function updateFallaciesTable(fallacies) {
   return fallacies
 }
 
-function updateFallacies() {
+window.updateFallacies = function() {
   const type = document.querySelector('#fallacies .type').value
   const fallacies = extractFallacies(document.querySelector('#content .fallacies'))
   return updateFallaciesTable(fallacies.filter(fallacy => fallacy.type===type))
@@ -171,10 +185,10 @@ function updateLabelsTable(labels) {
     const row = `<tr><td class="id">${label.id}</td><td contenteditable="plaintext-only">${label.text}</td><td>${label.length}</td></tr>`
     tbody.insertAdjacentHTML('beforeEnd', row)
   })
-  return fallacies
+  return labels
 }
 
-function updateLabels() {
+window.updateLabels = function() {
   const type = document.querySelector('#labels .type').value
   const labels = extractLabels(document.querySelector('#content .labels'))
   return updateLabelsTable(labels.filter(label => label.type===type))
@@ -184,19 +198,42 @@ function extractLabels(labels) {
   return Array.from(labels.querySelectorAll('a[id]')).map(toLabelData)
 }
 
+
+function updateCancelsTable(cancels) {
+  const tbody = document.querySelector('#cancels .list tbody')
+  tbody.innerHTML = ''
+  cancels.forEach(cancel => {
+    const row = `<tr><td class="id">${cancel.id}</td><td contenteditable="plaintext-only">${cancel.text}</td><td>${cancel.length}</td></tr>`
+    tbody.insertAdjacentHTML('beforeEnd', row)
+  })
+  return cancels
+}
+
+window.updateCancels = function() {
+  const type = document.querySelector('#cancels .type').value
+  const cancels = extractLabels(document.querySelector('#content .cancels'))
+  return updateCancelsTable(cancels.filter(label => label.type===type))
+}
+
+function extractCancels(labels) {
+  return Array.from(cancels.querySelectorAll('a[id]')).map(toCancelData)
+}
+
 function updateAll() {
   updateArguments()
   updateFallacies()
   updateAppealTos()
   updateTopics()
   updateLabels()
+  updateCancels()
   observe(document.querySelector('#fallacies .list'))
   observe(document.querySelector('#labels .list'))
   observe(document.querySelector('#topics .list'))
   observe(document.querySelector('#appeal-tos .list'))
+  observe(document.querySelector('#cancels .list'))
 }
 
-function navigate(event) {
+window.navigateMaintain = function(event) {
   const selected = event.target.id.substring(1)
   Array.from(document.querySelectorAll('.tab')).forEach(tab => tab.classList.add('hidden'))
   document.getElementById(selected).classList.remove('hidden')
@@ -207,7 +244,7 @@ function observe(element) {
     mutations.forEach(mutation => {
       const id = mutation.target.parentElement.closest('tr').firstElementChild.innerText
       const message = id + " from '" + mutation.oldValue + "' to '" + mutation.target.data + "'"
-      console.log(message)
+      console.log(message, mutation)
     })
   })
   observer.observe(element, {

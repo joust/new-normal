@@ -108,20 +108,20 @@ class EditableCard extends HTMLElement {
       this.setEditable(content.querySelector('i'), true)
     if (content && content.querySelector('h2'))
       this.setEditable(content.querySelector('h2'), true)
-    if (content && content.querySelector('p'))
-      this.setEditable(content.querySelector('p'), true)
+    if (content && content.querySelector('span'))
+      this.setEditable(content.querySelector('span'), true)
     return content
   }
                                                 
   getCardElement() {
     if (!this.card || !this.card.length) return '<div></div>'
     const data = document.querySelector(`${EditableCard.contentRootSelector} > #${this.lang} *[id="${this.card}"]`) 
-    const title = data && data.querySelector('h2') ? data.querySelector('h2').innerHTML : data.title
+    const title = data ? data.querySelector('h2') ? data.querySelector('h2').innerHTML : data.title : ''
     const type = this.idiot ? 'idiot' : ''
     const spellcheck = data && data.hasAttribute('spellcheck') ? 'spellcheck ' : ''
     const content = this.makeEditable(data)
     switch (this.card[0]) {
-      case 'C': return `<cancel-card id="card" ${type} ${mirrored} card="${this.card}">${data ?data.outerHTML : ''}</cancel-card>`
+      case 'C': return `<cancel-card id="card" card="${this.card}">${content.outerHTML}</cancel-card>`
       case 'L': return `<label-card id="card" ${type} card="${this.card}">${content.outerHTML}</label-card>`
       case 'A': return this.card, title, `<appeal-to-card id="card" ${type} type="${data.type}" card="${this.card}">${content.outerHTML}</appeal-to-card>`
       case 'F': return `<fallacy-card id="card" ${type} card="${this.card}">${content.outerHTML}</fallacy-card>`

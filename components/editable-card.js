@@ -11,6 +11,10 @@ editableCardTemplate.innerHTML = `
       width: 100%;
       height: 100%;
     }
+
+    [contenteditable] {
+      background-color: rgb(255, 248, 220, 0.5);
+    }
   </style>
   <div id="editable-card">
   </div>
@@ -104,8 +108,8 @@ class EditableCard extends HTMLElement {
   }
 
   makeEditable(content) {
-    if (content && content.querySelector('i'))
-      this.setEditable(content.querySelector('i'), true)
+    // if (content && content.querySelector('i'))
+      // this.setEditable(content.querySelector('i'), true)
     if (content && content.querySelector('h2'))
       this.setEditable(content.querySelector('h2'), true)
     if (content && content.querySelector('span'))
@@ -116,7 +120,7 @@ class EditableCard extends HTMLElement {
   getCardElement() {
     if (!this.card || !this.card.length) return '<div></div>'
     const data = document.querySelector(`${EditableCard.contentRootSelector} > #${this.lang} *[id="${this.card}"]`) 
-    const title = data ? data.querySelector('h2') ? data.querySelector('h2').innerHTML : data.title : ''
+    const title = data ? data.querySelector('h2') ? data.querySelector('h2').innerHTML : data.title : '???'
     const type = this.idiot ? 'idiot' : ''
     const spellcheck = data && data.hasAttribute('spellcheck') ? 'spellcheck ' : ''
     const content = this.makeEditable(data)
@@ -125,8 +129,13 @@ class EditableCard extends HTMLElement {
       case 'L': return `<label-card id="card" ${type} card="${this.card}">${content.outerHTML}</label-card>`
       case 'A': return this.card, title, `<appeal-to-card id="card" ${type} type="${data.type}" card="${this.card}">${content.outerHTML}</appeal-to-card>`
       case 'F': return `<fallacy-card id="card" ${type} card="${this.card}">${content.outerHTML}</fallacy-card>`
+      case 'D': 
       case 'T': 
         return `<discuss-card id="card" ${type} topicId="${this.card}" topic="${title}"></discuss-card>`
+      case 'N': return `<strawman-card id="card" ${type}></strawman-card>`
+      case 'R': return `<research-card id="card" ${type}></research-card>`
+      case 'P': return `<pause-card id="card" ${type}></pause-card>`
+      case 'B': return `<banish-card id="card" ${type}></banish-card>`
       case 'I':
       case 'S': return`<argument-card id="card" ${type} ${spellcheck} card="${this.card}">${content.innerHTML}</argument-card>`
     }

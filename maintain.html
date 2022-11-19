@@ -9,37 +9,49 @@
     <link rel="stylesheet" href="styles/crocodile.css">
     <link rel="stylesheet" href="styles/maintain.css">
     <script src="libs/table-sort.js" type="text/javascript"></script>
-    <script src="components/centered-cards.js" type="module"></script>
     <script src="components/editable-card.js" type="module"></script>
     <script src="components/argument-card.js" type="module"></script>
-    <script src="components/fallacy-card.js" type="module"></script>
-    <script src="components/appeal-to-card.js" type="module"></script>
-    <script src="components/discuss-card.js" type="module"></script>
+    <script src="components/no-card.js" type="module"></script>
+    <script src="components/card-pile.js" type="module"></script>
+    <script src="components/card-back.js" type="module"></script>
     <script src="components/label-card.js" type="module"></script>
     <script src="components/cancel-card.js" type="module"></script>
+    <script src="components/fallacy-card.js" type="module"></script>
+    <script src="components/strawman-card.js" type="module"></script>
+    <script src="components/appeal-to-card.js" type="module"></script>
+    <script src="components/research-card.js" type="module"></script>
+    <script src="components/discuss-card.js" type="module"></script>
+    <script src="components/pause-card.js" type="module"></script>
+    <script src="components/banish-card.js" type="module"></script>
+    <script src="components/flip-card.js" type="module"></script>
+    <script src="components/sources-back.js" type="module"></script>
+    <script src="components/centered-cards.js" type="module"></script>
     <script src="modules/content.js" type="module"></script>
     <script src="modules/common.js" type="module"></script>
     <script src="modules/maintain.js" type="module"></script>
   </head>
   <body lang="fr" onload="loadMaintain()">
-    <div id="navigation">
+    <div id="navigation" class="radio-tabs">
       <div id="header">
-        <input id="_topics" type="radio" name="type" value="topics" onclick="navigateMaintain(event)">
+        <input id="_topics" type="radio" name="type" class="radio-tab" value="topics" onclick="navigateMaintain(event)">
         <label for="_topics">Topics</label>
-        <input id="_arguments" type="radio" name="type" value="arguments" checked onclick="navigateMaintain(event)">
+        <input id="_arguments" type="radio" name="type" class="radio-tab" value="arguments" checked onclick="navigateMaintain(event)">
         <label for="_arguments">Arguments</label>
-        <input id="_fallacies" type="radio" name="type" value="fallacies" onclick="navigateMaintain(event)">
+        <input id="_fallacies" type="radio" name="type" class="radio-tab" value="fallacies" onclick="navigateMaintain(event)">
         <label for="_fallacies">Fallacies</label>
-        <input id="_appeal-tos" type="radio" name="type" value="appeal-tos" onclick="navigateMaintain(event)">
+        <input id="_appeal-tos" type="radio" name="type" class="radio-tab" value="appeal-tos" onclick="navigateMaintain(event)">
         <label for="_appeal-tos">Appeal Tos</label>
-        <input id="_labels" type="radio" name="type" value="labels" onclick="navigateMaintain(event)">
+        <input id="_labels" type="radio" name="type" class="radio-tab" value="labels" onclick="navigateMaintain(event)">
         <label for="_labels">Labels</label>
-        <input id="_cancels" type="radio" name="type" value="cancels" onclick="navigateMaintain(event)">
+        <input id="_cancels" type="radio" name="type" class="radio-tab" value="cancels" onclick="navigateMaintain(event)">
         <label for="_cancels">Cancels</label>
+        <input id="_messages" type="radio" name="type" class="radio-tab" value="messages" onclick="navigateMaintain(event)">
+        <label for="_messages">Messages</label>
       </div>
       <div id="topics" class="tab hidden">
-        <button disabled>New Topic</button>
-        <table class="list table-sort" onclick="selectCard(event)">
+        <input class="search" placeholder="🔍 Search topics" oninput="searchMaintain(event)">
+        <button disabled>➕ Add Topic</button>
+        <table class="list table-sort" onclick="selectMaintainCard(event)">
           <thead>
             <tr>
               <th>Id</th>
@@ -55,24 +67,13 @@
         </table>
       </div>
       <div id="arguments" class="tab">
-        <button disabled>New Argument Card</button>
-        <select class="type" onchange="updateArguments()">
-          <option value="idiot" checked>Idiot</option>
-          <option value="sheep">Sheep</option>
-        </select>
-        <select class="task" onchange="updateArguments()">
-          <option value="review-translations" checked>Review Translations</option>
-          <option value="fix-long">Fix too long arguments</option>
-          <option value="fix-short">Fix too short arguments</option>
-          <option value="fix-long-titles">Fix too long titles</option>
-          <option value="fix-short-titles">Fix too short titles</option>
-          <option value="assign-topics">Change topic assignment</option>
-          <option value="assign-unassigned">Assign unassigned to topic</option>
-        </select>
-        <table class="list table-sort" onclick="selectCard(event)">
+        <input class="search" placeholder="🔍 Search arguments" oninput="searchMaintain(event)">
+        <button disabled>➕ Add Argument Card</button>
+        <table class="list table-sort" onclick="selectMaintainCard(event)">
           <thead>
             <tr>            
               <th>Id</th>
+              <th>✓</th>
               <th>Title</th>
               <th>Length</th>
               <th>Text Length</th>
@@ -84,12 +85,9 @@
         </table>
       </div>
       <div id="appeal-tos" class="tab hidden">
-        <select class="type" onchange="updateAppealTos()">
-          <option value="idiot" checked>Idiot</option>
-          <option value="sheep">Sheep</option>
-        </select>
-        <button disabled>New Appeal-to Card</button>
-        <table class="list table-sort" onclick="selectCard(event)">
+        <input class="search" placeholder="🔍 Search appeal tos" oninput="searchMaintain(event)">
+        <button disabled>➕ Add Appeal-to Card</button>
+        <table class="list table-sort" onclick="selectMaintainCard(event)">
           <thead>
             <tr>
               <th>Id</th>
@@ -103,12 +101,9 @@
         </table>
       </div>
       <div id="fallacies" class="tab hidden">
-        <select class="type" onchange="updateFallacies()">
-          <option value="idiot" checked>Idiot</option>
-          <option value="sheep">Sheep</option>
-        </select>
-        <button disabled>New Fallacy Card</button>
-        <table class="list table-sort" onclick="selectCard(event)">
+        <input class="search" placeholder="🔍 Search fallacies" oninput="searchMaintain(event)">
+        <button disabled>➕ Add Fallacy Card</button>
+        <table class="list table-sort" onclick="selectMaintainCard(event)">
           <thead>
             <tr>
               <th>Id</th>
@@ -122,12 +117,9 @@
         </table>
       </div>
       <div id="labels" class="tab hidden">
-        <select class="type" onchange="updateLabels()">
-          <option value="idiot" checked>Idiot</option>
-          <option value="sheep">Sheep</option>
-        </select>
-        <button disabled>New Label Card</button>
-        <table class="list table-sort" onclick="selectCard(event)">
+        <input class="search" placeholder="🔍 Search labels" oninput="searchMaintain(event)">
+        <button disabled>➕ Add Label Card</button>
+        <table class="list table-sort" onclick="selectMaintainCard(event)">
           <thead>
             <tr>
               <th>Id</th>
@@ -140,16 +132,28 @@
         </table>
       </div>
       <div id="cancels" class="tab hidden">
-        <select class="type" onchange="updateCancels()">
-          <option value="idiot" checked>Idiot</option>
-          <option value="sheep">Sheep</option>
-        </select>
-        <button disabled>New Cancel Card</button>
-        <table class="list table-sort" onclick="selectCard(event)">
+        <input class="search" placeholder="🔍 Search cancels" oninput="searchMaintain(event)">
+        <button disabled>➕ Add Cancel Card</button>
+        <table class="list table-sort" onclick="selectMaintainCard(event)">
           <thead>
             <tr>
               <th>Id</th>
               <th>Title</th>
+              <th>Length</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+      <div id="messages" class="tab hidden">
+        <input class="search" placeholder="🔍 Search messages" oninput="searchMaintain(event)">
+        <table class="list table-sort" onclick="selectMaintainCard(event)">
+          <thead>
+            <tr>
+              <th class="hidden">Id</th>
+              <th>Keys</th>
+              <th>Message</th>
               <th>Length</th>
             </tr>
           </thead>

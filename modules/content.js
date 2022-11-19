@@ -92,17 +92,19 @@ export async function loadContent() {
       elementWithKids('div', null, { 'class': 'cancels' }),
       elementWithKids('div', null, { 'class': 'appeal-tos' }),
       elementWithKids('div', null, { 'class': 'fallacies' }),
-      elementWithKids('div', null, { 'class': 'topics' })
+      elementWithKids('div', null, { 'class': 'topics' }),
+      elementWithKids('div', null, { 'class': 'messages' })
     ], { id })
     document.querySelector('#content').appendChild(root)
-    const [idiot, sheep, labels, cancels, appealTos, fallacies, topics] = await Promise.all([
+    const [idiot, sheep, labels, cancels, appealTos, fallacies, topics, messages] = await Promise.all([
       fetchLocalizedContent(true),
       fetchLocalizedContent(false),
       fetchSilent(`content/${language}/labels.html`),
       fetchSilent(`content/${language}/cancels.html`),
       fetchSilent(`content/${language}/appeal-tos.html`),
       fetchSilent(`content/${language}/fallacies.html`),
-      fetchLocalizedTopics()
+      fetchLocalizedTopics(),
+      fetchSilent(`content/${language}/messages.html`),
     ])
     root.querySelector('.idiot').innerHTML = idiot
     root.querySelector('.sheep').innerHTML = sheep
@@ -111,6 +113,7 @@ export async function loadContent() {
     root.querySelector('.appeal-tos').innerHTML = appealTos
     root.querySelector('.fallacies').innerHTML = fallacies
     root.querySelector('.topics').innerHTML = topics
+    root.querySelector('.messages').innerHTML = messages
     return root
   }
   return loaded

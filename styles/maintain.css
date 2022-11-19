@@ -7,7 +7,7 @@ html, body {
 }
 
 #navigation {
-  font-family: 'Open Sans', Helvetica;
+  font-family: 'HVD Crocodile', Helvetica;
   position: absolute;
   left: 0;
   height: 100%;
@@ -43,6 +43,25 @@ html, body {
   height: 100%;
 }
 
+#details centered-cards > * {
+  box-shadow: 1vmax 1vmax 1vmax -1vmax rgba(0, 0, 0, 0.3);
+}
+
+[contenteditable] {
+  background-color: rgb(255, 248, 220, 0.5);
+}
+
+
+.tab {
+  font-family: 'Open Sans', Helvetica;
+  background: white;
+}
+
+.search {
+  margin: 0.3em;
+  padding: 0.3em;
+}
+
 .list {
   width: 100%;
   height: 100%;
@@ -56,14 +75,18 @@ html, body {
   background-color: #f2f2f2;
 }
 
-.list tr.selected {
+.list tr:hover {
   background-color: white;
   color: black;
 }
 
-.list tr:hover {
+.list tr.selected {
   background-color: coral;
-  color: white;
+  color: black;
+}
+
+.list tr.not-matching {
+  display: none;
 }
 
 .list th {
@@ -76,4 +99,32 @@ html, body {
 .hidden {
   display: none;
   visibility: collapse;
+}
+
+.fix {
+  color: red;
+  font-weight: 600;
+}
+
+.radio-tab {
+  position: absolute;
+  left: -99999em;
+  top: -99999em;
+}
+
+.radio-tab + label {
+  font-size: 1.2em;
+  cursor: pointer;
+  float: left;
+  background-color: #eee;
+  padding: 0.4em 0.4em;
+  position: relative;
+}
+ 
+.radio-tab + label:hover {
+   background-color: #ccc;
+ }
+
+.radio-tab:checked + label {
+  background-color: #fff;
 }

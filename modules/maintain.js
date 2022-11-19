@@ -62,7 +62,17 @@ function toCancelData(cancel) {
   }
 }
 
-window.selectCard = function(event) {
+function toMessageData(message) {
+  return {
+    message,
+    id: message.id,
+    'class': message.className,
+    text: message.innerHTML,
+    length: message.innerText.length
+  }
+}
+
+window.selectMaintainCard = function(event) {
   const card = event && event.target.closest('tr') ? event.target.closest('tr').firstElementChild.innerText : ''
   document.querySelector('#card').setAttribute('card', card)
   document.querySelectorAll('tr').forEach(tr => tr.classList.remove('selected'))
@@ -74,47 +84,44 @@ window.selectCard = function(event) {
 
 function updateArgumentTable(args) {
   const tbody = document.querySelector('#arguments .list tbody')
+  const LONG_TEXT = 320
+  const SHORT_TEXT = 200
+  const LONG_TITLE = 34
+  const SHORT_TITLE = 14
   tbody.innerHTML = ''
   args.forEach(arg => {
-    const row = `<tr><td class="id">${arg.id}</td><td>${arg.title}</td><td>${arg.length}</td><td>${arg.textLength}</td><td>${arg.topics.join(', ')}</td></tr>`
+    const row = `<tr>
+      <td class="id">${arg.id}</td>
+      <td>${arg.spellcheck ? '🚧' : '✅'}</td>
+      <td>${arg.title}</td>
+      <td ${arg.length > LONG_TITLE || arg.length < SHORT_TITLE ? 'class="fix"' : ''}>${arg.length}</td>
+      <td ${arg.textLength > LONG_TEXT || arg.textLength < SHORT_TEXT ? 'class="fix"' : ''}>${arg.textLength}</td>
+      <td>${arg.topics.join(', ')}</td>
+    </tr>`
     tbody.insertAdjacentHTML('beforeEnd', row)
   })
-  selectCard()
+  selectMaintainCard()
   return args
 }
 
 window.updateArguments = function() {
-  const LONG_THRESHOLD = 320
-  const SHORT_THRESHOLD = 245
-  const LONG_TITLE_THRESHOLD = 34
-  const SHORT_TITLE_THRESHOLD = 14
   const [, topicsMap] = extractTopics(document.querySelector('#content .topics'))
-  const type = document.querySelector('#arguments .type').value
-  const args = Array.from(document.querySelectorAll(`#content .${type} a[id]`)).map(arg => toArgumentData(arg, topicsMap))
-  const task = document.querySelector('#arguments .task').value
-  switch (task) {
-    case 'review-translations':
-      return updateArgumentTable(args.filter(arg => arg.spellcheck))
-    case 'fix-long':
-      return updateArgumentTable(args.filter(arg => arg.textLength > LONG_THRESHOLD))
-    case 'fix-short':
-      return updateArgumentTable(args.filter(arg => arg.textLength < SHORT_THRESHOLD))
-    case 'fix-long-titles':
-      return updateArgumentTable(args.filter(arg => arg.length > LONG_TITLE_THRESHOLD))
-    case 'fix-short-titles':
-      return updateArgumentTable(args.filter(arg => arg.length < SHORT_TITLE_THRESHOLD))
-    case 'assign-topics':
-      return updateArgumentTable(args)
-    case 'assign-unassigned': 
-      return updateArgumentTable(args.filter(arg => arg.topics.length === 0))
-  }
+  const args = Array.from(document.querySelectorAll('#content .idiot a[id], #content .sheep a[id]')).map(arg => toArgumentData(arg, topicsMap))
+  return updateArgumentTable(args)
 }
 
 function updateTopicsTable(topics) {
   const tbody = document.querySelector('#topics .list tbody')
   tbody.innerHTML = ''
   topics.forEach(topic => {
-    const row = `<tr><td class="id">${topic.id}</td><td contenteditable="plaintext-only">${topic.title}</td><td contenteditable="plaintext-only">${topic.sheepTitle}</td><td contenteditable="plaintext-only">${topic.idiotTitle}</td><td contenteditable="plaintext-only">${topic.sheepLabel}</td><td contenteditable="plaintext-only">${topic.idiotLabel}</td></tr>`
+    const row = `<tr>
+      <td class="id">${topic.id}</td>
+      <td contenteditable="plaintext-only">${topic.title}</td>
+      <td contenteditable="plaintext-only">${topic.sheepTitle}</td>
+      <td contenteditable="plaintext-only">${topic.idiotTitle}</td>
+      <td contenteditable="plaintext-only">${topic.sheepLabel}</td>
+      <td contenteditable="plaintext-only">${topic.idiotLabel}</td>
+    </tr>`
     tbody.insertAdjacentHTML('beforeEnd', row)
   })
   return topics
@@ -142,16 +149,19 @@ function updateAppealTosTable(appealTos) {
   const tbody = document.querySelector('#appeal-tos .list tbody')
   tbody.innerHTML = ''
   appealTos.forEach(appealTo => {
-    const row = `<tr><td class="id">${appealTo.id}</td><td>${appealTo['class']}</td><td contenteditable="plaintext-only">${appealTo.title}</td><td>${appealTo.length}</td></tr>`
+    const row = `<tr>
+      <td class="id">${appealTo.id}</td>
+      <td>${appealTo['class']}</td>
+      <td contenteditable="plaintext-only">${appealTo.title}</td><td>${appealTo.length}</td>
+    </tr>`
     tbody.insertAdjacentHTML('beforeEnd', row)
   })
   return appealTos
 }
 
 window.updateAppealTos = function() {
-  const type = document.querySelector('#appeal-tos .type').value
   const appealTos = extractAppealTos(document.querySelector('#content .appeal-tos'))
-  return updateAppealTosTable(appealTos.filter(appealTo => appealTo.type===type))
+  return updateAppealTosTable(appealTos)
 }
 
 function extractAppealTos(appealTos) {
@@ -162,16 +172,20 @@ function updateFallaciesTable(fallacies) {
   const tbody = document.querySelector('#fallacies .list tbody')
   tbody.innerHTML = ''
   fallacies.forEach(fallacy => {
-    const row = `<tr><td class="id">${fallacy.id}</td><td contenteditable="plaintext-only">${fallacy['class']}</td><td contenteditable="plaintext-only">${fallacy.text}</td><td>${fallacy.length}</td></tr>`
+    const row = `<tr>
+      <td class="id">${fallacy.id}</td>
+      <td contenteditable="plaintext-only">${fallacy['class']}</td>
+      <td contenteditable="plaintext-only">${fallacy.text}</td>
+      <td>${fallacy.length}</td>
+    </tr>`
     tbody.insertAdjacentHTML('beforeEnd', row)
   })
   return fallacies
 }
 
 window.updateFallacies = function() {
-  const type = document.querySelector('#fallacies .type').value
   const fallacies = extractFallacies(document.querySelector('#content .fallacies'))
-  return updateFallaciesTable(fallacies.filter(fallacy => fallacy.type===type))
+  return updateFallaciesTable(fallacies)
 }
 
 function extractFallacies(fallacies) {
@@ -182,16 +196,19 @@ function updateLabelsTable(labels) {
   const tbody = document.querySelector('#labels .list tbody')
   tbody.innerHTML = ''
   labels.forEach(label => {
-    const row = `<tr><td class="id">${label.id}</td><td contenteditable="plaintext-only">${label.text}</td><td>${label.length}</td></tr>`
+    const row = `<tr>
+      <td class="id">${label.id}</td>
+      <td contenteditable="plaintext-only">${label.text}</td>
+      <td>${label.length}</td>
+    </tr>`
     tbody.insertAdjacentHTML('beforeEnd', row)
   })
   return labels
 }
 
 window.updateLabels = function() {
-  const type = document.querySelector('#labels .type').value
   const labels = extractLabels(document.querySelector('#content .labels'))
-  return updateLabelsTable(labels.filter(label => label.type===type))
+  return updateLabelsTable(labels)
 }
 
 function extractLabels(labels) {
@@ -203,20 +220,48 @@ function updateCancelsTable(cancels) {
   const tbody = document.querySelector('#cancels .list tbody')
   tbody.innerHTML = ''
   cancels.forEach(cancel => {
-    const row = `<tr><td class="id">${cancel.id}</td><td contenteditable="plaintext-only">${cancel.text}</td><td>${cancel.length}</td></tr>`
+    const row = `<tr>
+      <td class="id">${cancel.id}</td>
+      <td contenteditable="plaintext-only">${cancel.text}</td>
+      <td>${cancel.length}</td>
+    </tr>`
     tbody.insertAdjacentHTML('beforeEnd', row)
   })
   return cancels
 }
 
 window.updateCancels = function() {
-  const type = document.querySelector('#cancels .type').value
   const cancels = extractLabels(document.querySelector('#content .cancels'))
-  return updateCancelsTable(cancels.filter(label => label.type===type))
+  return updateCancelsTable(cancels)
 }
 
-function extractCancels(labels) {
+
+function extractCancels(cancels) {
   return Array.from(cancels.querySelectorAll('a[id]')).map(toCancelData)
+}
+
+function updateMessagesTable(messages) {
+  const tbody = document.querySelector('#messages .list tbody')
+  tbody.innerHTML = ''
+  messages.forEach(message => {
+    const row = `<tr>
+      <td class="id hidden">${message.id}</td>
+      <td class="keys ">${message.class}</td>
+      <td contenteditable="plaintext-only">${message.text}</td>
+      <td>${message.length}</td>
+    </tr>`
+    tbody.insertAdjacentHTML('beforeEnd', row)
+  })
+  return messages
+}
+
+window.updateMessages = function() {
+  const messages = extractMessages(document.querySelector('#content .messages'))
+  return updateMessagesTable(messages)
+}
+
+function extractMessages(messages) {
+  return Array.from(messages.querySelectorAll('a[class]')).map(toMessageData)
 }
 
 function updateAll() {
@@ -226,17 +271,20 @@ function updateAll() {
   updateTopics()
   updateLabels()
   updateCancels()
+  updateMessages()
   observe(document.querySelector('#fallacies .list'))
   observe(document.querySelector('#labels .list'))
   observe(document.querySelector('#topics .list'))
   observe(document.querySelector('#appeal-tos .list'))
   observe(document.querySelector('#cancels .list'))
+  observe(document.querySelector('#messages .list'))
 }
 
 window.navigateMaintain = function(event) {
   const selected = event.target.id.substring(1)
   Array.from(document.querySelectorAll('.tab')).forEach(tab => tab.classList.add('hidden'))
   document.getElementById(selected).classList.remove('hidden')
+  selectMaintainCard()
 }
 
 function observe(element) {
@@ -252,4 +300,13 @@ function observe(element) {
     characterData: true,
     characterDataOldValue: true
   })
+}
+
+window.searchMaintain = function(event) {
+  const table = event.target.parentElement.querySelector('.list')
+  const input = event.target.value.toLowerCase()
+  const entries = Array.from(table.querySelectorAll('tr'))
+  entries.forEach(tr => tr.classList.remove('not-matching'))
+  const notMatching = input.length ? entries.filter(tr => !tr.textContent.replace(/\u00ad/gi, '').toLowerCase().includes(input)) : []
+  notMatching.forEach(tr => tr.classList.add('not-matching'))
 }

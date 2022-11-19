@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html lang="en" class="notranslate" translate="no">
+<html class="notranslate" translate="no">
   <head>
     <meta name="viewport" content="width=device-width">
     <meta name="google" content="notranslate" />
@@ -30,7 +30,7 @@
     <script src="modules/common.js" type="module"></script>
     <script src="modules/maintain.js" type="module"></script>
   </head>
-  <body lang="fr" onload="loadMaintain()">
+  <body onload="loadMaintain()">
     <div id="navigation" class="radio-tabs">
       <div id="header">
         <input id="_topics" type="radio" name="type" class="radio-tab" value="topics" onclick="navigateMaintain(event)">
@@ -68,6 +68,7 @@
       </div>
       <div id="arguments" class="tab">
         <input class="search" placeholder="🔍 Search arguments" oninput="searchMaintain(event)">
+        <button onclick="toggleText()">Toggle Text</button>
         <button disabled>➕ Add Argument Card</button>
         <table class="list table-sort" onclick="selectMaintainCard(event)">
           <thead>
@@ -75,6 +76,7 @@
               <th>Id</th>
               <th>✓</th>
               <th>Title</th>
+              <th class="text-column hidden">Text</th>
               <th>Length</th>
               <th>Text Length</th>
               <th>Topics</th>
@@ -93,7 +95,8 @@
               <th>Id</th>
               <th>Class</th>
               <th>Title</th>
-              <th>Text Length</th>
+              <th>Text</th>
+              <th>Overall Length</th>
             </tr>
           </thead>
           <tbody>

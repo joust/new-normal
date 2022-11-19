@@ -2,7 +2,7 @@ import { setLocale } from './common.js'
 import { loadContent, extractTopics } from './content.js'
 
 window.loadMaintain = async function() {
-  setLocale(document.body.lang = 'de')
+  setLocale(document.body.lang = 'en')
   const content = await loadContent() 
   document.querySelector('#details').insertAdjacentHTML('beforeEnd', '<centered-cards><editable-card id="card"></editable-card></centered-cards>')
   updateAll()
@@ -13,6 +13,7 @@ function toArgumentData(arg, topicMap) {
     arg,
     id: arg.id,
     title: arg.querySelector('h2').innerHTML,
+    text: arg.querySelector('p').innerHTML,
     length: arg.querySelector('h2').innerText.length,
     textLength: arg.querySelector('p').innerText.length,
     spellcheck: arg.hasAttribute('spellcheck'),
@@ -27,6 +28,7 @@ function toAppealToData(appealTo) {
     type: appealTo.id.includes('I') ? 'idiot' : 'sheep',
     'class': appealTo.getAttribute('class'),
     title: appealTo.querySelector('h2').innerHTML,
+    text: appealTo.querySelector('p').innerHTML,
     length: appealTo.innerText.length
   }
 }
@@ -93,7 +95,8 @@ function updateArgumentTable(args) {
     const row = `<tr>
       <td class="id">${arg.id}</td>
       <td>${arg.spellcheck ? '🚧' : '✅'}</td>
-      <td>${arg.title}</td>
+      <td contenteditable="plaintext-only">${arg.title}</td>
+      <td contenteditable="plaintext-only" class="text-column hidden">${arg.text}</td>
       <td ${arg.length > LONG_TITLE || arg.length < SHORT_TITLE ? 'class="fix"' : ''}>${arg.length}</td>
       <td ${arg.textLength > LONG_TEXT || arg.textLength < SHORT_TEXT ? 'class="fix"' : ''}>${arg.textLength}</td>
       <td>${arg.topics.join(', ')}</td>
@@ -102,6 +105,10 @@ function updateArgumentTable(args) {
   })
   selectMaintainCard()
   return args
+}
+
+window.toggleText = function() {
+  Array.from(document.querySelectorAll('#arguments .list .text-column')).forEach(node => node.classList.toggle('hidden'))
 }
 
 window.updateArguments = function() {
@@ -152,7 +159,9 @@ function updateAppealTosTable(appealTos) {
     const row = `<tr>
       <td class="id">${appealTo.id}</td>
       <td>${appealTo['class']}</td>
-      <td contenteditable="plaintext-only">${appealTo.title}</td><td>${appealTo.length}</td>
+      <td contenteditable="plaintext-only">${appealTo.title}</td>
+      <td contenteditable="plaintext-only">${appealTo.text}</td>
+      <td>${appealTo.length}</td>
     </tr>`
     tbody.insertAdjacentHTML('beforeEnd', row)
   })

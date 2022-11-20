@@ -235,7 +235,7 @@ class AppealToCard extends HTMLElement {
   }
 
   get fallacy() {
-    return this.type === 'authority' ? 'Appeal to Authority' : 'Appeal to Popularity'
+    return this.querySelector('i') ? this.querySelector('i').innerHTML : ''
   }
 
   get to() {

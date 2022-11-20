@@ -132,6 +132,17 @@ FallacyCardTemplate.innerHTML = `
       content: close-quote;
     }
 
+    #description {
+      position: absolute;
+      bottom: 0; 
+      font-family: 'Open Sans', Helvetica;
+      padding: calc(5 * var(--cavg));
+      padding-bottom: calc(16 * var(--cavg));
+      font-size: calc(3 * var(--cavg));
+      font-style: italic;
+      color: white;
+      opacity: 0.4;
+    }
 
     #card {
       position: absolute;
@@ -187,7 +198,7 @@ FallacyCardTemplate.innerHTML = `
     <div id="icon"></div>
     <div id="watermark"></div>
     <div id="new">New</div>
-    <div id="phrase"><span id="fallacy"></span><span class="quoted phrase"></span></div>
+    <div id="phrase"><span id="fallacy"></span><span class="quoted phrase"></span><span id="description"></span></div>
     <div id="side-phrase"><span class="phrase"></span></div>
     <div id="normal">Normal</div>
     <div id="card"></div>
@@ -214,6 +225,10 @@ class FallacyCard extends HTMLElement {
 
   get phrase() {
     return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
+  }
+
+  get description() {
+    return this.querySelector('p') ? this.querySelector('p').innerHTML : ''
   }
 
   get card() {
@@ -251,6 +266,7 @@ class FallacyCard extends HTMLElement {
       this.element('card').innerHTML = this.card
       this.element('fallacy').innerHTML = this.fallacy 
       Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = this.phrase)
+      this.element('description').innerHTML = this.description 
     }
   }
 }

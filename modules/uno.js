@@ -1,6 +1,6 @@
 import { prompt } from '../components/dialog.js' 
 import { language, territory, locales, element, elements } from './common.js'
-import { loadSources, loadContent, extractContent } from './content.js'
+import { loadSources, loadContent, extractContent, getMessage } from './content.js'
 import { startLocal, startClient, getAlternatives, canBePlayedOn, isIdiot, allowedToPlay, allPossibleMoves, isArgument, isWildcard, isFallacy } from './uno-bg.js'
        
 function setupTable() {
@@ -32,7 +32,8 @@ function cleanupTable() {
 let setNameRequestSent = false
 async function sendSetNameRequest(client, playerID) {
   setNameRequestSent = true
-  const name = await prompt(`Name for Player ${playerID}?`, '')
+  const message = getMessage('player.name.prompt').replace('PLAYERID', playerID)
+  const name = await prompt(message, '')
   client.sendChatMessage({ message: 'setName', name })
 }
 
@@ -147,7 +148,9 @@ window.uno = async function(isHost, numPlayers) {
   const client = await startClient(locale, content, isHost, numPlayers, playerID, matchID)
   if (isHost) {
     element('uno').insertAdjacentHTML('beforeEnd', '<player-hand id="hand" nr="0" cards="[]" droppable></player-hand>')
-    client.moves.setName(playerID, await prompt(`Name for Host Player?`, ''))
+    const message = getMessage('host-player.name.prompt').replace('PLAYERID', playerID)
+    const name = await prompt(message, '')
+    client.moves.setName(playerID, name)
     activateDrag(client)
     const opponentPlayerIds = [...Array(numPlayers).keys()].map(String).filter(id => id!==playerID)
     opponentPlayerIds.forEach(id => addOpponentHand(id, '?'))

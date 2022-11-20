@@ -168,6 +168,7 @@ class GameCard extends HTMLElement {
     return mirror
   }
 
+  // TODO: Move strings to messages
   replaceStatement(lang, content) {
     if (lang.includes('-')) lang = lang.split('-')[0]
     const from1 = {
@@ -250,6 +251,21 @@ class GameCard extends HTMLElement {
     return node
   }
 
+  getMessage(key, fallback = '???') {
+    const node = document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} .messages a.${key}`)
+    console.log(`${GameCard.contentRootSelector} > #${this.lang} .messages a.${key}`, node)
+    return node ? node.innerHTML : fallback
+  }
+
+  getContent(key, clazz = undefined) {
+    clazz = this.getMessage(clazz ? `${key}.class.${clazz}` : `${key}.class`, null)
+    const phrase = this.getMessage(`${key}.phrase`, null)
+    const description = this.getMessage(`${key}.description`, null)
+    return (clazz ? `<i>${clazz}</i>` : '')
+          + (phrase ? `<h2>${phrase}</h2>` : '') 
+          + (description ? `<p>${description}</p>` : '')
+  }
+
   cardWithSources(id, title, front) {
     const sources = this.getSourcesHTML(id)
     if (sources) {
@@ -262,28 +278,30 @@ class GameCard extends HTMLElement {
                                                   
   getCardElement() {
     const data = document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} a[id="${this.idOnly}"]`)
+    const clazz = data.className
     const title = data ? data.querySelector('h2') ? data.querySelector('h2').innerHTML : data.title : '???'
     const type = this.idiot ? 'idiot' : ''
+    const side = this.idiot ? 'idiot' : 'sheep'
     const mirrored = this.mirrored ? 'mirrored' : ''
     const wildcard = this.isWildcard ? 'wildcard' : ''
     const spellcheck = data && data.hasAttribute('spellcheck') ? 'spellcheck ' : ''
     switch (this.idOnly[0]) {
-      case 'C': return `<cancel-card id="card" ${type} ${mirrored} card="${this.card}">${data ?data.outerHTML : ''}</cancel-card>`
-      case 'L': return `<label-card id="card" ${type} ${mirrored} card="${this.card}">${data ?data.outerHTML : ''}</label-card>`
-      case 'A': return this.cardWithSources(this.idOnly, title, `<appeal-to-card ${type} ${mirrored} type="${data.type}" card="${this.card}">${data ? data.outerHTML : ''}</appeal-to-card>`)
-      case 'F': return `<fallacy-card id="card" ${type} ${mirrored} card="${this.card}">${data ?data.outerHTML : ''}</fallacy-card>`
-      case 'N': return `<strawman-card id="card" ${type} ${mirrored}></strawman-card>`
-      case 'R': return `<research-card id="card" ${type} ${mirrored}></research-card>`
-      case 'P': return `<pause-card id="card" ${type} ${mirrored}></pause-card>`
-      case 'B': return `<banish-card id="card" ${type} ${mirrored}></banish-card>`
+      case 'C': return `<cancel-card id="card" ${type} ${mirrored} card="${this.card}">${data ?data.outerHTML : ''}${this.getContent('cancel')}</cancel-card>`
+      case 'L': return `<label-card id="card" ${type} ${mirrored} card="${this.card}">${data ?data.outerHTML : ''}${this.getContent('label')}</label-card>`
+      case 'A': return this.cardWithSources(this.idOnly, title, `<appeal-to-card ${type} ${mirrored} card="${this.card}">${data ? data.outerHTML : ''}${this.getContent('appeal-to', clazz)}</appeal-to-card>`)
+      case 'F': return `<fallacy-card id="card" ${type} ${mirrored} card="${this.card}">${data ?data.outerHTML : ''}${this.getContent('fallacy', clazz)}</fallacy-card>`
+      case 'N': return `<strawman-card id="card" ${type} ${mirrored}>${this.getContent('strawman')}</strawman-card>`
+      case 'R': return `<research-card id="card" ${type} ${mirrored}>${this.getContent(`research.${side}`)}</research-card>`
+      case 'P': return `<pause-card id="card" ${type} ${mirrored}>${this.getContent(`pause.${side}`)}</pause-card>`
+      case 'B': return `<banish-card id="card" ${type} ${mirrored}>${this.getContent('banish')}</banish-card>`
       default: // argument id and discuss id will have a topic
         const topicData = this.topic && document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} > .topics > section[id="${this.topic}"]`)
-        const topic = topicData ? topicData.title : ''
+        const topicTitle = topicData ? topicData.title : ''
         if (this.idOnly.startsWith('D'))
-          return `<discuss-card id="card" ${type} ${mirrored} topicId="${this.topic}" topic="${topic}"></discuss-card>`
+          return `<discuss-card id="card" ${type} ${mirrored} topicId="${this.topic}">${this.getContent('discuss').replace('TOPIC', `<b>${topicTitle}</b>`)}</discuss-card>`
         else {
           const html = data ? this.replaceStatement(this.lang, data.innerHTML) : ''
-          return this.cardWithSources(this.idOnly, title, `<argument-card ${type} ${mirrored} ${wildcard} ${spellcheck} card="${this.idOnly}" topicId="${this.topic}" topic="${topic}">${html}</argument-card>`)
+          return this.cardWithSources(this.idOnly, title, `<argument-card ${type} ${mirrored} ${wildcard} ${spellcheck} card="${this.idOnly}" topicId="${this.topic}" topic="${topicTitle}">${html}</argument-card>`)
         }
     }
   }

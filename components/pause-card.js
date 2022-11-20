@@ -172,37 +172,19 @@ class PauseCard extends HTMLElement {
   }
 
   static observedAttributes = ['idiot', 'mirrored']
-  static phrase = {
-    sheep: {
-      da: 'Vær venlig også at sige noget!',
-      de: 'Sag\' doch bitte auch mal was!',
-      en: 'Please say something too!',
-      nl: 'Zeg alsjeblieft ook wat!',
-      es: '¡Por favor, ¡diga algo también!',
-      fr: 'Dis quelque chose !',
-      it: 'Per favore, dite qualcosa anche voi!',
-      pl: 'Proszę też coś powiedzieć!',
-      pt: 'Por favor, diga algo também!',
-      'pt-br': 'Por favor, diga algo também!'
-    },
-    idiot: {
-      da: 'Hjælp mig her, tak!',
-      de: 'Hilf mir doch mal bitte, Mensch!',
-      en: 'Help me out here, please!',
-      nl: 'Help me, alsjeblieft, mens!',
-      es: '¡Ayúdenme, por favor!',
-      fr: 'Aide-moi, s\'il te plaît !',
-      it: 'Aiutatemi, per favore!',
-      pl: 'Pomóż mi tutaj, proszę!',
-      pt: 'Ajude-me, por favor!',
-      'pr-br': 'Ajude-me, por favor!'
-    }
-  }
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
   get idiot() {
     return this.hasAttribute('idiot')
+  }
+
+  get phrase() {
+    return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
+  }
+
+  get description() {
+    return this.querySelector('p') ? this.querySelector('p').innerHTML : ''
   }
 
   get mirrored() {
@@ -236,10 +218,7 @@ class PauseCard extends HTMLElement {
     if (this.isConnected && root) {
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
-      const type = this.idiot ? 'idiot' : 'sheep'
-      const key = Object.keys(PauseCard.phrase[type]).find(p => this.lang.startsWith(p)) || 'de'
-      const phrase = PauseCard.phrase[type][key]
-      Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = phrase)
+      Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = this.phrase)
     }
   }
 }

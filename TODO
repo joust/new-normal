@@ -2,7 +2,6 @@ Uno
 
 * implement winning policy and turn order for > 2 players, when single players can run out of cards without the game ending
 * implement touchmove for hand & card shuffle (vertical & horizontal)
-* add description texts to research, discuss, pause, ad-hominem and label cards
 * add random first player (currently the host always makes the first move)
 * implement game end for >2 players => game ends when *all* players of one side got rid of their cards
 * implement game-table component

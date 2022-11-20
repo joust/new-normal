@@ -45,13 +45,15 @@
         <label for="_labels">Labels</label>
         <input id="_cancels" type="radio" name="type" class="radio-tab" value="cancels" onclick="navigateMaintain(event)">
         <label for="_cancels">Cancels</label>
+        <input id="_sources" type="radio" name="type" class="radio-tab" value="sources" onclick="navigateMaintain(event)">
+        <label for="_sources">Sources</label>
         <input id="_messages" type="radio" name="type" class="radio-tab" value="messages" onclick="navigateMaintain(event)">
         <label for="_messages">Messages</label>
       </div>
       <div id="topics" class="tab hidden">
         <input class="search" placeholder="🔍 Search topics" oninput="searchMaintain(event)">
         <button disabled>➕ Add Topic</button>
-        <table class="list table-sort" onclick="selectMaintainCard(event)">
+        <table class="list table-sort" onclick="updateMaintainCard(event.target)">
           <thead>
             <tr>
               <th>Id</th>
@@ -70,7 +72,7 @@
         <input class="search" placeholder="🔍 Search arguments" oninput="searchMaintain(event)">
         <button onclick="toggleText()">Toggle Text</button>
         <button disabled>➕ Add Argument Card</button>
-        <table class="list table-sort" onclick="selectMaintainCard(event)">
+        <table class="list table-sort" onclick="updateMaintainCard(event.target)">
           <thead>
             <tr>            
               <th>Id</th>
@@ -89,7 +91,7 @@
       <div id="appeal-tos" class="tab hidden">
         <input class="search" placeholder="🔍 Search appeal tos" oninput="searchMaintain(event)">
         <button disabled>➕ Add Appeal-to Card</button>
-        <table class="list table-sort" onclick="selectMaintainCard(event)">
+        <table class="list table-sort" onclick="updateMaintainCard(event.target)">
           <thead>
             <tr>
               <th>Id</th>
@@ -106,7 +108,7 @@
       <div id="fallacies" class="tab hidden">
         <input class="search" placeholder="🔍 Search fallacies" oninput="searchMaintain(event)">
         <button disabled>➕ Add Fallacy Card</button>
-        <table class="list table-sort" onclick="selectMaintainCard(event)">
+        <table class="list table-sort" onclick="updateMaintainCard(event.target)">
           <thead>
             <tr>
               <th>Id</th>
@@ -122,7 +124,7 @@
       <div id="labels" class="tab hidden">
         <input class="search" placeholder="🔍 Search labels" oninput="searchMaintain(event)">
         <button disabled>➕ Add Label Card</button>
-        <table class="list table-sort" onclick="selectMaintainCard(event)">
+        <table class="list table-sort" onclick="updateMaintainCard(event.target)">
           <thead>
             <tr>
               <th>Id</th>
@@ -137,7 +139,7 @@
       <div id="cancels" class="tab hidden">
         <input class="search" placeholder="🔍 Search cancels" oninput="searchMaintain(event)">
         <button disabled>➕ Add Cancel Card</button>
-        <table class="list table-sort" onclick="selectMaintainCard(event)">
+        <table class="list table-sort" onclick="updateMaintainCard(event.target)">
           <thead>
             <tr>
               <th>Id</th>
@@ -149,9 +151,27 @@
           </tbody>
         </table>
       </div>
+      <div id="sources" class="tab hidden">
+        <input class="search" placeholder="🔍 Search sources" oninput="searchMaintain(event)">
+        <button disabled>➕ Add Source</button>
+        <table class="list table-sort" onclick="updateSourcePreview(event.target)">
+          <thead>
+            <tr>
+              <th class="hidden">Id</th>
+              <th>Language</th>
+              <th>Keys</th>
+              <th>URL</th>
+              <th>Text</th>
+              <th>Length</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
       <div id="messages" class="tab hidden">
         <input class="search" placeholder="🔍 Search messages" oninput="searchMaintain(event)">
-        <table class="list table-sort" onclick="selectMaintainCard(event)">
+        <table class="list table-sort" onclick="updateMaintainCard(event.target)">
           <thead>
             <tr>
               <th class="hidden">Id</th>
@@ -167,6 +187,7 @@
     </div>
     <div id="details">
       <div id="edit-bar"><button>Single-Quote</button><button>Bold</button><button>Shy</button></div>
+      <iframe id="preview" src="" class="hidden"></iframe>
     </div>
     <div id="content" class="hidden"></div>
     <div id="loader" class="hidden"></div>

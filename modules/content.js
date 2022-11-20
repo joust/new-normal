@@ -227,6 +227,16 @@ export function extractContent() {
   return {idiot, sheep}
 }
 
+/**
+ * query string content for a translation key (classes list)
+ * @param {string} key the content key, e.g. 'prompt.info'.
+ * @param {string} fallback the fallback string
+ * @return {any} A content structure
+ */
+export function getMessage(key, fallback = '???') {
+  const node = localeBlock().querySelector(`.messages a.${key}`)
+  return node ? node.innerHTML : fallback
+}
 
 /**
  * Generate label select

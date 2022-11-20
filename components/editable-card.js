@@ -76,17 +76,25 @@ class EditableCard extends HTMLElement {
   }
 
   observe(element) {
-    const observer = new MutationObserver(mutations => {
-      mutations.forEach(mutation => {
-        const message = this.card + " from '" + mutation.oldValue + "' to '" + mutation.target.data + "'"
-        console.log(message)
-      })
-    })
-    observer.observe(element, {
-      subtree: true,
-      characterData: true,
-      characterDataOldValue: true
-    })
+    const observer = new MutationObserver(mutations => 
+      mutations.forEach(mutation => 
+        this.dispatchEvent(new CustomEvent('mutated', {detail: mutation})))
+    )
+    observer.observe(element, { subtree: true, characterData: true, characterDataOldValue: true })
+  }
+
+  getMessage(key, fallback = '???') {
+    const node = document.querySelector(`${EditableCard.contentRootSelector} > #${this.lang} .messages a.${key}`)
+    return node ? node.innerHTML : fallback
+  }
+
+  getContent(key, clazz = undefined) {
+    clazz = this.getMessage(clazz ? `${key}.class.${clazz}` : `${key}.class`, null)
+    const phrase = this.getMessage(`${key}.phrase`, null)
+    const description = this.getMessage(`${key}.description`, null)
+    return (clazz ? `<i>${clazz}</i>` : '')
+          + (phrase ? `<h2>${phrase}</h2>` : '') 
+          + (description ? `<p>${description}</p>` : '')
   }
 
   setEditable(e, editable) {
@@ -108,8 +116,6 @@ class EditableCard extends HTMLElement {
   }
 
   makeEditable(content) {
-    // if (content && content.querySelector('i'))
-      // this.setEditable(content.querySelector('i'), true)
     if (content && content.querySelector('h2'))
       this.setEditable(content.querySelector('h2'), true)
     if (content && content.querySelector('span'))
@@ -120,22 +126,24 @@ class EditableCard extends HTMLElement {
   getCardElement() {
     if (!this.card || !this.card.length) return '<div></div>'
     const data = document.querySelector(`${EditableCard.contentRootSelector} > #${this.lang} *[id="${this.card}"]`) 
+    const clazz = data.className
     const title = data ? data.querySelector('h2') ? data.querySelector('h2').innerHTML : data.title : '???'
     const type = this.idiot ? 'idiot' : ''
+    const side = this.idiot ? 'idiot' : 'sheep'
     const spellcheck = data && data.hasAttribute('spellcheck') ? 'spellcheck ' : ''
     const content = this.makeEditable(data)
     switch (this.card[0]) {
-      case 'C': return `<cancel-card id="card" card="${this.card}">${content.outerHTML}</cancel-card>`
-      case 'L': return `<label-card id="card" ${type} card="${this.card}">${content.outerHTML}</label-card>`
-      case 'A': return this.card, title, `<appeal-to-card id="card" ${type} type="${data.type}" card="${this.card}">${content.outerHTML}</appeal-to-card>`
-      case 'F': return `<fallacy-card id="card" ${type} card="${this.card}">${content.outerHTML}</fallacy-card>`
+      case 'C': return `<cancel-card id="card" card="${this.card}">${content.outerHTML}${this.getContent('cancel')}</cancel-card>`
+      case 'L': return `<label-card id="card" ${type} card="${this.card}">${content.outerHTML}${this.getContent('label')}</label-card>`
+      case 'A': return this.card, title, `<appeal-to-card id="card" ${type} type="${data.type}" card="${this.card}">${content.outerHTML}${this.getContent('appeal-to', clazz)}</appeal-to-card>`
+      case 'F': return `<fallacy-card id="card" ${type} card="${this.card}">${content.outerHTML}${this.getContent('fallacy', clazz)}</fallacy-card>`
       case 'D': 
       case 'T': 
-        return `<discuss-card id="card" ${type} topicId="${this.card}" topic="${title}"></discuss-card>`
-      case 'N': return `<strawman-card id="card" ${type}></strawman-card>`
-      case 'R': return `<research-card id="card" ${type}></research-card>`
-      case 'P': return `<pause-card id="card" ${type}></pause-card>`
-      case 'B': return `<banish-card id="card" ${type}></banish-card>`
+        return `<discuss-card id="card" ${type} topicId="${this.card}">${this.getContent('discuss').replace('TOPIC', `<b>${title}</b>`)}</discuss-card>`
+      case 'N': return `<strawman-card id="card" ${type}>${this.getContent('strawman')}</strawman-card>`
+      case 'R': return `<research-card id="card" ${type}>${this.getContent(`research.${side}`)}</research-card>`
+      case 'P': return `<pause-card id="card" ${type}>${this.getContent(`pause.${side}`)}</pause-card>`
+      case 'B': return `<banish-card id="card" ${type}>${this.getContent('banish')}</banish-card>`
       case 'I':
       case 'S': return`<argument-card id="card" ${type} ${spellcheck} card="${this.card}">${content.innerHTML}</argument-card>`
     }

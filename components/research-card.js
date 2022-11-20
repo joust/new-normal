@@ -155,6 +155,18 @@ researchCardTemplate.innerHTML = `
       content: close-quote;
     }
 
+    #description {
+      position: absolute;
+      bottom: 0; 
+      font-family: 'Open Sans', Helvetica;
+      padding: calc(5 * var(--cavg));
+      padding-bottom: calc(16 * var(--cavg));
+      font-size: calc(3 * var(--cavg));
+      font-style: italic;
+      color: white;
+      opacity: 0.4;
+    }
+
     #side-phrase {
       position: absolute;
       font-family: 'HVD Crocodile', Helvetica;
@@ -180,7 +192,7 @@ researchCardTemplate.innerHTML = `
     <div id="icon"></div>
     <div id="watermark"></div>
     <div id="new">New</div>
-    <div id="phrase"><span><span class="phrase"></span></span></div>
+    <div id="phrase"><span><span class="phrase"></span></span><span id="description"></span></div>
     <div id="side-phrase"><span class="phrase"></span></div>
     <div id="normal">Normal</div>
   </div>
@@ -193,37 +205,19 @@ class ResearchCard extends HTMLElement {
   }
 
   static observedAttributes = ['idiot', 'mirrored']
-  static phrase = {
-    sheep: {
-      da: 'Lad mig google det et øjeblik!',
-      de: 'Lass mich das kurz googlen!',
-      en: 'Let me google this for us!',
-      nl: 'Laat me dat even googlen!',
-      es: '¡Déjeme buscar en Google por un momento!',
-      fr: 'Laisse-moi faire une recherche rapide sur Google !',
-      it: 'Lasciatemi cercare su Google!',
-      pl: 'Pozwól, że przez chwilę pogoogluję!',
-      pt: 'Deixe-me ir ao Google por um momento!',
-      'pt-br': 'Deixe-me ir ao Google por um momento!'
-    },
-    idiot: {
-      da: 'Lad mig lige tale med Telegram!',
-      de: 'Lass mich kurz auf Telegram!',
-      en: 'Let me just find this on Telegram!',
-      nl: 'Laat me even achter op Telegram!',
-      es: '¡Dejadme un momento en Telegram!',
-      fr: 'Laisse-moi un peu sur Telegram !',
-      it: 'Lasciatemi un attimo su Telegram!',
-      pl: 'Daj mi chwilkę na Telegramie!',
-      pt: 'Dê-me um momento no Telegrama!',
-      'pr-br': 'Dê-me um momento no Telegrama!'
-    }
-  }
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
   get idiot() {
     return this.hasAttribute('idiot')
+  }
+
+  get phrase() {
+    return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
+  }
+
+  get description() {
+    return this.querySelector('p') ? this.querySelector('p').innerHTML : ''
   }
 
   get mirrored() {
@@ -255,10 +249,8 @@ class ResearchCard extends HTMLElement {
     if (this.isConnected && root) {
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
-      const type = this.idiot ? 'idiot' : 'sheep'
-      const key = Object.keys(ResearchCard.phrase[type]).find(p => this.lang.startsWith(p)) || 'de'
-      const phrase = ResearchCard.phrase[type][key]
-      Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = phrase)
+      Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = this.phrase)
+      this.element('description').innerHTML = this.description
     }
   }
 }

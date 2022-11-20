@@ -118,16 +118,12 @@ strawmanCardTemplate.innerHTML = `
       color: white;
     }
 
-    #fallacy::after {
-      content: 'Strawman';
-    }
-
     #description {
       position: absolute;
       bottom: 0; 
       font-family: 'Open Sans', Helvetica;
-      padding: calc(5 * var(--cavg));;
-      padding-bottom: calc(15 * var(--cavg));;
+      padding: calc(5 * var(--cavg));
+      padding-bottom: calc(16 * var(--cavg));
       font-size: calc(3 * var(--cavg));
       font-style: italic;
       color: var(--blue);
@@ -203,36 +199,22 @@ class StrawmanCard extends HTMLElement {
 
   static observedAttributes = ['idiot', 'mirrored']
 
-  static phrase = {
-    da: 'Lad mig lægge det her i din mund!',
-    de: 'Lass mich Dir das in den Mund legen!',	
-    en: 'Let me put this in your mouth!',
-    nl: 'Laat me dit in je mond steken!',
-    es: '¡Déjame poner esto en tu boca!',
-    fr: 'Laisse-moi te mettre ça en bouche !',
-    it: 'Lasciate che ve lo metta in bocca!',
-    pl: 'Pozwól, że włożę ci to do ust!',
-    pt: 'Deixa-me pôr-te isto na boca!',
-    'pt-br': 'Deixe-me pôr isto em sua boca!'
-  }
-
-  static description = {
-    da: 'At pådutte den anden side et argument, der passer til mine kort',
-    de: 'Der Gegenseite ein zu meinen Karten passendes Argument unterschieben',
-    en: 'Foist an argument on the other side that fits my cards',
-    nl: 'Om de andere kant een argument op te dringen dat bij mijn kaarten past',
-    es: 'Para endilgar un argumento a la otra parte que se ajuste a mis cartas',
-    fr: 'Donner à l\'autre partie un argument qui correspond à mes cartes',
-    it: 'Per imporre all\'altra parte un\'argomentazione che si adatti alle mie carte',
-    pl: 'Aby przedstawić drugiej stronie argument, który pasuje do moich kart',
-    pt: 'Impor uma discussão do outro lado que se encaixa nas minhas cartas',
-    'pt-br': 'Impor uma discussão do outro lado que se encaixa nas minhas cartas'
-  }
-
   element(id) { return this.shadowRoot.getElementById(id) }
 
   get idiot() {
     return this.hasAttribute('idiot')
+  }
+
+  get fallacy() {
+    return this.querySelector('i') ? this.querySelector('i').innerHTML : ''
+  }
+
+  get phrase() {
+    return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
+  }
+
+  get description() {
+    return this.querySelector('p') ? this.querySelector('p').innerHTML : ''
   }
 
   get mirrored() {
@@ -265,11 +247,8 @@ class StrawmanCard extends HTMLElement {
     if (this.isConnected && root) {
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
-      const key = Object.keys(StrawmanCard.phrase).find(p => this.lang.startsWith(p)) || 'de'
-      const phrase = StrawmanCard.phrase[key]
-      Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = phrase)
-      const dkey = Object.keys(StrawmanCard.description).find(p => this.lang.startsWith(p)) || 'de'
-      this.element('description').innerHTML = StrawmanCard.description[dkey]
+      Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = this.phrase)
+      this.element('description').innerHTML = this.description
     }
   }
 }

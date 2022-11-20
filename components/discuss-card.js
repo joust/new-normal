@@ -150,6 +150,18 @@ discussCardTemplate.innerHTML = `
       content: close-quote;
     }
 
+    #description {
+      position: absolute;
+      bottom: 0; 
+      font-family: 'Open Sans', Helvetica;
+      padding: calc(5 * var(--cavg));
+      padding-bottom: calc(16 * var(--cavg));
+      font-size: calc(3 * var(--cavg));
+      font-style: italic;
+      color: white;
+      opacity: 0.4;
+    }
+
     #side-phrase {
       position: absolute;
       font-family: 'HVD Crocodile', Helvetica;
@@ -179,7 +191,7 @@ discussCardTemplate.innerHTML = `
     <div id="watermark"></div>
     <div id="new">New</div>
     <div id="topic-icon"></div>
-    <div id="phrase"><span><span class="phrase"></span></span></div>
+    <div id="phrase"><span><span class="phrase"></span></span><span id="description"></span></div>
     <div id="side-phrase"><span class="phrase"></span></div>
     <div id="normal">Normal</div>
   </div>
@@ -191,29 +203,20 @@ class DiscussCard extends HTMLElement {
     this.attachShadow({ mode: 'open' })
   }
 
-  static observedAttributes = ['idiot', 'topicId', 'topic', 'mirrored']
-
-  static phrase = topic => ({
-    da: `Lad os diskutere emnet <b>${topic}</b> til det sidste!`,
-    de: `Lasst uns das Thema <b>${topic}</b> mal zu Ende diskutieren!`,
-    en: `Let's discuss the topic <b>${topic}</b> to the end!`,
-    nl: `Laten we het onderwerp <b>${topic}</b> eens tot het einde bespreken`,
-    es: `¡Vamos a discutir el tema <b>${topic}</b> hasta el final!`,
-    fr: `Finissons-en avec le sujet <b>${topic}</b> !`,
-    it: `Discutiamo l'argomento <b>${topic}</b> fino in fondo!`,
-    pl: `Przedyskutujmy temat <b>${topic}</b> do końca!`,
-    pt: `Vamos discutir o tema <b>${topic}</b> até ao fim!`,
-    'pt-br': `Vamos discutir o tema <b>${topic}</b> até o final!`
-  })
+  static observedAttributes = ['idiot', 'topicId', 'mirrored']
 
   element(id) { return this.shadowRoot.getElementById(id) }
 
-  get topic() {
-    return this.getAttribute('topic')
-  }
-
   get topicId() {
     return this.getAttribute('topicId')
+  }
+
+  get phrase() {
+    return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
+  }
+
+  get description() {
+    return this.querySelector('p') ? this.querySelector('p').innerHTML : ''
   }
 
   get idiot() {
@@ -334,10 +337,8 @@ class DiscussCard extends HTMLElement {
       this.element('topic-icon').innerHTML = this.flagMapped(this.topicId ? this.topicId.substring(1) : '')
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
-      const type = this.idiot ? 'idiot' : 'sheep'
-      const key = Object.keys(DiscussCard.phrase(this.topic)).find(p => this.lang.startsWith(p)) || 'de'
-      const phrase = DiscussCard.phrase(this.topic)[key]
-      Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = phrase)
+      Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = this.phrase)
+      this.element('description').innerHTML = this.description
     }
   }
 }

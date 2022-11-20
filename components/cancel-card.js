@@ -111,10 +111,6 @@ cancelCardTemplate.innerHTML = `
       color: white;
     }
 
-    #fallacy::after {
-      content: 'Cancel Attack';
-    }
-
     #cancel-name {
       font-family: 'HVD Crocodile', Helvetica;
       font-size: calc(7 * var(--cavg));
@@ -133,6 +129,18 @@ cancelCardTemplate.innerHTML = `
 
     .quoted::after {
       content: close-quote;
+    }
+
+    #description {
+      position: absolute;
+      bottom: 0; 
+      font-family: 'Open Sans', Helvetica;
+      padding: calc(5 * var(--cavg));
+      padding-bottom: calc(16 * var(--cavg));
+      font-size: calc(3 * var(--cavg));
+      font-style: italic;
+      color: white;
+      opacity: 0.4;
     }
 
     #card {
@@ -190,7 +198,7 @@ cancelCardTemplate.innerHTML = `
     <div id="icon"></div>
     <div id="watermark"></div>
     <div id="new">New</div>
-    <div id="cancel"><span id="fallacy"></span><span class="quoted" id="cancel-name"></span></div>
+    <div id="cancel"><span id="fallacy"></span><span class="quoted" id="cancel-name"></span><span id="description"></span></div>
     <div id="side-cancel"></div>
     <div id="normal">Normal</div>
     <div id="card"></div>
@@ -211,8 +219,16 @@ class CancelCard extends HTMLElement {
     return this.hasAttribute('idiot')
   }
 
+  get fallacy() {
+    return this.querySelector('i') ? this.querySelector('i').innerHTML : ''
+  }
+
   get cancel() {
     return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
+  }
+
+  get description() {
+    return this.querySelector('p') ? this.querySelector('p').innerHTML : ''
   }
 
   get mirrored() {
@@ -250,6 +266,8 @@ class CancelCard extends HTMLElement {
       this.element('card').innerHTML = this.card
       this.element('side-cancel').innerHTML = this.cancel
       this.element('cancel-name').innerHTML = this.cancel
+      this.element('fallacy').innerHTML = this.fallacy
+      this.element('description').innerHTML = this.description
     }
   }
 }

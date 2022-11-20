@@ -127,8 +127,8 @@ banishCardTemplate.innerHTML = `
       position: absolute;
       bottom: 0; 
       font-family: 'Open Sans', Helvetica;
-      padding: calc(5 * var(--cavg));;
-      padding-bottom: calc(15 * var(--cavg));;
+      padding: calc(5 * var(--cavg));
+      padding-bottom: calc(16 * var(--cavg));
       font-size: calc(3 * var(--cavg));
       font-style: italic;
       color: var(--blue);
@@ -233,6 +233,14 @@ class BanishCard extends HTMLElement {
     return this.hasAttribute('idiot')
   }
 
+  get phrase() {
+    return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
+  }
+
+  get description() {
+    return this.querySelector('p') ? this.querySelector('p').innerHTML : ''
+  }
+
   get mirrored() {
     return this.hasAttribute('mirrored')
   }
@@ -263,11 +271,9 @@ class BanishCard extends HTMLElement {
     if (this.isConnected && root) {
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
-      const key = Object.keys(BanishCard.phrase).find(p => this.lang.startsWith(p)) || 'de'
-      const phrase = BanishCard.phrase[key]
-      Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = phrase)
+      Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = this.phrase)
       const dkey = Object.keys(BanishCard.description).find(p => this.lang.startsWith(p)) || 'de'
-      this.element('description').innerHTML = BanishCard.description[dkey]
+      this.element('description').innerHTML = this.description
     }
   }
 }

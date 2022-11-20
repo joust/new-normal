@@ -223,7 +223,6 @@ export function extractContent() {
   const [topics, map] = extractTopics(content)
   const idiot = extractContentForSide(content, topics, map, true)
   const sheep = extractContentForSide(content, topics, map, false)
-  console.log({idiot, sheep})
   return {idiot, sheep}
 }
 

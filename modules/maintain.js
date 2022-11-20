@@ -452,7 +452,6 @@ function extractMessages(messages) {
 function messageListMutated(mutation) {
   const target = mutation.target.parentElement // target is always a #text
   const clazz = target.closest('tr').children[1].innerText
-  console.log(clazz)
   const node = document.querySelector(`#content .messages a[class="${clazz}"]`)
   if (node) {
     node.innerHTML = mutation.target.data
@@ -492,7 +491,6 @@ function extractSources(sources) {
 function sourceListMutated(mutation) {
   const target = mutation.target.parentElement // target is always a #text
   const clazz = target.closest('tr').children[1].innerText
-  console.log(clazz)
   const node = document.querySelector(`#content .messages a[class="${clazz}"]`)
   if (node) {
     node.innerHTML = mutation.target.data

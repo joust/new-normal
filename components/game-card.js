@@ -253,7 +253,6 @@ class GameCard extends HTMLElement {
 
   getMessage(key, fallback = '???') {
     const node = document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} .messages a.${key}`)
-    console.log(`${GameCard.contentRootSelector} > #${this.lang} .messages a.${key}`, node)
     return node ? node.innerHTML : fallback
   }
 

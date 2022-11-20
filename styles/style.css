@@ -403,7 +403,7 @@ button.hidden, q.hidden:after, a.hidden, span.hidden {
 .detail.single a[id], 
 .detail.single a[id] p, 
 .detail.single a[id] + ul, 
-.detail.single a[id] span,
+.detail.single a[id] > span,
 .detail.single .search,
 .detail.single input[type="checkbox"],
 .detail a[id].not-matching, 
@@ -451,7 +451,7 @@ button.hidden, q.hidden:after, a.hidden, span.hidden {
   margin-right: 0.5em;
 }
 
-.detail a[id] span, .detail li span, .detail p span {
+.detail a[id] > span, .detail li span, .detail .navigation span {
   color: #fff;
   padding: 0.5vmax;
   user-select: none;
@@ -460,19 +460,19 @@ button.hidden, q.hidden:after, a.hidden, span.hidden {
   display: inline-block;
 }
 
-.idiot .detail a[id] span, .idiot .detail li span, .idiot .navigation span, .sheep .navigation span.counter {
+.idiot .detail a[id] > span, .idiot .detail li span, .idiot .navigation span, .sheep .navigation span.counter {
   background: #f72d5d;
 }
 
-.sheep .detail a[id] span, .sheep .detail li   span, .sheep .navigation span, .idiot .navigation span.counter {
+.sheep .detail a[id] > span, .sheep .detail li   span, .sheep .navigation span, .idiot .navigation span.counter {
   background: #2d60f6;
 }
 
-.detail a[id].excluded span {
+.detail a[id].excluded > span {
   background: #aaa;
 }
 
-.detail a[id] span {
+.detail a[id] > span {
   float: right;
 }
 

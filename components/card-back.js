@@ -48,7 +48,7 @@ class CardBack extends HTMLElement {
   }
 
   static observedAttributes = ['idiot']
-  static virus = 'images/virus.png'
+  static virus = 'styles/images/virus.png'
 
   element(id) { return this.shadowRoot.getElementById(id) }
 

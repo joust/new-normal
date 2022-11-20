@@ -19,8 +19,7 @@ dialog {
   flex: 1;
   position: relative;
   width: 100%;
-  transition: all 0.3s;
-  transition: margin ease 0.5s;
+  transition: all ease 0.5s;
 }
 
 #uno.hidden #game {

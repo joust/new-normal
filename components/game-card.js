@@ -262,7 +262,7 @@ class GameCard extends HTMLElement {
                                                   
   getCardElement() {
     const data = document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} a[id="${this.idOnly}"]`)
-    const title = data ? data.querySelector('h2').innerHTML : ''
+    const title = data ? data.querySelector('h2') ? data.querySelector('h2').innerHTML : data.title : '???'
     const type = this.idiot ? 'idiot' : ''
     const mirrored = this.mirrored ? 'mirrored' : ''
     const wildcard = this.isWildcard ? 'wildcard' : ''

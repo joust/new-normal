@@ -114,7 +114,6 @@ class FlipCard extends HTMLElement {
   }
 
   static observedAttributes = ['mirrored']
-  static contentRootSelector = '#content'
 
   element(id) { return this.shadowRoot.getElementById(id) }
 

@@ -76,3 +76,9 @@
 #result .result {
   margin-top: 0;
 }
+
+@media (prefers-color-scheme: light) {
+  #test, #result {
+    background-color: #222;
+  }
+}

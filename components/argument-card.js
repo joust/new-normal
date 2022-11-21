@@ -23,6 +23,13 @@ argumentCardTemplate.innerHTML = `
       user-select: none;
     }
 
+    @media (prefers-color-scheme: light) {
+      #argument-card {
+        background: linear-gradient(30deg, #5d5d5d 0%, #555 100%);
+        color: white;
+      }
+    }
+
     #topic-icon {
       position: absolute;
       width: calc(1.3 * var(--sidebar-width));

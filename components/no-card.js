@@ -13,7 +13,13 @@ noCardTemplate.innerHTML = `
       border-radius: calc(2 * var(--cavg));
       background: white;
     }
-  </style>
+
+    @media (prefers-color-scheme: light) {
+      #no-card {
+        background: #555;
+      }
+    }
+</style>
   <div id="no-card"></div>
 `
 

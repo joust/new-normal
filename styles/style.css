@@ -94,18 +94,15 @@ q::after {
   visibility: collapse;
 }
 
-#bingo, #menu {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #fff;
-}
-
 .hidden {
   visibility: collapse;
 }
 
 #menu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
   text-align: left;
   overflow-y: auto;
   color: #333;
@@ -199,11 +196,6 @@ q::after {
   cursor: pointer;
   font-size: 13vmin;
   max-width: 18vmin;
-}
-
-.detail .location {
-  font-size: 7vmin;
-  max-width: 10vmin;
 }
 
 #menu .intro-mod {
@@ -304,20 +296,6 @@ button.hidden, q.hidden:after, a.hidden, span.hidden {
 .i {
   background-image: url(images/i.svg);
 }
-      
-.card .bingo, .detail, .card {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-
-.detail {
-  background: #eee;
-  overflow-y: auto;
-  text-align: left;
-  cursor: pointer;
-  user-select: text;
-}
 
 #menu .content, .detail .content {
   padding: 4vmin;
@@ -351,250 +329,6 @@ button.hidden, q.hidden:after, a.hidden, span.hidden {
   float: none;
 }
 
-#bingo {
-  font-size: 1.7vmax;
-}
-
-#bingo.one {
-  font-size: 3vmin;
-}
-
-.title {
-  height: 4vmax;
-  font-size: 2vmax;
-  font-family: 'HVD Crocodile';
-  color: white;
-  width: calc(100% - 3vmax);
-}
-
-.title label.hidden {
-  display: none;
-}
-
-.title select {
-  font-size: 3vmax;
-}
-
-#bingo table {
-  height: calc(100% - 4vmax);
-}
-
-.detail.single {
-  display: flex;
-  align-items: start;
-  user-select: none;
-  overflow-y: hidden;
-}
-
-.search {
-  width: 100%;
-  font-size: 2vmax;
-  padding: 0.5vmax;
-}
-
-.detail a[id] input {
-  float: left;
-}
-
-.detail a[id].excluded, .detail a[id].excluded p {
-  color: #aaa;
-}
-
-.detail.single a[id], 
-.detail.single a[id] p, 
-.detail.single a[id] + ul, 
-.detail.single a[id] > span,
-.detail.single .search,
-.detail.single input[type="checkbox"],
-.detail a[id].not-matching, 
-.detail a[id].not-matching p {
-  display: none;
-}
-
-.detail.single a.single, .detail.single a.single p {
-  display: block;
-  transition: height 0.5s ease;
-}
-
-.detail.single h1, .detail.single h1 + p {
-  display: none;
-}
-
-.detail .content h2 {
-  font-family: 'HVD Crocodile';
-  font-weight: 600;
-  font-stretch: condensed;
-}
-
-.detail .content h2::before {
-  content: "\201c"
-}
-
-.detail .content h2::after {
-  content: "\201d"
-}
-
-.detail .content > h2 {
-  display: none;
-}
-
-.detail.single .content > h2 {
-  display: block;
-}
-
-.detail ul {
-  list-style-type: none;
-  padding-left: 0;
-}
-
-.detail ul li span {
-  margin-right: 0.5em;
-}
-
-.detail a[id] > span, .detail li span, .detail .navigation span {
-  color: #fff;
-  padding: 0.5vmax;
-  user-select: none;
-  margin-left: 0.5vmax;
-  margin-bottom: 0.5vmax;
-  display: inline-block;
-}
-
-.idiot .detail a[id] > span, .idiot .detail li span, .idiot .navigation span, .sheep .navigation span.counter {
-  background: #f72d5d;
-}
-
-.sheep .detail a[id] > span, .sheep .detail li   span, .sheep .navigation span, .idiot .navigation span.counter {
-  background: #2d60f6;
-}
-
-.detail a[id].excluded > span {
-  background: #aaa;
-}
-
-.detail a[id] > span {
-  float: right;
-}
-
-.detail li span {
-  float: left;
-  clear: both;
-  min-width: 2.5em;
-  text-align: center;
-}
-
-.detail li h3 {
-  margin: 0.6em;
-}
-
-.detail li h3 a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.detail .navigation {
-  display: none;
-}
-
-.detail.single .navigation {
-  display: block;
-}
-
-.navigation span {
-  opacity: 0.5;
-}
-
-.navigation span.selected {
-  opacity: 1;
-  transform: scale(1.1);
-}
-
-.detail .logo, #result .logo {
-  font-size: 6vmax;
-  letter-spacing: -0.3vmax;
-  text-align: center;
-}
-
-#bingo.one .detail .logo {
-  font-size: 12vmin;
-  letter-spacing: -0.6vmax;
-}
-
-.detail .logo .virus, #result .logo .virus {
-  width: 6vmax;
-  height: 6vmax;
-  margin-left: -1.3vmax;
-  margin-right: -1.3vmax;
-}
-
-#bingo.one .detail .logo .virus {
-  width: 12vmin;
-  height: 12vmin;
-  margin-left: -2.6vmin;
-  margin-right: -2.6vmin;
-}
-
-.detail button {
-  font-size: 3vmax;
-}
-
-#bingo.one .detail button {
-  font-size: 6vmin;
-}
-
-.card-wrapper {
-  position: relative;
-  width: 100vmin;
-}
-
-.card-wrapper.hidden {
-  display: none;
-}
-
-.card-wrapper:after {
-  content: '';
-  display: block;
-  padding-bottom: 100%;
-}
-
-@media (orientation: landscape) {
-  #bingo {
-    flex-direction: row;
-  }
-
-  #bingo.hidden .card-wrapper:nth-child(1) {
-    margin-top: -150%;
-  }
-
-  #bingo.hidden .card-wrapper:nth-child(2) {
-    margin-bottom: -150%;
-  }
-}
-
-@media (orientation: portrait) {
-  #bingo {
-    flex-direction: column;
-  }
-
-  .detail {
-    font-size: 1.7vmax;
-  }
-  
-  #bingo.hidden .card-wrapper:nth-child(1) {
-    margin-left: -150%;
-  }
-
-  #bingo.hidden .card-wrapper:nth-child(2) {
-    margin-right: -150%;
-  }
-}
-
-@media (orientation: portrait) and (min-aspect-ratio: 1/2) {
-  #bingo:not(.one) .card-wrapper {
-    width: 50vh;
-  }
-}
-
 #stop, .reload, .permalink, .correct {
   position: absolute;
   right: 0.2vmax;
@@ -610,91 +344,10 @@ button.hidden, q.hidden:after, a.hidden, span.hidden {
   z-index: 1;
 }
 
-.correct {
-  left: 0.2vmax;
-  right: inherit;
-}
-
-.correct.active {
-  background: yellow;
-}
-
 #stop {
   left: 0.2vmax;
   right: auto;
   z-index: 2;
-}
-
-.reload:hover, .permalink:hover, #stop:hover, .correct:hover {
-  background: rgba(255, 255, 255, 0.6);
-  color: black;
-}
-
-.card {
-  background: #999;
-}
-
-.red {
-  color: #f72d5d;
-}
-
-.idiot .card {
-  background: #f72d5d;
-}
-
-.blue {
-  color: #2d60f6;
-}
-
-.sheep .card {
-  background: #2d60f6;
-}
-
-#bingo table {
-  border: 2vmax solid transparent;
-  border-top: none;
-  border-collapse: separate;
-  user-select: none;
-  table-layout: fixed;
-  width: 100%;
-}
-
-#bingo table tr {
-  height: 20%;
-}
-
-#bingo table td {
-  width: 20%;
-  background: rgba(255, 255, 255, 0.6);
-  text-align: center;
-  cursor: pointer;
-  padding: 0.5vmax;
-}
-
-#bingo table td.set {
-  background: transparent;
-  color: white;
-}
-
-#bingo .done table td.idiot {
-  background: #f72d5d;
-  opacity: 0.7;
-}
-
-#bingo .done table td.sheep {
-  background: #2d60f6;
-  opacity: 0.7;
-}
-
-#bingo table td.center {
-  background: transparent;
-  color: white;
-  font-size: 4vmax;
-}
-
-#bingo table td.complete {
-  background: yellow;
-  color: black;
 }
 
 .title select {
@@ -794,4 +447,26 @@ button:hover {
 #menu h2, h3 {
   padding-top: 1em;
   clear: both;
+}
+
+@media (prefers-color-scheme: light) {
+  #menu {
+    background-color: #222;
+    color: #ddd;
+  }
+  
+  #menu button, #menu input {
+    background-color: #444;
+    color: #aaa;
+  }
+  
+  .game-logo {
+    background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, #222 10%);
+    color: #fff;
+  }
+  
+  q {
+    background: #666;
+    color: white;
+  }
 }

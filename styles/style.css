@@ -195,7 +195,8 @@ q::after {
   color: #ccc;
   cursor: pointer;
   font-size: 13vmin;
-  max-width: 18vmin;
+  max-width: 17vmin;
+  -webkit-appearance: none;
 }
 
 #menu .intro-mod {
@@ -361,6 +362,7 @@ button.hidden, q.hidden:after, a.hidden, span.hidden {
   text-align-last: center;
   appearance: none;
   cursor: pointer;
+  -webkit-appearance: none;
 }
 
 option {
@@ -449,7 +451,7 @@ button:hover {
   clear: both;
 }
 
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
   #menu {
     background-color: #222;
     color: #ddd;

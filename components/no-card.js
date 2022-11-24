@@ -14,7 +14,7 @@ noCardTemplate.innerHTML = `
       background: white;
     }
 
-    @media (prefers-color-scheme: light) {
+    @media (prefers-color-scheme: dark) {
       #no-card {
         background: #555;
       }

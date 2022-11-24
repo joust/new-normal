@@ -102,7 +102,7 @@ opponent-hand.current {
   100% { transform: scale(1.05); }
 }
 
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
   #uno {
     background-color: #222;
   }

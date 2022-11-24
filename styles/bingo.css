@@ -38,6 +38,7 @@
 
 .detail {
   background: #eee;
+  overflow-x: hidden;
   overflow-y: auto;
   text-align: left;
   cursor: pointer;

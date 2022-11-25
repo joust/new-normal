@@ -3,8 +3,8 @@
     "bundle": "browserify -r boardgame.io/client -r boardgame.io/multiplayer -r boardgame.io/ai -r boardgame.io/debug -r @boardgame.io/p2p > libs/boardgame.js"
   },
   "dependencies": {
-    "@boardgame.io/p2p": "^0.4.1",
-    "boardgame.io": "^0.49.12",
+    "@boardgame.io/p2p": "^0.4.3",
+    "boardgame.io": "^0.50.2",
     "browserify": "^17.0.0"
   }
 }

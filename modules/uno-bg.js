@@ -247,7 +247,6 @@ export function Uno(locale, content, host) {
     const banishes = new Array(Math.round(PERCENTAGE_BANISHES*nargs/100)).fill(`B${type}`)
     const labels = elementsFrom(Math.round(PERCENTAGE_LABELS*nargs/100), cards.labels)
     const cancels = elementsFrom(Math.round(PERCENTAGE_CANCELS*nargs/100), cards.cancels)
-    console.log(cancels)
     const fallacies = elementsFrom(Math.round(PERCENTAGE_FALLACIES*nargs/100), cards.fallacies)
     const appealTos = elementsFrom(Math.round(PERCENTAGE_APPEAL_TOS*nargs/100), cards.appealTos)
     const pauses = players > 2 ? new Array(Math.round(PERCENTAGE_PAUSES*nargs/100)).fill(`P${type}`) : []
@@ -294,7 +293,7 @@ export function Uno(locale, content, host) {
   return {
     name: 'newnormaluno',
     content,
-    setup: (ctx) => {
+    setup: ({ctx}) => {
       const decks = generateDecks(ctx.numPlayers)
       const hands = new Array(ctx.numPlayers).fill([]).map((p,i) => drawHand(decks, isIdiot(i)))
       const names = new Array(ctx.numPlayers).fill(undefined)
@@ -302,7 +301,7 @@ export function Uno(locale, content, host) {
       return { locale, host, decks, pile, hands, names }
     },
     moves: {
-      playCard: (G, ctx, index, alt) => { // alt = alternative card to put on the pile
+      playCard: ({G, ctx}, index, alt) => { // alt = alternative card to put on the pile
         const idiot = isIdiot(ctx.currentPlayer)
         const deck = idiot ? G.decks.idiot : G.decks.sheep
         const hand = G.hands[ctx.currentPlayer]
@@ -363,14 +362,14 @@ export function Uno(locale, content, host) {
             G.pile.push(alt)
         }
       },
-      drawCard: (G, ctx) => {
+      drawCard: ({G, ctx}) => {
         const hand = G.hands[ctx.currentPlayer]
         const type = isIdiot(ctx.currentPlayer) ? 'idiot' : 'sheep'
         const deck = G.decks[type]
         if (!deck.length) return INVALID_MOVE
         draw(hand, deck)
       },
-      setName: (G, ctx, id, name) => {
+      setName: ({G, ctx}, id, name) => {
         if (ctx.currentPlayer===G.host)
           G.names = G.names.map((n, i) => i==id ? name : n);
         else
@@ -384,17 +383,17 @@ export function Uno(locale, content, host) {
     },
     turn: {
       order: {
-        first: (G, ctx) => host==='0' ? 0 : 1,
-        next: (G, ctx) => (ctx.playOrderPos + 1) % ctx.numPlayers
+        first: ({G, ctx}) => host==='0' ? 0 : 1,
+        next: ({G, ctx}) => (ctx.playOrderPos + 1) % ctx.numPlayers
       },
-      endIf: (G, ctx) => {
+      endIf: ({G, ctx}) => {
         const idiot = isIdiot(ctx.currentPlayer)
         const top = G.pile.length ? G.pile[G.pile.length-1] : undefined
         // only when a valid argument / appeal to card was played, the turn is over
         return top && isOfType(top, idiot) && (isAppealTo(top) || isArgument(top) || isDiscuss(top))
       }
     },
-    endIf: (G, ctx) => {
+    endIf: ({G, ctx}) => {
       const idiot = isIdiot(ctx.currentPlayer)
       const hand = G.hands[ctx.currentPlayer]
       const top = G.pile.length ? G.pile[G.pile.length-1] : undefined

@@ -38,6 +38,7 @@ input[type="checkbox"] {
 }
 
 q {
+  position: relative;
   display: block;
   background: #fff;
   border-radius: 0.5vmax;
@@ -51,20 +52,6 @@ q {
 q h2 {
   margin-left: 3vmax;
   color: #999;
-}
-
-.single q h2 {
-  margin-left: 9vmax;
-}
-
-.single q {
-  position: absolute;
-  top: 2vmax;
-  left: 2vmax;
-  right: 2vmax;
-  bottom: 2vmax;
-  margin: 0;
-  padding: 2vmax;
 }
 
 #menu q {
@@ -83,9 +70,10 @@ q.hidden {
 
 q::before {
   position: absolute;
-  font-size: 10vmax;
+  font-size: 12vmax;
   color: #ccc;
-  left: 6vmax;
+  left: 2vmax;
+  top: -6vmax;
   font-family: 'HVD Crocodile';
   font-weight: 600;
 }
@@ -196,7 +184,12 @@ q::after {
   cursor: pointer;
   font-size: 13vmin;
   max-width: 17vmin;
+  appearance: none;
   -webkit-appearance: none;
+}
+
+.location option {
+  font-family: 'Open Sans', Helvetica;  
 }
 
 #menu .intro-mod {
@@ -242,6 +235,10 @@ button, button.menu, span.menu, select.menu {
   font-family: 'HVD Crocodile';
   font-weight: 300;
   color: #777;
+}
+
+button {
+  background-color: #efefef;
 }
 
 #menu h1, #menu h2, #menu h3 {
@@ -349,24 +346,6 @@ button.hidden, q.hidden:after, a.hidden, span.hidden {
   left: 0.2vmax;
   right: auto;
   z-index: 2;
-}
-
-.title select {
-  font-family: 'HVD Crocodile';
-  font-weight: 600;
-  border: none;
-  background: transparent;
-  color: #fff;
-  outline: none;
-  text-align: center;
-  text-align-last: center;
-  appearance: none;
-  cursor: pointer;
-  -webkit-appearance: none;
-}
-
-option {
-  font-family: 'Open Sans', Helvetica;  
 }
 
 button {

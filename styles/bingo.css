@@ -23,7 +23,22 @@
 }
 
 .title select {
+  font-family: 'HVD Crocodile';
   font-size: 3vmax;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: #fff;
+  outline: none;
+  text-align: center;
+  text-align-last: center;
+  appearance: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+}
+
+.title select option {
+  font-family: 'Open Sans', Helvetica;  
 }
 
 #bingo table {
@@ -50,6 +65,12 @@
   max-width: 10vmin;
 }
 
+.detail .search {
+  width: 100%;
+  font-size: 2vmax;
+  padding: 0.5vmax;
+}
+
 .detail.single {
   display: flex;
   align-items: start;
@@ -57,10 +78,19 @@
   overflow-y: hidden;
 }
 
-.search {
-  width: 100%;
-  font-size: 2vmax;
-  padding: 0.5vmax;
+
+.detail.single q h2 {
+  margin-left: 9vmax;
+}
+
+.detail.single q {
+  position: absolute;
+  top: 2vmax;
+  left: 2vmax;
+  right: 2vmax;
+  bottom: 2vmax;
+  margin: 0;
+  padding: 2vmax;
 }
 
 .detail a[id] input {

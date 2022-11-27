@@ -6,47 +6,101 @@ html, body {
   margin: 0;
 }
 
-#navigation {
-  font-family: 'HVD Crocodile', Helvetica;
-  position: absolute;
-  left: 0;
-  height: 100%;
-  width: 50%;
-  background: lightgrey;
-  overflow-y: auto;
+body {
   display: flex;
   flex-direction: column;
 }
 
-#details {
-  position: absolute;
-  right: 0;
+#navigation {
+  font-family: 'HVD Crocodile', Helvetica;
+  height: 2em;
+  width: 100%;
+  background: lightgrey;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: row;
+  user-select: none;
+}
+
+#navigation #edit-bar {
+  flex: auto;
+  text-align: end;
+}
+
+#navigation #edit-bar button {
+  margin: 1%;
+}
+
+.tab {
+  max-height: calc(100% - 2em);
+  flex: auto;
+  flex-direction: row;
+  font-family: 'Open Sans', Helvetica;
+  background: white;
+  display: flex;
+}
+
+.tab .master, .tab .details {
   height: 100%;
-  width: 50%;
   display: flex;
   flex-direction: column;
+}
+
+.tab .master {
+  min-width: 50%; 
+}
+
+#arguments .details .topics {
+  min-width: 15%;
+  max-height: 100%;
+  overflow: auto;
+}
+
+
+#arguments .details .topics ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.tab .master .table {
+  flex: auto;
+  overflow: auto;
+}
+
+.tab .details {
   padding: 0.5em;
   box-sizing: border-box;
 }
 
-#details #edit-bar {
+
+.tab .details .edit-bar {
   width: 100%;
   margin-bottom: 0.5em;
 }
 
-#details #edit-bar * {
+#details .edit-bar * {
   margin-left: 0.5em;
 }
 
-#details centered-cards, #details #preview {
+.tab .details centered-cards, .tab .details .preview {
   width: 100%;
-  height: 100%;
+  flex: auto;
   border: none;
   padding: 0;
   margin: 0;
 }
 
-#details centered-cards > * {
+#arguments .details centered-cards {
+  max-height: 60%;
+}
+
+.tab .sources {
+  max-height: 30%;
+  overflow: auto;
+}
+
+.tab .details centered-cards > * {
   box-shadow: 1vmax 1vmax 1vmax -1vmax rgba(0, 0, 0, 0.3);
 }
 
@@ -54,20 +108,13 @@ html, body {
   background-color: rgb(255, 248, 220, 0.5);
 }
 
-
-.tab {
-  font-family: 'Open Sans', Helvetica;
-  background: white;
-}
-
-.search {
+.toolbar .search {
   margin: 0.3em;
   padding: 0.3em;
 }
 
 .list {
   width: 100%;
-  height: 100%;
 }
 
 .list tr {

@@ -12,7 +12,15 @@ export const attitude = { hasty: false, curious: true, open: false, fair: false,
 export let language, territory
 
 export function setLocale(locale) {
-  [language, territory] = locale.split('-').map(s => s.toLowerCase())
+  if (locale) {
+    [language, territory] = locale.split('-').map(s => s.toLowerCase())
+  } else {
+    [language, territory] = browserLocale()
+    if (!supported.includes(language)) [language, territory] = ['en', 'us']
+    locale = `${language}-${territory}`
+  }
+  document.querySelector('.location').value = locale
+  document.body.lang = locales.includes(locale) ? locale : language
 }
 
 /**
@@ -22,16 +30,7 @@ export function setLocale(locale) {
  */
 window.load = function(locale) {
   loadAttitude()
-  if (locale) {
-    [language, territory] = locale.split('-')
-  } else {
-    [language, territory] = browserLocale()
-    if (!supported.includes(language)) [language, territory] = ['en', 'us']
-    locale = `${language}-${territory}`
-  }
-  document.querySelector('.location').value = locale
-  document.body.lang = locales.includes(locale) ? locale : language
-
+  setLocale(locale)
   if (!window.location.hash || !displayHash(window.location.hash.substring(1)))
     if (attitude.hasty) show('start'); else runIntro()
 }
@@ -148,7 +147,7 @@ export function mirrorNode(a) {
  *
  * @return {string[]} an 2-entry-array with the browser languageuage and territoryitory
  */
-function browserLocale() {
+export function browserLocale() {
   let [language, territory] = navigator.language.split('-')
   territory = territory ? territory.toLowerCase() : language
   return [language, territory]

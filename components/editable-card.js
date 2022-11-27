@@ -52,6 +52,7 @@ class EditableCard extends HTMLElement {
   }
 
   attributeChangedCallback(name) {
+    this.lang = document.body.lang
     if (this.isConnected) {
       if (name==='card') this.updateCard()
     }

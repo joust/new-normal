@@ -1,14 +1,54 @@
-import { setLocale, htmlToElement } from './common.js'
-import { loadContent, loadSources, extractTopics } from './content.js'
+import { setLocale, htmlToElement, browserLocale } from './common.js'
+import { localeBlock, loadContent, loadSources, extractTopics } from './content.js'
 
-window.loadMaintain = async function() {
-  setLocale(document.body.lang = 'de')
+window.loadMaintain = function() {
+  Array.from(document.querySelectorAll('.details.card-preview')).forEach(detail => detail.insertAdjacentHTML('afterBegin', '<centered-cards class="cards"><editable-card class="card"></editable-card></centered-cards>'))
+  Array.from(document.querySelectorAll('.card')).forEach(card => card.addEventListener('mutated', event => cardMutated(event)))
+  document.querySelector('#arguments .details centered-cards').insertAdjacentHTML('beforeEnd', '<div class="topics"><ul></ul></div>')
+  document.addEventListener('selectionchange', () => {
+    const selection = window.getSelection()
+    const editable = selection.anchorNode.tagName!=='CENTERED-CARDS'
+    document.getElementById('edit-bar').classList.toggle('hidden', !editable)
+  })
+  
+/*  document.addEventListener('keyup', e => {
+    console.log(e)
+    if (e.ctrlKey && e.keyCode === 66) toggleBold()
+  }, false)*/
+}
+
+window.switchLocale = async function(locale = undefined, normality = undefined) {
+  setLocale(locale)
   const content = await loadContent()
   await loadSources()
-  document.querySelector('#details').insertAdjacentHTML('beforeEnd', '<centered-cards id="cards"><editable-card id="card"></editable-card></centered-cards>')
-  document.querySelector('#card').addEventListener('mutated', event => cardMutated(event))
-
   updateAll()
+}
+
+window.addQuotes = function() {
+  const selection = window.getSelection()
+  if (selection.rangeCount && selection.anchorNode.tagName!=='CENTERED-CARDS') {
+    const range = selection.getRangeAt(0)
+    range.insertNode(document.createTextNode('‘'))
+    const clone = range.cloneRange()
+    clone.collapse(false) // collapse the range to the end of selection
+    clone.insertNode(document.createTextNode('’'))
+  }
+}
+
+window.toggleBold = function() {
+  const selection = window.getSelection()
+  if (selection.rangeCount && selection.anchorNode.tagName!=='CENTERED-CARDS') {
+    const range = selection.getRangeAt(0)
+    range.surroundContents(document.createElement('b'))
+  }
+}
+
+window.addShy = function() {
+  const selection = window.getSelection()
+  if (selection.rangeCount && selection.anchorNode.tagName!=='CENTERED-CARDS') {
+    const range = selection.getRangeAt(0)
+    range.insertNode(document.createTextNode('­'))
+  }
 }
 
 function toArgumentData(arg, topicMap) {
@@ -92,32 +132,65 @@ function toSourceData(source) {
   }
 }
 
-window.updateSourcePreview = function(target) {
-  const tr = target && target.closest('tr')
+function getTableSelected(table) {
+  const tr = table.querySelector('.selected')
+  return tr ? tr.id : undefined
+}
+
+function setTableSelected(table, id) {
+  const tr = table.querySelector(`tr[id=${id}]`)
   if (tr) {
-    const url = tr.querySelector('.url').innerText
-    document.querySelector('#preview').src = url
-    document.querySelector('#preview').classList.remove('hidden')
-    document.querySelector('#edit-bar').classList.add('hidden')
-    document.querySelector('#cards').classList.add('hidden')
-    document.querySelectorAll('tr').forEach(tr => tr.classList.remove('selected'))
-    if (event) {
-      const selected = event.target.closest('tr')
-      if (selected) selected.classList.add('selected')
-    }
+    tr.classList.add('selected')
+    update(tr)
   }
 }
 
-window.updateMaintainCard = function(target) {
-  const card = target && target.closest('tr') ? target.closest('tr').firstElementChild.innerText : ''
-  document.querySelector('#card').setAttribute('card', card)
-  document.querySelector('#preview').classList.add('hidden')
-  document.querySelector('#edit-bar').classList.remove('hidden')
-  document.querySelector('#cards').classList.remove('hidden')
-  document.querySelectorAll('tr').forEach(tr => tr.classList.remove('selected'))
-  if (event) {
-    const selected = event.target.closest('tr')
-    if (selected) selected.classList.add('selected')
+window.updateSourcePreview = function(target) {
+  const tab = target && target.closest('.tab')
+  const tr = target && target.closest('tr')
+  if (tab && tr) {
+    const url = tr.querySelector('.url').innerText
+    tab.querySelector('.preview').src = url
+    tab.querySelectorAll('tr').forEach(tr => tr.classList.remove('selected'))
+    tr.classList.add('selected')
+  }
+}
+
+window.update = function(target) {
+  const tr = target && target.closest('tr')
+  const tab = target && target.closest('.tab')
+  if (tab && tr) {
+    const card = tr.id
+    tab.querySelector('.card').setAttribute('card', card)
+    tab.querySelectorAll('tr').forEach(tr => tr.classList.remove('selected'))
+    tr.classList.add('selected')
+  }
+}
+
+window.toggleArgumentTopic = function(event) {
+  const argId = event.target.closest('ul').className
+  const topicId = event.target.className
+  console.log(argId, topicId, event.target.checked)
+}
+
+window.updateArgument = function(target) {
+  update(target)
+  const tr = target && target.closest('tr')
+  const tab = target && target.closest('.tab')
+  if (tab && tr) {
+    const card = tr.id
+    const tbody = tab.querySelector('.sources tbody')
+    // update argument sources
+    const sources = extractSources(document.querySelector('#content .sources')).filter(source => source.class.split(' ').includes(card))
+    tbody.innerHTML = ''
+    sources.forEach(source => tbody.insertAdjacentHTML('beforeEnd', sourceRow(source)))
+    // update argument topics
+    const ul = tab.querySelector('.topics ul')
+    ul.className = card
+    const topics = extractTopicsData(localeBlock().querySelector('.topics'))
+    const assigned = getArgumentData(card).topics
+    ul.innerHTML = ''
+    topics.forEach(topic => ul.insertAdjacentHTML('beforeEnd', `<li><input type="checkbox" class="${topic.id}" onchange="toggleArgumentTopic(event)" ${assigned.includes(topic.id) ? ' checked' : ''}> <b>${topic.id}</b> ${topic.title} </li>`))
   }
 }
 
@@ -127,7 +200,7 @@ function cardMutated(event) {
   const argCard = target.closest('argument-card')
   if (argCard) {
     const tag = target.tagName.toLowerCase()
-    const node = document.querySelector(`#content .idiot a[id="${argCard.card}"] ${tag}, #content .sheep a[id="${argCard.card}"] ${tag}`)
+    const node = localeBlock().querySelector(`.idiot a[id="${argCard.card}"] ${tag}, .sheep a[id="${argCard.card}"] ${tag}`)
     if (node) {
       node.innerHTML = mutation.target.data
       updateArgumentRow(argCard.card)
@@ -141,11 +214,12 @@ function argumentRow(arg) {
   const LONG_TEXT = 320
   const SHORT_TEXT = 200
   const LONG_TITLE = 34
+  const show = showText() ? '' : 'hidden'
   return `<tr id="${arg.id}">
     <td class="id">${arg.id}</td>
     <td onclick="toggleSpellcheck(event)">${arg.spellcheck ? '🚧' : '✅'}</td>
     <td contenteditable="plaintext-only" class="title">${arg.title}</td>
-    <td class="text-column hidden">${arg.textPrefix}<span contenteditable="plaintext-only" class="text">${arg.text}</span></td>
+    <td class="text-column ${show}">${arg.textPrefix}<span contenteditable="plaintext-only" class="text">${arg.text}</span></td>
     <td ${arg.length > LONG_TITLE ? 'class="fix"' : ''}>${arg.length}</td>
     <td ${arg.textLength > LONG_TEXT || arg.textLength < SHORT_TEXT ? 'class="fix"' : ''}>${arg.textLength}</td>
     <td>${arg.topics.join(', ')}</td>
@@ -154,17 +228,23 @@ function argumentRow(arg) {
 
 function updateArgumentList(args) {
   const tbody = document.querySelector('#arguments .list tbody')
+  const selected = getTableSelected(tbody)
   tbody.innerHTML = ''
   args.forEach(arg => tbody.insertAdjacentHTML('beforeEnd', argumentRow(arg)))
-  updateMaintainCard()
+  if (selected) setTableSelected(tbody, selected)
   return args
 }
 
-function updateArgumentRow(id, columnsToUpdate = undefined) {
-  const [, topicsMap] = extractTopics(document.querySelector('#content .topics'))
+function getArgumentData(id) {
+  const [, topicsMap] = extractTopics(localeBlock().querySelector('.topics'))
   const tr = document.querySelector(`#arguments .list tr[id=${id}]`)
-  const node = document.querySelector(`#content .idiot a[id=${id}], #content .sheep a[id=${id}]`)
-  const arg = toArgumentData(node, topicsMap)
+  const node = localeBlock().querySelector(`.idiot a[id=${id}], .sheep a[id=${id}]`)
+  return toArgumentData(node, topicsMap)
+}
+
+function updateArgumentRow(id, columnsToUpdate = undefined) {
+  const tr = document.querySelector(`#arguments .list tr[id=${id}]`)
+  const arg = getArgumentData(id)
   const row = htmlToElement(argumentRow(arg))
   if (columnsToUpdate) {
     columnsToUpdate.forEach(col => tr.children[col].outerHTML = row.children[col].outerHTML)
@@ -174,34 +254,40 @@ function updateArgumentRow(id, columnsToUpdate = undefined) {
 }
 
 window.toggleSpellcheck = function(event) {
-  const id = event.target.closest('tr') ? event.target.closest('tr').firstElementChild.innerText : ''
-  const node = document.querySelector(`#content .idiot a[id=${id}], #content .sheep a[id=${id}]`)
+  const id = event.target.closest('tr') ? event.target.closest('tr').id : ''
+  const node = localeBlock().querySelector(`.idiot a[id=${id}], .sheep a[id=${id}]`)
   if (node) {
     node.toggleAttribute('spellcheck')
     event.target.innerHTML = node.hasAttribute('spellcheck') ? '🚧' : '✅'
-    updateMaintainCard(event.target)
+    update(event.target)
   } else console.error('no target found for spellcheck toggle')
 }
 
-window.toggleText = function() {
-  Array.from(document.querySelectorAll('#arguments .list .text-column')).forEach(node => node.classList.toggle('hidden'))
+function showText() {
+  return document.getElementById('show-text').checked
+}
+
+window.updateShowText = function() {
+  const show = showText()
+  Array.from(document.querySelectorAll('#arguments .list .text-column')).forEach(node => node.classList.toggle('hidden', !show))
 }
 
 window.updateArguments = function() {
-  const [, topicsMap] = extractTopics(document.querySelector('#content .topics'))
-  const args = Array.from(document.querySelectorAll('#content .idiot a[id], #content .sheep a[id]')).map(arg => toArgumentData(arg, topicsMap))
+  const [, topicsMap] = extractTopics(localeBlock().querySelector('.topics'))
+  const args = Array.from(localeBlock().querySelectorAll('.idiot a[id], .sheep a[id]')).map(arg => toArgumentData(arg, topicsMap))
   return updateArgumentList(args)
 }
 
 function argumentListMutated(mutation) {
-  const target = getParentElement(mutation.target) // target is always a #text
-  const id = target.closest('tr').firstElementChild.innerText
+  const target = getParentElement(mutation.target, 'td') // target is always a #text
+  console.log(target)
+  const id = target.closest('tr').id
   const tag = target.classList.contains('title') ? 'h2' : target.classList.contains('text') ? 'span' : undefined
   if (tag) {
-    const node = document.querySelector(`#content .idiot a[id=${id}] ${tag}, #content .sheep a[id=${id}] ${tag}`)
+    const node = localeBlock().querySelector(`.idiot a[id=${id}] ${tag}, .sheep a[id=${id}] ${tag}`)
     if (node) {
-      node.innerHTML = mutation.target.data
-      updateMaintainCard(target)
+      node.innerHTML = target.innerHTML
+      update(target)
       updateArgumentRow(id, [4, 5])
     } else
       console.error('could not find content target for mutation', mutation)
@@ -211,7 +297,7 @@ function argumentListMutated(mutation) {
 }
 
 function topicRow(topic) {
-  return `<tr>
+  return `<tr id="${topic.id}">
     <td class="id">${topic.id}</td>
     <td contenteditable="plaintext-only" class="title">${topic.title}</td>
     <td contenteditable="plaintext-only" class="sheepTitle">${topic.sheepTitle}</td>
@@ -223,13 +309,15 @@ function topicRow(topic) {
 
 function updateTopicsList(topics) {
   const tbody = document.querySelector('#topics .list tbody')
+  const selected = getTableSelected(tbody)
   tbody.innerHTML = ''
   topics.forEach(topic => tbody.insertAdjacentHTML('beforeEnd', topicRow(topic)))
+  if (selected) setTableSelected(tbody, selected)
   return topics
 }
 
 window.updateTopics = function() {
-  const topics = extractTopicsData(document.querySelector('#content .topics'))
+  const topics = extractTopicsData(localeBlock().querySelector('.topics'))
   return updateTopicsList(topics)
 }
 
@@ -247,13 +335,13 @@ function extractTopicsData(topics) {
 }
 
 function topicListMutated(mutation) {
-  const target = getParentElement(mutation.target) // target is always a #text
-  const id = target.closest('tr').firstElementChild.innerText
+  const target = getParentElement(mutation.target, 'td') // target is always a #text
+  const id = target.closest('tr').id
   const attr = target.className
-  const node = document.querySelector(`#content .topics section[id="${id}"]`)
+  const node = localeBlock().querySelector(`.topics section[id="${id}"]`)
   if (node) {
     node.setAttribute(attr, mutation.target.data)
-    updateMaintainCard(target)
+    update(target)
   } else 
     console.error('no target found for mutation', mutation)
 }
@@ -270,21 +358,24 @@ function appealToRow(appealTo) {
 
 function updateAppealTosList(appealTos) {
   const tbody = document.querySelector('#appeal-tos .list tbody')
+  const selected = getTableSelected(tbody)
+  console.log(selected)
   tbody.innerHTML = ''
   appealTos.forEach(appealTo => tbody.insertAdjacentHTML('beforeEnd', appealToRow(appealTo)))
+  if (selected) setTableSelected(tbody, selected)
   return appealTos
 }
 
 function updateAppealToRow(id) {
   const tr = document.querySelector(`#appeal-tos .list tr[id=${id}]`)
-  const node = document.querySelector(`#content .appeal-tos a[id=${id}]`)
+  const node = localeBlock().querySelector(`.appeal-tos a[id=${id}]`)
   const arg = toAppealToData(node)
   tr.outerHTML = appealToRow(arg)
 }
 
 
 window.updateAppealTos = function() {
-  const appealTos = extractAppealTos(document.querySelector('#content .appeal-tos'))
+  const appealTos = extractAppealTos(localeBlock().querySelector('.appeal-tos'))
   return updateAppealTosList(appealTos)
 }
 
@@ -293,26 +384,27 @@ function extractAppealTos(appealTos) {
 }
 
 function appealToListMutated(mutation) {
-  const target = getParentElement(mutation.target).closest('td') // target is always a #text
-  const id = target.closest('tr').firstElementChild.innerText
+  const target = getParentElement(mutation.target, 'td') // target is always a #text
+  const id = target.closest('tr').id
   const tag = target.className==='title' ? 'h2' : target.className==='text' ? 'p' : undefined
-  const node = document.querySelector(`#content .appeal-tos a[id="${id}"] ${tag}`)
+  const node = localeBlock().querySelector(`.appeal-tos a[id="${id}"] ${tag}`)
   if (tag && node) {
     node.innerHTML = target.innerHTML
-    updateMaintainCard(target)
+    update(target)
     updateAppealToRow(id)
   } else 
     console.error('no target found for mutation', mutation)
 }
 
 window.setAppealToClass = function(event) {
-  const id = event.target.closest('tr').firstElementChild.innerText
-  const node = document.querySelector(`#content .appeal-tos a[id="${id}"]`)
+  const id = event.target.closest('tr').id
+  const node = localeBlock().querySelector(`.appeal-tos a[id="${id}"]`)
   node.setAttribute('class', event.target.value)
+  update(event.target)
 }
 
 function fallacyRow(fallacy) {
-  return `<tr>
+  return `<tr id="${fallacy.id}">
     <td class="id">${fallacy.id}</td>
     <td contenteditable="plaintext-only" class="fallacy">${fallacyClassSelect(fallacy.class)}</td>
     <td contenteditable="plaintext-only" class="text">${fallacy.text}</td>
@@ -322,13 +414,15 @@ function fallacyRow(fallacy) {
 
 function updateFallaciesList(fallacies) {
   const tbody = document.querySelector('#fallacies .list tbody')
+  const selected = getTableSelected(tbody)
   tbody.innerHTML = ''
   fallacies.forEach(fallacy => tbody.insertAdjacentHTML('beforeEnd', fallacyRow(fallacy)))
+  if (selected) setTableSelected(tbody, selected)
   return fallacies
 }
 
 window.updateFallacies = function() {
-  const fallacies = extractFallacies(document.querySelector('#content .fallacies'))
+  const fallacies = extractFallacies(localeBlock().querySelector('.fallacies'))
   return updateFallaciesList(fallacies)
 }
 
@@ -337,25 +431,26 @@ function extractFallacies(fallacies) {
 }
 
 function fallacyListMutated(mutation) {
-  const target = mutation.target.parentElement.closest('td') // target is always a #text
-  const id = target.closest('tr').firstElementChild.innerText
+  const target = getParentElement(mutation.target, 'td') // target is always a #text
+  const id = target.closest('tr').id
   const tag = target.className==='fallacy' ? 'i' : target.className==='text' ? 'h2' : undefined
-  const node = document.querySelector(`#content .fallacies a[id="${id}"] ${tag}`)
+  const node = localeBlock().querySelector(`.fallacies a[id="${id}"] ${tag}`)
   if (tag && node) {
-    node.innerHTML = mutation.target.data
-    updateMaintainCard(target)
+    node.innerHTML = target.innerHTML
+    update(target)
   } else 
     console.error('no target found for mutation', mutation)
 }
 
 window.setFallacyClass = function(event) {
-  const id = event.target.closest('tr').firstElementChild.innerText
-  const node = document.querySelector(`#content .fallacies a[id="${id}"]`)
+  const id = event.target.closest('tr').id
+  const node = localeBlock().querySelector(`.fallacies a[id="${id}"]`)
   node.setAttribute('class', event.target.value)
+  update(event.target)
 }
 
 function labelRow(label) {
-  return `<tr>
+  return `<tr id="${label.id}">
     <td class="id">${label.id}</td>
     <td contenteditable="plaintext-only">${label.text}</td>
     <td>${label.length}</td>
@@ -364,13 +459,15 @@ function labelRow(label) {
 
 function updateLabelsList(labels) {
   const tbody = document.querySelector('#labels .list tbody')
+  const selected = getTableSelected(tbody)
   tbody.innerHTML = ''
   labels.forEach(label => tbody.insertAdjacentHTML('beforeEnd', labelRow(label)))
+  if (selected) setTableSelected(tbody, selected)
   return labels
 }
 
 window.updateLabels = function() {
-  const labels = extractLabels(document.querySelector('#content .labels'))
+  const labels = extractLabels(localeBlock().querySelector('.labels'))
   return updateLabelsList(labels)
 }
 
@@ -379,18 +476,18 @@ function extractLabels(labels) {
 }
 
 function labelListMutated(mutation) {
-  const target = mutation.target.parentElement // target is always a #text
-  const id = target.closest('tr').firstElementChild.innerText
-  const node = document.querySelector(`#content .labels a[id="${id}"] h2`)
+  const target = getParentElement(mutation.target, 'td') // target is always a #text
+  const id = target.closest('tr').id
+  const node = localeBlock().querySelector(`.labels a[id="${id}"] h2`)
   if (node) {
-    node.innerHTML = mutation.target.data
-    updateMaintainCard(target)
+    node.innerHTML = target.innerHTML
+    update(target)
   } else 
     console.error('no target found for mutation', mutation)
 }
 
 function cancelRow(cancel) {
-  return `<tr>
+  return `<tr id="${cancel.id}">
     <td class="id">${cancel.id}</td>
     <td contenteditable="plaintext-only">${cancel.text}</td>
     <td>${cancel.length}</td>
@@ -399,13 +496,15 @@ function cancelRow(cancel) {
 
 function updateCancelsList(cancels) {
   const tbody = document.querySelector('#cancels .list tbody')
+  const selected = getTableSelected(tbody)
   tbody.innerHTML = ''
   cancels.forEach(cancel => tbody.insertAdjacentHTML('beforeEnd', cancelRow(cancel)))
+  if (selected) setTableSelected(tbody, selected)
   return cancels
 }
 
 window.updateCancels = function() {
-  const cancels = extractLabels(document.querySelector('#content .cancels'))
+  const cancels = extractLabels(localeBlock().querySelector('.cancels'))
   return updateCancelsList(cancels)
 }
 
@@ -414,18 +513,18 @@ function extractCancels(cancels) {
 }
 
 function cancelListMutated(mutation) {
-  const target = mutation.target.parentElement // target is always a #text
-  const id = target.closest('tr').firstElementChild.innerText
-  const node = document.querySelector(`#content .cancels a[id="${id}"] h2`)
+  const target = getParentElement(mutation.target, 'td') // target is always a #text
+  const id = target.closest('tr').id
+  const node = localeBlock().querySelector(`.cancels a[id="${id}"] h2`)
   if (node) {
-    node.innerHTML = mutation.target.data
-    updateMaintainCard(target)
+    node.innerHTML = target.innerHTML
+    update(target)
   } else 
     console.error('no target found for mutation', mutation)
 }
 
 function messageRow(message) {
-  return `<tr>
+  return `<tr id="${message.id}">
     <td class="id hidden">${message.id}</td>
     <td class="keys">${message.class}</td>
     <td contenteditable="plaintext-only">${message.text}</td>
@@ -435,13 +534,15 @@ function messageRow(message) {
 
 function updateMessagesList(messages) {
   const tbody = document.querySelector('#messages .list tbody')
+  const selected = getTableSelected(tbody)
   tbody.innerHTML = ''
   messages.forEach(message => tbody.insertAdjacentHTML('beforeEnd', messageRow(message)))
+  if (selected) setTableSelected(tbody, selected)
   return messages
 }
 
 window.updateMessages = function() {
-  const messages = extractMessages(document.querySelector('#content .messages'))
+  const messages = extractMessages(localeBlock().querySelector('.messages'))
   return updateMessagesList(messages)
 }
 
@@ -450,12 +551,12 @@ function extractMessages(messages) {
 }
 
 function messageListMutated(mutation) {
-  const target = mutation.target.parentElement // target is always a #text
+  const target = getParentElement(mutation.target, 'td') // target is always a #text
   const clazz = target.closest('tr').children[1].innerText
-  const node = document.querySelector(`#content .messages a[class="${clazz}"]`)
+  const node = localeBlock().querySelector(`.messages a[class="${clazz}"]`)
   if (node) {
-    node.innerHTML = mutation.target.data
-    updateMaintainCard(target)
+    node.innerHTML = target.innerHTML
+    update(target)
   } else 
     console.error('no target found for mutation', mutation)
 }
@@ -474,8 +575,10 @@ function sourceRow(source) {
 
 function updateSourcesList(sources) {
   const tbody = document.querySelector('#sources .list tbody')
+  const selected = getTableSelected(tbody)
   tbody.innerHTML = ''
   sources.forEach(source => tbody.insertAdjacentHTML('beforeEnd', sourceRow(source)))
+  if (selected) setTableSelected(tbody, selected)
   return sources
 }
 
@@ -488,13 +591,13 @@ function extractSources(sources) {
   return Array.from(sources.querySelectorAll('a[class]')).map(toSourceData)
 }
 
-function sourceListMutated(mutation) {
-  const target = mutation.target.parentElement // target is always a #text
+function sourceList(mutation) {
+  const target = mutation.target.closest('td') // target is always a #text
   const clazz = target.closest('tr').children[1].innerText
-  const node = document.querySelector(`#content .messages a[class="${clazz}"]`)
+  const node = document.querySelector(`#content .sources a[class="${clazz}"]`)
   if (node) {
-    node.innerHTML = mutation.target.data
-    updateMaintainCard(target)
+    node.innerHTML = target.innerHTML
+    update(target)
   } else 
     console.error('no target found for mutation', mutation)
 }
@@ -521,7 +624,6 @@ window.navigateMaintain = function(event) {
   const selected = event.target.id.substring(1)
   Array.from(document.querySelectorAll('.tab')).forEach(tab => tab.classList.add('hidden'))
   document.getElementById(selected).classList.remove('hidden')
-  updateMaintainCard()
 }
 
 function observe(element, callback) {
@@ -530,13 +632,13 @@ function observe(element, callback) {
   observer.observe(element, { subtree: true, characterData: true })
 }
 
-function getParentElement(node) {
+function getParentElement(node, tag = undefined) {
   while (!node.parentElement) node = node.parentNode
-  return node.parentElement
+  return tag ? node.parentElement.closest(tag) : node.parentElement
 }
 
 window.searchMaintain = function(event) {
-  const table = event.target.parentElement.querySelector('.list')
+  const table = event.target.closest('.tab').querySelector('.list')
   const input = event.target.value.toLowerCase()
   const entries = Array.from(table.querySelectorAll('tr'))
   entries.forEach(tr => tr.classList.remove('not-matching'))
@@ -549,9 +651,9 @@ window.searchMaintain = function(event) {
  * @return {string} select HTML
  */
 export function appealToClassSelect(selected) {
-  const classes = Array.from(document.querySelectorAll(`#content .messages a.appeal-to.class`)).map(clazz => {
+  const classes = Array.from(localeBlock().querySelectorAll(`.messages a.appeal-to.class`)).map(clazz => {
     const value = clazz.classList.item(clazz.classList.length-1)
-    return `<option value="${value}" ${selected===value?'selected':''}">${clazz.innerHTML}</option>`
+    return `<option value="${value}" ${selected===value?'selected':''}>${clazz.innerHTML}</option>`
   })
   return `<select onchange="setAppealToClass(event)">${classes}</select>`
 }
@@ -561,8 +663,9 @@ export function appealToClassSelect(selected) {
  * @return {string} select HTML
  */
 export function fallacyClassSelect(selected) {
-  const classes = Array.from(document.querySelectorAll(`#content .messages a.fallacy.class`)).map(clazz => {
+  const classes = Array.from(localeBlock().querySelectorAll(`.messages a.fallacy.class`)).map(clazz => {
     const value = clazz.classList.item(clazz.classList.length-1)
-    return `<option value="${value}" ${selected===value?'selected':''}">${clazz.innerHTML}</option>`
+    return `<option value="${value}" ${selected===value?'selected':''}>${clazz.innerHTML}</option>`
   })
-  return `<select onchange="setFallacyClass(event)">${classes}</select>`}
+  return `<select onchange="setFallacyClass(event)">${classes}</select>`
+}

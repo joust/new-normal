@@ -13,7 +13,7 @@ export async function loadSources() {
   }
 }
 
-function localeBlock() {
+export function localeBlock() {
   const locale = `${language}-${territory}`
   const id = locales.includes(locale) ? locale : language
   return document.querySelector(`#content > #${id}`)

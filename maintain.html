@@ -30,165 +30,328 @@
     <script src="modules/common.js" type="module"></script>
     <script src="modules/maintain.js" type="module"></script>
   </head>
-  <body onload="loadMaintain()">
+  <body onload="loadMaintain(); switchLocale()">
     <div id="navigation" class="radio-tabs">
-      <div id="header">
-        <input id="_topics" type="radio" name="type" class="radio-tab" value="topics" onclick="navigateMaintain(event)">
-        <label for="_topics">Topics</label>
-        <input id="_arguments" type="radio" name="type" class="radio-tab" value="arguments" checked onclick="navigateMaintain(event)">
-        <label for="_arguments">Arguments</label>
-        <input id="_fallacies" type="radio" name="type" class="radio-tab" value="fallacies" onclick="navigateMaintain(event)">
-        <label for="_fallacies">Fallacies</label>
-        <input id="_appeal-tos" type="radio" name="type" class="radio-tab" value="appeal-tos" onclick="navigateMaintain(event)">
-        <label for="_appeal-tos">Appeal Tos</label>
-        <input id="_labels" type="radio" name="type" class="radio-tab" value="labels" onclick="navigateMaintain(event)">
-        <label for="_labels">Labels</label>
-        <input id="_cancels" type="radio" name="type" class="radio-tab" value="cancels" onclick="navigateMaintain(event)">
-        <label for="_cancels">Cancels</label>
-        <input id="_sources" type="radio" name="type" class="radio-tab" value="sources" onclick="navigateMaintain(event)">
-        <label for="_sources">Sources</label>
-        <input id="_messages" type="radio" name="type" class="radio-tab" value="messages" onclick="navigateMaintain(event)">
-        <label for="_messages">Messages</label>
+      <select class="location" onchange="switchLocale(event.target.value)">
+        <option title="Deutschland" value="de-de">🇩🇪 Deutschland</option>
+        <option title="Österreich" value="de-at">🇦🇹 Österreich</option>
+        <option title="Schweiz" value="de-ch">🇨🇭 Schweiz</option>
+        <option title="Svizzera" value="it-ch">🇨🇭 Svizzera</option>
+        <option title="Suisse" value="fr-ch">🇨🇭 Suisse</option>
+        <option title="Danmark" value="da-da">🇩🇰 Danmark</option>
+        <option title="Liechtenstein" value="de-li">🇱🇮 Liechtenstein</option>
+        <option title="Italia" value="it-it">🇮🇹 Italia</option>
+        <option title="Italien" value="de-it">🇮🇹 Italien</option>
+        <option title="San Marino" value="it-sm">🇸🇲 San Marino</option>
+        <option title="Città del Vaticano" value="it-va">🇻🇦 Città del Vaticano</option>
+        <option title="United States" value="en-us">🇺🇸 United States</option>
+        <option title="United Kingdom" value="en-gb">🇬🇧 United Kingdom</option>
+        <option title="Australia" value="en-au">🇦🇺 Australia</option>
+        <option title="New Zealand" value="en-nz">🇳🇿 New Zealand</option>
+        <option title="Canada" value="en-ca">🇨🇦 Canada</option>
+        <option title="Canada" value="fr-ca">🇨🇦 Canada</option>
+        <option title="Polska" value="pl-pl">🇵🇱 Polska</option>
+        <option title="Antigua and Barbuda" value="en-ag">🇦🇬 Antigua and Barbuda</option>
+        <option title="The Bahamas" value="en-bs">🇧🇸 The Bahamas</option>
+        <option title="Barbados" value="en-bb">🇧🇧 Barbados</option>
+        <option title="Belize" value="en-bz">🇧🇿  Belize</option>
+        <option title="Dominica" value="en-dm">🇩🇲 Dominica</option>
+        <option title="Grenada" value="en-gd">🇬🇩 Grenada</option>
+        <option title="Guyana" value="en-gy">🇬🇾 Guyana</option>
+        <option title="Ireland" value="en-ie">🇮🇪 Ireland</option>
+        <option title="Jamaica" value="en-jm">🇯🇲 Jamaica</option>
+        <option title="Malta" value="en-mt">🇲🇹 Malta</option>
+        <option title="St Kitts and Nevis" value="en-kn">🇰🇳 St Kitts and Nevis</option>
+        <option title="St Lucia" value="en-lc">🇱🇨 St Lucia</option>
+        <option title="St Vincent and the Grenadines" value="en-vc">🇻🇨 St Vincent and the Grenadines</option>
+        <option title="Trinidad and Tobago" value="en-tt">🇹🇹 Trinidad and Tobago</option>
+        <option title="España" value="es-es">🇪🇸 España</option>
+        <option title="Cuba" value="es-cu">🇨🇺 Cuba</option>
+        <option title="Perú" value="es-pe">🇵🇪 Perú</option>
+        <option title="Chile" value="es-cl">🇨🇱 Chile</option>
+        <option title="México" value="es-mx">🇲🇽 México</option>
+        <option title="Puerto Rico" value="es-pr">🇵🇷 Puerto Rico</option>
+        <option title="Argentina" value="es-ar">🇦🇷 Argentina</option>
+        <option title="Bolivia" value="es-bo">🇧🇴 Bolivia</option>
+        <option title="Colombia" value="es-co">🇨🇴 Colombia</option>
+        <option title="Costa Rica" value="es-cr">🇨🇷 Costa Rica</option>
+        <option title="República Dominicana" value="es-do">🇩🇴 República Dominicana</option>
+        <option title="Ecuador" value="es-ec">🇪🇨 Ecuador</option>
+        <option title="El Salvador" value="es-sv">🇸🇻 El Salvador</option>
+        <option title="Guinea Ecuatorial" value="es-gq">🇬🇶 Guinea Ecuatorial</option>
+        <option title="Guatemala" value="es-gt">🇬🇹 Guatemala</option>
+        <option title="Honduras" value="es-hn">🇭🇳 Honduras</option>
+        <option title="Nicaragua" value="es-ni">🇳🇮 Nicaragua</option>
+        <option title="Panama" value="es-pa">🇵🇦 Panama</option>
+        <option title="Paraguay" value="es-py">🇵🇾 Paraguay</option>
+        <option title="Uruguay" value="es-uy">🇺🇾 Uruguay</option>
+        <option title="Venezuela" value="es-ve">🇻🇪 Venezuela</option>
+        <option title="Portugual" value="pt-pt">🇵🇹 Portugual</option>
+        <option title="Brasil" value="pt-br">🇧🇷 Brasil</option>
+        <option title="Angola" value="pt-ao">🇦🇴 Angola</option>
+        <option title="Moçambique" value="pt-mz">🇲🇿 Moçambique</option>
+        <option title="Guiné-Bissau" value="pt-gw">🇬🇼 Guiné-Bissau</option>
+        <option title="São Tomé &amp; Príncipe" value="pt-st">🇸🇹 São Tomé &amp; Príncipe</option>
+        <option title="Cabo Verde" value="pt-cv">🇨🇻 Cabo Verde</option>
+        <option title="France" value="fr-fr">🇫🇷 France</option>
+        <option title="Nederlands" value="nl-nl">🇳🇱 Nederlands</option>
+        <option title="België" value="nl-be">🇧🇪 België</option>
+        <option title="Belgien" value="de-be">🇧🇪 Belgien</option>
+        <option title="Belgique" value="fr-be">🇧🇪 Belgique</option>
+        <option title="Congo" value="fr-cd">🇨🇩 Congo</option>
+        <option title="Congo" value="fr-cg">🇨🇬 Congo</option>
+        <option title="Côte d’Ivoire" value="fr-ko">🇨🇮 Côte d’Ivoire</option>
+        <option title="Madagascar" value="fr-ko">🇲🇬 Madagascar</option>
+        <option title="Cameroun" value="fr-cm">🇨🇲 Cameroun</option>
+        <option title="Cameroon" value="en-cm">🇨🇲 Cameroon</option>
+        <option title="Burkina Faso" value="fr-bf">🇧🇫 Burkina Faso</option>
+        <option title="Niger" value="fr-ne">🇳🇪 Niger</option>
+        <option title="Mali" value="fr-ml">🇲🇱 Mali</option>
+        <option title="Sénégal" value="fr-sn">🇸🇳 Sénégal</option>
+        <option title="Haïti" value="fr-ht">🇭🇹 Haïti</option>
+        <option title="Benin" value="fr-bj">🇧🇯 Benin</option>
+      </select>
+      <select class="normality" onchange="loadMaintain(undefined, event.target.value)">
+        <option title="Pandemic" value="p">🦠 Pandemic</option>
+        <option title="Climate" value="c" disabled>🌎 Climate</option>
+        <option title="Gender" value="g" disabled>🌈 Gender</option>
+        <option title="Ukraine" value="u" disabled>🇺🇦 Ukraine</option>
+        <option title="Terror" value="t" disabled>💣 Terror</option>
+        <option title="NWO" value="n" disabled>👁 NWO</option>
+        <option title="Moon" value="m" disabled>🚀 Moon</option>
+      </select>
+      <input id="_topics" type="radio" name="type" class="radio-tab" value="topics" onclick="navigateMaintain(event)">
+      <label for="_topics">Topics</label>
+      <input id="_arguments" type="radio" name="type" class="radio-tab" value="arguments" checked onclick="navigateMaintain(event)">
+      <label for="_arguments">Arguments</label>
+      <input id="_fallacies" type="radio" name="type" class="radio-tab" value="fallacies" onclick="navigateMaintain(event)">
+      <label for="_fallacies">Fallacies</label>
+      <input id="_appeal-tos" type="radio" name="type" class="radio-tab" value="appeal-tos" onclick="navigateMaintain(event)">
+      <label for="_appeal-tos">Appeal Tos</label>
+      <input id="_labels" type="radio" name="type" class="radio-tab" value="labels" onclick="navigateMaintain(event)">
+      <label for="_labels">Labels</label>
+      <input id="_cancels" type="radio" name="type" class="radio-tab" value="cancels" onclick="navigateMaintain(event)">
+      <label for="_cancels">Cancels</label>
+      <input id="_sources" type="radio" name="type" class="radio-tab" value="sources" onclick="navigateMaintain(event)">
+      <label for="_sources">Sources</label>
+      <input id="_messages" type="radio" name="type" class="radio-tab" value="messages" onclick="navigateMaintain(event)">
+      <label for="_messages">Messages</label>
+      <div id="edit-bar"><button onclick="addQuotes()">Single-Quote</button><button onclick="toggleBold()">Bold</button><button onclick="addShy()">Shy</button></div>
+    </div>
+    <div id="topics" class="tab hidden">
+      <div class="master">
+        <div class="toolbar">
+          <input class="search" placeholder="🔍 Search topics" oninput="searchMaintain(event)">
+          <button disabled>➕ Add Topic</button>
+        </div>
+        <div class="table">
+          <table class="list table-sort" onclick="update(event.target)">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Sheep Title</th>
+                <th>Idiot Title</th>
+                <th>Sheep Label</th>
+                <th>Idiot Label</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div id="topics" class="tab hidden">
-        <input class="search" placeholder="🔍 Search topics" oninput="searchMaintain(event)">
-        <button disabled>➕ Add Topic</button>
-        <table class="list table-sort" onclick="updateMaintainCard(event.target)">
-          <thead>
-            <tr>
-              <th>Id</th>
-              <th>Title</th>
-              <th>Sheep Title</th>
-              <th>Idiot Title</th>
-              <th>Sheep Label</th>
-              <th>Idiot Label</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
+      <div class="details card-preview"></div>
+    </div>
+    <div id="arguments" class="tab">
+      <div class="master">
+        <div class="toolbar">
+          <input class="search" placeholder="🔍 Search arguments" oninput="searchMaintain(event)">
+          <input type="checkbox" id="show-text" onclick="updateShowText()" /><label for="show-text">Show Text</label>
+          <button disabled>➕ Add Argument Card</button>
+        </div>
+        <div class="table">
+          <table class="list table-sort" onclick="updateArgument(event.target)">
+            <thead>
+              <tr>            
+                <th>Id</th>
+                <th>✓</th>
+                <th>Title</th>
+                <th class="text-column hidden">Text</th>
+                <th>Length</th>
+                <th>Text Length</th>
+                <th>Topics</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div id="arguments" class="tab">
-        <input class="search" placeholder="🔍 Search arguments" oninput="searchMaintain(event)">
-        <button onclick="toggleText()">Toggle Text</button>
-        <button disabled>➕ Add Argument Card</button>
-        <table class="list table-sort" onclick="updateMaintainCard(event.target)">
-          <thead>
-            <tr>            
-              <th>Id</th>
-              <th>✓</th>
-              <th>Title</th>
-              <th class="text-column hidden">Text</th>
-              <th>Length</th>
-              <th>Text Length</th>
-              <th>Topics</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
-      </div>
-      <div id="appeal-tos" class="tab hidden">
-        <input class="search" placeholder="🔍 Search appeal tos" oninput="searchMaintain(event)">
-        <button disabled>➕ Add Appeal-to Card</button>
-        <table class="list table-sort" onclick="updateMaintainCard(event.target)">
-          <thead>
-            <tr>
-              <th>Id</th>
-              <th>Class</th>
-              <th>Title</th>
-              <th>Text</th>
-              <th>Overall Length</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
-      </div>
-      <div id="fallacies" class="tab hidden">
-        <input class="search" placeholder="🔍 Search fallacies" oninput="searchMaintain(event)">
-        <button disabled>➕ Add Fallacy Card</button>
-        <table class="list table-sort" onclick="updateMaintainCard(event.target)">
-          <thead>
-            <tr>
-              <th>Id</th>
-              <th>Fallacy</th>
-              <th>Title</th>
-              <th>Length</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
-      </div>
-      <div id="labels" class="tab hidden">
-        <input class="search" placeholder="🔍 Search labels" oninput="searchMaintain(event)">
-        <button disabled>➕ Add Label Card</button>
-        <table class="list table-sort" onclick="updateMaintainCard(event.target)">
-          <thead>
-            <tr>
-              <th>Id</th>
-              <th>Title</th>
-              <th>Length</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
-      </div>
-      <div id="cancels" class="tab hidden">
-        <input class="search" placeholder="🔍 Search cancels" oninput="searchMaintain(event)">
-        <button disabled>➕ Add Cancel Card</button>
-        <table class="list table-sort" onclick="updateMaintainCard(event.target)">
-          <thead>
-            <tr>
-              <th>Id</th>
-              <th>Title</th>
-              <th>Length</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
-      </div>
-      <div id="sources" class="tab hidden">
-        <input class="search" placeholder="🔍 Search sources" oninput="searchMaintain(event)">
-        <button disabled>➕ Add Source</button>
-        <table class="list table-sort" onclick="updateSourcePreview(event.target)">
-          <thead>
-            <tr>
-              <th class="hidden">Id</th>
-              <th>Language</th>
-              <th>Keys</th>
-              <th>URL</th>
-              <th>Text</th>
-              <th>Length</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
-      </div>
-      <div id="messages" class="tab hidden">
-        <input class="search" placeholder="🔍 Search messages" oninput="searchMaintain(event)">
-        <table class="list table-sort" onclick="updateMaintainCard(event.target)">
-          <thead>
-            <tr>
-              <th class="hidden">Id</th>
-              <th>Keys</th>
-              <th>Message</th>
-              <th>Length</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
+      <div class="details card-preview">
+        <div class="sources">
+          <table class="list">
+            <thead>
+              <tr>
+                <th class="hidden">Id</th>
+                <th>Language</th>
+                <th>Keys</th>
+                <th>URL</th>
+                <th>Text</th>
+                <th>Length</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-    <div id="details">
-      <div id="edit-bar"><button>Single-Quote</button><button>Bold</button><button>Shy</button></div>
-      <iframe id="preview" src="" class="hidden"></iframe>
+    <div id="appeal-tos" class="tab hidden">
+      <div class="master">
+        <div class="toolbar">
+          <input class="search" placeholder="🔍 Search appeal tos" oninput="searchMaintain(event)">
+          <button disabled>➕ Add Appeal-to Card</button>
+        </div>
+        <div class="table">
+          <table class="list table-sort" onclick="update(event.target)">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Class</th>
+                <th>Title</th>
+                <th>Text</th>
+                <th>Overall Length</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="details card-preview">
+      </div>
     </div>
+    <div id="fallacies" class="tab hidden">
+      <div class="master">
+        <div class="toolbar">
+          <input class="search" placeholder="🔍 Search fallacies" oninput="searchMaintain(event)">
+          <button disabled>➕ Add Fallacy Card</button>
+        </div>
+        <div class="table">
+          <table class="list table-sort" onclick="update(event.target)">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Fallacy</th>
+                <th>Title</th>
+                <th>Length</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="details card-preview">
+      </div>
+    </div>
+    <div id="labels" class="tab hidden">
+      <div class="master">
+        <div class="toolbar">
+          <input class="search" placeholder="🔍 Search labels" oninput="searchMaintain(event)">
+          <button disabled>➕ Add Label Card</button>
+        </div>
+        <div class="table">
+          <table class="list table-sort" onclick="update(event.target)">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Length</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="details card-preview">
+      </div>
+    </div>
+    <div id="cancels" class="tab hidden">
+      <div class="master">
+        <div class="toolbar">
+          <input class="search" placeholder="🔍 Search cancels" oninput="searchMaintain(event)">
+          <button disabled>➕ Add Cancel Card</button>
+        </div>
+        <div class="table">
+          <table class="list table-sort" onclick="update(event.target)">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Length</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="details card-preview">
+      </div>
+    </div>
+    <div id="sources" class="tab hidden">
+      <div class="master">
+        <div class="toolbar">
+          <input class="search" placeholder="🔍 Search sources" oninput="searchMaintain(event)">
+          <button disabled>➕ Add Source</button>
+        </div>
+        <div class="table">
+          <table class="list table-sort" onclick="updateSourcePreview(event.target)">
+            <thead>
+              <tr>
+                <th class="hidden">Id</th>
+                <th>Language</th>
+                <th>Keys</th>
+                <th>URL</th>
+                <th>Text</th>
+                <th>Length</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="details">
+        <iframe class="preview" src=""></iframe>
+      </div>
+    </div>
+    <div id="messages" class="tab hidden">
+      <div class="master">
+        <div class="toolbar">
+          <input class="search" placeholder="🔍 Search messages" oninput="searchMaintain(event)">
+        </div>
+        <div class="table">
+          <table class="list table-sort" onclick="update(event.target)">
+            <thead>
+              <tr>
+                <th class="hidden">Id</th>
+                <th>Keys</th>
+                <th>Message</th>
+                <th>Length</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="details card-preview">
+      </div>
+    </div>    
     <div id="content" class="hidden"></div>
     <div id="loader" class="hidden"></div>
   </body>

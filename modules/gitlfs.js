@@ -26,7 +26,6 @@ export async function initLFS() {
         await pfs.mkdir(dir)
         await git.clone({ fs, http, corsProxy, dir, url, ref, singleBranch, depth: 10 })
       }
-      console.log('calling resolve')
       resolve()
     }) 
   )

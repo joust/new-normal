@@ -4,12 +4,11 @@ export async function initHDD() {
 }
 
 export async function fetchHDD(path) {
-  console.log('fetchHDD', path)
   try {
     const handle = await pathToHandle(path)
     return handle ? await load(handle) : ''
   } catch (e) {
-    console.error(e)
+    // console.error(e)
     return ''
   }
 }

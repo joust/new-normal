@@ -147,7 +147,7 @@
           <button disabled>➕ Add Topic</button>
         </div>
         <div class="table">
-          <table class="list table-sort" onclick="update(event.target)">
+          <table class="list table-sort" onkeydown="navigate(event)" onclick="update(event.target)"  onfocusin="update(event.target)">
             <thead>
               <tr>
                 <th>Id</th>
@@ -173,7 +173,7 @@
           <button disabled>➕ Add Argument Card</button>
         </div>
         <div class="table">
-          <table class="list table-sort" onclick="updateArgument(event.target)">
+          <table class="list table-sort" onkeydown="navigate(event)" onclick="updateArgument(event.target)" onfocusin="updateArgument(event.target)">
             <thead>
               <tr>            
                 <th>Id</th>
@@ -216,7 +216,7 @@
           <button disabled>➕ Add Appeal-to Card</button>
         </div>
         <div class="table">
-          <table class="list table-sort" onclick="update(event.target)">
+          <table class="list table-sort" onkeydown="navigate(event)" onclick="update(event.target)"  onfocusin="update(event.target)">
             <thead>
               <tr>
                 <th>Id</th>
@@ -241,7 +241,7 @@
           <button disabled>➕ Add Fallacy Card</button>
         </div>
         <div class="table">
-          <table class="list table-sort" onclick="update(event.target)">
+          <table class="list table-sort" onkeydown="navigate(event)" onclick="update(event.target)" onfocusin="update(event.target)">
             <thead>
               <tr>
                 <th>Id</th>
@@ -265,7 +265,7 @@
           <button disabled>➕ Add Label Card</button>
         </div>
         <div class="table">
-          <table class="list table-sort" onclick="update(event.target)">
+          <table class="list table-sort" onkeydown="navigate(event)" onclick="update(event.target)" onfocusin="update(event.target)">
             <thead>
               <tr>
                 <th>Id</th>
@@ -288,7 +288,7 @@
           <button disabled>➕ Add Cancel Card</button>
         </div>
         <div class="table">
-          <table class="list table-sort" onclick="update(event.target)">
+          <table class="list table-sort" onkeydown="navigate(event)" onclick="update(event.target)" onfocusin="update(event.target)">
             <thead>
               <tr>
                 <th>Id</th>
@@ -311,7 +311,7 @@
           <button disabled>➕ Add Source</button>
         </div>
         <div class="table">
-          <table class="list table-sort" onclick="updateSourcePreview(event.target)">
+          <table class="list table-sort" onclick="updateSourcePreview(event.target)" onfocusin="updateSourcePreview(event.target)">
             <thead>
               <tr>
                 <th class="hidden">Id</th>
@@ -337,7 +337,7 @@
           <input class="search" placeholder="🔍 Search messages" oninput="searchMaintain(event)">
         </div>
         <div class="table">
-          <table class="list table-sort" onclick="update(event.target)">
+          <table class="list table-sort" onkeydown="navigate(event)" onclick="update(event.target)" onfocusin="update(event.target)">
             <thead>
               <tr>
                 <th class="hidden">Id</th>

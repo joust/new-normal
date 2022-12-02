@@ -363,7 +363,7 @@ function topicListMutated(mutation) {
 function appealToRow(appealTo) {
   return `<tr id="${appealTo.id}">
     <td class="id">${appealTo.id}</td>
-    <td>${appealToClassSelect(appealTo.class)}</td>
+    <td class="select">${appealToClassSelect(appealTo.class)}</td>
     <td contenteditable="plaintext-only" class="title">${appealTo.title}</td>
     <td contenteditable="plaintext-only" class="text">${appealTo.text}</td>
     <td>${appealTo.length}</td>
@@ -420,7 +420,7 @@ window.setAppealToClass = function(event) {
 function fallacyRow(fallacy) {
   return `<tr id="${fallacy.id}">
     <td class="id">${fallacy.id}</td>
-    <td contenteditable="plaintext-only" class="fallacy">${fallacyClassSelect(fallacy.class)}</td>
+    <td class="fallacy select">${fallacyClassSelect(fallacy.class)}</td>
     <td contenteditable="plaintext-only" class="text">${fallacy.text}</td>
     <td>${fallacy.length}</td>
   </tr>`
@@ -636,6 +636,56 @@ function updateAll() {
   observe(document.querySelector('#appeal-tos .list'), appealToListMutated)
   observe(document.querySelector('#cancels .list'), cancelListMutated)
   observe(document.querySelector('#messages .list'), messageListMutated)
+}
+
+window.navigate = function(event) {
+  const current = event.target
+  const index = Array.prototype.indexOf.call(current.parentNode.children, current)
+  let next = undefined
+  
+  switch (event.key) {
+    case 'ArrowLeft':
+      if (textInfo(current).atStart) next = current.closest('td').previousElementSibling
+      break
+    case 'ArrowRight':
+      if (textInfo(current).atEnd) next = current.closest('td').nextElementSibling
+      break
+    case 'ArrowDown': {
+      const row = current.closest('tr').nextElementSibling
+      if (row) next = row.children[index]
+    }
+    break
+    case 'ArrowUp': {
+      const row = current.closest('tr').previousElementSibling
+      if (row) next = row.children[index]
+    }
+  }
+
+  if (next && (next.hasAttribute('contenteditable') || next.classList.contains('select'))) {
+    if (next.classList.contains('select')) next.firstElementChild.focus(); else next.focus()
+    event.stopPropagation()
+    return false
+  } else
+    return true
+}
+
+function textInfo(el) {
+  let atStart = false, atEnd = false
+  const sel = window.getSelection()
+  if (sel.rangeCount) {
+    const selRange = sel.getRangeAt(0)
+    const testRange = selRange.cloneRange()
+
+    testRange.selectNodeContents(el)
+    testRange.setEnd(selRange.startContainer, selRange.startOffset)
+    atStart = (testRange.toString() === '')
+
+    testRange.selectNodeContents(el)
+    testRange.setStart(selRange.endContainer, selRange.endOffset)
+    atEnd = (testRange.toString() === '')
+  }
+
+  return { atStart, atEnd }
 }
 
 window.navigateMaintain = function(event) {

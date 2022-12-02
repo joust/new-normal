@@ -28,10 +28,12 @@
     <script src="components/centered-cards.js" type="module"></script>
     <script src="modules/content.js" type="module"></script>
     <script src="modules/common.js" type="module"></script>
+    <script src="modules/filesystem.js" type="module"></script>
     <script src="modules/maintain.js" type="module"></script>
   </head>
-  <body onload="loadMaintain(); switchLocale()">
+  <body>
     <div id="navigation" class="radio-tabs">
+      <button onclick="connect()">Connect</button>
       <select class="location" onchange="switchLocale(event.target.value)">
         <option title="Deutschland" value="de-de">🇩🇪 Deutschland</option>
         <option title="Österreich" value="de-at">🇦🇹 Österreich</option>

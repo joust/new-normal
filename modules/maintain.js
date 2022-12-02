@@ -1,5 +1,16 @@
 import { setLocale, htmlToElement, browserLocale } from './common.js'
-import { localeBlock, loadContent, loadSources, extractTopics } from './content.js'
+import { localeBlock, loadContent, saveContent, loadSources, saveSources, extractTopics } from './content.js'
+import { initHDD, fetchHDD, saveHDD } from './filesystem.js'
+
+const init = initHDD
+const fetch = fetchHDD
+const save = saveHDD
+
+window.connect = async function() {
+  await init()
+  loadMaintain()
+  await switchLocale()
+}
 
 window.loadMaintain = function() {
   Array.from(document.querySelectorAll('.details.card-preview')).forEach(detail => detail.insertAdjacentHTML('afterBegin', '<centered-cards class="cards"><editable-card class="card"></editable-card></centered-cards>'))
@@ -19,8 +30,8 @@ window.loadMaintain = function() {
 
 window.switchLocale = async function(locale = undefined, normality = undefined) {
   setLocale(locale)
-  const content = await loadContent()
-  await loadSources()
+  const content = await loadContent(fetch)
+  await loadSources(fetch)
   updateAll()
 }
 
@@ -196,14 +207,15 @@ window.updateArgument = function(target) {
 
 function cardMutated(event) {
   const mutation = event.detail
-  const target = mutation.target.parentNode
+  const target = getParentElement(mutation.target, 'h2, span')
   const argCard = target.closest('argument-card')
   if (argCard) {
     const tag = target.tagName.toLowerCase()
     const node = localeBlock().querySelector(`.idiot a[id="${argCard.card}"] ${tag}, .sheep a[id="${argCard.card}"] ${tag}`)
     if (node) {
-      node.innerHTML = mutation.target.data
+      node.innerHTML = target.innerHTML
       updateArgumentRow(argCard.card)
+      saveContent(save, argCard.card.startsWith('I') ? 'idiot' : 'sheep')
     } else
       console.error('could not find content target for mutation', mutation)
   } else
@@ -289,6 +301,7 @@ function argumentListMutated(mutation) {
       node.innerHTML = target.innerHTML
       update(target)
       updateArgumentRow(id, [4, 5])
+      saveContent(save, id.startsWith('I') ? 'idiot' : 'sheep')
     } else
       console.error('could not find content target for mutation', mutation)
     
@@ -342,6 +355,7 @@ function topicListMutated(mutation) {
   if (node) {
     node.setAttribute(attr, mutation.target.data)
     update(target)
+    saveContent(save, 'topics')
   } else 
     console.error('no target found for mutation', mutation)
 }
@@ -359,7 +373,6 @@ function appealToRow(appealTo) {
 function updateAppealTosList(appealTos) {
   const tbody = document.querySelector('#appeal-tos .list tbody')
   const selected = getTableSelected(tbody)
-  console.log(selected)
   tbody.innerHTML = ''
   appealTos.forEach(appealTo => tbody.insertAdjacentHTML('beforeEnd', appealToRow(appealTo)))
   if (selected) setTableSelected(tbody, selected)
@@ -392,6 +405,7 @@ function appealToListMutated(mutation) {
     node.innerHTML = target.innerHTML
     update(target)
     updateAppealToRow(id)
+    saveContent(save, 'appeal-tos')
   } else 
     console.error('no target found for mutation', mutation)
 }
@@ -438,6 +452,7 @@ function fallacyListMutated(mutation) {
   if (tag && node) {
     node.innerHTML = target.innerHTML
     update(target)
+    saveContent(save, 'fallacies')
   } else 
     console.error('no target found for mutation', mutation)
 }
@@ -482,6 +497,7 @@ function labelListMutated(mutation) {
   if (node) {
     node.innerHTML = target.innerHTML
     update(target)
+    saveContent(save, 'labels')
   } else 
     console.error('no target found for mutation', mutation)
 }
@@ -519,6 +535,7 @@ function cancelListMutated(mutation) {
   if (node) {
     node.innerHTML = target.innerHTML
     update(target)
+    saveContent(save, 'cancels')
   } else 
     console.error('no target found for mutation', mutation)
 }
@@ -557,6 +574,7 @@ function messageListMutated(mutation) {
   if (node) {
     node.innerHTML = target.innerHTML
     update(target)
+    saveContent(save, 'messages')
   } else 
     console.error('no target found for mutation', mutation)
 }
@@ -632,9 +650,9 @@ function observe(element, callback) {
   observer.observe(element, { subtree: true, characterData: true })
 }
 
-function getParentElement(node, tag = undefined) {
+function getParentElement(node, selector = undefined) {
   while (!node.parentElement) node = node.parentNode
-  return tag ? node.parentElement.closest(tag) : node.parentElement
+  return selector ? node.parentElement.closest(selector) : node.parentElement
 }
 
 window.searchMaintain = function(event) {

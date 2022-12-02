@@ -3,14 +3,21 @@ import { language, territory, locales, elementWithKids, htmlToElement, fetchSile
 /**
  * load all sources
  */
-export async function loadSources() {
+export async function loadSources(fetch = fetchSilent) {
   const loaded = document.querySelector('#content > .sources')
   if (!loaded) {
     const sources = elementWithKids('div', null, { 'class': 'sources' })
     document.querySelector('#content').appendChild(sources)
-    sources.innerHTML = await fetchSilent(`content/sources.html`)
+    sources.innerHTML = await fetch('content/sources.html')
     Array.from(sources.querySelectorAll('a')).forEach(link => link.target = '_blank')
   }
+}
+
+export async function saveSources(save) {
+  const sources = document.querySelector('#content > .sources')
+  Array.from(sources.querySelectorAll('a')).forEach(link => link.removeAttribute('target'))
+  await save('content/sources.html', sources.innerHTML)
+  Array.from(sources.querySelectorAll('a')).forEach(link => link.target = '_blank')
 }
 
 export function localeBlock() {
@@ -80,7 +87,7 @@ function mergeContent(content, local) {
 }
 
 // public
-export async function loadContent() {
+export async function loadContent(fetch = fetchSilent) {
   const loaded = localeBlock()
   if (!loaded) {
     const locale = `${language}-${territory}`
@@ -97,14 +104,14 @@ export async function loadContent() {
     ], { id })
     document.querySelector('#content').appendChild(root)
     const [idiot, sheep, labels, cancels, appealTos, fallacies, topics, messages] = await Promise.all([
-      fetchLocalizedContent(true),
-      fetchLocalizedContent(false),
-      fetchSilent(`content/${language}/labels.html`),
-      fetchSilent(`content/${language}/cancels.html`),
-      fetchSilent(`content/${language}/appeal-tos.html`),
-      fetchSilent(`content/${language}/fallacies.html`),
-      fetchLocalizedTopics(),
-      fetchSilent(`content/${language}/messages.html`),
+      fetchLocalizedContent(fetch, true),
+      fetchLocalizedContent(fetch, false),
+      fetch(`content/${language}/labels.html`),
+      fetch(`content/${language}/cancels.html`),
+      fetch(`content/${language}/appeal-tos.html`),
+      fetch(`content/${language}/fallacies.html`),
+      fetchLocalizedTopics(fetch),
+      fetch(`content/${language}/messages.html`),
     ])
     root.querySelector('.idiot').innerHTML = idiot
     root.querySelector('.sheep').innerHTML = sheep
@@ -124,12 +131,12 @@ export async function loadContent() {
  *
  * @param {boolean} idiot whether to load the idiot or sheep arguments
  */
-async function fetchLocalizedContent(idiot) {
+async function fetchLocalizedContent(fetch = fetchSilent, idiot) {
   const file = idiot ? 'idiot.html' : 'sheep.html'
-  let content = await fetchSilent(`content/${language}/${file}`)
+  let content = await fetch(`content/${language}/${file}`)
   const locale = `${language}-${territory}`
   if (locales.includes(locale))
-    content = mergeContent(content, await fetchSilent(`content/${language}/${territory}/${file}`))
+    content = mergeContent(content, await fetch(`content/${language}/${territory}/${file}`))
 
   return content
 }
@@ -137,14 +144,14 @@ async function fetchLocalizedContent(idiot) {
 /**
  * get topics data with localized topics, arguments, titles and labels
  */
-async function fetchLocalizedTopics() {
+async function fetchLocalizedTopics(fetch = fetchSilent) {
   const locale = `${language}-${territory}`
   const id = locales.includes(locale) ? locale : language
   const topics = elementWithKids('div')
   const localTopics = elementWithKids('div')
-  topics.innerHTML = await fetchSilent('content/topics.html')
-  let localHTML = await fetchSilent(`content/${id}/topics.html`)
-  if (!localHTML.length && id !== language) localHTML = await fetchSilent(`content/${language}/topics.html`)
+  topics.innerHTML = await fetch('content/topics.html')
+  let localHTML = await fetch(`content/${id}/topics.html`)
+  if (!localHTML.length && id !== language) localHTML = await fetch(`content/${language}/topics.html`)
   localTopics.innerHTML = localHTML
   Array.from(localTopics.querySelectorAll('section')).forEach(localSection => {
     const section = topics.querySelector(`#${localSection.id}`)
@@ -154,6 +161,55 @@ async function fetchLocalizedTopics() {
   return localTopics.innerHTML
 }
 
+
+function htmlFix(content) {
+  const shy = s => s.replace(/\xad/g, '&shy;')
+  const rsquo = s => s.replace(/’/g, '&rsquo;')
+  const lsquo = s => s.replace(/‘/g, '&lsquo;')
+  return shy(rsquo(lsquo(content)))
+}
+
+export async function saveContent(save, type) {
+  const content = localeBlock().querySelector(`.${type}`)
+  const locale = `${language}-${territory}`
+  const localFile = locales.includes(locale) ? `content/${language}/${territory}/${type}.html` : undefined
+  const globalFile = type==='topics' ? `content/${type}.html` : `content/${language}/${type}.html`
+  if (content) {
+    switch (type) {
+      case 'idiot':
+      case 'sheep': {
+        const global = content.cloneNode(true)
+        Array.from(global.querySelectorAll('a[id]')).filter(e => RegExp(/[IS][A-Z][A-Z][0-9]*/).test(e.id)).forEach(e => e.parentElement.removeChild(e))
+        await save(globalFile, htmlFix(global.innerHTML))
+        if (localFile) {
+          const local = content.cloneNode(true)
+          Array.from(local.querySelectorAll('a[id]')).filter(e => RegExp(/[IS][0-9]*/).test(e.id)).forEach(e => e.parentElement.removeChild(e))
+          await save(localFile, htmlFix(local.innerHTML))
+        }
+        break
+      }
+      case 'topics': {
+        const global = content.cloneNode(true)
+        Array.from(global.querySelectorAll('section[id], a[id]')).filter(e => RegExp(/[IS][A-Z][A-Z][0-9]*/).test(e.id)).forEach(e => e.parentElement.removeChild(e))
+        Array.from(global.querySelectorAll('section[id]'))
+          .forEach(e => ['title', 'data-idiot-title', 'data-sheep-title', 'data-idiot-label', 'data-sheep-label'].forEach(attr => e.removeAttribute(attr)))
+        await save(globalFile, htmlFix(global.innerHTML))
+        if (localFile) {
+          const local = content.cloneNode(true)
+          Array.from(local.querySelectorAll('a[id]')).filter(e => RegExp(/[IS][0-9]*/).test(e.id)).forEach(e => e.parentElement.removeChild(e))
+          await save(localFile, htmlFix(local.innerHTML))
+        }
+        break
+      }
+      case 'fallacies':
+      case 'appeal-tos':
+      case 'labels':
+      case 'messages':
+      case 'cancels':
+        await save(globalFile, htmlFix(content.innerHTML))
+    }
+  }
+}
 
 /** Extract all topics and arguments into a topics array and both a topics array and hash
  * @return {Array} The topic id array and a hash argumentId => [topicId]

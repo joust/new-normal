@@ -1,15 +1,41 @@
-import { setLocale, htmlToElement, browserLocale } from './common.js'
+import { setLocale, htmlToElement, browserLocale, fetchSilent } from './common.js'
 import { localeBlock, loadContent, saveContent, loadSources, saveSources, extractTopics } from './content.js'
+import { alert } from '../components/message-box.js'
 import { initHDD, fetchHDD, saveHDD } from './filesystem.js'
+import { initLFS, fetchLFS, saveLFS } from './gitlfs.js'
 
-const init = initHDD
-const fetch = fetchHDD
-const save = saveHDD
+let init = warnInit
+let fetch = fetchSilent
+let save = warnSave
 
-window.connect = async function() {
+window.connect = async function(target = undefined) {
+  if (target==='lfs') {
+    init = initLFS
+    fetch = fetchLFS
+    save = saveLFS
+  } else if (target==='hdd') {
+    init = initHDD
+    fetch = fetchHDD
+    save = saveHDD
+  }
+  Array.from(document.querySelectorAll('#connect button, #connect h2')).forEach(button => button.classList.add('hidden'))
+
   await init()
   loadMaintain()
   await switchLocale()
+  navigateTo('arguments')
+}
+
+async function warnInit() {
+  await alert('Your may edit the application data but you cannot save or contribute!', 'Warning')
+}
+
+let warnedOnce = false
+async function warnSave() {
+  if (!warnedOnce) {
+    warnedOnce = true
+    await alert('The data you changed will affect your running application but can\'t be saved or contributed!', 'Warning')
+  }
 }
 
 window.loadMaintain = function() {
@@ -689,9 +715,13 @@ function textInfo(el) {
 }
 
 window.navigateMaintain = function(event) {
-  const selected = event.target.id.substring(1)
+  navigateTo(event.target.id.substring(1))
+}
+
+function navigateTo(tab) {
   Array.from(document.querySelectorAll('.tab')).forEach(tab => tab.classList.add('hidden'))
-  document.getElementById(selected).classList.remove('hidden')
+  document.getElementById(`_${tab}`).toggleAttribute('checked', true)
+  document.getElementById(tab).classList.remove('hidden')
 }
 
 function observe(element, callback) {

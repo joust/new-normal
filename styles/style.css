@@ -146,6 +146,14 @@ q::after {
   font-weight: 600;
 }
 
+.red {
+  color: #f72d5d;
+}
+
+.blue {
+  color: #2d60f6;
+}
+
 .logo .virus {
   position: relative;
   display: inline-block;

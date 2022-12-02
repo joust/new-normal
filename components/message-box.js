@@ -188,6 +188,9 @@ class MessageBoxElement extends HTMLElement {
       title = null
     }
     switch (type) {
+    case 'inform':
+      this.setInform(content, title)
+      break
     case 'alert':
       this.setAlert(content, title)
       break
@@ -247,6 +250,15 @@ class MessageBoxElement extends HTMLElement {
     return text[v] && text[v][lang] || v
   }
   
+  /**
+   * Creates the inform dialog element which closes when the given promise is resolved/rejected
+   */
+  setInform(content, title, promise) {
+    this.setupDialog(content, title)
+    if (promise) return promise.then(() => this.disposeDialog())
+    return Promise.resolve()
+  }
+
   /**
    * Creates the alert dialog element
    */
@@ -337,6 +349,12 @@ class MessageBoxElement extends HTMLElement {
 
 // Define the custom element as a web component
 customElements.define('message-box', MessageBoxElement)
+
+export function inform(content, title = null, promise = null) {
+  const dialogBox = document.createElement('message-box')
+  document.body.appendChild(dialogBox)
+  return dialogBox.setInform(content, title, promise)
+}
 
 export function alert(content, title = null) {
   const dialogBox = document.createElement('message-box')

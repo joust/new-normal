@@ -8,9 +8,12 @@
     <link rel="stylesheet" href="styles/opensans.css">
     <link rel="stylesheet" href="styles/crocodile.css">
     <link rel="stylesheet" href="styles/maintain.css">
+    <script src="https://unpkg.com/@isomorphic-git/lightning-fs"></script>
+    <script src="https://unpkg.com/isomorphic-git"></script>
     <script src="libs/table-sort.js" type="text/javascript"></script>
     <script src="components/editable-card.js" type="module"></script>
     <script src="components/argument-card.js" type="module"></script>
+    <script src="components/message-box.js" type="module"></script>
     <script src="components/no-card.js" type="module"></script>
     <script src="components/card-pile.js" type="module"></script>
     <script src="components/card-back.js" type="module"></script>
@@ -33,7 +36,9 @@
   </head>
   <body>
     <div id="navigation" class="radio-tabs">
-      <button onclick="connect()">Connect</button>
+      <button id="stop">&#x274c;</button>
+      <input id="_connect" type="radio" name="type" class="radio-tab" value="connect" onclick="navigateMaintain(event)" checked>
+      <label for="_connect">🛠️</label>
       <select class="location" onchange="switchLocale(event.target.value)">
         <option title="Deutschland" value="de-de">🇩🇪 Deutschland</option>
         <option title="Österreich" value="de-at">🇦🇹 Österreich</option>
@@ -124,7 +129,7 @@
       </select>
       <input id="_topics" type="radio" name="type" class="radio-tab" value="topics" onclick="navigateMaintain(event)">
       <label for="_topics">Topics</label>
-      <input id="_arguments" type="radio" name="type" class="radio-tab" value="arguments" checked onclick="navigateMaintain(event)">
+      <input id="_arguments" type="radio" name="type" class="radio-tab" value="arguments" onclick="navigateMaintain(event)">
       <label for="_arguments">Arguments</label>
       <input id="_fallacies" type="radio" name="type" class="radio-tab" value="fallacies" onclick="navigateMaintain(event)">
       <label for="_fallacies">Fallacies</label>
@@ -138,7 +143,17 @@
       <label for="_sources">Sources</label>
       <input id="_messages" type="radio" name="type" class="radio-tab" value="messages" onclick="navigateMaintain(event)">
       <label for="_messages">Messages</label>
-      <div id="edit-bar"><button onclick="addQuotes()">Single-Quote</button><button onclick="toggleBold()">Bold</button><button onclick="addShy()">Shy</button></div>
+      <div id="edit-bar"><button onclick="addQuotes()">‘…’</button><button onclick="toggleBold()"><b>B</b></button><!--<button onclick="addShy()">-</button>--></div>
+    </div>
+    <div id="connect" class="tab">
+      <h2>
+        <span class="logo"><span class="red">New</span>&nbsp;<span class="blue">Normal</span></span><br>
+        <b>Maintenance</b>
+        <br>
+        How do you want to access the application data?</h2>
+      <button id="ro" onclick="connect()">👀<br><b>Locally, just to explore</b> (You won't be able to save)</button>
+      <button id="git" onclick="connect('lfs')">✔️<br><b>Through the offical git repository</b><br>(gitlab account needed)</button>
+      <button id="fs" onclick="connect('hdd')">🖋<br><b>Through a git clone on your computer</b> (best option for developers)</button>
     </div>
     <div id="topics" class="tab hidden">
       <div class="master">
@@ -165,12 +180,13 @@
       </div>
       <div class="details card-preview"></div>
     </div>
-    <div id="arguments" class="tab">
+    <div id="arguments" class="tab hidden">
       <div class="master">
         <div class="toolbar">
           <input class="search" placeholder="🔍 Search arguments" oninput="searchMaintain(event)">
           <input type="checkbox" id="show-text" onclick="updateShowText()" /><label for="show-text">Show Text</label>
-          <button disabled>➕ Add Argument Card</button>
+          <button>➕ Add Idiot Argument</button>
+          <button>➕ Add Sheep Argument</button>
         </div>
         <div class="table">
           <table class="list table-sort" onkeydown="navigate(event)" onclick="updateArgument(event.target)" onfocusin="updateArgument(event.target)">
@@ -213,7 +229,8 @@
       <div class="master">
         <div class="toolbar">
           <input class="search" placeholder="🔍 Search appeal tos" oninput="searchMaintain(event)">
-          <button disabled>➕ Add Appeal-to Card</button>
+          <button>➕ Add Idiot Appeal-to</button>
+          <button>➕ Add Sheep Appeal-to</button>
         </div>
         <div class="table">
           <table class="list table-sort" onkeydown="navigate(event)" onclick="update(event.target)"  onfocusin="update(event.target)">
@@ -238,7 +255,8 @@
       <div class="master">
         <div class="toolbar">
           <input class="search" placeholder="🔍 Search fallacies" oninput="searchMaintain(event)">
-          <button disabled>➕ Add Fallacy Card</button>
+          <button>➕ Add Idiot Fallacy</button>
+          <button>➕ Add Sheep Fallacy</button>
         </div>
         <div class="table">
           <table class="list table-sort" onkeydown="navigate(event)" onclick="update(event.target)" onfocusin="update(event.target)">
@@ -262,7 +280,8 @@
       <div class="master">
         <div class="toolbar">
           <input class="search" placeholder="🔍 Search labels" oninput="searchMaintain(event)">
-          <button disabled>➕ Add Label Card</button>
+          <button>➕ Add Idiot Label</button>
+          <button>➕ Add Sheep Label</button>
         </div>
         <div class="table">
           <table class="list table-sort" onkeydown="navigate(event)" onclick="update(event.target)" onfocusin="update(event.target)">
@@ -285,7 +304,8 @@
       <div class="master">
         <div class="toolbar">
           <input class="search" placeholder="🔍 Search cancels" oninput="searchMaintain(event)">
-          <button disabled>➕ Add Cancel Card</button>
+          <button>➕ Add Idiot Cancel</button>
+          <button>➕ Add Sheep Cancel</button>
         </div>
         <div class="table">
           <table class="list table-sort" onkeydown="navigate(event)" onclick="update(event.target)" onfocusin="update(event.target)">

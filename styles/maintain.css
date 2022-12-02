@@ -11,6 +11,20 @@ body {
   flex-direction: column;
 }
 
+.logo {
+  font-family: 'HVD Crocodile';
+  font-weight: 600;
+  font-size: 2em;
+}
+
+.red {
+  color: #f72d5d;
+}
+
+.blue {
+  color: #2d60f6;
+}
+
 #navigation {
   font-family: 'HVD Crocodile', Helvetica;
   height: 2em;
@@ -29,7 +43,7 @@ body {
 }
 
 #navigation #edit-bar button {
-  margin: 1%;
+  height: 100%;
 }
 
 .tab {
@@ -49,6 +63,12 @@ body {
 
 .tab .master {
   min-width: 50%; 
+}
+
+#connect button, #connect h2 {
+  margin: 1em;
+  padding: 2em;
+  font-size: 1.5em;
 }
 
 #arguments .details .topics {

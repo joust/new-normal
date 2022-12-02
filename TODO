@@ -25,5 +25,4 @@ General
 * Implement card display on URL param e.g. https://new-normal.app#test/LI4
 * Draft arguments with only headlines (h2) will be displayed with placeholder content lines
 * implement the new intro, remove the old
-* refactor dialog.js
 * refactor all redundant card local css to cards.css

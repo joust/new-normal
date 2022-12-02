@@ -1,4 +1,4 @@
-import { prompt } from '../components/dialog.js' 
+import { prompt } from '../components/message-box.js' 
 import { language, territory, locales, element, elements } from './common.js'
 import { loadSources, loadContent, extractContent, getMessage } from './content.js'
 import { startLocal, startClient, getAlternatives, canBePlayedOn, isIdiot, allowedToPlay, allPossibleMoves, isArgument, isWildcard, isFallacy } from './uno-bg.js'

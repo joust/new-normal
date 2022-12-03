@@ -14,11 +14,11 @@ export default class DragDropWithTouchSupportShim {
    */
   constructor({
     threshold = 5,
-    opacity = 0.8,
+    opacity = 1,
     dblClick = 500,
     ctxMenu = 900,
-    isPressHoldMode = 400,
-    pressHoldAwait = 400,
+    isPressHoldMode = false,
+    pressHoldAwait = 50,
     pressHoldMargin = 25,
     pressHoldThreshold = 0,
   } = {}) {

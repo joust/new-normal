@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="styles/uno.css">
     <link rel="stylesheet" href="styles/test.css">
     <title>New Normal</title>
-    <script src="libs/mobile-drag-drop.js" type="text/javascript"></script>
+    <script src="libs/drag-drop-touch.js" type="text/javascript"></script>
     <script src="libs/boardgame.js" type="text/javascript"></script>
     <script src="components/message-box.js" type="module"></script>
     <script src="components/player-hand.js" type="module"></script>
@@ -52,13 +52,9 @@
         if (navigator.userAgent.indexOf('Windows') > 0)
           document.head.innerHTML += '<link rel="stylesheet" href="noto.css">'
       }
-
-      window.dragdrop = function() {
-        MobileDragDrop.polyfill({ forceApply: true })
-      }
     </script>
   </head>
-  <body onload="dragdrop(); flagcheck(); load()">
+  <body onload="flagcheck(); load()">
     <div><button id="stop" class="hidden">&#x274c;</button></div>
     <div id="menu">
       <div class="game-logo menu">

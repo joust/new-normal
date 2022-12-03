@@ -247,23 +247,15 @@ export default class DragDropWithTouchSupportShim {
    * @returns {HTMLElement}
    */
   __getDragOverTarget(event) {
-    let element;
-
     // find what we're looking for in the composed path that isn't a slot or a
-    // fragment
-    const found = event.composedPath().find(i => {
-      if (i.nodeType === 1 && i.nodeName !== 'SLOT') {
+    // fragment and has the needed event handlers dragover and drop set
+    return event.composedPath().find(i => {
+      if (i.nodeType === 1 && i.nodeName !== 'SLOT' 
+          && typeof i.ondragover === 'function' 
+          && typeof i.ondrop === 'function') {
         return i;
       }
     });
-
-    if (found) {
-      // find the shadow root for our target
-      const theLowestShadowRoot = found.getRootNode();
-      const pointFromTouchEvent = this._getPoint(event);
-      element = theLowestShadowRoot.elementFromPoint(pointFromTouchEvent.x, pointFromTouchEvent.y);
-    }
-    return element;
   }
 
   // create drag image from source element
@@ -377,7 +369,8 @@ export default class DragDropWithTouchSupportShim {
   __findClosestDraggable(event) {
     return event.composedPath().find(i => {
       if (i.attributes) {
-        return i.hasAttribute('draggable');
+        return i.hasAttribute('draggable') && 
+          (i.getAttribute('draggable')==='true' || i.getAttribute('draggable')==='auto');
       }
     });
   }

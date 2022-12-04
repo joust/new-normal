@@ -115,31 +115,35 @@ export default class DragDropWithTouchSupportShim {
       return;
     }
     if (this._shouldHandleMove(event) || this._shouldHandlePressHoldMove(event)) {
-      // see if target wants to handle move
-      const target = this.__getDragOverTarget(event);
-
-      if (this._dispatchEvent(event, 'mousemove', target)) {
-        this._lastTouch = event;
-        event.preventDefault();
-        return;
-      }
-      // start dragging
-      if (this._dragSource && !this._img && this._shouldStartDragging(event)) {
-        this._dispatchEvent(event, 'dragstart', this._dragSource);
-        this._createImage(event);
-        this._dispatchEvent(event, 'dragenter', target);
-      }
-      // continue dragging
-      if (this._img) {
-        this._lastTouch = event;
-        event.preventDefault(); // prevent scrolling
-        if (target != this._lastTarget) {
-          this._dispatchEvent(this._lastTouch, 'dragleave', this._lastTarget);
+      let targets = this.__getDragOverTargets(event);
+      if (targets.includes(this._lastTarget)) targets = [this._lastTarget];
+      for (const target of targets) {
+        // see if target wants to handle move => exit
+        if (this._dispatchEvent(event, 'mousemove', target)) {
+          this._lastTouch = event;
+          event.preventDefault();
+          return;
+        }
+        // start dragging (if not already done)
+        if (this._dragSource && !this._img && this._shouldStartDragging(event)) {
+          this._dispatchEvent(event, 'dragstart', this._dragSource);
+          this._createImage(event);
           this._dispatchEvent(event, 'dragenter', target);
           this._lastTarget = target;
         }
-        this._moveImage(event);
-        this._isDropZone = this._dispatchEvent(event, 'dragover', target);
+        // continue dragging
+        if (this._img) {
+          this._lastTouch = event;
+          event.preventDefault(); // prevent scrolling
+          if (target != this._lastTarget) {
+            this._dispatchEvent(this._lastTouch, 'dragleave', this._lastTarget);
+            this._dispatchEvent(event, 'dragenter', target);
+            this._lastTarget = target;
+          }
+          this._moveImage(event);
+          this._isDropZone = this._dispatchEvent(event, 'dragover', target);
+          if (this._isDropZone) break; // Don't go deeper if we have found a drop zone
+        }
       }
     }
   }
@@ -242,20 +246,21 @@ export default class DragDropWithTouchSupportShim {
   }
 
   /**
-   * Find what we're actually dragging over
+   * Find the element(s) we're dragging over - with possible deeper elements in open shadow doms
    * @param {Event} event
-   * @returns {HTMLElement}
+   * @returns {Array<HTMLElement>}
    */
-  __getDragOverTarget(event) {
-    // find what we're looking for in the composed path that isn't a slot or a
-    // fragment and has the needed event handlers dragover and drop set
-    return event.composedPath().find(i => {
-      if (i.nodeType === 1 && i.nodeName !== 'SLOT' 
-          && typeof i.ondragover === 'function' 
-          && typeof i.ondrop === 'function') {
-        return i;
-      }
-    });
+  __getDragOverTargets(event) {
+    const point = this._getPoint(event);
+    let element = document.elementFromPoint(point.x, point.y);
+    const elements = [element];
+    while (element && element.shadowRoot) {
+      const deeperElement = element.shadowRoot.elementFromPoint(point.x, point.y);
+      if (!deeperElement || deeperElement === element || deeperElement.nodeType !== 1) break;
+      elements.push(deeperElement);
+      element = deeperElement;
+    }
+    return elements;
   }
 
   // create drag image from source element

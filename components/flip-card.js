@@ -128,7 +128,7 @@ class FlipCard extends HTMLElement {
     this.shadowRoot.appendChild(template.content)
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
-    this.element('front').onclick = event => { this.openRandom(event); event.stopPropagation() }
+    this.element('front').ondblclick = event => { this.openRandom(event); event.stopPropagation() }
     this.element('back').onclick = event => { this.close(); event.stopPropagation() }
   }
 

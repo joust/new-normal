@@ -59,6 +59,11 @@
         if ('ontouchstart' in document) new DragDropWithTouchSupportShim()
       }
       
+      // prevent dblclick zoom
+      document.addEventListener('dblclick', event => {
+        event.preventDefault()
+      }, { passive: false })
+      
     </script>
   </head>
   <body onload="dragdrop(); flagcheck(); load()">

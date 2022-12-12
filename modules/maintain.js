@@ -1,5 +1,5 @@
-import { setLocale, htmlToElement, browserLocale, fetchSilent } from './common.js'
-import { localeBlock, loadContent, saveContent, loadSources, saveSources, extractTopics } from './content.js'
+import { htmlToElement, browserLocale, fetchSilent } from './common.js'
+import { setLocale, localeBlock, loadContent, saveContent, loadSources, saveSources, extractTopics } from './content.js'
 import { alert } from '../components/message-box.js'
 import { initHDD, fetchHDD, saveHDD } from './filesystem.js'
 import { initLFS, fetchLFS, saveLFS } from './gitlfs.js'

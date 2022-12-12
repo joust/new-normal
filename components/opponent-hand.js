@@ -100,7 +100,7 @@ class OpponentHand extends HTMLElement {
     const cardw8 = (cardw/8)*100/cw
     const restw8 = Math.min(cardw/8, rest/(len-1))*100/cw
     const card = Array(8).fill(cardw8)
-    const before = Array(len-1).fill(restw8)
+    const before = Array(len > 0 ? len-1 : 0).fill(restw8)
     return [...before, ...card].map(c => `${c}%`).join(' ')
   }
 

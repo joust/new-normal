@@ -63,6 +63,10 @@ class GameCard extends HTMLElement {
     return this.getAttribute('alt')
   }
 
+  set alt(alt) {
+    if (this.getAttribute('alt') !== alt) this.setAttribute('alt', alt)
+  }
+
   get idOnly() {
     const card = this.alt || this.card
     return (this.hasTopic ? card.split(':')[1] : card).replace('*', '')
@@ -118,7 +122,7 @@ class GameCard extends HTMLElement {
     if (this.altIndex >= this.alternatives.length) this.altIndex -= this.alternatives.length
     const index = Math.floor(this.altIndex)
 
-    this.setAttribute('alt', this.alternatives[index]+(this.isWildcard?'*':''))
+    this.alt = this.alternatives[index]+(this.isWildcard?'*':'')
   }
 
   resize() {
@@ -149,7 +153,7 @@ class GameCard extends HTMLElement {
     
     const card = this.alt || this.card
     this.altIndex = this.alternatives.indexOf(card.replace('*', ''))
-    if (this.altIndex<0) { this.setAttribute('alt', this.alternatives[0]); this.altIndex = 0 }
+    if (this.altIndex<0) { this.alt = this.alternatives[0]; this.altIndex = 0; }
     const previous = this.element('previous')
     const next = this.element('next')
     if (previous) previous.classList.toggle('hidden', this.alternatives.length===1)
@@ -166,61 +170,6 @@ class GameCard extends HTMLElement {
     mirror.href = `https://archive.is/${a.href}` 
     mirror.firstChild.textContent = 'Mirror'
     return mirror
-  }
-
-  // TODO: Move strings to messages
-  replaceStatement(lang, content) {
-    if (lang.includes('-')) lang = lang.split('-')[0]
-    const from1 = {
-      de: 'Die sagen<i> doch allen Ernstes</i>',
-      en: 'They say<i> in all seriousness</i>',
-      nl: 'Ze zeggen<i> in alle ernst</i>',
-      fr: 'Ils disent<i> en toute sincérité</i>',
-      es: 'Dicen<i> con toda seriedad</i>',
-      it: 'Dicono<i> in tutta serietà</i>',
-      da: 'De siger<i> med al alvor</i>',
-      pl: 'Twierdzą<i> z całą powagą</i>',
-      pt: 'Dizem<i> com toda a seriedade</i>',
-      'pt-br': 'Dizem<i> com toda a seriedade</i>'
-    }
-    const to1 = {
-      de: 'Ich bin bei denen, die sagen',
-      en: 'I am with those who say',
-      nl: 'Ik ben met hen die zeggen',
-      fr: 'Je suis avec ceux qui disent',
-      es: 'Estoy con quienes dicen',
-      it: 'Sono d\'accordo con chi dice',
-      da: 'Jeg er enig med dem, der siger',
-      pl: 'Jestem z tymi, którzy twierdzą',
-      pt: 'Estou com aqueles que dizem',
-      'pt-br': 'Estou com aqueles que dizem'
-    }
-    const from2 = {
-      de: 'Die fragen<i> doch allen Ernstes</i>',
-      en: 'They ask<i> in all seriousness</i>',
-      nl: 'Ze vragen<i> in alle ernst</i>',
-      fr: 'Ils demandent<i> en toute sincérité</i>',
-      es: 'Preguntan<i> con toda seriedad</i>',
-      it: 'Chiedono<i> in tutta serietà</i>',
-      da: 'De spørger<i> med al alvor</i>',
-      pl: 'Pytają<i> z całą powagą</i>',
-      pt: 'Pergunta<i> com toda a seriedade</i>',
-      'pt-br': 'Pergunta<i> com toda a seriedade</i>'
-
-    }
-    const to2 = {
-      de: 'Ich bin bei denen, die fragen',
-      en: 'I am with those who ask',
-      nl: 'Ik ben met hen die vragen',
-      fr: 'Je suis avec ceux qui demandent',
-      es: 'Estoy con quienes preguntan',
-      it: 'Sono d\'accordo con chi chiedono',
-      da: 'Jeg er enig med dem, der spørger',
-      pl: 'Jestem z tymi, którzy pytają',
-      pt: 'Estou com aqueles que perguntam',
-      'pt-br': 'Estou com aqueles que perguntam'
-    }
-    return content.replaceAll(from1[lang], to1[lang]).replaceAll(from2[lang], to2[lang])
   }
 
   getSourcesHTML(id) {
@@ -299,8 +248,7 @@ class GameCard extends HTMLElement {
         if (this.idOnly.startsWith('D'))
           return `<discuss-card id="card" ${type} ${mirrored} topicId="${this.topic}">${this.getContent('discuss').replace('TOPIC', `<b>${topicTitle}</b>`)}</discuss-card>`
         else {
-          const html = data ? this.replaceStatement(this.lang, data.innerHTML) : ''
-          return this.cardWithSources(this.idOnly, title, `<argument-card ${type} ${mirrored} ${wildcard} ${spellcheck} card="${this.idOnly}" topicId="${this.topic}" topic="${topicTitle}">${html}</argument-card>`)
+          return this.cardWithSources(this.idOnly, title, `<argument-card ${type} ${mirrored} ${wildcard} ${spellcheck} card="${this.idOnly}" topicId="${this.topic}" topic="${topicTitle}">${data.innerHTML}</argument-card>`)
         }
     }
   }

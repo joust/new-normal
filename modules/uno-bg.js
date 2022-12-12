@@ -301,7 +301,7 @@ export function Uno(locale, content, host) {
       return { locale, host, decks, pile, hands, names }
     },
     moves: {
-      playCard: ({G, ctx}, index, alt) => { // alt = alternative card to put on the pile
+      playCard: ({G, ctx, events}, index, alt) => { // alt = alternative card to put on the pile
         const idiot = isIdiot(ctx.currentPlayer)
         const deck = idiot ? G.decks.idiot : G.decks.sheep
         const hand = G.hands[ctx.currentPlayer]
@@ -346,7 +346,8 @@ export function Uno(locale, content, host) {
           case 'P': // Pause
             hand.splice(index, 1)
             G.pile.push(alt) // allows to play any argument card afterwards
-            ctx.events.endTurn({ next: ctx.playOrder[(ctx.playOrderPos + 2) % ctx.numPlayers]})
+            console.log(ctx)
+            events.endTurn({ next: ctx.playOrder[(ctx.playOrderPos + 2) % ctx.numPlayers]})
             break;
           case 'A': // Appeal to
             removeFrom(deck, card) // appeal to cards are only removed from their deck when played

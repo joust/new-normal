@@ -1,6 +1,7 @@
-import { loadSources, loadContent, getLocalizedContent, getSources, getTopic, getTopicsData, getArgument, getLabels, labelSelect } from './content.js'
+import { language, territory, supported, setLocale, loadSources, loadContent, getLocalizedContent, getSources, getTopic, getTopicsData, getArgument, getLabels, getMessage, labelSelect } from './content.js'
 import { close, open, flipClose, flipOpen } from './flipside.js'
-import { language, territory, supported, setLocale, attitude, element, elementWithKids, htmlToElement, mirrorNode, uniqueWord, randomElement, safariFix, debounce } from './common.js'
+import { element, elementWithKids, htmlToElement, mirrorNode, uniqueWord, randomElement, safariFix, debounce } from './common.js'
+import { attitude } from './main.js'
 
 /**
  * create one or two idiot or sheep cards and start the game
@@ -31,6 +32,7 @@ window.bingo = async function(one, two) {
 function loadCard(wrapper, idiot, update = false) {
   if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
   wrapper.querySelector('.content').innerHTML = getLocalized(idiot)
+  addStatements(wrapper)
   wrapper.querySelector('.detail').onclick = event => handleClick(event)
   addIdTags(wrapper)
   addSources(wrapper)
@@ -44,6 +46,15 @@ function loadCard(wrapper, idiot, update = false) {
   ;(update ? updateCard : prepareCard)(wrapper, topics, idiot)
   prepareCardTitle(wrapper, idiot)
   copyLogoToCard(wrapper, idiot)
+}
+
+function addStatements(wrapper) {
+  const statement = getMessage('bingo.phrase.statement')
+  const question = getMessage('bingo.phrase.question')
+  wrapper.querySelectorAll('a[id] p').forEach(p => {
+    const hasQmark = p.innerHTML.includes('?')
+    p.insertAdjacentHTML('afterbegin', `<i>${hasQmark ? question : statement} </i>`)
+  })
 }
 
 /**
@@ -371,7 +382,7 @@ function showWrapperTwo() {
  * handle change of the search input text
  * @param {MouseEvent} event - the input event
  */
-function search(event) {
+window.search = function(event) {
   const wrapper = event.target.closest('.card-wrapper')
   const input = event.target.value.toLowerCase()
   const args = Array.from(wrapper.querySelectorAll('a[id]'))
@@ -635,7 +646,7 @@ export function handleCorrection(event) {
 window.toggleCorrectMode = function(wrapper) {
   if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
   const currentMode = wrapper.querySelector('.correct').classList.contains('active')
-  wrapper.querySelectorAll('a[id] p span, a[id] h2').forEach(e => {
+  wrapper.querySelectorAll('a[id] p, a[id] h2').forEach(e => {
     if (!currentMode)
       e.setAttribute('contenteditable', 'plaintext-only')
     else

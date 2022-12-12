@@ -1,4 +1,31 @@
-import { language, territory, locales, elementWithKids, htmlToElement, fetchSilent } from './common.js' 
+import { elementWithKids, htmlToElement, fetchSilent, browserLocale } from './common.js' 
+
+export const supported = ['de', 'da', 'en', 'es', 'pl', 'it', 'pt', 'fr', 'nl']
+export const locales = ['de-de', 'de-ch', 'de-at', 'en-us', 'es-gb', 'pt-br']
+export const localDirs = [ 'de/de', 'de/ch', 'de/at', 'en/us', 'es/gb', 'pt/br']
+export let language, territory
+
+const path = 'content/pandemic'
+
+export function setLocale(locale) {
+  if (locale) {
+    [language, territory] = locale.split('-').map(s => s.toLowerCase())
+  } else {
+    [language, territory] = browserLocale()
+    if (!supported.includes(language)) [language, territory] = ['en', 'us']
+    locale = `${language}-${territory}`
+  }
+  document.querySelector('.location').value = locale
+  document.body.lang = locales.includes(locale) ? locale : language
+}
+
+export async function getPage(page) {
+  const locale = `${language}/${territory}`
+  let content = ''
+  if (localDirs.includes(locale)) content = await fetchSilent(`${path}/${locale}/${page}.html`)
+  if (content === '') content = await fetchSilent(`${path}/${language}/${page}.html`)
+  return content
+}
 
 /**
  * load all sources
@@ -8,7 +35,7 @@ export async function loadSources(fetch = fetchSilent) {
   if (!loaded) {
     const sources = elementWithKids('div', null, { 'class': 'sources' })
     document.querySelector('#content').appendChild(sources)
-    sources.innerHTML = await fetch('content/sources.html')
+    sources.innerHTML = await fetch(`${path}/sources.html`)
     Array.from(sources.querySelectorAll('a')).forEach(link => link.target = '_blank')
   }
 }
@@ -16,7 +43,7 @@ export async function loadSources(fetch = fetchSilent) {
 export async function saveSources(save) {
   const sources = document.querySelector('#content > .sources')
   Array.from(sources.querySelectorAll('a')).forEach(link => link.removeAttribute('target'))
-  await save('content/sources.html', sources.innerHTML)
+  await save(`${path}/sources.html`, sources.innerHTML)
   Array.from(sources.querySelectorAll('a')).forEach(link => link.target = '_blank')
 }
 
@@ -106,12 +133,12 @@ export async function loadContent(fetch = fetchSilent) {
     const [idiot, sheep, labels, cancels, appealTos, fallacies, topics, messages] = await Promise.all([
       fetchLocalizedContent(fetch, true),
       fetchLocalizedContent(fetch, false),
-      fetch(`content/${language}/labels.html`),
-      fetch(`content/${language}/cancels.html`),
-      fetch(`content/${language}/appeal-tos.html`),
-      fetch(`content/${language}/fallacies.html`),
+      fetch(`${path}/${language}/labels.html`),
+      fetch(`${path}/${language}/cancels.html`),
+      fetch(`${path}/${language}/appeal-tos.html`),
+      fetch(`${path}/${language}/fallacies.html`),
       fetchLocalizedTopics(fetch),
-      fetch(`content/${language}/messages.html`),
+      fetch(`${path}/${language}/messages.html`),
     ])
     root.querySelector('.idiot').innerHTML = idiot
     root.querySelector('.sheep').innerHTML = sheep
@@ -133,10 +160,10 @@ export async function loadContent(fetch = fetchSilent) {
  */
 async function fetchLocalizedContent(fetch = fetchSilent, idiot) {
   const file = idiot ? 'idiot.html' : 'sheep.html'
-  let content = await fetch(`content/${language}/${file}`)
+  let content = await fetch(`${path}/${language}/${file}`)
   const locale = `${language}-${territory}`
   if (locales.includes(locale))
-    content = mergeContent(content, await fetch(`content/${language}/${territory}/${file}`))
+    content = mergeContent(content, await fetch(`${path}/${language}/${territory}/${file}`))
 
   return content
 }
@@ -149,9 +176,9 @@ async function fetchLocalizedTopics(fetch = fetchSilent) {
   const id = locales.includes(locale) ? locale : language
   const topics = elementWithKids('div')
   const localTopics = elementWithKids('div')
-  topics.innerHTML = await fetch('content/topics.html')
-  let localHTML = await fetch(`content/${id}/topics.html`)
-  if (!localHTML.length && id !== language) localHTML = await fetch(`content/${language}/topics.html`)
+  topics.innerHTML = await fetch(`${path}/topics.html`)
+  let localHTML = await fetch(`${path}/${id}/topics.html`)
+  if (!localHTML.length && id !== language) localHTML = await fetch(`${path}/${language}/topics.html`)
   localTopics.innerHTML = localHTML
   Array.from(localTopics.querySelectorAll('section')).forEach(localSection => {
     const section = topics.querySelector(`#${localSection.id}`)
@@ -172,8 +199,8 @@ function htmlFix(content) {
 export async function saveContent(save, type) {
   const content = localeBlock().querySelector(`.${type}`)
   const locale = `${language}-${territory}`
-  const localFile = locales.includes(locale) ? `content/${language}/${territory}/${type}.html` : undefined
-  const globalFile = type==='topics' ? `content/${type}.html` : `content/${language}/${type}.html`
+  const localFile = locales.includes(locale) ? `${path}/${language}/${territory}/${type}.html` : undefined
+  const globalFile = type==='topics' ? `${path}/${type}.html` : `${path}/${language}/${type}.html`
   if (content) {
     switch (type) {
       case 'idiot':

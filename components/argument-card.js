@@ -144,6 +144,24 @@ argumentCardTemplate.innerHTML = `
       content: close-quote;
     }
 
+    #content #placeholder {
+      display: none;
+    }
+
+    #content.empty #placeholder {
+      display: block;
+      text-align: justify;
+      font-size: calc(3 * var(--cavg));
+      line-height: 1.8;
+    }
+
+    #placeholder span {
+      background: lightgray;
+      color: lightgray;
+      opacity: 0.5;
+      display: inline;
+    }
+
     #side-title {
       font-family: 'HVD Crocodile', Helvetica;
       font-size: calc(6 * var(--cavg));
@@ -239,7 +257,7 @@ argumentCardTemplate.innerHTML = `
     <div id="watermark"></div>
     <div id="topic-icon"></div>
     <div id="topic-name"></div>
-    <div id="content"><slot></slot></div>
+    <div id="content"><slot></slot><p id="placeholder"></p></div>
     <div id="side-title"></div>
     <div id="card"></div>
     <div id="spellcheck" class="hidden"></div>
@@ -250,6 +268,7 @@ argumentCardTemplate.innerHTML = `
 class ArgumentCard extends HTMLElement {
   constructor() {
     super()
+    this.placeholder = this.randomPlaceholder(400)
     this.attachShadow({ mode: 'open' })
   }
 
@@ -275,6 +294,10 @@ class ArgumentCard extends HTMLElement {
 
   get title() {
     return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
+  }
+
+  get content() {
+    return this.querySelector('p') ? this.querySelector('p').innerHTML : ''
   }
 
   get wildcard() {
@@ -303,6 +326,21 @@ class ArgumentCard extends HTMLElement {
       clearTimeout(timer)
       timer = setTimeout(() => f.apply(this, args), delay)
     }
+  }
+
+  random(min, max) {
+    return min + Math.floor(Math.random()*(max-min+1))
+  }
+
+  randomPlaceholder(len) {
+    let placeholder = ''
+    let letters = 0
+    while (letters < len) {
+      const l = this.random(2, 12)
+      placeholder += `<span>${'xxxxxx'.substr(0, l)}</span> `
+      letters += l+1
+    }
+    return placeholder
   }
 
   connectedCallback() {
@@ -420,6 +458,8 @@ class ArgumentCard extends HTMLElement {
       this.element('spellcheck').classList.toggle('hidden', !this.spellcheck)
       this.element('card').innerHTML = this.flagMapped(this.card)
       this.element('card').classList.toggle('hidden', this.neutral)
+      this.element('content').classList.toggle('empty', !this.content.length)
+      this.element('placeholder').innerHTML = this.placeholder
       this.element('topic-icon').innerHTML = this.flagMapped(this.topicId ? this.topicId.substring(1) : '?')
       this.element('topic-name').innerHTML = this.topic
       this.element('side-title').innerHTML = `${this.wildcard?'✱ ':''}${this.title}`

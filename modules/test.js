@@ -1,5 +1,5 @@
-import { language, territory, fetchSilent, shuffle, element, elementsFrom } from './common.js'
-import { loadSources, loadContent, extractContent, getTopicsData, labelSelect } from './content.js'
+import { fetchSilent, shuffle, element, elementsFrom } from './common.js'
+import { language, territory, loadSources, loadContent, extractContent, getTopicsData, labelSelect } from './content.js'
 import { topicOf } from './uno-bg.js'
 
 let stats // test stats
@@ -99,7 +99,7 @@ function updateTestStats(choices) {
 async function loadTestResult() {
   const start = new Date(stats.begin)
   const locale = `${language}-${territory}`
-  const template = await fetchSilent(`content/${language}/result.html`)
+  const template = await fetchSilent(`content/pandemic/${language}/result.html`)
   const result = element('result')
   result.innerHTML = template
   result.querySelector('.date-time').innerHTML = `Berlin, ${start.toLocaleDateString(locale)} ${start.toLocaleTimeString(locale)}`

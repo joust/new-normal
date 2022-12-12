@@ -47,24 +47,7 @@
     <script src="modules/test.js" type="module"></script>
     <script src="modules/uno-bg.js" type="module"></script>
     <script src="modules/uno.js" type="module"></script>
-    <script type="module">
-      import DragDropWithTouchSupportShim from '../libs/html5-dragdroptouch-shim.js'
-
-      window.flagcheck = function() {
-        if (navigator.userAgent.indexOf('Windows') > 0)
-          document.head.innerHTML += '<link rel="stylesheet" href="noto.css">'
-      }
-      
-      window.dragdrop = function() {
-        if ('ontouchstart' in document) new DragDropWithTouchSupportShim()
-      }
-      
-      // prevent dblclick zoom
-      document.addEventListener('dblclick', event => {
-        event.preventDefault()
-      }, { passive: false })
-      
-    </script>
+    <script src="modules/main.js" type="module"></script>
   </head>
   <body onload="dragdrop(); flagcheck(); load()">
     <div><button id="stop" class="hidden">&#x274c;</button></div>

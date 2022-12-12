@@ -337,7 +337,7 @@ class ArgumentCard extends HTMLElement {
     let letters = 0
     while (letters < len) {
       const l = this.random(2, 12)
-      placeholder += `<span>${'xxxxxx'.substr(0, l)}</span> `
+      placeholder += `<span>${'____________'.substr(0, l)}</span> `
       letters += l+1
     }
     return placeholder

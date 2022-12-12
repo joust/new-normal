@@ -89,15 +89,11 @@ window.addShy = function() {
 }
 
 function toArgumentData(arg, topicMap) {
-  const prefix = arg.querySelector('p').cloneNode(true)
-  if (!prefix.querySelector('span')) console.error(arg)
-  prefix.removeChild(prefix.querySelector('span'))
   return {
     arg,
     id: arg.id,
     title: arg.querySelector('h2').innerHTML,
-    textPrefix: prefix.innerHTML,
-    text: arg.querySelector('span').innerHTML,
+    text: arg.querySelector('p').innerHTML,
     length: arg.querySelector('h2').innerText.length,
     textLength: arg.querySelector('p').innerText.length,
     spellcheck: arg.hasAttribute('spellcheck'),
@@ -233,7 +229,7 @@ window.updateArgument = function(target) {
 
 function cardMutated(event) {
   const mutation = event.detail
-  const target = getParentElement(mutation.target, 'h2, span')
+  const target = getParentElement(mutation.target, 'h2, p')
   const argCard = target.closest('argument-card')
   if (argCard) {
     const tag = target.tagName.toLowerCase()
@@ -257,7 +253,7 @@ function argumentRow(arg) {
     <td class="id">${arg.id}</td>
     <td onclick="toggleSpellcheck(event)">${arg.spellcheck ? '🚧' : '✅'}</td>
     <td contenteditable="plaintext-only" class="title">${arg.title}</td>
-    <td class="text-column ${show}">${arg.textPrefix}<span contenteditable="plaintext-only" class="text">${arg.text}</span></td>
+    <td class="text ${show}" contenteditable="plaintext-only">${arg.text}</td>
     <td ${arg.length > LONG_TITLE ? 'class="fix"' : ''}>${arg.length}</td>
     <td ${arg.textLength > LONG_TEXT || arg.textLength < SHORT_TEXT ? 'class="fix"' : ''}>${arg.textLength}</td>
     <td>${arg.topics.join(', ')}</td>
@@ -307,7 +303,7 @@ function showText() {
 
 window.updateShowText = function() {
   const show = showText()
-  Array.from(document.querySelectorAll('#arguments .list .text-column')).forEach(node => node.classList.toggle('hidden', !show))
+  Array.from(document.querySelectorAll('#arguments .list .text')).forEach(node => node.classList.toggle('hidden', !show))
 }
 
 window.updateArguments = function() {
@@ -320,7 +316,7 @@ function argumentListMutated(mutation) {
   const target = getParentElement(mutation.target, 'td') // target is always a #text
   console.log(target)
   const id = target.closest('tr').id
-  const tag = target.classList.contains('title') ? 'h2' : target.classList.contains('text') ? 'span' : undefined
+  const tag = target.classList.contains('title') ? 'h2' : target.classList.contains('text') ? 'p' : undefined
   if (tag) {
     const node = localeBlock().querySelector(`.idiot a[id=${id}] ${tag}, .sheep a[id=${id}] ${tag}`)
     if (node) {

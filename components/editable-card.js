@@ -119,8 +119,8 @@ class EditableCard extends HTMLElement {
   makeEditable(content) {
     if (content && content.querySelector('h2'))
       this.setEditable(content.querySelector('h2'), true)
-    if (content && content.querySelector('span'))
-      this.setEditable(content.querySelector('span'), true)
+    if (content && content.querySelector('p'))
+      this.setEditable(content.querySelector('p'), true)
     return content
   }
                                                 

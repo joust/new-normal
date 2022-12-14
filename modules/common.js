@@ -11,9 +11,9 @@ export function mirrorNode(a) {
 }
 
 /**
- * get browser two-character-codes for languageuage and territoryitory in lower case
+ * get browser two-character-codes for language and territory in lower case
  *
- * @return {string[]} an 2-entry-array with the browser languageuage and territoryitory
+ * @return {string[]} an 2-entry-array with the browser language and territory
  */
 export function browserLocale() {
   let [language, territory] = navigator.language.split('-')

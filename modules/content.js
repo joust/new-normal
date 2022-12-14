@@ -15,7 +15,7 @@ export function setLocale(locale) {
     if (!supported.includes(language)) [language, territory] = ['en', 'us']
     locale = `${language}-${territory}`
   }
-  document.querySelector('.location').value = locale
+  if (document.querySelector('.location')) document.querySelector('.location').value = locale
   document.body.lang = locales.includes(locale) ? locale : language
 }
 

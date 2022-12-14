@@ -88,19 +88,16 @@
       }
     </style>
     <script type="module">
-      import { loadSources, loadContent } from './modules/content.js'
+      import { setLocale, loadSources, loadContent } from './modules/content.js'
       
       function idsFrom(content, block, filter = '') {
         return [...Array.from(content.querySelectorAll(`.${block} a[id]`))].map(node => node.id).filter(id => id.includes(filter))
       }
 
-      function setLang(loc) {
-        document.body.lang = loc.split('-')[0]
-      }
-
-      window.addHand = async function() {
+      window.addHand = async function(locale) {
+        setLocale(locale)
         await loadSources()
-        const content = await loadContent(document.body.lang)
+        const content = await loadContent()
         const cards = JSON.stringify([
           {card: 'S1', alt: idsFrom(content, 'sheep'), playable: true},
           {card: 'I2', alt: idsFrom(content, 'idiot'), playable: true},
@@ -141,10 +138,10 @@
       }
     </script>
   </head>
-  <body lang="de" onload="addHand()">
+  <body lang="de" onload="addHand('de-de')">
     <div id="uno">
     </div>
-    <select id="location" onchange="setLang(event.target.value); addHand()">
+    <select id="location" onchange="addHand(event.target.value)">
       <option title="Deutschland" value="de-de">🇩🇪</option>
       <option title="Österreich" value="de-at">🇦🇹</option>
       <option title="Schweiz" value="de-ch">🇨🇭</option>

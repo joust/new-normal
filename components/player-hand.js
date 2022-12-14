@@ -176,7 +176,6 @@ class PlayerHand extends HTMLElement {
   }
 
   over(event) {
-    console.log(event.target.card || event.target.id)
     event.target && event.target.id!=='player-hand' && this.show(event.target)
   }
 

@@ -14,14 +14,16 @@ gameCardTemplate.innerHTML = `
 
     #previous, #next {
       position: absolute;
-      font-size: calc(7 * var(--cavg));
+      font-size: calc(6 * var(--cavg));
       color: lightgrey;
-      opacity: 0;
-      right: 0;
+      right: calc(50% - 5 * var(--cavg));
       cursor: pointer;
-      width: calc(7 * var(--cavg));
+      width: calc(10 * var(--cavg));
+      height: calc(10 * var(--cavg));
       text-align: center;
-      display: none;
+      border-radius: 50%;
+      background-color: white;
+      opacity: 0.2;
     }
 
     #previous {
@@ -111,12 +113,14 @@ class GameCard extends HTMLElement {
     resizeObserver.observe(this)
     this.element('previous').insertAdjacentHTML('beforeBegin', this.getCardElement())
 
-    this.element('previous').onlick = event => this.updateAltIndex(-1) // TODO not working
-    this.element('next').onlick = event => this.updateAltIndex(1) // TODO not working
+    this.element('previous').onclick = event => this.updateAltIndex(-ALTERNATIVES_STEP)
+    this.element('next').onclick = event => this.updateAltIndex(ALTERNATIVES_STEP)
     this.onwheel = event => this.updateAltIndex(event.deltaY)
+    this.updateAlternatives()
   }
 
   updateAltIndex(delta) {
+    console.log('updateAltIndex', delta)
     this.altIndex += delta / ALTERNATIVES_STEP
     if (this.altIndex < 0) this.altIndex += this.alternatives.length
     if (this.altIndex >= this.alternatives.length) this.altIndex -= this.alternatives.length
@@ -140,11 +144,7 @@ class GameCard extends HTMLElement {
   }
 
   updateMirrored() {
-    const previous = this.element('previous')
-    const next = this.element('next')
     const card = this.element('card')
-    if (previous) previous.classList.toggle('mirrored', this.mirrored)
-    if (next) next.classList.toggle('mirrored', this.mirrored)
     if (card) card.toggleAttribute('mirrored', this.mirrored)
   }
 
@@ -156,8 +156,8 @@ class GameCard extends HTMLElement {
     if (this.altIndex<0) { this.alt = this.alternatives[0]; this.altIndex = 0; }
     const previous = this.element('previous')
     const next = this.element('next')
-    if (previous) previous.classList.toggle('hidden', this.alternatives.length===1)
-    if (next) next.classList.toggle('hidden', this.alternatives.length===1)
+    if (previous) previous.classList.toggle('hidden', this.alternatives.length<=1)
+    if (next) next.classList.toggle('hidden', this.alternatives.length<=1)
   }
 
   /**

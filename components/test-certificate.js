@@ -93,7 +93,15 @@ testCertificateTemplate.innerHTML = `
 
     @media (prefers-color-scheme: dark) {
       #test-certificate {
-        background: #555;
+        background-color: #999;
+      }
+      
+      #inner {
+        background-color: #666;
+      }
+
+      #logo {
+        background: linear-gradient(0deg, #666 50%, transparent 50%);
       }
     }
 </style>

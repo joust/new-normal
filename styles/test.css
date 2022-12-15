@@ -77,7 +77,7 @@
 }
 
 #result .arrow::before {
-  content: '⬇';
+  content: '▼';
   display: block;
   font-size: 6vmax;
 }
@@ -87,7 +87,11 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  #test, #result {
-    background-color: #222;
+  test-certificate {
+    color: #ddd;
+  }
+  
+  #result .drawer {
+    border: 0.5vmax solid #ddd;
   }
 }

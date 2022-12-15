@@ -13,16 +13,11 @@ Bingo
 
 * implement bingo-card component
 
-Test
-
-* implement test-cert component
-
 General
 
 * build a real javascript module from boardgame.io with browserify
 * Implement card display on URL param e.g. https://new-normal.app#bingo/I4
 * Implement card display on URL param e.g. https://new-normal.app#uno/LI4
 * Implement card display on URL param e.g. https://new-normal.app#test/LI4
-* Draft arguments with only headlines (h2) will be displayed with placeholder content lines
 * implement the new intro, remove the old
 * refactor all redundant card local css to cards.css

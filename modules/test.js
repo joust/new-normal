@@ -101,7 +101,8 @@ async function loadTestResult() {
   const locale = `${language}-${territory}`
   const template = await fetchSilent(`content/pandemic/${language}/result.html`)
   const result = element('result')
-  result.innerHTML = template
+  result.classList.toggle('idiot', stats.idiot.count >= stats.sheep.count)
+  result.innerHTML = `<test-certificate>${template}</test-certificate>`
   result.querySelector('.date-time').innerHTML = `Berlin, ${start.toLocaleDateString(locale)} ${start.toLocaleTimeString(locale)}`
   result.querySelector('.cycles').innerHTML = stats.cycles
   result.querySelector('.duration').innerHTML = `${Math.round(stats.duration/1000)}s`
@@ -126,17 +127,6 @@ async function loadTestResult() {
   
   const select = labelSelect(stats.idiot.count < stats.sheep.count)
   result.querySelector('.labels').appendChild(select)
-  
-  copyLogoToTestResult()
-}
-
-/**
- * copy the logo to the top of the test result
- */
-function copyLogoToTestResult() {
-  const logo = document.querySelector('.logo').cloneNode(true)
-  logo.removeChild(logo.querySelector('select'))
-  element('result').prepend(logo)
 }
 
 /**

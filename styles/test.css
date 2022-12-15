@@ -14,27 +14,27 @@
   height: 100%;
   font-size: 2.5vmin;
   background-color: #fff;
-  padding-top: 2vmin;
+  color: #666;
+  padding: 0;
+  margin: 0;
   text-align: center;
   transition: margin ease 0.5s;
+  overflow: hidden;
+}
+
+#result test-certificate {
+  width: 100%;
+  height: 100%;
 }
 
 #result.hidden {
   margin-bottom: -150%;
 }
 
-#result .logo::after {
-  content: '🎖️';
-}
-
 #result h1 {
   font-family: 'HVD Crocodile';
-  font-weight: 300;
-}
-
-#result > * {
-  padding-left: 2vmin;
-  padding-right: 2vmin;
+  font-weight: 600;
+  font-size: 7vmin;
 }
 
 #result table {
@@ -45,13 +45,22 @@
   text-align: left;
 }
 
+#result .result {
+  color: white;
+  background-color: #2d60f6;
+}
+
+#result.idiot .result {
+  background-color: #f72d5d;
+}
+
 #result .drawer, #result .result {
-  border: 0.5vmax solid #000;
   margin-left: 3vmin;
   margin-right: 3vmin;
 }
 
 #result .drawer {
+  border: 0.5vmax solid #666;
   border-bottom: none;
   margin-top: 0;
   margin-bottom: 0;

@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <link rel="apple-touch-icon" href="styles/images/nn-icon.png">
+    <link rel="icon" type="image/png" href="styles/images/nn-icon.png">
+    <link rel="stylesheet" href="styles/opensans.css">
+    <link rel="stylesheet" href="styles/crocodile.css">
+    <title>New Normal - Certificate</title>
+    <script src="components/test-certificate.js" type="module"></script>
+    <style>
+      html, body, test-certificate {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+      }
+    </style>
+    <script type="module">
+      window.showCertificate = async function() {
+        document.querySelector('body').insertAdjacentHTML('afterBegin', '<test-certificate></test-certificate>')
+      }
+    </script>
+  </head>
+  <body lang="de" onload="showCertificate()">
+  </body>
+</html>

@@ -2,6 +2,10 @@ import { element } from './common.js'
 import { setLocale, getPage, loadContent } from './content.js'
 import DragDropWithTouchSupportShim from '../libs/html5-dragdroptouch-shim.js'
 
+import { displayHashAsCard } from './bingo.js'
+import { displayHashAsHand } from './uno.js'
+import { displayHashAsTest } from './test.js'
+
 // New Normal needs a browser with at least fetch support
 if (!('fetch' in window)) alert('Please user a modern Browser to play New Normal!')
 
@@ -128,4 +132,17 @@ export function loadAttitude() {
       if (localStorage.getItem(a) !== null)
         attitude[a] = a === 'exclusions' ? localStorage.getItem(a) : localStorage.getItem(a)==='true'
     }
+}
+
+function displayHash(hash) {
+  const first = hash.toLowerCase().split('&')[0]
+  const rest = hash.toUpperCase().split('&').map(v => v.split('=')[0]).slice(1)
+  console.log(rest)
+  switch (first) {
+    case 'test': return displayHashAsTest(rest)
+    case 'uno': 
+    case 'hand': return displayHashAsHand(rest) 
+    case 'bingo': return displayHashAsCard(rest)
+    default: return displayHashAsCard([first, ...rest]) // backward compatibility
+  }
 }

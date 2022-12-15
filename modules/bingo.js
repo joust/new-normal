@@ -572,16 +572,17 @@ function updateCard(wrapper, topics, idiot = undefined) {
 /**
  * show idiot or sheep cards corresponding to the id(s) given in the hash
  *
- * @param {string} hash with comma separated ids of argument(s) to show
+ * @param {string} ids Array of ids of argument(s) to show
  * @return {boolean} true if success false otherwise
  */
-async function displayHash(hash) {
-  const ids = hash.toUpperCase().split('&').map(v => v.split('=')[0])
+export async function displayHashAsCard(ids) {
   const idiot = ids.filter(v => v.startsWith('I'))
   const sheep = ids.filter(v => v.startsWith('S'))
   const test = ids.filter(v => v.startsWith('T'))
   const wrapper1 = element('wrapper-1')
   const wrapper2 = element('wrapper-2')
+  await loadContent()
+  await loadSources()
   if (test.length) {
     await loadTestCard(wrapper1, true, 0, 5)
     await loadTestCard(wrapper2, false, 25, 5)

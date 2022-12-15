@@ -24,8 +24,8 @@ function cleanupTable() {
   element('stop').classList.add('hidden')
   element('uno').classList.add('hidden')
   element('pyro').classList.add('hidden')
-  element('uno').removeChild(element('game'))
-  element('uno').removeChild(element('hand'))
+  if (element('game')) element('uno').removeChild(element('game'))
+  if (element('hand')) element('uno').removeChild(element('hand'))
   show('start')
 }
 
@@ -112,8 +112,7 @@ window.unoWithBots = async function(bots) {
   await loadContent()
   setupTable()
   element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand" nr="${playerID}" cards="[]" name="Me" droppable></player-hand>`)
-  element('stop').classList.toggle('hidden', false)
-  setTimeout(() => element('uno').classList.toggle('hidden', false), 50)
+  showUno()
   element('players').classList.add(`p${numPlayers}`)
   const content = extractContent()
   // extractUnassigned()
@@ -140,8 +139,7 @@ window.uno = async function(isHost, numPlayers) {
   await loadSources()
   await loadContent()
   setupTable()
-  element('stop').classList.toggle('hidden', false)
-  setTimeout(() => element('uno').classList.toggle('hidden', false), 50)
+  showUno()
   element('players').classList.add(`p${numPlayers}`)
   const content = extractContent()
   const locale = `${language}-${territory}`
@@ -227,4 +225,33 @@ function extractUnassigned() {
   const toHTML = id => `<a id="${id.substring(1)}"><!--${getTitle(id.substring(1))}--></a>`
   console.log(content.idiot.args.filter(id => id.startsWith(':')).map(toHTML).join('\n'))
   console.log(content.sheep.args.filter(id => id.startsWith(':')).map(toHTML).join('\n'))
+}
+
+/**
+ * show game cards in a hand, corresponding to the id(s) given in the hash
+ *
+ * @param {string} hash with comma separated ids of argument(s) to show
+ * @return {boolean} true if success false otherwise
+ */
+export async function displayHashAsHand(cards) {
+  await loadContent()
+  await loadSources()
+  const cardsString = JSON.stringify(cards.map(card => ({ card, playable: false })))
+  element('uno').insertAdjacentHTML('beforeEnd', 
+                                    `<player-hand id="hand" nr="0" cards="[]"></player-hand>`)
+  element('hand').setAttribute('cards', cardsString)
+  element('stop').onclick = () => cleanupTable()
+  showUno()
+  return true
+}
+
+function showUno() {
+  element('stop').classList.toggle('hidden', false)
+  setTimeout(() => element('uno').classList.toggle('hidden', false), 50)
+}
+
+function hideUno() {
+  element('stop').classList.toggle('hidden', true)
+  element('uno').classList.toggle('hidden', true)
+  showPage('start')
 }

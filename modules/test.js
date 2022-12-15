@@ -1,6 +1,6 @@
 import { fetchSilent, shuffle, element, elementsFrom } from './common.js'
 import { language, territory, loadSources, loadContent, extractContent, getTopicsData, labelSelect } from './content.js'
-import { topicOf } from './uno-bg.js'
+import { topicOf, isArgument } from './uno-bg.js'
 
 let stats // test stats
 
@@ -141,4 +141,29 @@ function showResult() {
  */
 function hideResult() {
   element('result').classList.add('hidden')
+}
+
+
+/**
+ * show game cards in a test, corresponding to the id(s) given in the hash
+ *
+ * @param {string} hash with comma separated ids of argument(s) to show
+ * @return {boolean} true if success false otherwise
+ */
+export async function displayHashAsTest(ids) {
+  const cards = ids.filter(card => isArgument(card))
+  if (cards.length) {
+    initTestStats(cards.length)
+    await loadContent()
+    await loadSources()
+    document.getElementById('test').insertAdjacentHTML('afterBegin', `
+    <centered-cards>
+      <test-pile id="test-pile" cards="${cards.join(',')}"></test-pile>
+    </centered-cards>
+    `)
+    document.getElementById('test-pile').addEventListener('finish', finish)
+    showTest()
+    return true
+  }
+  return false
 }

@@ -24,22 +24,27 @@ gameCardTemplate.innerHTML = `
       border-radius: 50%;
       background-color: white;
       opacity: 0.2;
+      border: none;
+    }
+
+    #previous:hover, #next:hover {
+      background: grey;
     }
 
     #previous {
-      top: 0;
+      top: 0.5%;
     }
 
     #next {
-      bottom: 0;
+      bottom: 0.5%;
     }
 
     .hidden {
       display: none;
     }
   </style>
-  <div id="previous">▲</div>
-  <div id="next">▼</div>
+  <button id="previous">▲</button>
+  <button id="next">▼</button>
 `
 
 const ALTERNATIVES_STEP = 300
@@ -174,16 +179,18 @@ class GameCard extends HTMLElement {
 
   getSourcesHTML(id) {
     const sources = document.querySelector(`${GameCard.contentRootSelector} > .sources`)
-    const links = Array.from(sources.querySelectorAll(`a.${id}`))
-    if (links.length > 0) {
-      const q = this.elementWithKids('q', [
-//        a.querySelector('h2').cloneNode(true),
-        this.elementWithKids('ul', links.map(
-        s => this.elementWithKids('li', [
-          s.cloneNode(true), ' (', this.mirrorNode(s), ')'
-        ])))
-      ])
-      return q.outerHTML
+    if (sources) {
+      const links = Array.from(sources.querySelectorAll(`a.${id}`))
+      if (links.length > 0) {
+        const q = this.elementWithKids('q', [
+  //        a.querySelector('h2').cloneNode(true),
+          this.elementWithKids('ul', links.map(
+          s => this.elementWithKids('li', [
+            s.cloneNode(true), ' (', this.mirrorNode(s), ')'
+          ])))
+        ])
+        return q.outerHTML
+      }
     }
     return undefined
   }

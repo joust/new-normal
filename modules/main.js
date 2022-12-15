@@ -1,5 +1,5 @@
 import { element } from './common.js'
-import { setLocale, getPage } from './content.js'
+import { setLocale, getPage, loadContent } from './content.js'
 import DragDropWithTouchSupportShim from '../libs/html5-dragdroptouch-shim.js'
 
 // New Normal needs a browser with at least fetch support
@@ -45,6 +45,7 @@ window.load = function(locale) {
 window.show = async function(page) {
   document.querySelector('.logo').style.display = page === 'intro' ? 'none' : 'block'
   element('menu').classList.add('hidden')
+  if (page==='uno') await loadContent()
   const content = await getPage(page)
   if (page === 'intro') content = content.replace('NN_YEAR', `<b>${getNNYear()}</b>`)
   document.querySelector('#menu .content').innerHTML = content

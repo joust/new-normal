@@ -1,0 +1,81 @@
+<h1>Instructions Corona Uno</h1>
+<p>
+The <b>New Normal Uno</b> is a variant of the turn-based Uno card game, in which a discussion about the Corona topic is simulated. 2-10 people can participate, and both sides - idiots and sheep - are always equally represented.
+</p>
+<p>
+There is the local game - against the computer - and the network game. The network game runs via direct P2P communication, so it does not need a running communication server (only signaling). Here, one player is the <b>host</b> and the other <b>guests</b> connecting to his game instance. The connection characteristic is the match ID, which the host must communicate to his guests (on a different channel).
+</p>
+
+<h2>Game</h2>
+
+<p>
+The participants of the discourse argue one after the other by playing cards. A turn ends with the playing of an argument card or an appeal-to card. The next player on the turn must respond to the last card played. If he does not have a suitable answer, he can compensate with auxiliary or wild cards; if he also lacks these, he must draw one or more cards from the deck until he has a suitable one.
+</p>
+
+<h2>Types of cards</h2>
+
+<h3>Argument card</h3>
+<p>
+ <game-card class="icard" card="T1:S21"></game-card>
+ <game-card class="icard" card="T1:I1"></game-card>
+An argument card represents a topic from the discourse and all associated arguments of one side. An initial argument is displayed, but can be changed before the card is played. The argument card concludes one's turn. It can also be played in response to an appeal-to card. To respond to an argument card, you need a card with the same topic - or an auxiliary or wild card. Argument cards usually have a fold-out back that lists sources that support the argument. These can be referred to if interested.
+</p>
+<h3>Appeal-to card</h3>
+<p>
+ <game-card class="icard" idiot card="AI1"></game-card>
+ <game-card class="icard" card="AS1"></game-card>
+The appeal-to card represents a reference to a person or institution relevant in the discourse - with authority or popularity - that stands for the respective side. An initial reference is shown, but can be changed before the card is played. The appeal-to card concludes one's turn. It can also be played in response to an argument card. The other side can respond to it with any argument card, i.e. change the subject if necessary, or also respond with an appeal-to card. Appeal-to cards also usually have a fold-out back, on which sources are listed. These can be referred to if interested.
+</p>
+<h3>Cancel Card</h3>
+ <game-card class="icard" card="CI1"></game-card>
+ <game-card class="icard" card="CS1"></game-card>
+<p>
+The Cancel card can be played in response to an appeal-to card. An initial cancel "demand" is displayed, but can be changed before the card is played. The cancel card causes the top card from the deck to return to the hand of the player who played it, along with a cancel card, so that the player is  able to "retaliate".
+<h3>Research Card</h3>
+<p>
+ <game-card class="icard" card="RI"></game-card>
+ <game-card class="icard" card="RS"></game-card>
+The research card is a wild card and can be played on top of an argument or appeal-to card. It provides 1-3 matching cards from its own deck. If there are no matching cards left in the deck, it may, in rare cases, supply no cards at all. If there is an argument card, matching counter-arguments are preferred. If there are none or not enough, appeal-to cards can be added. If there is an appeal-to card on top of the pile, appeal-to cards are delivered. If there are none or not enough, argument cards can also be added. The cards are added to your hand and can be played afterwards.
+</p>
+<h3>Straw man card</h3>
+<p>
+ <game-card class="icard" card="NI"></game-card>
+ <game-card class="icard" card="NS"></game-card>
+The straw man card is a wild card and can be played on top of an argument card. It overrides the card played by the opponent and allows it to be replaced by another (put in the opponent's mouth as something). This is done by adding a matching card from the opponent's deck to the own hand. The current player must then play this and respond with an argument or appeal-to card of his own to end the turn.
+</p>
+<h3>Commonplace Card</h3>
+<p>
+ <game-card class="icard" card="FI1"></game-card>
+ <game-card class="icard" card="FS1"></game-card>
+The commonplace card is an auxiliary card that can be used to influence the discourse to your own favor. An initial commonplace is displayed, but can be changed before the card is played. The commonplace card can be used to respond to an argument or appeal-to card. It removes the constraint of having to respond to that exact card and its topic. It enables a change of topic. Several commonplace cards can be played in succession, but the turn is not over until the current player has played a final argument, appeal-to, or discuss card.
+</p>
+<h3>Labeling Card</h3>
+<p>
+ <game-card class="icard" idiot card="LI1"></game-card>
+ <game-card class="icard" card="LS1"></game-card>
+The labeling card is an auxiliary card that can be used to influence the discourse to your own favor. An initial label is displayed, but can be changed before the card is played. The labeling card can be used to respond to an argument or appeal-to card. It removes the constraint of having to respond exactly to that card and its topic. It makes it possible to change the topic. Several labeling cards can be played in succession, but the turn is not over until the current player has played a final argument, appeal-to or discuss card.</p>
+<h3>Discuss Card</h3>
+<p>
+ <game-card class="icard" card="T1:DI"></game-card>
+ <game-card class="icard" card="T1:DS"></game-card>
+The discuss card is an auxiliary card that can be used to direct the discourse to a topic. An initial topic is displayed, but can be changed before the card is played. The discourse card ends the player's turn. It can be used to enforce that the topic played must be discussed out by all participants. It can be used, for example, when individual players are about to win (by playing all their cards). By playing it, all players receive a special "infinite" argument card, which remains in their hands until the topic has been discussed to the end - or has been changed to another by playing a new argument card.
+</p>
+<h3>Banish Card</h3>
+<p>
+ <game-card class="icard" card="T1:BI"></game-card>
+ <game-card class="icard" card="T1:BS"></game-card>
+The banish card can be used to ensure that the topic of the last card played is banned from the game. All argument cards related to the topic disappear from the piles and the players' hands after they are played. The current player can continue with any card of his own. The banish card can be used, for example, directly or delayed against an discuss card. It can be strategically useful to ban a topic for which your own side's argument pool is particularly large.
+</p>
+<h3>Pause Card</h3>
+<p>
+ <game-card class="icard" card="PI"></game-card>
+ <game-card class="icard" card="PS"></game-card>
+With the pause card, the current player can pause, i.e. not having to play an argument or appeal-to card. Instead, it is immediately the turn of the next player of the same side. This can be useful if you want to avoid a long draw of cards. The pause card is in play from 4 participants. In such a constellation, both sides no longer discuss alone and it can be passed on to a fellow player of the same side.
+</p>
+<h2>End of game</h2>
+<p>
+The game ends the moment one side has no more cards in his/their hands - being the winner of the discussion by having gotten rid of all arguments. When more than two players are playing this can result in fewer people playing in one team than in the other! 
+</p>
+<p><center>
+<button class="menu" onclick="show('start')">back</button>
+</center></p>

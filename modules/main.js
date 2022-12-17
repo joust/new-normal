@@ -50,8 +50,7 @@ window.show = async function(page) {
   document.querySelector('.logo').style.display = page === 'intro' ? 'none' : 'block'
   element('menu').classList.add('hidden')
   if (page==='uno') await loadContent()
-  const content = await getPage(page)
-  if (page === 'intro') content = content.replace('NN_YEAR', `<b>${getNNYear()}</b>`)
+  const content = (page === 'intro') ? await getPage(page) : (await getPage(page)).replace('NN_YEAR', `<b>${getNNYear()}</b>`)
   document.querySelector('#menu .content').innerHTML = content
   document.querySelector('#menu .content').setAttribute('class', `content ${page}`)
   element('menu').scrollTop = 0

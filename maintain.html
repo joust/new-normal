@@ -162,7 +162,7 @@
           <button disabled>➕ Add Topic</button>
         </div>
         <div class="table">
-          <table class="list table-sort" onkeydown="navigate(event)" onclick="update(event.target)"  onfocusin="update(event.target)">
+          <table class="list table-sort" onkeydown="navigate(event)" onclick="update(event.target)"  onfocus="update(event.target)">
             <thead>
               <tr>
                 <th>Id</th>
@@ -184,12 +184,12 @@
       <div class="master">
         <div class="toolbar">
           <input class="search" placeholder="🔍 Search arguments" oninput="searchMaintain(event)">
-          <input type="checkbox" id="show-text" onclick="updateShowText()" /><label for="show-text">Show Text</label>
+          <input type="checkbox" id="show-text" onclick="updateShowText()"><label for="show-text">Show Text</label>
           <button>➕ Add Idiot Argument</button>
           <button>➕ Add Sheep Argument</button>
         </div>
         <div class="table">
-          <table class="list table-sort" onkeydown="navigate(event)" onclick="updateArgument(event.target)" onfocusin="updateArgument(event.target)">
+          <table class="list table-sort" onkeydown="navigate(event)" onclick="updateArgument(event.target)" onfocus="updateArgument(event.target)">
             <thead>
               <tr>            
                 <th>Id</th>
@@ -233,7 +233,7 @@
           <button>➕ Add Sheep Appeal-to</button>
         </div>
         <div class="table">
-          <table class="list table-sort" onkeydown="navigate(event)" onclick="update(event.target)"  onfocusin="update(event.target)">
+          <table class="list table-sort" onkeydown="navigate(event)" onclick="update(event.target)"  onfocus="update(event.target)">
             <thead>
               <tr>
                 <th>Id</th>
@@ -259,7 +259,7 @@
           <button>➕ Add Sheep Fallacy</button>
         </div>
         <div class="table">
-          <table class="list table-sort" onkeydown="navigate(event)" onclick="update(event.target)" onfocusin="update(event.target)">
+          <table class="list table-sort" onkeydown="navigate(event)" onclick="update(event.target)" onfocus="update(event.target)">
             <thead>
               <tr>
                 <th>Id</th>
@@ -284,7 +284,7 @@
           <button>➕ Add Sheep Label</button>
         </div>
         <div class="table">
-          <table class="list table-sort" onkeydown="navigate(event)" onclick="update(event.target)" onfocusin="update(event.target)">
+          <table class="list table-sort" onkeydown="navigate(event)" onclick="update(event.target)" onfocus="update(event.target)">
             <thead>
               <tr>
                 <th>Id</th>
@@ -308,7 +308,7 @@
           <button>➕ Add Sheep Cancel</button>
         </div>
         <div class="table">
-          <table class="list table-sort" onkeydown="navigate(event)" onclick="update(event.target)" onfocusin="update(event.target)">
+          <table class="list table-sort" onkeydown="navigate(event)" onclick="update(event.target)" onfocus="update(event.target)">
             <thead>
               <tr>
                 <th>Id</th>
@@ -331,7 +331,7 @@
           <button disabled>➕ Add Source</button>
         </div>
         <div class="table">
-          <table class="list table-sort" onclick="updateSourcePreview(event.target)" onfocusin="updateSourcePreview(event.target)">
+          <table class="list table-sort" onclick="updateSourcePreview(event.target)" onfocus="updateSourcePreview(event.target)">
             <thead>
               <tr>
                 <th class="hidden">Id</th>
@@ -348,7 +348,7 @@
         </div>
       </div>
       <div class="details">
-        <iframe class="preview" src=""></iframe>
+        <iframe class="preview"></iframe>
       </div>
     </div>
     <div id="messages" class="tab hidden">
@@ -357,7 +357,7 @@
           <input class="search" placeholder="🔍 Search messages" oninput="searchMaintain(event)">
         </div>
         <div class="table">
-          <table class="list table-sort" onkeydown="navigate(event)" onclick="update(event.target)" onfocusin="update(event.target)">
+          <table class="list table-sort" onkeydown="navigate(event)" onclick="update(event.target)" onfocus="update(event.target)">
             <thead>
               <tr>
                 <th class="hidden">Id</th>

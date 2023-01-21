@@ -1,11 +1,11 @@
-import { prompt } from '../components/message-box.js' 
+import { prompt } from '../components/message-box.js'
 import { element, elements } from './common.js'
 import { language, territory, locales, loadSources, loadContent, extractContent, getMessage } from './content.js'
 import { startLocal, startClient, getAlternatives, canBePlayedOn, isIdiot, allowedToPlay, allPossibleMoves, isArgument, isWildcard, isFallacy } from './uno-bg.js'
-       
+
 function setupTable() {
   if (!element('game'))
-    element('uno').insertAdjacentHTML('afterBegin', `
+    element('uno').insertAdjacentHTML('afterbegin', `
       <div id="game">
         <div id="players">
         </div>
@@ -38,7 +38,7 @@ async function sendSetNameRequest(client, playerID) {
 }
 
 function addOpponentHand(nr, name) {
-  element('players').insertAdjacentHTML('beforeEnd', `<opponent-hand cards="8" nr="${nr}" ${name ? `name="${name}"` : ''}></opponent-hand>`)
+  element('players').insertAdjacentHTML('beforeend', `<opponent-hand cards="8" nr="${nr}" ${name ? `name="${name}"` : ''}></opponent-hand>`)
 }
 
 function cardsString(hand, decks, content, top, current, idiot) {
@@ -58,7 +58,6 @@ function updateTable(client, state) { // TODO move to uno/game-table.js componen
   const name = state.G.names[client.playerID]
   const hand = state.G.hands[client.playerID]
   const idiot = !!(client.playerID%2)
-  const deck = idiot ? state.G.decks.idiot : state.G.decks.sheep
   const current = client.playerID===state.ctx.currentPlayer
   element('draw-pile').setAttribute('top', idiot ? 'I' : 'S')
   element('hand').setAttribute('cards', cardsString(hand, state.G.decks, client.game.content, top, current, idiot))
@@ -69,7 +68,7 @@ function updateTable(client, state) { // TODO move to uno/game-table.js componen
   Array.from(element('players').children).forEach((hand, index) => {
     hand.setAttribute('nr', opponentIds[index])
     hand.classList.toggle('current', state.ctx.currentPlayer===opponentIds[index])
-    if (state.G.names[opponentIds[index]]) 
+    if (state.G.names[opponentIds[index]])
       hand.setAttribute('name', state.G.names[opponentIds[index]])
     hand.setAttribute('cards', state.G.hands[opponentIds[index]].length)
   })
@@ -83,7 +82,7 @@ function makeBotMove(client, state) {
     const argument = possibleMoves.findIndex(move => move.move==='playCard' && isArgument(hand[move.args[0]]))
     if (argument>=0) return argument
     const fallacy = possibleMoves.findIndex(move => move.move==='playCard' && isFallacy(hand[move.args[0]]))
-    if (fallacy>=0) return fallacy 
+    if (fallacy>=0) return fallacy
     return Math.floor(Math.random()*possibleMoves.length) // random index
   }
   const botID = client.playerID
@@ -111,7 +110,7 @@ window.unoWithBots = async function(bots) {
   await loadSources()
   await loadContent()
   setupTable()
-  element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand" nr="${playerID}" cards="[]" name="Me" droppable></player-hand>`)
+  element('uno').insertAdjacentHTML('beforeend', `<player-hand id="hand" nr="${playerID}" cards="[]" name="Me" droppable></player-hand>`)
   showUno()
   element('players').classList.add(`p${numPlayers}`)
   const content = extractContent()
@@ -145,7 +144,7 @@ window.uno = async function(isHost, numPlayers) {
   const locale = `${language}-${territory}`
   const client = await startClient(locale, content, isHost, numPlayers, playerID, matchID)
   if (isHost) {
-    element('uno').insertAdjacentHTML('beforeEnd', '<player-hand id="hand" nr="0" cards="[]" droppable></player-hand>')
+    element('uno').insertAdjacentHTML('beforeend', '<player-hand id="hand" nr="0" cards="[]" droppable></player-hand>')
     const message = getMessage('host-player.name.prompt').replace('PLAYERID', playerID)
     const name = await prompt(message, '')
     client.moves.setName(playerID, name)
@@ -173,19 +172,18 @@ window.uno = async function(isHost, numPlayers) {
         }
       } else {
         const hostPlayerID = state.G.host
-        const hostPlayerName = state.G.names[state.G.host]
-        const takeSeat = (client, playerID) => { 
+        const takeSeat = (client, playerID) => {
           elements('opponent-hand').forEach(child => child.classList.remove('selectable'))
           client.updatePlayerID(playerID)
-          updateTable(client, state)              
+          updateTable(client, state)
           activateDrag(client)
         }
 
         if (!element('players').children.length) { // first call in a guest (no playerID set)
           element('players').classList.add(`p${state.ctx.numPlayers}`)
           await takeoverHostLocale(state.G.locale)
-          
-          element('uno').insertAdjacentHTML('beforeEnd', `<player-hand id="hand"></player-hand>`)
+
+          element('uno').insertAdjacentHTML('beforeend', `<player-hand id="hand"></player-hand>`)
           if (state.ctx.numPlayers===2) {
             addOpponentHand(hostPlayerID, state.G.names[hostPlayerID])
             takeSeat(client, hostPlayerID==='0' ? '1' : '0')
@@ -193,7 +191,7 @@ window.uno = async function(isHost, numPlayers) {
             const selectablePlayerIds = state.ctx.playOrder.filter(id => id!==hostPlayerID)
             selectablePlayerIds.forEach(id => addOpponentHand(id, state.G.names[id]))
             elements('opponent-hand').forEach(child => child.classList.add('selectable'))
-            elements('opponent-hand').forEach((child, index) => child.onclick = async event => takeSeat(client, selectablePlayerIds[index]))
+            elements('opponent-hand').forEach((child, index) => child.onclick = async () => takeSeat(client, selectablePlayerIds[index]))
           }
         }
       }
@@ -230,14 +228,14 @@ function extractUnassigned() {
 /**
  * show game cards in a hand, corresponding to the id(s) given in the hash
  *
- * @param {string} hash with comma separated ids of argument(s) to show
+ * @param {string[]} cards Array with ids of argument(s) to show
  * @return {boolean} true if success false otherwise
  */
 export async function displayHashAsHand(cards) {
   await loadContent()
   await loadSources()
   const cardsString = JSON.stringify(cards.map(card => ({ card, playable: false })))
-  element('uno').insertAdjacentHTML('beforeEnd', 
+  element('uno').insertAdjacentHTML('beforeend',
                                     `<player-hand id="hand" nr="0" cards="[]"></player-hand>`)
   element('hand').setAttribute('cards', cardsString)
   element('stop').onclick = () => cleanupTable()
@@ -253,5 +251,5 @@ function showUno() {
 function hideUno() {
   element('stop').classList.toggle('hidden', true)
   element('uno').classList.toggle('hidden', true)
-  showPage('start')
+  show('start')
 }

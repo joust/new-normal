@@ -25,7 +25,7 @@ flipCardTemplate.innerHTML = `
       color: lightgrey;
       text-align: center;
       font-size: calc(5 * var(--cavg));
-      font-family: 'Open Sans', Helvetica;
+      font-family: 'Open Sans', Helvetica, sans-serif;
     }
 
     #open.mirrored {
@@ -51,8 +51,7 @@ flipCardTemplate.innerHTML = `
     #front {
       display: block;
       backface-visibility: hidden;
-      transition: background 0.15s ease, line-height 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-      transition: opacity 0.2s ease;
+      transition: background 0.15s ease, line-height 0.8s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.2s ease;
     }
 
     #back {
@@ -153,7 +152,7 @@ class FlipCard extends HTMLElement {
     this.open(event.clientX, event.clientY)
   }
 
-  openRandom(event) {
+  openRandom() {
     const randomX = Math.random() * this.clientWidth
     const randomY = Math.random() * this.clientHeight
     this.open(randomX, randomY)

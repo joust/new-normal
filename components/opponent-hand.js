@@ -8,8 +8,6 @@ opponentHandTemplate.innerHTML = `
     #opponent-hand {
       width: 100%;
       height: calc(100% - 4vh);
-      overflow-x: hidden;
-      overflow-y: auto;
       box-sizing: border-box;
       display: grid;
       grid-gap: 0;
@@ -17,7 +15,7 @@ opponentHandTemplate.innerHTML = `
     }  
 
     #opponent-name {
-      font-family: 'HVD Crocodile', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-size: 2vh;
       font-weight: 300;
       text-align: center;
@@ -60,7 +58,7 @@ class OpponentHand extends HTMLElement {
     this.updateCards()
     this.update()
   }
-  
+
   attributeChangedCallback() {
     if (this.isConnected && this.element('opponent-hand')) {
       this.updateCards()
@@ -78,7 +76,7 @@ class OpponentHand extends HTMLElement {
       if (index < Math.min(this.cards, elements.length)) {
         elements[index].toggleAttribute('idiot', this.idiot)
       } else if (index < this.cards) {
-        hand.insertAdjacentHTML('beforeEnd', `<card-back ${type}></card-back>`);
+        hand.insertAdjacentHTML('beforeend', `<card-back ${type}></card-back>`);
         elements = Array.from(hand.querySelectorAll('card-back'))
       } else {
         elements[index].parentElement.removeChild(elements[index])
@@ -108,7 +106,7 @@ class OpponentHand extends HTMLElement {
     const columns = this.columns(this.cards)
     this.element('opponent-hand').style.gridTemplateColumns = `1fr ${columns} 1fr`
   }
-  
+
   resize() {
     this.recalc()
   }
@@ -116,7 +114,7 @@ class OpponentHand extends HTMLElement {
   update() {
     const visible = this.ownChildren()
     visible.forEach((child, index) => {
-      child.style.gridRow = 1
+      child.style.gridRow = '1'
       child.style.gridColumn = `${index+2}/span 8`
     })
     this.recalc()

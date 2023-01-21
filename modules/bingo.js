@@ -1,7 +1,7 @@
-import { language, territory, supported, setLocale, loadSources, loadContent, getLocalizedContent, getSources, getTopic, getTopicsData, getArgument, getLabels, getMessage, labelSelect } from './content.js'
+import { language, territory, setLocale, loadSources, loadContent, getLocalizedContent, getSources, getTopic, getTopicsData, getArgument, getMessage, labelSelect } from './content.js'
 import { close, open, flipClose, flipOpen } from './flipside.js'
-import { element, elementWithKids, htmlToElement, mirrorNode, uniqueWord, randomElement, safariFix, debounce } from './common.js'
-import { attitude } from './main.js'
+import { element, elementWithKids, mirrorNode, uniqueWord, randomElement, safariFix, debounce } from './common.js'
+import { attitude, saveAttitude } from './main.js'
 
 /**
  * create one or two idiot or sheep cards and start the game
@@ -188,7 +188,7 @@ function handleClick(event) {
  * open the detail window, adding the CSS 'single' classes to the given id details
  * @param {MouseEvent} event the event that triggered the open action
  * @param {string} topicId id of the topic to open
- * @param {string[]} arguments argument ids to show
+ * @param {string[]} args argument ids to show
  */
 function openDetails(event, topicId, args) {
   const wrapper = event.target.closest('.card-wrapper')
@@ -424,7 +424,6 @@ function hideBingo() {
 /**
  * extract idiot/sheep arguments for a given topic for showing a tooltip
  *
- * @param {HTMLElement} detail - content DOM node containing the arguments
  * @param {string} topicId - the topic id
  * @param {boolean} idiot - idiot or sheep
  * @return {string} the extracted arguments
@@ -572,24 +571,16 @@ function updateCard(wrapper, topics, idiot = undefined) {
 /**
  * show idiot or sheep cards corresponding to the id(s) given in the hash
  *
- * @param {string} ids Array of ids of argument(s) to show
+ * @param {string[]} ids Array of ids of argument(s) to show
  * @return {boolean} true if success false otherwise
  */
 export async function displayHashAsCard(ids) {
   const idiot = ids.filter(v => v.startsWith('I'))
   const sheep = ids.filter(v => v.startsWith('S'))
-  const test = ids.filter(v => v.startsWith('T'))
   const wrapper1 = element('wrapper-1')
   const wrapper2 = element('wrapper-2')
   await loadContent()
   await loadSources()
-  if (test.length) {
-    await loadTestCard(wrapper1, true, 0, 5)
-    await loadTestCard(wrapper2, false, 25, 5)
-    initTestStats(5, 5)
-    const td = document.querySelector(`td[id="${test[0]}"]`)
-    if (td) td.click(); else console.error('no element', test[0])
-  } else {
   if (!idiot.length && !sheep.length) return false // nothing to evaluate
     const one = idiot.length > 0
     const two = (one ? sheep : idiot).length > 0 ? !one : undefined
@@ -603,26 +594,14 @@ export async function displayHashAsCard(ids) {
       showWrapperTwo()
     } else
       hideWrapperTwo()
-  }
   showBingo()
   return true
-}
-
-// Maintenance code
-
-const patchFiles = supported.reduce((files, lang) => {
-  files[lang] = { idiot: {}, sheep: {}}
-  return files
-}, {}) 
-
-export function setBaseContent(content, lang, idiot) {
-  patchFiles[lang][idiot? 'idiot' : 'sheep'].base = content
 }
 
 /**
  * update patch file and html formatted representing the users text corrections for wrapper
  *
- * @param {wrapper} target wrapper
+ * @param {Event} event wrapper
  */
 export function handleCorrection(event) {
   const wrapper = event.target.closest('.card-wrapper')
@@ -642,7 +621,7 @@ export function handleCorrection(event) {
 /**
  * toggle correct mode for current card
  *
- * @param {wrapper} target wrapper
+ * @param {HTMLElement} wrapper wrapper
  */
 window.toggleCorrectMode = function(wrapper) {
   if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)

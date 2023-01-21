@@ -35,10 +35,6 @@ class EditableCard extends HTMLElement {
     return this.getAttribute('card')
   }
 
-  get idOnly() {
-    return (this.hasTopic ? this.card.split(':')[1] : this.card).replace('*', '')
-  }
-
   get hasTopic() {
     return this.card.includes(':')
   }
@@ -71,14 +67,14 @@ class EditableCard extends HTMLElement {
     if (this.isConnected && parent) {
       const card = this.element('card')
       if (card) parent.removeChild(card)
-      parent.insertAdjacentHTML('afterBegin', this.getCardElement())
+      parent.insertAdjacentHTML('afterbegin', this.getCardElement())
       Array.from(this.shadowRoot.querySelectorAll('[contenteditable]')).forEach(node => this.observe(node))
     }
   }
 
   observe(element) {
-    const observer = new MutationObserver(mutations => 
-      mutations.forEach(mutation => 
+    const observer = new MutationObserver(mutations =>
+      mutations.forEach(mutation =>
         this.dispatchEvent(new CustomEvent('mutated', {detail: mutation})))
     )
     observer.observe(element, { subtree: true, characterData: true, characterDataOldValue: true })
@@ -94,7 +90,7 @@ class EditableCard extends HTMLElement {
     const phrase = this.getMessage(`${key}.phrase`, null)
     const description = this.getMessage(`${key}.description`, null)
     return (clazz ? `<i>${clazz}</i>` : '')
-          + (phrase ? `<h2>${phrase}</h2>` : '') 
+          + (phrase ? `<h2>${phrase}</h2>` : '')
           + (description ? `<p>${description}</p>` : '')
   }
 
@@ -103,17 +99,6 @@ class EditableCard extends HTMLElement {
         e.setAttribute('contenteditable', 'plaintext-only')
     else
       e.removeAttribute('contenteditable')
-    // e.oninput = () => this.debounce(handleCorrection, 1000)
-  }
-
-  debounce(callback, wait) {
-    let timeoutId = null
-    return (...args) => {
-      window.clearTimeout(timeoutId)
-      timeoutId = window.setTimeout(() => {
-        callback.apply(null, args)
-      }, wait)
-    }
   }
 
   makeEditable(content) {
@@ -123,10 +108,10 @@ class EditableCard extends HTMLElement {
       this.setEditable(content.querySelector('p'), true)
     return content
   }
-                                                
+
   getCardElement() {
     if (!this.card || !this.card.length) return '<div></div>'
-    const data = document.querySelector(`${EditableCard.contentRootSelector} > #${this.lang} *[id="${this.card}"]`) 
+    const data = document.querySelector(`${EditableCard.contentRootSelector} > #${this.lang} *[id="${this.card}"]`)
     const clazz = data.className
     const title = data ? data.querySelector('h2') ? data.querySelector('h2').innerHTML : data.title : '???'
     const type = this.idiot ? 'idiot' : ''
@@ -136,10 +121,10 @@ class EditableCard extends HTMLElement {
     switch (this.card[0]) {
       case 'C': return `<cancel-card id="card" card="${this.card}">${content.outerHTML}${this.getContent('cancel')}</cancel-card>`
       case 'L': return `<label-card id="card" ${type} card="${this.card}">${content.outerHTML}${this.getContent('label')}</label-card>`
-      case 'A': return this.card, title, `<appeal-to-card id="card" ${type} type="${data.type}" card="${this.card}">${content.outerHTML}${this.getContent('appeal-to', clazz)}</appeal-to-card>`
+      case 'A': return `<appeal-to-card id="card" ${type} type="${data.type}" card="${this.card}">${content.outerHTML}${this.getContent('appeal-to', clazz)}</appeal-to-card>`
       case 'F': return `<fallacy-card id="card" ${type} card="${this.card}">${content.outerHTML}${this.getContent('fallacy', clazz)}</fallacy-card>`
-      case 'D': 
-      case 'T': 
+      case 'D':
+      case 'T':
         return `<discuss-card id="card" ${type} topicId="${this.card}">${this.getContent('discuss').replace('TOPIC', `<b>${title}</b>`)}</discuss-card>`
       case 'N': return `<strawman-card id="card" ${type}>${this.getContent('strawman')}</strawman-card>`
       case 'R': return `<research-card id="card" ${type}>${this.getContent(`research.${side}`)}</research-card>`

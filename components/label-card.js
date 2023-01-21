@@ -22,7 +22,7 @@ labelCardTemplate.innerHTML = `
     #icon {
       position: absolute;
       width: calc(1.3 * var(--sidebar-width));
-      heigt: calc(1.3 * var(--sidebar-width))
+      height: calc(1.3 * var(--sidebar-width))
       top: 0;
       left: 0;
       font-size: calc(8 * var(--cavg));
@@ -58,7 +58,7 @@ labelCardTemplate.innerHTML = `
 
     
     #new, #normal {
-      font-family: 'HVD Crocodile', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-weight: 600;
       font-size: calc(14 * var(--cavg));
       position: absolute;
@@ -104,14 +104,14 @@ labelCardTemplate.innerHTML = `
     }
 
     #fallacy {
-      font-family: 'Open Sans', Helvetica;
+      font-family: 'Open Sans', Helvetica, sans-serif;
       font-size: calc(4 * var(--cavg));
       font-weight: 300;
       color: white;
     }
 
     #label-name {
-      font-family: 'HVD Crocodile', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-size: calc(7 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
@@ -133,7 +133,7 @@ labelCardTemplate.innerHTML = `
     #description {
       position: absolute;
       bottom: 0; 
-      font-family: 'Open Sans', Helvetica;
+      font-family: 'Open Sans', Helvetica, sans-serif;
       padding: calc(5 * var(--cavg));
       padding-bottom: calc(16 * var(--cavg));
       font-size: calc(3 * var(--cavg));
@@ -148,7 +148,7 @@ labelCardTemplate.innerHTML = `
       top: 0;
       width: 12%;
       height: 4%;
-      font-family: 'Open Sans', Helvetica;
+      font-family: 'Open Sans', Helvetica, sans-serif;
       font-size: calc(2.5 * var(--cavg));
       text-align: center;
       color: white;
@@ -169,7 +169,7 @@ labelCardTemplate.innerHTML = `
 
     #side-label {
       position: absolute;
-      font-family: 'HVD Crocodile', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-size: calc(6 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;

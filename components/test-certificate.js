@@ -50,7 +50,7 @@ testCertificateTemplate.innerHTML = `
       position: absolute;
       top: 0;
       left: calc(50% - 27 * var(--cavg));
-      font-family: 'HVD Crocodile';
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-weight: 600;
       text-align: center;
       letter-spacing: -0.6vmax;
@@ -141,7 +141,7 @@ class TestCertificate extends HTMLElement {
   }
 
   randomViruses() {
-    return Array(100).fill().map(() => `url(${TestCertificate.virus}) ${this.random(-20,120)}% ${this.random(-20,120)}% / ${this.random(10,20)}% no-repeat`).join(',')
+    return Array(100).fill('').map(() => `url(${TestCertificate.virus}) ${this.random(-20,120)}% ${this.random(-20,120)}% / ${this.random(10,20)}% no-repeat`).join(',')
   }
 
   resize() {

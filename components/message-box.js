@@ -4,7 +4,7 @@ const messageBoxTemplate = document.createElement('template')
 messageBoxTemplate.innerHTML = `
   <style>
     .msg-box-modal {
-      font-family: 'HVD Crocodile';
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-size: 2em;
       font-weight: 300;
       width: 100%;
@@ -89,7 +89,7 @@ messageBoxTemplate.innerHTML = `
       border: none;
       border-top: solid 1px rgba(0, 0, 0, 0.15);
       outline: 0;
-      border-radius: 0px;
+      border-radius: 0;
       transition: background-color 225ms ease-out;
     }
 
@@ -165,7 +165,7 @@ class MessageBoxElement extends HTMLElement {
     super()
     this.attachShadow({ mode: 'open' })
   }
-  
+
   connectedCallback() {
     this.shadowRoot.appendChild(messageBoxTemplate.content.cloneNode(true))
     this.setDefault()
@@ -202,7 +202,7 @@ class MessageBoxElement extends HTMLElement {
       break
     }
   }
-  
+
   /**
    * Put the title and the content of the dialog box.
    */
@@ -216,7 +216,7 @@ class MessageBoxElement extends HTMLElement {
       dialogHeaderElm.innerHTML = title
     }
   }
-  
+
   /**
    * Execute 'animationend' event of the dialog, then dispose
    */
@@ -229,7 +229,7 @@ class MessageBoxElement extends HTMLElement {
       }
     })
   }
-  
+
   t(v) {
     const lang = navigator.language.substring(0, 2)
     const text = {
@@ -249,7 +249,7 @@ class MessageBoxElement extends HTMLElement {
     }
     return text[v] && text[v][lang] || v
   }
-  
+
   /**
    * Creates the inform dialog element which closes when the given promise is resolved/rejected
    */
@@ -277,7 +277,7 @@ class MessageBoxElement extends HTMLElement {
       })
     })
   }
-  
+
   /**
    * Creates the confirm dialog element
    */
@@ -303,7 +303,7 @@ class MessageBoxElement extends HTMLElement {
       })
     })
   }
-  
+
   /**
    * Creates the prompt dialog element
    */

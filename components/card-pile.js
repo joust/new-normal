@@ -78,7 +78,7 @@ class CardPile extends HTMLElement {
   updateTop() {
     const card = this.shadowRoot.querySelector('no-card, card-back, game-card') // select top element
     if (this.isConnected && card) {
-      card.insertAdjacentHTML('beforeBegin', this.getTopElement())
+      card.insertAdjacentHTML('beforebegin', this.getTopElement())
       this.shadowRoot.removeChild(card)
       this.updateDraggable()
     }

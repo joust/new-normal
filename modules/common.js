@@ -44,11 +44,11 @@ export function elementWithKids(tag, kids = undefined, attrs = undefined) {
 }
 
 /**
- * @param {String} HTML representing a single element
- * @return {Element}
+ * @param {string} html HTML string representing a single element
+ * @return {ChildNode}
  */
 export function htmlToElement(html) {
-  var template = document.createElement('template')
+  const template = document.createElement('template')
   template.innerHTML = html
   return template.content.firstChild
 }

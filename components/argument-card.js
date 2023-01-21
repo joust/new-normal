@@ -33,10 +33,10 @@ argumentCardTemplate.innerHTML = `
     #topic-icon {
       position: absolute;
       width: calc(1.3 * var(--sidebar-width));
-      heigt: calc(1.3 * var(--sidebar-width))
+      height: calc(1.3 * var(--sidebar-width))
       top: 0;
       left: 0;
-      font-family: 'HVD Crocodile', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-weight: 600;
       font-stretch: condensed;
       font-size: calc(8 * var(--cavg));
@@ -119,7 +119,7 @@ argumentCardTemplate.innerHTML = `
     }
 
     ::slotted(h2) {
-      font-family: 'HVD Crocodile', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-weight: 600;
       font-stretch: condensed;
       font-size: calc(7 * var(--cavg));
@@ -163,7 +163,7 @@ argumentCardTemplate.innerHTML = `
     }
 
     #side-title {
-      font-family: 'HVD Crocodile', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-size: calc(6 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
@@ -233,7 +233,7 @@ argumentCardTemplate.innerHTML = `
 
     #spellcheck {
       position: absolute;
-      right: 0%;
+      right: 0;
       top: 4%;
       width: 8%;
       height: 6%;
@@ -241,7 +241,7 @@ argumentCardTemplate.innerHTML = `
     }
 
     .mirrored #spellcheck {
-      left: 0%;
+      left: 0;
       right: auto;
     }
 
@@ -363,11 +363,8 @@ class ArgumentCard extends HTMLElement {
       de: '🇩🇪',
       at: '🇦🇹',
       ch: '🇨🇭',
-      ch: '🇨🇭',
-      ch: '🇨🇭',
       da: '🇩🇰',
       li: '🇱🇮',
-      it: '🇮🇹',
       it: '🇮🇹',
       sm: '🇸🇲',
       va: '🇻🇦',
@@ -375,7 +372,6 @@ class ArgumentCard extends HTMLElement {
       gb: '🇬🇧',
       au: '🇦🇺',
       nz: '🇳🇿',
-      ca: '🇨🇦',
       ca: '🇨🇦',
       pl: '🇵🇱',
       ag: '🇦🇬',
@@ -422,13 +418,9 @@ class ArgumentCard extends HTMLElement {
       cv: '🇨🇻',
       fr: '🇫🇷',
       be: '🇧🇪',
-      be: '🇧🇪',
-      be: '🇧🇪',
       cd: '🇨🇩',
       cg: '🇨🇬',
       ko: '🇨🇮',
-      ko: '🇲🇬',
-      cm: '🇨🇲',
       cm: '🇨🇲',
       bf: '🇧🇫',
       ne: '🇳🇪',

@@ -19,7 +19,7 @@ const INVALID_MOVE = 'INVALID_MOVE'
 
 export async function startLocal(locale, content, numPlayers, humanID) {
   const game = Uno(locale, content, humanID)
-  const clients = [...Array(numPlayers).keys()].map(String).map(playerID => 
+  const clients = [...Array(numPlayers).keys()].map(String).map(playerID =>
     Client({ game, playerID, numPlayers, multiplayer: Local(), debug: { collapseOnLoad: true } }))
   clients.forEach(client => client.start())
   return clients
@@ -28,7 +28,7 @@ export async function startLocal(locale, content, numPlayers, humanID) {
 export async function startClient(locale, content, isHost, numPlayers, playerID, matchID) {
   const game = Uno(locale, content, isHost ? playerID : undefined)
   const peerOptions = { host: 'new-normal.app', port: 9443 }
-  
+
   const client = Client({
     game,
     numPlayers,
@@ -48,7 +48,7 @@ export async function startClient(locale, content, isHost, numPlayers, playerID,
 /**
 Uno game engine. Game state: {
     locale: 'de-de', // opponents have to use the same locale!
-    host: '0'/'1', 
+    host: '0'/'1',
     decks: {
       idiot: ['I1', 'I2', ...],
       sheep: ['S1', 'S2', ...]
@@ -66,13 +66,12 @@ content = {
 */
 export function Uno(locale, content, host) {
   /**
-   * adds wildcard argument cards for topic of card to every players hand, 
+   * adds wildcard argument cards for topic of card to every players hand,
    * removing possible existing arguments of given topic
    * @param {Array<Array>} hands All hands.
-   * @param {{idiot: Array, sheep: Array}} Both decks.
+   * @param {{idiot: Array, sheep: Array}} decks Both decks.
    * @param {string} card card played
-   * @param {boolean} idiot if an idiot
-   */ 
+   */
   function resolveDiscuss(hands, decks, card) {
     const topic = topicOf(card)
     const withSameTopic = card => isArgument(card) && hasTopic(card, topic)
@@ -86,7 +85,7 @@ export function Uno(locale, content, host) {
       if (idiot && firstI)
         hand.push(`${firstI}*`)
       else if (!idiot && firstS)
-        hand.push(`${firstS}*`)  
+        hand.push(`${firstS}*`)
       // else do nothing for this player
     })
   }
@@ -94,9 +93,9 @@ export function Uno(locale, content, host) {
     /**
    * removes all argument cards matching the topic of top from all hands and both decks
    * @param {Array<Array>} hands All hands.
-   * @param {{idiot: Array, sheep: Array}} Both decks.
+   * @param {{idiot: Array, sheep: Array}} decks Both decks.
    * @param {string} top top card on the pile
-   */ 
+   */
   function resolveBanish(hands, decks, top) {
     const topic = topicOf(top)
     const withSameTopic = card => isArgument(card) && hasTopic(card, topic)
@@ -110,10 +109,11 @@ export function Uno(locale, content, host) {
   /**
    * look up cards matching the current argument on the pile and add to hand
    * gives you up to three argument cards
-   * @param {Array}} hand The players hand.
+   * @param {Array} hand The players hand.
    * @param {{idiot: Array, sheep: Array}} decks The decks.
-   * @param {string} card card to counter on the pile
-   */ 
+   * @param {string} top card to counter on the pile
+   * @param {boolean} idiot idiot?
+   */
   function resolveResearch(hand, decks, top, idiot) {
     const deck = decks[idiot ? 'idiot' : 'sheep']
     const nrOfCards = 1+Math.floor(Math.random()*3)
@@ -138,7 +138,7 @@ export function Uno(locale, content, host) {
    * @param {Array} hand The players hand.
    * @param {{idiot: Array, sheep: Array}} decks The decks.
    * @param {boolean} idiot current player type.
-   */ 
+   */
   function resolveStrawman(hand, decks, idiot) {
     const deck = decks[idiot ? 'sheep' : 'idiot']
     const myTopics = hand.filter(isArgument).map(topicOf)
@@ -153,14 +153,14 @@ export function Uno(locale, content, host) {
         hand.push(cards[0])
       }
     }
-  } 
-  
+  }
+
   /**
    * removes returns the top card to the previous players hand together with an own cancel card to retailiate.
    * @param {Array<Array>} hands All hands.
-   * @param {{idiot: Array, sheep: Array}} decks The decks.
    * @param {Array} pile The pile
-   */ 
+   * @param {number} prevPlayer The id of the prev player.
+   */
   function resolveCancel(pile, hands, prevPlayer) {
     const top = pile.pop()
     hands[prevPlayer].push(top)
@@ -181,7 +181,7 @@ export function Uno(locale, content, host) {
       deck.pop()
     hand.push(top)
   }
-  
+
     /**
    * draw an argument card from the given deck into the given hand
    * side effect: will modify both the given deck and hand
@@ -193,7 +193,7 @@ export function Uno(locale, content, host) {
     const [card] = deck.splice(index, 1)
     hand.push(card)
   }
-  
+
     /**
    * draw a non argument card from the given deck into the given hand
    * side effect: will modify both the given deck and hand
@@ -205,7 +205,7 @@ export function Uno(locale, content, host) {
     const [card] = deck.splice(index, 1)
     hand.push(card)
   }
-  
+
   /**
    * draw an initial hand of size size from a given deck
    * side effect: will modify the given deck
@@ -255,7 +255,7 @@ export function Uno(locale, content, host) {
   }
 
   /**
-   * adjust the deck size of the smaller deck 
+   * adjust the deck size of the smaller deck
    * by duplicating labels, fallacies, appealTos, strawmans or researchs
    * side effect: directly changes the smaller array
    * @param {{idiot: Array, sheep: Array}} decks The unadjusted decks
@@ -267,7 +267,7 @@ export function Uno(locale, content, host) {
     const start = smaller.findIndex(c => c.startsWith('L')) // do not duplicate argument cards
     while(difference--) smaller.push(randomElement(smaller, start))
   }
-  
+
   function removeFrom(deckOrHand, card) {
     card = argumentOnly(card)
     const index = deckOrHand.findIndex(c => argumentOnly(c)===card)
@@ -280,7 +280,7 @@ export function Uno(locale, content, host) {
       if (index>=0) hand.splice(index, 1)
     })
   }
-  
+
   function findLastIndex(array, finder) {
     return array.map(finder).map(result => !!result).lastIndexOf(true)
   }
@@ -309,7 +309,7 @@ export function Uno(locale, content, host) {
 
         const card = hand[index]
         alt = alt ? argumentOnly(alt) : argumentOnly(card) // if not given, use the card
-        
+
         const top = G.pile.length ? G.pile[G.pile.length-1] : undefined
         if (!canBePlayedOn(top, card, idiot)) return INVALID_MOVE
 
@@ -358,7 +358,7 @@ export function Uno(locale, content, host) {
             removeFrom(deck, argumentOnly(card)) // argument cards are only removed from their deck when played
             if (isWildcard(card))
               resolveDiscuss(G.hands, G.decks, card)
-            else  
+            else
               hand.splice(index, 1)
             G.pile.push(alt)
         }
@@ -430,17 +430,17 @@ export function canBePlayedOn(top, card, idiot) {
     case 'B': // Banish
       return top && (isArgument(top) || isDiscuss(top))
     case 'A': // Appeal to
-      return isOfType(card, !idiot) && isStrawman(top) 
-      || isOfType(card, idiot) && 
+      return isOfType(card, !idiot) && isStrawman(top)
+      || isOfType(card, idiot) &&
         (!top || isArgument(top) || isAppealTo(top) || isFallacy(top) || isLabel(top) || isPause(top) || isBanish(top) || isCancel(top))
     case 'I': // Idiot argument
     case 'S': // Sheep argument
       return top && isStrawman(top) && (isArgument(card) || isAppealTo(card)) && isOfType(card, !idiot)
-        || isOfType(card, idiot) && (!top 
-          || isAppealTo(top) 
+        || isOfType(card, idiot) && (!top
+          || isAppealTo(top)
           || ((isArgument(top) || isDiscuss(top)) && topicOf(card)===topicOf(top))
-          || isFallacy(top) 
-          || isPause(top) 
+          || isFallacy(top)
+          || isPause(top)
           || isLabel(top)
           || isBanish(top)
           || isCancel(top))
@@ -465,7 +465,7 @@ export function getAlternatives(id, decks, content) {
   if (isDiscuss(id)) return cards.discusses
   return [id]
 }
-    
+
 
 /** check player for idiot */
 export function isIdiot(player) {
@@ -473,7 +473,7 @@ export function isIdiot(player) {
 }
 
 export function previousPlayer(ctx) {
-  const prevPos = ctx.playOrderPos===0 ? playOrder.length-1 : ctx.playOrderPos-1
+  const prevPos = ctx.playOrderPos===0 ? ctx.playOrder.length-1 : ctx.playOrderPos-1
   return ctx.playOrder[prevPos]
 }
 

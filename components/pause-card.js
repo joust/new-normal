@@ -25,7 +25,7 @@ pauseCardTemplate.innerHTML = `
     #icon {
       position: absolute;
       width: calc(1.3 * var(--sidebar-width));
-      heigt: calc(1.3 * var(--sidebar-width))
+      height: calc(1.3 * var(--sidebar-width))
       top: 0;
       left: 0;
       font-size: calc(8 * var(--cavg));
@@ -61,7 +61,7 @@ pauseCardTemplate.innerHTML = `
 
     
     #new, #normal {
-      font-family: 'HVD Crocodile', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-weight: 600;
       font-size: calc(14 * var(--cavg));
       position: absolute;
@@ -89,7 +89,7 @@ pauseCardTemplate.innerHTML = `
 
     #phrase {
       position: absolute;
-      font-family: 'HVD Crocodile', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-size: calc(7 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
@@ -132,7 +132,7 @@ pauseCardTemplate.innerHTML = `
 
     #side-phrase {
       position: absolute;
-      font-family: 'HVD Crocodile', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-size: calc(6 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;

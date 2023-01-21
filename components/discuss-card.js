@@ -50,7 +50,7 @@ discussCardTemplate.innerHTML = `
     }
     
     #new, #normal {
-      font-family: 'HVD Crocodile', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-weight: 600;
       font-size: calc(14 * var(--cavg));
       position: absolute;
@@ -79,7 +79,7 @@ discussCardTemplate.innerHTML = `
     #topic-icon {
       position: absolute;
       width: calc(1.3 * var(--sidebar-width));
-      heigt: calc(1.3 * var(--sidebar-width))
+      height: calc(1.3 * var(--sidebar-width))
       top: 0;
       left: 0;
       font-family: 'HVD Crocodile', Helvetica, 'NotoColorEmojiLimited';
@@ -104,7 +104,7 @@ discussCardTemplate.innerHTML = `
 
     #phrase {
       position: absolute;
-      font-family: 'HVD Crocodile', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-size: calc(7 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
@@ -153,7 +153,7 @@ discussCardTemplate.innerHTML = `
     #description {
       position: absolute;
       bottom: 0; 
-      font-family: 'Open Sans', Helvetica;
+      font-family: 'Open Sans', Helvetica, sans-serif;
       padding: calc(5 * var(--cavg));
       padding-bottom: calc(16 * var(--cavg));
       font-size: calc(3 * var(--cavg));
@@ -164,7 +164,7 @@ discussCardTemplate.innerHTML = `
 
     #side-phrase {
       position: absolute;
-      font-family: 'HVD Crocodile', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-size: calc(6 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
@@ -312,9 +312,7 @@ class DiscussCard extends HTMLElement {
       be: '🇧🇪',
       cd: '🇨🇩',
       cg: '🇨🇬',
-      ko: '🇨🇮',
       ko: '🇲🇬',
-      cm: '🇨🇲',
       cm: '🇨🇲',
       bf: '🇧🇫',
       ne: '🇳🇪',

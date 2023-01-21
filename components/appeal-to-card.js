@@ -25,7 +25,7 @@ appealToCardTemplate.innerHTML = `
     #icon {
       position: absolute;
       width: calc(1.3 * var(--sidebar-width));
-      heigt: calc(1.3 * var(--sidebar-width))
+      height: calc(1.3 * var(--sidebar-width))
       top: 0;
       left: 0;
       font-size: calc(8 * var(--cavg));
@@ -61,7 +61,7 @@ appealToCardTemplate.innerHTML = `
 
     
     #new, #normal {
-      font-family: 'HVD Crocodile', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-weight: 600;
       font-size: calc(14 * var(--cavg));
       position: absolute;
@@ -107,7 +107,7 @@ appealToCardTemplate.innerHTML = `
     }
 
     #phrase {
-      font-family: 'HVD Crocodile', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-size: calc(7 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
@@ -126,7 +126,7 @@ appealToCardTemplate.innerHTML = `
     }
 
      #fallacy {
-      font-family: 'Open Sans', Helvetica;
+      font-family: 'Open Sans', Helvetica, sans-serif;
       font-size: calc(4 * var(--cavg));
       font-weight: 300;
       max-width: 100%;
@@ -153,7 +153,7 @@ appealToCardTemplate.innerHTML = `
       top: 0;
       width: 12%;
       height: 4%;
-      font-family: 'Open Sans', Helvetica;
+      font-family: 'Open Sans', Helvetica, sans-serif;
       font-size: calc(2.5 * var(--cavg));
       text-align: center;
       color: white;
@@ -174,7 +174,7 @@ appealToCardTemplate.innerHTML = `
 
     #side-to {
       position: absolute;
-      font-family: 'HVD Crocodile', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-size: calc(6 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
@@ -275,7 +275,7 @@ class AppealToCard extends HTMLElement {
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
       this.element('card').innerHTML = this.card
-      this.element('fallacy').innerHTML = this.fallacy 
+      this.element('fallacy').innerHTML = this.fallacy
       Array.from(root.querySelectorAll('.to')).forEach(node => node.innerHTML = this.to)
       root.querySelector('.phrase').innerHTML = this.phrase
     }

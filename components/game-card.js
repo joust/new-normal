@@ -116,10 +116,10 @@ class GameCard extends HTMLElement {
     this.shadowRoot.appendChild(template.content)
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
-    this.element('previous').insertAdjacentHTML('beforeBegin', this.getCardElement())
+    this.element('previous').insertAdjacentHTML('beforebegin', this.getCardElement())
 
-    this.element('previous').onclick = event => this.updateAltIndex(-ALTERNATIVES_STEP)
-    this.element('next').onclick = event => this.updateAltIndex(ALTERNATIVES_STEP)
+    this.element('previous').onclick = () => this.updateAltIndex(-ALTERNATIVES_STEP)
+    this.element('next').onclick = () => this.updateAltIndex(ALTERNATIVES_STEP)
     this.onwheel = event => this.updateAltIndex(event.deltaY)
     this.updateAlternatives()
   }
@@ -142,7 +142,7 @@ class GameCard extends HTMLElement {
   updateCard() {
     const card = this.element('card')
     if (this.isConnected && card) {
-      card.insertAdjacentHTML('beforeBegin', this.getCardElement())
+      card.insertAdjacentHTML('beforebegin', this.getCardElement())
       this.shadowRoot.removeChild(card)
     }
     if (!this.alternatives.length) this.alternatives = [this.card]
@@ -155,7 +155,7 @@ class GameCard extends HTMLElement {
 
   updateAlternatives() {
     this.alternatives = this.hasAttribute('alternatives') ? this.getAttribute('alternatives').split(',') : [this.card]
-    
+
     const card = this.alt || this.card
     this.altIndex = this.alternatives.indexOf(card.replace('*', ''))
     if (this.altIndex<0) { this.alt = this.alternatives[0]; this.altIndex = 0; }
@@ -166,13 +166,13 @@ class GameCard extends HTMLElement {
   }
 
   /**
-   * generates an archive.is mirror anchor node for the given node 
+   * generates an archive.is mirror anchor node for the given node
    *
    * @param {HTMLElement} a the anchor node to mirror
    */
    mirrorNode(a) {
     const mirror = a.cloneNode(true)
-    mirror.href = `https://archive.is/${a.href}` 
+    mirror.href = `https://archive.is/${a.href}`
     mirror.firstChild.textContent = 'Mirror'
     return mirror
   }
@@ -217,7 +217,7 @@ class GameCard extends HTMLElement {
     const phrase = this.getMessage(`${key}.phrase`, null)
     const description = this.getMessage(`${key}.description`, null)
     return (clazz ? `<i>${clazz}</i>` : '')
-          + (phrase ? `<h2>${phrase}</h2>` : '') 
+          + (phrase ? `<h2>${phrase}</h2>` : '')
           + (description ? `<p>${description}</p>` : '')
   }
 
@@ -230,7 +230,7 @@ class GameCard extends HTMLElement {
     } else
       return front.replace(' ', ' id="card" ')
   }
-                                                  
+
   getCardElement() {
     const data = document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} a[id="${this.idOnly}"]`)
     const clazz = data.className

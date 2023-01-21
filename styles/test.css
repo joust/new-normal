@@ -32,7 +32,7 @@
 }
 
 #result h1 {
-  font-family: 'HVD Crocodile';
+  font-family: 'HVD Crocodile', Helvetica, sans-serif;
   font-weight: 600;
   font-size: 7vmin;
 }
@@ -64,7 +64,7 @@
   border-bottom: none;
   margin-top: 0;
   margin-bottom: 0;
-  transform: perspective(20vmax) rotateX(40deg); 
+  transform: perspective(20vmax) rotateX(40deg);
   transform-origin: bottom;
   padding: 1vmax;
   height: 5vmax;
@@ -90,7 +90,7 @@
   test-certificate {
     color: #ddd;
   }
-  
+
   #result .drawer {
     border: 0.5vmax solid #ddd;
   }

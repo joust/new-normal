@@ -39,15 +39,15 @@ async function warnSave() {
 }
 
 window.loadMaintain = function() {
-  Array.from(document.querySelectorAll('.details.card-preview')).forEach(detail => detail.insertAdjacentHTML('afterBegin', '<centered-cards class="cards"><editable-card class="card"></editable-card></centered-cards>'))
+  Array.from(document.querySelectorAll('.details.card-preview')).forEach(detail => detail.insertAdjacentHTML('afterbegin', '<centered-cards class="cards"><editable-card class="card"></editable-card></centered-cards>'))
   Array.from(document.querySelectorAll('.card')).forEach(card => card.addEventListener('mutated', event => cardMutated(event)))
-  document.querySelector('#arguments .details centered-cards').insertAdjacentHTML('beforeEnd', '<div class="topics"><ul></ul></div>')
+  document.querySelector('#arguments .details centered-cards').insertAdjacentHTML('beforeend', '<div class="topics"><ul></ul></div>')
   document.addEventListener('selectionchange', () => {
     const selection = window.getSelection()
     const editable = selection.anchorNode.tagName!=='CENTERED-CARDS'
     document.getElementById('edit-bar').classList.toggle('hidden', !editable)
   })
-  
+
 /*  document.addEventListener('keyup', e => {
     console.log(e)
     if (e.ctrlKey && e.keyCode === 66) toggleBold()
@@ -56,7 +56,7 @@ window.loadMaintain = function() {
 
 window.switchLocale = async function(locale = undefined, normality = undefined) {
   setLocale(locale)
-  const content = await loadContent(fetch)
+  await loadContent(fetch)
   await loadSources(fetch)
   updateAll()
 }
@@ -97,7 +97,7 @@ function toArgumentData(arg, topicMap) {
     length: arg.querySelector('h2').innerText.length,
     textLength: arg.querySelector('p').innerText.length,
     spellcheck: arg.hasAttribute('spellcheck'),
-    topics: topicMap[arg.id] || [] 
+    topics: topicMap[arg.id] || []
   }
 }
 
@@ -216,14 +216,14 @@ window.updateArgument = function(target) {
     // update argument sources
     const sources = extractSources(document.querySelector('#content .sources')).filter(source => source.class.split(' ').includes(card))
     tbody.innerHTML = ''
-    sources.forEach(source => tbody.insertAdjacentHTML('beforeEnd', sourceRow(source)))
+    sources.forEach(source => tbody.insertAdjacentHTML('beforeend', sourceRow(source)))
     // update argument topics
     const ul = tab.querySelector('.topics ul')
     ul.className = card
     const topics = extractTopicsData(localeBlock().querySelector('.topics'))
     const assigned = getArgumentData(card).topics
     ul.innerHTML = ''
-    topics.forEach(topic => ul.insertAdjacentHTML('beforeEnd', `<li><input type="checkbox" class="${topic.id}" onchange="toggleArgumentTopic(event)" ${assigned.includes(topic.id) ? ' checked' : ''}> <b>${topic.id}</b> ${topic.title} </li>`))
+    topics.forEach(topic => ul.insertAdjacentHTML('beforeend', `<li><input type="checkbox" class="${topic.id}" onchange="toggleArgumentTopic(event)" ${assigned.includes(topic.id) ? ' checked' : ''}> <b>${topic.id}</b> ${topic.title} </li>`))
   }
 }
 
@@ -264,7 +264,7 @@ function updateArgumentList(args) {
   const tbody = document.querySelector('#arguments .list tbody')
   const selected = getTableSelected(tbody)
   tbody.innerHTML = ''
-  args.forEach(arg => tbody.insertAdjacentHTML('beforeEnd', argumentRow(arg)))
+  args.forEach(arg => tbody.insertAdjacentHTML('beforeend', argumentRow(arg)))
   if (selected) setTableSelected(tbody, selected)
   return args
 }
@@ -326,8 +326,8 @@ function argumentListMutated(mutation) {
       saveContent(save, id.startsWith('I') ? 'idiot' : 'sheep')
     } else
       console.error('could not find content target for mutation', mutation)
-    
-  } else 
+
+  } else
     console.error('no target found for mutation', mutation)
 }
 
@@ -346,7 +346,7 @@ function updateTopicsList(topics) {
   const tbody = document.querySelector('#topics .list tbody')
   const selected = getTableSelected(tbody)
   tbody.innerHTML = ''
-  topics.forEach(topic => tbody.insertAdjacentHTML('beforeEnd', topicRow(topic)))
+  topics.forEach(topic => tbody.insertAdjacentHTML('beforeend', topicRow(topic)))
   if (selected) setTableSelected(tbody, selected)
   return topics
 }
@@ -378,7 +378,7 @@ function topicListMutated(mutation) {
     node.setAttribute(attr, mutation.target.data)
     update(target)
     saveContent(save, 'topics')
-  } else 
+  } else
     console.error('no target found for mutation', mutation)
 }
 
@@ -396,7 +396,7 @@ function updateAppealTosList(appealTos) {
   const tbody = document.querySelector('#appeal-tos .list tbody')
   const selected = getTableSelected(tbody)
   tbody.innerHTML = ''
-  appealTos.forEach(appealTo => tbody.insertAdjacentHTML('beforeEnd', appealToRow(appealTo)))
+  appealTos.forEach(appealTo => tbody.insertAdjacentHTML('beforeend', appealToRow(appealTo)))
   if (selected) setTableSelected(tbody, selected)
   return appealTos
 }
@@ -428,7 +428,7 @@ function appealToListMutated(mutation) {
     update(target)
     updateAppealToRow(id)
     saveContent(save, 'appeal-tos')
-  } else 
+  } else
     console.error('no target found for mutation', mutation)
 }
 
@@ -452,7 +452,7 @@ function updateFallaciesList(fallacies) {
   const tbody = document.querySelector('#fallacies .list tbody')
   const selected = getTableSelected(tbody)
   tbody.innerHTML = ''
-  fallacies.forEach(fallacy => tbody.insertAdjacentHTML('beforeEnd', fallacyRow(fallacy)))
+  fallacies.forEach(fallacy => tbody.insertAdjacentHTML('beforeend', fallacyRow(fallacy)))
   if (selected) setTableSelected(tbody, selected)
   return fallacies
 }
@@ -475,7 +475,7 @@ function fallacyListMutated(mutation) {
     node.innerHTML = target.innerHTML
     update(target)
     saveContent(save, 'fallacies')
-  } else 
+  } else
     console.error('no target found for mutation', mutation)
 }
 
@@ -498,7 +498,7 @@ function updateLabelsList(labels) {
   const tbody = document.querySelector('#labels .list tbody')
   const selected = getTableSelected(tbody)
   tbody.innerHTML = ''
-  labels.forEach(label => tbody.insertAdjacentHTML('beforeEnd', labelRow(label)))
+  labels.forEach(label => tbody.insertAdjacentHTML('beforeend', labelRow(label)))
   if (selected) setTableSelected(tbody, selected)
   return labels
 }
@@ -520,7 +520,7 @@ function labelListMutated(mutation) {
     node.innerHTML = target.innerHTML
     update(target)
     saveContent(save, 'labels')
-  } else 
+  } else
     console.error('no target found for mutation', mutation)
 }
 
@@ -536,7 +536,7 @@ function updateCancelsList(cancels) {
   const tbody = document.querySelector('#cancels .list tbody')
   const selected = getTableSelected(tbody)
   tbody.innerHTML = ''
-  cancels.forEach(cancel => tbody.insertAdjacentHTML('beforeEnd', cancelRow(cancel)))
+  cancels.forEach(cancel => tbody.insertAdjacentHTML('beforeend', cancelRow(cancel)))
   if (selected) setTableSelected(tbody, selected)
   return cancels
 }
@@ -558,7 +558,7 @@ function cancelListMutated(mutation) {
     node.innerHTML = target.innerHTML
     update(target)
     saveContent(save, 'cancels')
-  } else 
+  } else
     console.error('no target found for mutation', mutation)
 }
 
@@ -575,7 +575,7 @@ function updateMessagesList(messages) {
   const tbody = document.querySelector('#messages .list tbody')
   const selected = getTableSelected(tbody)
   tbody.innerHTML = ''
-  messages.forEach(message => tbody.insertAdjacentHTML('beforeEnd', messageRow(message)))
+  messages.forEach(message => tbody.insertAdjacentHTML('beforeend', messageRow(message)))
   if (selected) setTableSelected(tbody, selected)
   return messages
 }
@@ -597,7 +597,7 @@ function messageListMutated(mutation) {
     node.innerHTML = target.innerHTML
     update(target)
     saveContent(save, 'messages')
-  } else 
+  } else
     console.error('no target found for mutation', mutation)
 }
 
@@ -617,7 +617,7 @@ function updateSourcesList(sources) {
   const tbody = document.querySelector('#sources .list tbody')
   const selected = getTableSelected(tbody)
   tbody.innerHTML = ''
-  sources.forEach(source => tbody.insertAdjacentHTML('beforeEnd', sourceRow(source)))
+  sources.forEach(source => tbody.insertAdjacentHTML('beforeend', sourceRow(source)))
   if (selected) setTableSelected(tbody, selected)
   return sources
 }
@@ -638,7 +638,7 @@ function sourceList(mutation) {
   if (node) {
     node.innerHTML = target.innerHTML
     update(target)
-  } else 
+  } else
     console.error('no target found for mutation', mutation)
 }
 
@@ -664,7 +664,7 @@ window.navigate = function(event) {
   const current = event.target
   const index = Array.prototype.indexOf.call(current.parentNode.children, current)
   let next = undefined
-  
+
   switch (event.key) {
     case 'ArrowLeft':
       if (textInfo(current).atStart) next = current.closest('td').previousElementSibling

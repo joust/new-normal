@@ -6,16 +6,14 @@ playerHandTemplate.innerHTML = `
     }
 
     #player-name {
-      font-family: 'HVD Crocodile', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-size: 3vh;
-      font-weight: 300;
       font-weight: 300;
       text-align: center;
     }
 
     #player-hand {
       width: 100%;
-      height: 100%;
       box-sizing: border-box;
       height: calc(100% - 4vh);
       display: grid;
@@ -85,11 +83,11 @@ class PlayerHand extends HTMLElement {
     hand.onpointerdown = e => this.start(e)
     hand.onpointermove = e => this.over(e)
     this.updateDroppable()
-    
+
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
   }
-  
+
   attributeChangedCallback(name) {
     if (this.isConnected && this.element('player-hand')) {
       if (name==='cards') this.updateCards()
@@ -102,7 +100,7 @@ class PlayerHand extends HTMLElement {
     // JSON array of id+alternative+playable elements in the format { id: '...', alt: ['...', '...'], playable: ...}
     const json = this.getAttribute('cards')
     this.cards = !json || !json.length ? [] : JSON.parse(json)
-    
+
     const cards = this.cards.map(element => element.card)
     const alts = this.cards.map(element => element.alt || [element.card])
     const hand = this.element('player-hand')
@@ -125,7 +123,7 @@ class PlayerHand extends HTMLElement {
   }
 
   addCard(hand, card, alternatives) {
-    hand.insertAdjacentHTML('beforeEnd', `<game-card card="${card}" alternatives="${alternatives}"></game-card>`)
+    hand.insertAdjacentHTML('beforeend', `<game-card card="${card}" alternatives="${alternatives}"></game-card>`)
   }
 
   updateName() {
@@ -149,7 +147,7 @@ class PlayerHand extends HTMLElement {
     const columns = this.columns(this.ownChildren.length, topIndex)
     this.element('player-hand').style.gridTemplateColumns = `1fr ${columns} 1fr`
   }
-  
+
   resize() {
     this.recalc()
   }
@@ -157,9 +155,9 @@ class PlayerHand extends HTMLElement {
   updateLayout() {
     let z = this.revChildren.length, after = false
     this.revChildren.forEach((child, index) => {
-      child.style.gridRow = 1
+      child.style.gridRow = '1'
       child.style.gridColumn = `${index+2}/span 8`
-      child.style.zIndex = z
+      child.style.zIndex = ''+z
       child.toggleAttribute('mirrored', after)
       const idx = this.ownChildren.indexOf(child)
       this.toggleDraggable(child, this.playable(idx))
@@ -225,7 +223,7 @@ class PlayerHand extends HTMLElement {
   dragstart(event) {
     const index = this.ownChildren.indexOf(event.target)
     const card = event.target.getAttribute('alt') || event.target.getAttribute('card')
-    if (card && this.playable(index)) { 
+    if (card && this.playable(index)) {
       event.target.classList.add('dragged')
       event.dataTransfer.setData('text/plain', JSON.stringify({card, index}))
       event.dataTransfer.setData('url', `https://new-normal.app#${card}`)
@@ -240,7 +238,7 @@ class PlayerHand extends HTMLElement {
 
   show(element) {
     if (!element.hasAttribute('top') && element.parentElement) {
-      for (const node of element.parentElement.children) 
+      for (const node of element.parentElement.children)
         node.toggleAttribute('top', node === element)
     }
     this.updateLayout()

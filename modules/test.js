@@ -20,7 +20,7 @@ window.test = async function(cycles) {
     ...elementsFrom(cycles-idiotArgs, content.sheep.args)
   ]
   shuffle(testCards)
-  document.getElementById('test').insertAdjacentHTML('afterBegin', `
+  document.getElementById('test').insertAdjacentHTML('afterbegin', `
   <centered-cards>
     <test-pile id="test-pile" cards="${testCards.join(',')}"></test-pile>
   </centered-cards>
@@ -81,7 +81,7 @@ function updateTestStats(choices) {
   const sheepArgument = id => id.includes('S')
   const count = (counter, key) => { counter[key] = 1 + counter[key] || 1; return counter }
   const bycount = (a, b) => b[1] - a[1]
-  
+
   stats.duration = Date.now() - stats.begin
   const idiot = [...choices.likes.filter(idiotArgument), ...choices.rejects.filter(sheepArgument)]
   const sheep = [...choices.likes.filter(sheepArgument), ...choices.rejects.filter(idiotArgument)]
@@ -113,18 +113,18 @@ async function loadTestResult() {
     row.childNodes[1].innerHTML = info.count
     row.childNodes[2].innerHTML = `${Math.round(info.count * 100 / stats.cycles)} %`
     row.childNodes[3].innerHTML = info.count >= stats.cycles/2 ? attributes : ''
-    
+
     if (info.attributes.length)
       result.querySelector(`.result .${type} .attribute`).innerHTML = info.attributes[0][0]
   }
-  
-  result.querySelector('.result .idiot').classList.toggle('hidden', 
+
+  result.querySelector('.result .idiot').classList.toggle('hidden',
     stats.idiot.count <= stats.sheep.count)
-  result.querySelector('.result .sheep').classList.toggle('hidden', 
+  result.querySelector('.result .sheep').classList.toggle('hidden',
     stats.idiot.count >= stats.sheep.count)
-  result.querySelector('.result .none').classList.toggle('hidden', 
+  result.querySelector('.result .none').classList.toggle('hidden',
     stats.idiot.count != stats.sheep.count)
-  
+
   const select = labelSelect(stats.idiot.count < stats.sheep.count)
   result.querySelector('.labels').appendChild(select)
 }
@@ -147,7 +147,7 @@ function hideResult() {
 /**
  * show game cards in a test, corresponding to the id(s) given in the hash
  *
- * @param {string} hash with comma separated ids of argument(s) to show
+ * @param {string[]} ids with comma separated ids of argument(s) to show
  * @return {boolean} true if success false otherwise
  */
 export async function displayHashAsTest(ids) {
@@ -156,7 +156,7 @@ export async function displayHashAsTest(ids) {
     initTestStats(cards.length)
     await loadContent()
     await loadSources()
-    document.getElementById('test').insertAdjacentHTML('afterBegin', `
+    document.getElementById('test').insertAdjacentHTML('afterbegin', `
     <centered-cards>
       <test-pile id="test-pile" cards="${cards.join(',')}"></test-pile>
     </centered-cards>

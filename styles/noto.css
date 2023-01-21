@@ -5,5 +5,5 @@
 }
 
 .location, .location option {
-  font-family: 'NotoColorEmojiLimited';
+  font-family: 'NotoColorEmojiLimited', sans-serif;
 }

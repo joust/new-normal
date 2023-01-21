@@ -36,7 +36,7 @@ banishCardTemplate.innerHTML = `
     #icon {
       position: absolute;
       width: calc(1.3 * var(--sidebar-width));
-      heigt: calc(1.3 * var(--sidebar-width))
+      height: calc(1.3 * var(--sidebar-width))
       top: 0;
       left: 0;
       font-size: calc(8 * var(--cavg));
@@ -72,7 +72,7 @@ banishCardTemplate.innerHTML = `
 
     
     #new, #normal {
-      font-family: 'HVD Crocodile', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-weight: 600;
       font-size: calc(14 * var(--cavg));
       position: absolute;
@@ -126,7 +126,7 @@ banishCardTemplate.innerHTML = `
     #description {
       position: absolute;
       bottom: 0; 
-      font-family: 'Open Sans', Helvetica;
+      font-family: 'Open Sans', Helvetica, sans-serif;
       padding: calc(5 * var(--cavg));
       padding-bottom: calc(16 * var(--cavg));
       font-size: calc(3 * var(--cavg));
@@ -140,7 +140,7 @@ banishCardTemplate.innerHTML = `
     }
 
     #phrase span.quoted {
-      font-family: 'HVD Crocodile', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-size: calc(7 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
@@ -159,7 +159,7 @@ banishCardTemplate.innerHTML = `
 
     #side-phrase {
       position: absolute;
-      font-family: 'HVD Crocodile', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-size: calc(6 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
@@ -273,7 +273,7 @@ class BanishCard extends HTMLElement {
       root.classList.toggle('idiot', this.idiot)
       Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = this.phrase)
       const dkey = Object.keys(BanishCard.description).find(p => this.lang.startsWith(p)) || 'de'
-      this.element('description').innerHTML = this.description
+      this.element('description').innerHTML = this.description[dkey]
     }
   }
 }

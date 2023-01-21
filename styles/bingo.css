@@ -13,7 +13,7 @@
 .title {
   height: 4vmax;
   font-size: 2vmax;
-  font-family: 'HVD Crocodile';
+  font-family: 'HVD Crocodile', Helvetica, sans-serif;
   color: white;
   width: calc(100% - 3vmax);
 }
@@ -23,7 +23,7 @@
 }
 
 .title select {
-  font-family: 'HVD Crocodile';
+  font-family: 'HVD Crocodile', Helvetica, sans-serif;
   font-size: 3vmax;
   font-weight: 600;
   border: none;
@@ -38,13 +38,13 @@
 }
 
 .title select option {
-  font-family: 'Open Sans', Helvetica;  
+  font-family: 'Open Sans', Helvetica, sans-serif;
 }
 
 #bingo table {
   height: calc(100% - 4vmax);
 }
-     
+
 .card .bingo, .detail, .card {
   position: absolute;
   width: 100%;
@@ -101,13 +101,13 @@
   color: #aaa;
 }
 
-.detail.single a[id], 
-.detail.single a[id] p, 
-.detail.single a[id] + ul, 
+.detail.single a[id],
+.detail.single a[id] p,
+.detail.single a[id] + ul,
 .detail.single a[id] > span,
 .detail.single .search,
 .detail.single input[type="checkbox"],
-.detail a[id].not-matching, 
+.detail a[id].not-matching,
 .detail a[id].not-matching p {
   display: none;
 }
@@ -122,7 +122,7 @@
 }
 
 .detail .content h2 {
-  font-family: 'HVD Crocodile';
+  font-family: 'HVD Crocodile', Helvetica, sans-serif;
   font-weight: 600;
   font-stretch: condensed;
 }
@@ -280,7 +280,7 @@
   .detail {
     font-size: 1.7vmax;
   }
-  
+
   #bingo.hidden .card-wrapper:nth-child(1) {
     margin-left: -150%;
   }
@@ -381,13 +381,13 @@
   #bingo {
     background-color: #222;
   }
-  
+
   .detail {
     background: #555;
     color: white;
   }
-  
+
   .card {
     background: #999;
-  }  
+  }
 }

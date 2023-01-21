@@ -1,4 +1,4 @@
-import { elementWithKids, htmlToElement, fetchSilent, browserLocale } from './common.js' 
+import { elementWithKids, htmlToElement, fetchSilent, browserLocale } from './common.js'
 
 export const supported = ['de', 'da', 'en', 'es', 'pl', 'it', 'pt', 'fr', 'nl']
 export const locales = ['de-de', 'de-ch', 'de-at', 'en-us', 'es-gb', 'pt-br']
@@ -156,6 +156,7 @@ export async function loadContent(fetch = fetchSilent) {
 /**
  * get localized content arguments
  *
+ * @param {Function} fetch fetch function
  * @param {boolean} idiot whether to load the idiot or sheep arguments
  */
 async function fetchLocalizedContent(fetch = fetchSilent, idiot) {
@@ -273,7 +274,8 @@ export function getTopicsData() {
 
 /**
  * Fetch ids from given content file, optionally filter by substring.
- * @param {string} file The filename (without suffix).
+ * @param {string} content The content.
+ * @param {string} section The section name.
  * @param {string} filter An optional string filter.
  * @return {Array} The content ids
  */
@@ -323,7 +325,7 @@ export function getMessage(key, fallback = '???') {
 /**
  * Generate label select
  * @param {boolean} idiot use idiot or sheep labels
- * @return {string} select HTML
+ * @return {ChildNode} select HTML
  */
 export function labelSelect(idiot) {
   const labels = getLabels(idiot).map(label => `<option>${label.innerHTML}</option>`)

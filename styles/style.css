@@ -1,9 +1,9 @@
 body {
-  font-family: 'Open Sans', Helvetica;
+  font-family: 'Open Sans', Helvetica, sans-serif;
   user-select: none;
   -webkit-hyphens: auto;
   hyphens: auto;
-  
+
   display: flex;
   justify-content: center;
   align-items: center;
@@ -74,7 +74,7 @@ q::before {
   color: #ccc;
   left: 2vmax;
   top: -6vmax;
-  font-family: 'HVD Crocodile';
+  font-family: 'HVD Crocodile', Helvetica, sans-serif;
   font-weight: 600;
 }
 
@@ -142,7 +142,7 @@ q::after {
 }
 
 .logo {
-  font-family: 'HVD Crocodile';
+  font-family: 'HVD Crocodile', Helvetica, sans-serif;
   font-weight: 600;
 }
 
@@ -197,7 +197,7 @@ q::after {
 }
 
 .location option {
-  font-family: 'Open Sans', Helvetica;  
+  font-family: 'Open Sans', Helvetica, sans-serif;
 }
 
 #menu .intro-mod {
@@ -227,7 +227,7 @@ p.frame.show {
 }
 
 #menu label, #menu input {
-  font-family: 'HVD Crocodile', Helvetica;
+  font-family: 'HVD Crocodile', Helvetica, sans-serif;
   font-weight: 300;
   font-size: 5vmin;
   color: #777;
@@ -240,7 +240,7 @@ p.frame.show {
 }
 
 button, button.menu, span.menu, select.menu {
-  font-family: 'HVD Crocodile';
+  font-family: 'HVD Crocodile', Helvetica, sans-serif;
   font-weight: 300;
   color: #777;
 }
@@ -250,7 +250,7 @@ button {
 }
 
 #menu h1, #menu h2, #menu h3 {
-  font-family: 'HVD Crocodile';
+  font-family: 'HVD Crocodile', Helvetica, sans-serif;
   font-weight: 600;
 }
 
@@ -391,7 +391,7 @@ button:hover {
 #loader {
   position: absolute;
   border: 16px solid #f3f3f3;
-  border-top: 16px solid #2d60f6; 
+  border-top: 16px solid #2d60f6;
   border-radius: 50%;
   width: 120px;
   height: 120px;
@@ -413,7 +413,7 @@ button:hover {
   font-size: 3vmax;
   cursor: pointer;
   border-radius: 50%;
-  font-family: 'Open Sans', Helvetica;
+  font-family: 'Open Sans', Helvetica, sans-serif;
   display: inline-block;
   margin: 0.2rem;
 }
@@ -443,17 +443,17 @@ button:hover {
     background-color: #222;
     color: #ddd;
   }
-  
+
   #menu button, #menu input {
     background-color: #444;
     color: #aaa;
   }
-  
+
   .game-logo {
     background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, #222 10%);
     color: #fff;
   }
-  
+
   q {
     background: #666;
     color: white;

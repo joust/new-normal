@@ -127,7 +127,7 @@ class TestCard extends HTMLElement {
     return this.hasTopic ? this.card.split(':')[0] : ''
   }
 
-  attributeChangedCallback(name) {
+  attributeChangedCallback() {
     this.updateCard()
   }
 
@@ -138,19 +138,19 @@ class TestCard extends HTMLElement {
     this.shadowRoot.appendChild(template.content)
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
-    this.element('like').insertAdjacentHTML('beforeBegin', this.getCardElement())
-    
+    this.element('like').insertAdjacentHTML('beforebegin', this.getCardElement())
+
     this.onmousedown = this.ontouchstart = e => {
       if (this.animating) return
       const startX =  e.pageX || e.originalEvent.touches[0].pageX
 
       this.onmousemove = this.ontouchmove = e => {
-        var x = e.pageX || e.originalEvent.touches[0].pageX
+        const x = e.pageX || e.originalEvent.touches[0].pageX
         this.pullDeltaX = (x - startX)
         if (!this.pullDeltaX) return
         this.pullChange()
       }
-                   
+
       this.onmouseup = this.ontouchend = () => {
         this.onmousemove = this.ontouchmove = this.onmouseup = this.ontouchend = null
         if (!this.pullDeltaX) return // prevents from rapid click events
@@ -167,19 +167,19 @@ class TestCard extends HTMLElement {
   updateCard() {
     const card = this.element('card')
     if (this.isConnected && card) {
-      card.insertAdjacentHTML('afterEnd', this.getCardElement())
+      card.insertAdjacentHTML('afterend', this.getCardElement())
       this.shadowRoot.removeChild(card)
     }
   }
 
   /**
-   * generates an archive.is mirror anchor node for the given node 
+   * generates an archive.is mirror anchor node for the given node
    *
    * @param {HTMLElement} a the anchor node to mirror
    */
    mirrorNode(a) {
     const mirror = a.cloneNode(true)
-    mirror.href = `https://archive.is/${a.href}` 
+    mirror.href = `https://archive.is/${a.href}`
     mirror.firstChild.textContent = 'Mirror'
     return mirror
   }
@@ -228,7 +228,7 @@ class TestCard extends HTMLElement {
     const topic = topicData ? topicData.title : ''
     return this.cardWithSources(this.idOnly, title, `<argument-card neutral card="${this.idOnly}" topicId="${this.topic}" topic="${topic}">${data ? data.innerHTML : ''}</argument-card>`)
   }
-  
+
   pullChange() {
     this.animating = true
     this.element('card').style.transform = `translateX(${this.pullDeltaX}px)`
@@ -238,8 +238,8 @@ class TestCard extends HTMLElement {
     const opacity = this.pullDeltaX / 180
     const rejectOpacity = (opacity >= 0) ? 0 : Math.abs(opacity)
     const likeOpacity = (opacity <= 0) ? 0 : opacity
-    this.element('reject').style.opacity = rejectOpacity
-    this.element('like').style.opacity = likeOpacity
+    this.element('reject').style.opacity = ''+rejectOpacity
+    this.element('like').style.opacity = ''+likeOpacity
   }
 
   release() {

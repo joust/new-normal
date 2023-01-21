@@ -29,7 +29,7 @@ async function pathToHandle(path) {
   let dir = root
   for (const d of dirs) dir = await dir.getDirectoryHandle(d)
   const handle = await dir.getFileHandle(file)
-  return (await verifyPermission(handle), true) ? handle : undefined
+  return (await verifyPermission(handle, true)) ? handle : undefined
 }
 
 async function load(handle) {
@@ -46,7 +46,7 @@ async function save(handle, content) {
     const writable = await handle.createWritable()
     await writable.write(content)
     await writable.close()
-  } else 
+  } else
     console.log(`no permission to write to file '${handle.name}'`)
 }
 

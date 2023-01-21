@@ -24,7 +24,7 @@ sourcesBackTemplate.innerHTML = `
     }
 
     ::slotted(*) {
-      font-family: 'Open Sans', Helvetica;
+      font-family: 'Open Sans', Helvetica, sans-serif;
       font-size: calc(3 * var(--cavg));
       text-align: justify;
       -webkit-hyphens: auto;
@@ -32,7 +32,7 @@ sourcesBackTemplate.innerHTML = `
     }
 
     ::slotted(h2) {
-      font-family: 'HVD Crocodile', Helvetica;
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-weight: 600;
       font-stretch: condensed;
       font-size: calc(7 * var(--cavg));

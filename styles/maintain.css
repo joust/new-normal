@@ -12,7 +12,7 @@ body {
 }
 
 .logo {
-  font-family: 'HVD Crocodile';
+  font-family: 'HVD Crocodile', Helvetica, sans-serif;
   font-weight: 600;
   font-size: 2em;
 }
@@ -26,7 +26,7 @@ body {
 }
 
 #navigation {
-  font-family: 'HVD Crocodile', Helvetica;
+  font-family: 'HVD Crocodile', Helvetica, sans-serif;
   height: 2em;
   width: 100%;
   background: lightgrey;
@@ -50,7 +50,7 @@ body {
   max-height: calc(100% - 2em);
   flex: auto;
   flex-direction: row;
-  font-family: 'Open Sans', Helvetica;
+  font-family: 'Open Sans', Helvetica, sans-serif;
   background: white;
   display: flex;
 }
@@ -62,7 +62,7 @@ body {
 }
 
 .tab .master {
-  min-width: 50%; 
+  min-width: 50%;
 }
 
 #connect button, #connect h2 {
@@ -201,7 +201,7 @@ body {
   padding: 0.4em 0.4em;
   position: relative;
 }
- 
+
 .radio-tab + label:hover {
    background-color: #ccc;
  }

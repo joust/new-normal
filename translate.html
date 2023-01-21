@@ -2,9 +2,13 @@
 <html lang="en">
   <head>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-    <title>New Normal - Deepl Translate arguments</title>
+    <title>New Normal Content - Deepl Translate arguments</title>
   </head>
   <body>
+    <select id="normality">
+      <option title="Pandemic" value="pandemic" checked>🦠 Pandemic</option>
+      <option title="Climate" value="climate" disabled>🌎 Climate</option>
+    </select>
     <button id="set" onclick="select()">Set project dir</button>
     <button class="run" disabled onclick="run('da')">Run 'da' translation</button>
     <button class="run" disabled onclick="run('en')">Run 'en' translation</button>
@@ -22,7 +26,7 @@
       let dir = undefined
       let content = {} 
       const AUTH_KEY = AUTH_KEYS[0]
-      const LIMIT = 20
+      const LIMIT = 700
 
       async function fetchJson(url) {
         return fetch(url).then(async response => response.status >= 400 && response.status < 600 ? '' : await response.json()).catch(error => {})  
@@ -45,40 +49,41 @@
           node.dataset[attr] = await translate(node.dataset[attr], lang)
         return node
       }
-      async function translateArgument(node, lang) {
-        node.firstChild.innerHTML = await translate(node.firstChild.innerHTML, lang)
-        await translateArgumentP(node.querySelector('p'), lang)
-        return node
+      async function translateArgumentTitle(node, lang) {
+        const h2 = node.querySelector('h2')
+        if (h2) h2.innerHTML = await translate(h2.innerHTML, lang)
       }
-      async function translateArgumentP(node, lang) {
-        const defaults = {
-          da: { s: 'De siger', q: 'De spørger', i: ' med al alvor' },
-          en: { s: 'They say', q: 'They ask', i: ' in all seriousness' },
-          es: { s: 'Dicen', q: 'Preguntan', i: ' con toda seriedad' },
-          pl: { s: 'Twierdzą', q: 'Pytają', i: ' z całą powagą' },
-          it: { s: 'Dicono', q: 'Chiedono', i: ' in tutta serietà' },
-          fr: { s: 'Ils disent', q: 'Ils demandent', i: ' en toute sincérité' },
-          nl: { s: 'Ze zeggen', q: 'Ze vfragen', i: ' in alle ernst' },
-          pt: { s: 'Dizem', q: 'Pergunta', i: ' com toda a seriedade' },
-          'pt-br': { s: 'Dizem', q: 'Pergunta', i: ' com toda a seriedade' }
-        }
-        node.childNodes[0].nodeValue = defaults[lang][node.innerHTML.startsWith('Die sagen') ? 's' : 'q']
-        node.childNodes[1].innerHTML = defaults[lang].i
-        const p = await translate(node.childNodes[2].nodeValue, lang)
-        node.childNodes[2].nodeValue = p.startsWith(' ') || p.startsWith(',') ? p : ' '+p
-        return node
+      async function translateArgumentText(node, lang, text = undefined) {
+        const p = node.querySelector('p')
+        if (p) p.innerHTML = await translate(text ? text.innerHTML : p.innerHTML, lang)
+      }
+      
+      function argumentsToTranslate(srcArgs, targetArgs) {
+        return srcArgs.filter(arg => {
+          const target = targetArgs.find(targ => targ.id === arg.id)
+          if (!target) return true
+          const p = target.querySelector('p')
+          return !p || p.innerHTML.trim().length===0
+        })
       }
       
       async function updateArguments(src, target) {
         const lowerId = id => `${id[0]}${(+id.substring(1)) - 1}`
-        const argstotranslate = src.args.filter(arg => !target.args.find(targ => targ.id === arg.id)).slice(0, LIMIT)
+        const argstotranslate = argumentsToTranslate(src.args, target.args).slice(0, LIMIT)
         for (const arg of argstotranslate) {
           log(`translating arg ${arg.id} to ${target.lang}`)
-          const a = await translateArgument(arg.cloneNode(true), target.lang)
-          const lower = target.div.querySelector(`a[id=${lowerId(arg.id)}]`)
-          const last = lower ? lower : target.div.querySelector('h1')
-          last.after(a)
-          last.after('\n')
+          const existing = target.args.find(targ => targ.id === arg.id)
+          const a = existing ? existing : arg.cloneNode(true)
+          await translateArgumentText(a, target.lang, existing ? arg.querySelector('p') : undefined)
+          if (!existing) {
+            await translateArgumentTitle(a, target.lang)
+            // find insert position and insert
+            const lower = target.div.querySelector(`a[id=${lowerId(arg.id)}]`)
+            const last = lower ? lower : target.div.querySelector('h1')
+            last.after(a)
+            last.after('\n')
+          }
+          console.log(target.div.innerHTML)
         }
       }
       
@@ -144,8 +149,10 @@
       }
       
       async function select() {
+        const normality = document.getElementById('normality').value
         project = await window.showDirectoryPicker()
         project = await project.getDirectoryHandle('content')
+        project = await project.getDirectoryHandle(normality)
         for (const lang of ['de', 'da', 'en', 'es', 'pl', 'it', 'fr', 'nl', 'pt', 'pt-br']) 
           content[lang] = await check(lang)
         document.querySelectorAll('.run').forEach(node => node.disabled = false)

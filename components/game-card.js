@@ -233,6 +233,7 @@ class GameCard extends HTMLElement {
 
   getCardElement() {
     const data = document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} a[id="${this.idOnly}"]`)
+    if (!data) return ''
     const clazz = data.className
     const title = data ? data.querySelector('h2') ? data.querySelector('h2').innerHTML : data.title : '???'
     const type = this.idiot ? 'idiot' : ''

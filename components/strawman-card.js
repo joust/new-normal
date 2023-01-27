@@ -172,7 +172,7 @@ strawmanCardTemplate.innerHTML = `
   <div id="strawman-card">
     <div id="icon"></div>
     <div id="new">New</div>
-    <div id="phrase"><img id="img" src="/components/images/strawman.png"><span id="fallacy"></span><span class="quoted"><span class="phrase"></span></span><span id="description"></span></div>
+    <div id="phrase"><img id="img" draggable="false" src="/components/images/strawman.png"><span id="fallacy"></span><span class="quoted"><span class="phrase"></span></span><span id="description"></span></div>
     <div id="side-phrase"><span class="phrase"></span></div>
     <div id="normal">Normal</div>
   </div>

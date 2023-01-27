@@ -215,7 +215,7 @@ appealToCardTemplate.innerHTML = `
     <div id="icon"></div>
     <div id="watermark"></div>
     <div id="new">New</div>
-    <div id="phrase"><span id="fallacy"></span><img id="img" class="hidden"></span><span class="quoted"><span class="to"></span> <span class="phrase"></span></span></div>
+    <div id="phrase"><span id="fallacy"></span><img id="img" draggable="false" class="hidden"></span><span class="quoted"><span class="to"></span> <span class="phrase"></span></span></div>
     <div id="side-to"><span class="to"></span></div>
     <div id="normal">Normal</div>
     <div id="card"></div>

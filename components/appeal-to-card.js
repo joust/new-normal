@@ -87,9 +87,21 @@ appealToCardTemplate.innerHTML = `
       right: calc(2% + var(--sidebar-width));
     }
 
+    #img {
+      display: inline-block;
+      text-align: center;
+      width: auto;
+      height: 40%;
+    }
+
+    #img.hidden {
+      display: none;
+    }
+
     #phrase {
       position: absolute;
-      color: grey;
+      font-family: 'Open Sans', Helvetica, sans-serif;
+      font-size: calc(4 * var(--cavg));
       display: flex;
       align-items: center;
       justify-content: center;
@@ -106,19 +118,16 @@ appealToCardTemplate.innerHTML = `
       right: var(--sidebar-width);
     }
 
-    #phrase {
-      font-family: 'HVD Crocodile', Helvetica, sans-serif;
-      font-size: calc(7 * var(--cavg));
-      font-weight: 600;
-      font-stretch: condensed;
-    }
-    
     #phrase b {
       color: var(--bold);
     }
 
     #phrase .to {
       color: var(--blue);
+      font-family: 'HVD Crocodile', Helvetica, sans-serif;
+      font-size: calc(7 * var(--cavg));
+      font-weight: 600;
+      font-stretch: condensed;
     }
 
     .idiot #phrase .to {
@@ -130,6 +139,7 @@ appealToCardTemplate.innerHTML = `
       font-size: calc(4 * var(--cavg));
       font-weight: 300;
       max-width: 100%;
+      color: #666;
       display: inline-block;
       text-align: center;
     }
@@ -205,7 +215,7 @@ appealToCardTemplate.innerHTML = `
     <div id="icon"></div>
     <div id="watermark"></div>
     <div id="new">New</div>
-    <div id="phrase"><span id="fallacy"></span><span class="quoted"><span class="to"></span> <span class="phrase"></span></span></div>
+    <div id="phrase"><span id="fallacy"></span><img id="img" class="hidden"></span><span class="quoted"><span class="to"></span> <span class="phrase"></span></span></div>
     <div id="side-to"><span class="to"></span></div>
     <div id="normal">Normal</div>
     <div id="card"></div>
@@ -231,11 +241,15 @@ class AppealToCard extends HTMLElement {
   }
 
   get card() {
-    return this.querySelector('a') ? this.querySelector('a').id : ''
+    return this.querySelector('a') ? this.querySelector('a').getAttribute('id') : ''
   }
 
   get fallacy() {
     return this.querySelector('i') ? this.querySelector('i').innerHTML : ''
+  }
+
+  get img() {
+    return this.querySelector('a') ? this.querySelector('a').getAttribute('img') : ''
   }
 
   get to() {
@@ -276,6 +290,8 @@ class AppealToCard extends HTMLElement {
       root.classList.toggle('idiot', this.idiot)
       this.element('card').innerHTML = this.card
       this.element('fallacy').innerHTML = this.fallacy
+      this.element('img').classList.toggle('hidden', !this.img || !this.img.length)
+      this.element('img').setAttribute('src', `/content/images/${this.img}`)
       Array.from(root.querySelectorAll('.to')).forEach(node => node.innerHTML = this.to)
       root.querySelector('.phrase').innerHTML = this.phrase
     }

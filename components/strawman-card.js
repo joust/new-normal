@@ -11,7 +11,6 @@ strawmanCardTemplate.innerHTML = `
       --yellow: yellow;
       --orange: orange;
       --sidebar-width: 12%;
-      --watermark-size: 50%;
       position: relative;
       width: 100%;
       height: 100%;
@@ -42,23 +41,6 @@ strawmanCardTemplate.innerHTML = `
       left: auto;
     }
 
-    #watermark {
-      position: absolute;
-      width: var(--watermark-size);
-      height: var(--watermark-size);
-      top: 4%;
-      right: 0;
-      opacity: 0.15;
-      background-image: url('/styles/images/virus.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-    }
-
-    .mirrored #watermark {
-      right: var(--sidebar-width);
-    }
-
-    
     #new, #normal {
       font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-weight: 600;
@@ -84,6 +66,12 @@ strawmanCardTemplate.innerHTML = `
 
     .mirrored #normal {
       right: calc(2% + var(--sidebar-width));
+    }
+
+    #img {
+      display: inline-block;
+      height: 40%;
+      width: auto;
     }
 
     #phrase {
@@ -123,7 +111,7 @@ strawmanCardTemplate.innerHTML = `
       bottom: 0; 
       font-family: 'Open Sans', Helvetica, sans-serif;
       padding: calc(5 * var(--cavg));
-      padding-bottom: calc(16 * var(--cavg));
+      padding-bottom: calc(4 * var(--cavg));
       font-size: calc(3 * var(--cavg));
       font-style: italic;
       color: var(--blue);
@@ -183,9 +171,8 @@ strawmanCardTemplate.innerHTML = `
   </style>
   <div id="strawman-card">
     <div id="icon"></div>
-    <div id="watermark"></div>
     <div id="new">New</div>
-    <div id="phrase"><span id="fallacy"></span><span class="quoted"><span class="phrase"></span></span><span id="description"></span></div>
+    <div id="phrase"><img id="img" src="/components/images/strawman.png"><span id="fallacy"></span><span class="quoted"><span class="phrase"></span></span><span id="description"></span></div>
     <div id="side-phrase"><span class="phrase"></span></div>
     <div id="normal">Normal</div>
   </div>

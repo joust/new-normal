@@ -125,7 +125,6 @@ class GameCard extends HTMLElement {
   }
 
   updateAltIndex(delta) {
-    console.log('updateAltIndex', delta)
     this.altIndex += delta / ALTERNATIVES_STEP
     if (this.altIndex < 0) this.altIndex += this.alternatives.length
     if (this.altIndex >= this.alternatives.length) this.altIndex -= this.alternatives.length

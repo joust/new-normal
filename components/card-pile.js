@@ -102,7 +102,6 @@ class CardPile extends HTMLElement {
 
   dragstart(event) {
     event.dataTransfer.setData('text/plain', JSON.stringify({draw: true}))
-    console.log('dragstart', event.dataTransfer.getData('text/plain'))
   }
 
   dragend(event) {

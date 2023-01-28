@@ -147,7 +147,7 @@ cancelCardTemplate.innerHTML = `
       position: absolute;
       right: 0;
       top: 0;
-      width: 12%;
+      padding: 0 2% 0 2%;
       height: 4%;
       font-family: 'Open Sans', Helvetica, sans-serif;
       font-size: calc(2.5 * var(--cavg));

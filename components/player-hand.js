@@ -203,7 +203,6 @@ class PlayerHand extends HTMLElement {
 
   drop(event) {
     const detail = JSON.parse(event.dataTransfer.getData('text/plain'))
-    console.log('drop!', detail)
     this.dispatchEvent(new CustomEvent('dropped', {detail}))
     this.element('player-hand').classList.remove('dropping')
     event.stopPropagation()

@@ -136,9 +136,9 @@ export function loadAttitude() {
 function displayHash(hash) {
   const first = hash.toLowerCase().split('&')[0]
   const rest = hash.toUpperCase().split('&').map(v => v.split('=')[0]).slice(1)
-  console.log(rest)
   switch (first) {
     case 'test': return displayHashAsTest(rest)
+    case 'card': 
     case 'uno': 
     case 'hand': return displayHashAsHand(rest) 
     case 'bingo': return displayHashAsCard(rest)

@@ -1,3 +1,5 @@
+import {flagMapped} from './shared.js'
+
 const appealToCardTemplate = document.createElement('template')
 appealToCardTemplate.innerHTML = `
   <style>
@@ -161,7 +163,7 @@ appealToCardTemplate.innerHTML = `
       position: absolute;
       right: 0;
       top: 0;
-      width: 12%;
+      padding: 0 2% 0 2%;
       height: 4%;
       font-family: 'Open Sans', Helvetica, sans-serif;
       font-size: calc(2.5 * var(--cavg));
@@ -249,7 +251,7 @@ class AppealToCard extends HTMLElement {
   }
 
   get img() {
-    return this.querySelector('a') ? this.querySelector('a').getAttribute('img') : ''
+    return this.querySelector('a') ? this.querySelector('a').getAttribute('href') : ''
   }
 
   get to() {
@@ -288,7 +290,7 @@ class AppealToCard extends HTMLElement {
     if (this.isConnected && root) {
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
-      this.element('card').innerHTML = this.card
+      this.element('card').innerHTML = flagMapped(this.card)
       this.element('fallacy').innerHTML = this.fallacy
       this.element('img').classList.toggle('hidden', !this.img || !this.img.length)
       this.element('img').setAttribute('src', `/content/images/${this.img}`)

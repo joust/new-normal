@@ -112,7 +112,7 @@ class EditableCard extends HTMLElement {
   getCardElement() {
     if (!this.card || !this.card.length) return '<div></div>'
     const data = document.querySelector(`${EditableCard.contentRootSelector} > #${this.lang} *[id="${this.card}"]`)
-    const clazz = data.className
+    const clazz = data.classList.item(0) || ''
     const title = data ? data.querySelector('h2') ? data.querySelector('h2').innerHTML : data.title : '???'
     const type = this.idiot ? 'idiot' : ''
     const side = this.idiot ? 'idiot' : 'sheep'

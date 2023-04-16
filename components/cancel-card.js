@@ -6,12 +6,6 @@ cancelCardTemplate.innerHTML = `
     }
 
     #cancel-card {
-      --green: green;
-      --lgreen: darkgreen;
-      --red: #f72d5d;
-      --blue: #2d60f6;
-      --sidebar-width: 12%;
-      --watermark-size: 50%;
       position: relative;
       width: 100%;
       height: 100%;
@@ -152,13 +146,16 @@ cancelCardTemplate.innerHTML = `
       font-family: 'Open Sans', Helvetica, sans-serif;
       font-size: calc(2.5 * var(--cavg));
       text-align: center;
-      color: var(--red);
       border-top-right-radius: calc(2 * var(--cavg));
-      background-color: lightgrey;
     }
 
     .idiot #card {
-      color: var(--blue);
+      background-color: var(--idiot-background);
+      color: var(--idiot-color);
+    }
+    .sheep #card {
+      background-color: var(--sheep-background);
+      color: var(--sheep-color);
     }
 
     .mirrored #card {
@@ -212,7 +209,7 @@ class CancelCard extends HTMLElement {
 
   static observedAttributes = ['idiot', 'mirrored']
 
-  element(id) { return this.shadowRoot.getElementById(id) }
+  element(id) { return this.shadowRoot.getElementById(id) }
 
   get idiot() {
     return this.hasAttribute('idiot')

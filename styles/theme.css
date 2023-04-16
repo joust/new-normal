@@ -1,0 +1,284 @@
+:root {
+  --cw: 10.24;
+  --ch: 7.68;
+  --cavg: 11.2;
+  --ratio: 0.71;
+  --sidebar-width: 12%;
+  --watermark-size: 50%;
+  --topic-height: 3%;
+
+  --black: black;
+  --white: white;
+  --lblack: #666;
+  --lwhite: #bbb;
+  --red: #f72d5d;
+  --blue: #2d60f6;
+  --lred: #f93b6b;
+  --lblue: #3b69f8;
+  --lightblue: aliceblue;
+  --lightgrey: lightgrey;
+  --bold: black;
+  --neutral: #777;
+  --green: green;
+  --lgreen: darkgreen;
+  --blue0: lightblue;
+  --blue1: cornflowerblue;
+  --yellow: yellow;
+  --orange: orange;
+
+  --reject: #ff945a;
+  --approve: #b1da96;
+
+  --good: green;
+  --lgood: seagreen;
+  --evil: saddlebrown;
+  --levil: sienna;
+
+  --rainbow: linear-gradient(
+          30deg,
+          rgba(255, 0, 0, 1) 0%,
+          rgba(255, 154, 0, 1) 10%,
+          rgba(208, 222, 33, 1) 20%,
+          rgba(79, 220, 74, 1) 30%,
+          rgba(63, 218, 216, 1) 40%,
+          rgba(47, 201, 226, 1) 50%,
+          rgba(28, 127, 238, 1) 60%,
+          rgba(95, 21, 242, 1) 70%,
+          rgba(186, 12, 248, 1) 80%,
+          rgba(251, 7, 217, 1) 90%,
+          rgba(255, 0, 0, 1) 100%
+  );
+  --reverse-rainbow: linear-gradient(
+          30deg,
+          rgba(28, 127, 238, 1) 0%,
+          rgba(95, 21, 242, 1) 10%,
+          rgba(186, 12, 248, 1) 20%,
+          rgba(251, 7, 217, 1) 30%,
+          rgba(255, 0, 0, 1) 40%,
+          rgba(255, 154, 0, 1) 50%,
+          rgba(208, 222, 33, 1) 60%,
+          rgba(79, 220, 74, 1) 70%,
+          rgba(63, 218, 216, 1) 80%,
+          rgba(47, 201, 226, 1) 90%,
+          rgba(28, 127, 238, 1) 100%
+  );
+  --neutral-background: white;
+}
+
+.black-white {
+  --idiot-sheep-label: '⬛️⬜️';
+  --sheep-idiot-label: '⬜⬛️';
+  --sheep-sheep-label: '⬜⬜️';
+  --idiot-idiot-label: '⬛⬛️';
+  --sheep-label: '⬜';
+  --idiot-label: '⬛';
+  --idiot-background: var(--black);
+  --sheep-background: var(--white);
+  --idiot-color: white;
+  --sheep-color: #222;
+  --sheep-card-background: linear-gradient(30deg, var(--lwhite) 0%, var(--white) 100%);
+  --idiot-card-background: linear-gradient(30deg, var(--lblack) 0%, var(--black) 100%);
+  --sheep-argument-color: #222;
+  --idiot-argument-color: white;
+  --sheep-argument-title-color: #444;
+  --idiot-argument-title-color: #ccc;
+  --sheep-argument-background: var(--white);
+  --idiot-argument-background: var(--black);
+  --sheep-appeal-to-color: var(--white);
+  --idiot-appeal-to-color: var(--black);
+  --sheep-fallacy-background: linear-gradient(30deg, var(--lwhite) 0%, var(--white) 100%);
+  --idiot-fallacy-background: linear-gradient(30deg, var(--lblack) 0%, var(--black) 100%);
+  --sheep-research-background: var(--rainbow);
+  --idiot-research-background: var(--reverse-rainbow);
+  --sheep-banish-background: radial-gradient(
+          circle,
+          #222 0%,
+          #666 50%,
+          var(--black) 100%
+  );
+  --sheep-banish-color: var(--white);
+  --idiot-banish-background: radial-gradient(
+          circle,
+          #aaa 0%,
+          #ccc 50%,
+          var(--white) 100%
+  );
+  --idiot-banish-color: var(--black);
+  --sheep-discuss-background: radial-gradient(
+          circle,
+          var(--white) 0%,
+          var(--white) 40%,
+          var(--black) 100%
+  );
+  --sheep-discuss-color: var(--black);
+  --sheep-discuss-topic-color: var(black);
+  --idiot-discuss-background: radial-gradient(
+          circle,
+          var(--black) 0%,
+          var(--black) 40%,
+          var(--white) 100%
+  );
+  --idiot-discuss-color: var(--white);
+  --idiot-discuss-topic-color: var(--white);
+  --sheep-pause-color: var(--white);
+  --idiot-pause-color: var(--black);
+  --sheep-label-color: var(--white);
+  --idiot-label-color: var(--black);
+  --sheep-cancel-color: var(--white);
+  --idiot-cancel-color: var(--black);
+  --sheep-strawman-color: var(--white);
+  --idiot-strawman-color: var(--black);
+}
+
+.red-blue-pill {
+  --idiot-sheep-label: '🟥️🟦️';
+  --sheep-idiot-label: '🟦🟥️';
+  --sheep-sheep-label: '🟦️🟦️';
+  --idiot-idiot-label: '🟥🟥️';
+  --sheep-label: '🟦️';
+  --idiot-label: '🟥';
+  --idiot-background: var(--red);
+  --sheep-background: var(--blue);
+  --idiot-color: white;
+  --sheep-color: white;
+  --sheep-card-background: linear-gradient(30deg, var(--lblue) 0%, var(--blue) 100%);
+  --idiot-card-background: linear-gradient(30deg, var(--lred) 0%, var(--red) 100%);
+  --sheep-argument-color: #222;
+  --idiot-argument-color: #222;
+  --sheep-argument-title-color: var(--blue);
+  --idiot-argument-title-color: var(--red);
+  --idiot-argument-background: linear-gradient(30deg, #fdfdfd 0%, #fff 100%);
+  --sheep-argument-background: linear-gradient(30deg, #fdfdfd 0%, #fff 100%);
+  --sheep-appeal-to-color: var(--blue);
+  --idiot-appeal-to-color: var(--red);
+  --sheep-fallacy-background: linear-gradient(30deg, var(--lblue) 0%, var(--blue) 100%);
+  --idiot-fallacy-background: linear-gradient(30deg, var(--lred) 0%, var(--red) 100%);
+  --sheep-research-background: var(--rainbow);
+  --idiot-research-background: var(--reverse-rainbow);
+  --sheep-banish-background: radial-gradient(
+          circle,
+          #222 0%,
+          #222 50%,
+          var(--blue) 100%
+  );
+  --sheep-banish-color: var(--white);
+  --idiot-banish-background: radial-gradient(
+          circle,
+          #222 0%,
+          #222 50%,
+          var(--red) 100%
+  );
+  --idiot-banish-color: var(--white);
+  --sheep-discuss-background: radial-gradient(
+          circle,
+          var(--blue) 0%,
+          var(--blue) 40%,
+          var(--red) 100%
+  );
+  --sheep-discuss-color: var(--white);
+  --sheep-discuss-topic-color: var(--blue);
+  --idiot-discuss-background: radial-gradient(
+          circle,
+          var(--red) 0%,
+          var(--red) 40%,
+          var(--blue) 100%
+  );
+  --idiot-discuss-color: var(--white);
+  --idiot-discuss-topic-color: var(--red);
+  --sheep-pause-color: var(--blue);
+  --idiot-pause-color: var(--red);
+  --sheep-label-color: var(--blue);
+  --idiot-label-color: var(--red);
+  --sheep-cancel-color: var(--blue);
+  --idiot-cancel-color: var(--red);
+  --sheep-strawman-color: var(--blue);
+  --idiot-strawman-color: var(--red);
+}
+
+.good-evil {
+  --idiot-sheep-label: '🟫️🟩';
+  --sheep-idiot-label: '🟩🟫️';
+  --sheep-sheep-label: '🟩🟩️';
+  --idiot-idiot-label: '🟫🟫️';
+  --sheep-label: '🟩';
+  --idiot-label: '🟫';
+  --idiot-background: var(--evil);
+  --sheep-background: var(--good);
+  --idiot-color: white;
+  --sheep-color: white;
+  --sheep-card-background: linear-gradient(30deg, var(--lgood) 0%, var(--good) 100%);
+  --idiot-card-background: linear-gradient(30deg, var(--levil) 0%, var(--evil) 100%);
+  --sheep-argument-color: #222;
+  --idiot-argument-color: #222;
+  --sheep-argument-title-color: var(--good);
+  --idiot-argument-title-color: var(--evil);
+  --idiot-argument-background: linear-gradient(30deg, #fdfdfd 0%, #fff 100%);
+  --sheep-argument-background: linear-gradient(30deg, #fdfdfd 0%, #fff 100%);
+  --sheep-appeal-to-color: var(--good);
+  --idiot-appeal-to-color: var(--evil);
+  --sheep-fallacy-background: linear-gradient(30deg, var(--lgood) 0%, var(--good) 100%);
+  --idiot-fallacy-background: linear-gradient(30deg, var(--levil) 0%, var(--evil) 100%);
+  --sheep-research-background: var(--rainbow);
+  --idiot-research-background: var(--reverse-rainbow);
+  --sheep-banish-background: radial-gradient(
+          circle,
+          #222 0%,
+          #222 50%,
+          var(--good) 100%
+  );
+  --sheep-banish-color: var(--white);
+  --idiot-banish-background: radial-gradient(
+          circle,
+          #222 0%,
+          #222 50%,
+          var(--evil) 100%
+  );
+  --idiot-banish-color: var(--white);
+  --sheep-discuss-background: radial-gradient(
+          circle,
+          var(--good) 0%,
+          var(--good) 40%,
+          var(--evil) 100%
+  );
+  --sheep-discuss-color: var(--white);
+  --sheep-discuss-topic-color: var(--good);
+  --idiot-discuss-background: radial-gradient(
+          circle,
+          var(--evil) 0%,
+          var(--evil) 40%,
+          var(--good) 100%
+  );
+  --idiot-discuss-color: var(--white);
+  --idiot-discuss-topic-color: var(--evil);
+  --sheep-pause-color: var(--good);
+  --idiot-pause-color: var(--evil);
+  --sheep-label-color: var(--good);
+  --idiot-label-color: var(--evil);
+  --sheep-cancel-color: var(--good);
+  --idiot-cancel-color: var(--evil);
+  --sheep-strawman-color: var(--good);
+  --idiot-strawman-color: var(--evil);
+}
+
+@media (prefers-color-scheme: dark) {
+  .black-white {
+    --idiot: var(--black);
+    --sheep: #222;
+    --idiot-color: #ddd;
+    --sheep-color: #222;
+  }
+
+  .red-blue-pill {
+    --idiot-color: white;
+    --sheep-color: white;
+    --idiot-card-background: linear-gradient(30deg, #5d5d5d 0%, #555 100%);
+    --sheep-card-background: linear-gradient(30deg, #5d5d5d 0%, #555 100%);
+  }
+
+  .good-evil {
+    --idiot-background: var(--reject);
+    --sheep-background: var(--approve);
+  }
+}
+
+

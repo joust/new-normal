@@ -6,17 +6,12 @@ strawmanCardTemplate.innerHTML = `
     }
 
     #strawman-card {
-      --red: #f72d5d;
-      --blue: #2d60f6;
-      --yellow: yellow;
-      --orange: orange;
-      --sidebar-width: 12%;
       position: relative;
       width: 100%;
       height: 100%;
       border: calc(0.1 * var(--cavg)) solid #aaa;
       border-radius: calc(2 * var(--cavg));
-      background: linear-gradient(30deg, var(--yellow) 0%, var(--orange) 100%);
+      background: linear-gradient(30deg, var(--orange) 0%, var(--yellow) 100%);
       user-select: none;
     }
 
@@ -76,7 +71,7 @@ strawmanCardTemplate.innerHTML = `
 
     #phrase {
       position: absolute;
-      color: var(--blue);
+      color: var(--sheep-strawman-color);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -91,7 +86,7 @@ strawmanCardTemplate.innerHTML = `
     }
 
     .idiot #phrase {
-      color: var(--red);
+      color: var(--idiot-strawman-color);
     }
 
     .mirrored #phrase {
@@ -114,12 +109,12 @@ strawmanCardTemplate.innerHTML = `
       padding-bottom: calc(4 * var(--cavg));
       font-size: calc(3 * var(--cavg));
       font-style: italic;
-      color: var(--blue);
+      color: var(--sheep-strawman-color);
       opacity: 0.4;
     }
 
     .idiot #description {
-      color: var(--red);
+      color: var(--idiot-strawman-color);
     }
 
     #phrase span.quoted {
@@ -146,7 +141,7 @@ strawmanCardTemplate.innerHTML = `
       font-size: calc(6 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
-      color: var(--blue);
+      color: var(--sheep-strawman-color);
       opacity: 0.4;
       padding-left: 2%;
       top: 100%;
@@ -162,7 +157,7 @@ strawmanCardTemplate.innerHTML = `
     }
 
     .idiot #side-phrase {
-      color: var(--red);
+      color: var(--idiot-strawman-color);
     }
 
     .mirrored #side-phrase {
@@ -186,7 +181,7 @@ class StrawmanCard extends HTMLElement {
 
   static observedAttributes = ['idiot', 'mirrored']
 
-  element(id) { return this.shadowRoot.getElementById(id) }
+  element(id) { return this.shadowRoot.getElementById(id) }
 
   get idiot() {
     return this.hasAttribute('idiot')

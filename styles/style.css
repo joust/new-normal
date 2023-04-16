@@ -90,7 +90,7 @@ q::after {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #fff;
+  background-color: #eee;
   text-align: left;
   overflow-y: auto;
   color: #333;
@@ -126,7 +126,7 @@ q::after {
 .game-logo {
   position: fixed;
   top: 0;
-  background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, #fff 10%);
+  background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, #eee 10%);
   width: 100%;
   color: #333;
   margin: 0;
@@ -147,11 +147,11 @@ q::after {
 }
 
 .red {
-  color: #f72d5d;
+  color: var(--idiot-background);
 }
 
 .blue {
-  color: #2d60f6;
+  color: var(--sheep-background);
 }
 
 .logo .virus {
@@ -246,7 +246,7 @@ button, button.menu, span.menu, select.menu {
 }
 
 button {
-  background-color: #efefef;
+  background-color: white;
 }
 
 #menu h1, #menu h2, #menu h3 {
@@ -277,30 +277,27 @@ button.hidden, q.hidden:after, a.hidden, span.hidden {
 }
 
 .ss, .i, .s, .si, .is, .ii {
-  background-position: center;
-  background-size: contain;
-  background-repeat: no-repeat;
-  width: 12vmin;
-  height: 12vmin;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
-.is {
-  background-image: url(images/is.svg);
+.is:after {
+  content: var(--idiot-sheep-label);
 }
-.si {
-  background-image: url(images/si.svg);
+.si:after {
+  content: var(--sheep-idiot-label);
 }
-.ss {
-  background-image: url(images/ss.svg);
+.ss:after {
+  content: var(--sheep-sheep-label);
 }
-.ii {
-  background-image: url(images/ii.svg);
+.ii:after {
+  content: var(--idiot-idiot-label);
 }
-.s {
-  background-image: url(images/s.svg);
+.s:after {
+  content: var(--sheep-label);
 }
-.i {
-  background-image: url(images/i.svg);
+.i:after {
+  content: var(--idiot-label);
 }
 
 #menu .content, .detail .content {
@@ -335,7 +332,7 @@ button.hidden, q.hidden:after, a.hidden, span.hidden {
   float: none;
 }
 
-#stop, .reload, .permalink, .correct {
+#stop, #theme, .reload, .permalink, .correct {
   position: absolute;
   right: 0.2vmax;
   top: 0.2vmax;
@@ -352,6 +349,12 @@ button.hidden, q.hidden:after, a.hidden, span.hidden {
 
 #stop {
   left: 0.2vmax;
+  right: auto;
+  z-index: 2;
+}
+
+#theme {
+  left: 4vmax;
   right: auto;
   z-index: 2;
 }

@@ -6,11 +6,9 @@ testCardTemplate.innerHTML = `
       display: inline-block;
       overflow: visible;
       position: relative;
-      --orange: #ff945a;
-      --green: #b1da96;
     }
 
-    #card, #reject, #like {
+    #card, #reject, #approve {
       position: absolute;
       width: 100%;
       height: 100%;
@@ -23,7 +21,7 @@ testCardTemplate.innerHTML = `
       z-index: 0;
     }
 
-    #like.reset, #reject.reset {
+    #approve.reset, #reject.reset {
       transition: opacity 0.3s;
       opacity: 0 !important;
     }
@@ -40,11 +38,11 @@ testCardTemplate.innerHTML = `
       transform: translate(30rem) !important;
     }
 
-    #like, #reject {
+    #approve, #reject {
       opacity: 0;
     }
 
-    #like:before, #reject:before {
+    #approve:before, #reject:before {
       content: '';
       position: absolute;
       left: 50%;
@@ -57,7 +55,7 @@ testCardTemplate.innerHTML = `
       box-shadow: -2rem -3rem #fff, 2rem -3rem #fff;
     }
 
-    #like:after, #reject:after {
+    #approve:after, #reject:after {
       content: '';
       position: absolute;
       left: 50%;
@@ -74,22 +72,22 @@ testCardTemplate.innerHTML = `
       border-top-right-radius: 1.5rem;
     }
 
-    #like:after {
+    #approve:after {
       border-top: none;
       border-bottom-left-radius: 1.5rem;
       border-bottom-right-radius: 1.5rem;
     }
 
     #reject {
-      background: var(--orange);
+      background: var(--reject);
     }
 
-    #like {
-      background: var(--green);
+    #approve {
+      background: var(--approve);
     }
 
   </style>
-  <div id="like"></div>
+  <div id="approve"></div>
   <div id="reject"></div>
 `
 
@@ -105,7 +103,7 @@ class TestCard extends HTMLElement {
   static observedAttributes = ['card']
   static contentRootSelector = '#content'
 
-  element(id) { return this.shadowRoot.getElementById(id) }
+  element(id) { return this.shadowRoot.getElementById(id) }
 
   get card() {
     return this.getAttribute('card')
@@ -138,7 +136,7 @@ class TestCard extends HTMLElement {
     this.shadowRoot.appendChild(template.content)
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
-    this.element('like').insertAdjacentHTML('beforebegin', this.getCardElement())
+    this.element('approve').insertAdjacentHTML('beforebegin', this.getCardElement())
 
     this.onmousedown = this.ontouchstart = e => {
       if (this.animating) return
@@ -233,31 +231,31 @@ class TestCard extends HTMLElement {
     this.animating = true
     this.element('card').style.transform = `translateX(${this.pullDeltaX}px)`
     this.element('reject').style.transform = `translateX(${this.pullDeltaX}px)`
-    this.element('like').style.transform = `translateX(${this.pullDeltaX}px)`
+    this.element('approve').style.transform = `translateX(${this.pullDeltaX}px)`
 
     const opacity = this.pullDeltaX / 180
     const rejectOpacity = (opacity >= 0) ? 0 : Math.abs(opacity)
-    const likeOpacity = (opacity <= 0) ? 0 : opacity
+    const approveOpacity = (opacity <= 0) ? 0 : opacity
     this.element('reject').style.opacity = ''+rejectOpacity
-    this.element('like').style.opacity = ''+likeOpacity
+    this.element('approve').style.opacity = ''+approveOpacity
   }
 
   release() {
     if (this.pullDeltaX >= this.decisionVal) {
       this.element('card').classList.add('to-right')
-      this.element('like').classList.add('to-right')
+      this.element('approve').classList.add('to-right')
       this.element('reject').classList.add('to-right')
-      this.dispatchEvent(new CustomEvent('choice', { detail: { like: true, card: this.card } }))
+      this.dispatchEvent(new CustomEvent('choice', { detail: { approve: true, card: this.card } }))
     } else if (this.pullDeltaX <= -this.decisionVal) {
       this.element('card').classList.add('to-left')
-      this.element('like').classList.add('to-left')
+      this.element('approve').classList.add('to-left')
       this.element('reject').classList.add('to-left')
-      this.dispatchEvent(new CustomEvent('choice', { detail: { like: false, card: this.card } }))
+      this.dispatchEvent(new CustomEvent('choice', { detail: { approve: false, card: this.card } }))
     }
 
     if (Math.abs(this.pullDeltaX) >= this.decisionVal) {
       this.element('card').classList.add('inactive')
-      this.element('like').classList.add('inactive')
+      this.element('approve').classList.add('inactive')
       this.element('reject').classList.add('inactive')
 
       setTimeout(() => {
@@ -267,14 +265,14 @@ class TestCard extends HTMLElement {
 
     if (Math.abs(this.pullDeltaX) < this.decisionVal) {
       this.element('card').classList.add('reset')
-      this.element('like').classList.add('reset')
+      this.element('approve').classList.add('reset')
       this.element('reject').classList.add('reset')
     }
 
     setTimeout(() => {
-      this.element('card').style = this.element('like').style = this.element('reject').style = null
+      this.element('card').style = this.element('approve').style = this.element('reject').style = null
       this.element('card').classList.remove('reset')
-      this.element('like').classList.remove('reset')
+      this.element('approve').classList.remove('reset')
       this.element('reject').classList.remove('reset')
 
       this.pullDeltaX = 0

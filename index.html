@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="styles/pyro.css">
     <link rel="stylesheet" href="styles/uno.css">
     <link rel="stylesheet" href="styles/test.css">
+    <link rel="stylesheet" href="styles/theme.css">
     <title>New Normal</title>
     <script src="libs/html5-dragdroptouch-shim.js" type="module"></script>
     <script src="libs/boardgame.js"></script>
@@ -50,8 +51,13 @@
     <script src="modules/uno.js" type="module"></script>
     <script src="modules/main.js" type="module"></script>
   </head>
-  <body onload="dragdrop(); flagcheck(); load()" class="notranslate" translate="no">
+  <body onload="dragdrop(); flagcheck(); load()" class="notranslate black-white" translate="no">
     <div><button id="stop" class="hidden">&#x274c;</button></div>
+    <select id="theme" class="hidden">
+      <option title="Black/White" selected value="black-white">⚫⚪</option>
+      <option title="Red/Blue Pill" value="red-blue-pill">🔴🔵</option>
+      <option title="Green/Right" value="good-evil">🟤🟢</option>
+    </select>
     <div id="menu" class="hidden">
       <div class="game-logo menu">
         <div class="logo">

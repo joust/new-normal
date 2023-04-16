@@ -60,7 +60,7 @@ class GameCard extends HTMLElement {
   static observedAttributes = ['card', 'alt', 'alternatives', 'mirrored']
   static contentRootSelector = '#content'
 
-  element(id) { return this.shadowRoot.getElementById(id) }
+  element(id) { return this.shadowRoot.getElementById(id) }
 
   get card() {
     return this.getAttribute('card')

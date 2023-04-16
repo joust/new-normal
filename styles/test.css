@@ -46,12 +46,13 @@
 }
 
 #result .result {
-  color: white;
-  background-color: #2d60f6;
+  color: var(--sheep-color);
+  background-color: var(--sheep-background);
 }
 
 #result.idiot .result {
-  background-color: #f72d5d;
+  color: var(--idiot-color);
+  background-color: var(--idiot-background);
 }
 
 #result .drawer, #result .result {

@@ -1,4 +1,4 @@
-import { language, territory, setLocale, loadSources, loadContent, getLocalizedContent, getSources, getTopic, getTopicsData, getArgument, getMessage, labelSelect } from './content.js'
+import { language, territory, setTheme, setLocale, loadSources, loadContent, getLocalizedContent, getSources, getTopic, getTopicsData, getArgument, getMessage, labelSelect } from './content.js'
 import { close, open, flipClose, flipOpen } from './flipside.js'
 import { element, elementWithKids, mirrorNode, uniqueWord, randomElement, safariFix, debounce } from './common.js'
 import { attitude, saveAttitude } from './main.js'
@@ -405,8 +405,10 @@ function stopBingo() {
 /**
  * Show the game panel and stop button, hide the menu
  */
-function showBingo() {
+function showBingo() {
+  element('theme').onchange = setTheme
   element('stop').onclick = stopBingo
+  element('theme').classList.remove('hidden')
   element('stop').classList.remove('hidden')
   element('bingo').classList.remove('hidden')
   element('menu').classList.add('hidden')
@@ -417,6 +419,7 @@ function showBingo() {
  */
 function hideBingo() {
   element('stop').classList.add('hidden')
+  element('theme').classList.add('hidden')
   element('bingo').classList.add('hidden')
   element('pyro').classList.add('hidden')
 }

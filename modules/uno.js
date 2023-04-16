@@ -1,6 +1,6 @@
 import { prompt } from '../components/message-box.js'
 import { element, elements } from './common.js'
-import { language, territory, locales, loadSources, loadContent, extractContent, getMessage } from './content.js'
+import { language, territory, locales, setTheme, loadSources, loadContent, extractContent, getMessage } from './content.js'
 import { startLocal, startClient, getAlternatives, canBePlayedOn, isIdiot, allowedToPlay, allPossibleMoves, isArgument, isWildcard, isFallacy } from './uno-bg.js'
 
 function setupTable() {
@@ -22,6 +22,7 @@ window.toggleZoomPiles = function() {
 
 function cleanupTable() {
   element('stop').classList.add('hidden')
+  element('theme').classList.add('hidden')
   element('uno').classList.add('hidden')
   element('pyro').classList.add('hidden')
   if (element('game')) element('uno').removeChild(element('game'))
@@ -128,6 +129,7 @@ window.unoWithBots = async function(bots) {
     clients.forEach(client => client.stop())
     cleanupTable()
   }
+  element('theme').onchange = setTheme
 }
 
 window.uno = async function(isHost, numPlayers) {
@@ -164,7 +166,7 @@ window.uno = async function(isHost, numPlayers) {
         updateTable(client, state)
         if (isHost && state.ctx.currentPlayer===hostPlayerID) {
           client.chatMessages.filter(setNameRequest).forEach(msg => {
-            if (state.G.names[msg.sender]!=msg.payload.name) {
+            if (state.G.names[msg.sender]!==msg.payload.name) {
               client.moves.setName(msg.sender, msg.payload.name)
             }
           }
@@ -203,6 +205,7 @@ window.uno = async function(isHost, numPlayers) {
     client.stop()
     cleanupTable()
   }
+  element('theme').onchange = setTheme
 }
 
 /**
@@ -238,13 +241,15 @@ export async function displayHashAsHand(cards) {
   element('uno').insertAdjacentHTML('beforeend',
                                     `<player-hand id="hand" nr="0" cards="[]"></player-hand>`)
   element('hand').setAttribute('cards', cardsString)
-  element('stop').onclick = () => cleanupTable()
+  element('stop').onclick = cleanupTable
+  element('theme').onchange = setTheme
   showUno()
   return true
 }
 
 function showUno() {
   element('stop').classList.toggle('hidden', false)
+  element('theme').classList.toggle('hidden', false)
   setTimeout(() => element('uno').classList.toggle('hidden', false), 50)
 }
 

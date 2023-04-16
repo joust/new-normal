@@ -7,6 +7,7 @@
     <link rel="icon" type="image/png" href="styles/images/nn-icon.png">
     <link rel="stylesheet" href="styles/opensans.css">
     <link rel="stylesheet" href="styles/crocodile.css">
+    <link rel="stylesheet" href="styles/theme.css">
     <title>New Normal - Corona-Uno</title>
     <script src="libs/boardgame.js"></script>
     <script src="components/player-hand.js" type="module"></script>
@@ -58,6 +59,15 @@
         width: 100%;
       }
 
+      #theme {
+        position: absolute;
+        top: 0;
+        left: 0;
+        font-size: 2em;
+        background: transparent;
+        border: none;
+      }
+
       #location {
         position: absolute;
         top: 0;
@@ -88,12 +98,13 @@
       }
     </style>
     <script type="module">
-      import { setLocale, loadSources, loadContent } from './modules/content.js'
-      
+      import { setTheme, setLocale, loadSources, loadContent } from './modules/content.js'
+
       function idsFrom(content, block, filter = '') {
         return [...Array.from(content.querySelectorAll(`.${block} a[id]`))].map(node => node.id).filter(id => id.includes(filter))
       }
 
+      window.setTheme = setTheme
       window.addHand = async function(locale) {
         setLocale(locale)
         await loadSources()
@@ -120,8 +131,8 @@
           {card: 'BS', alt: ['BS'], playable: true},
           {card: 'BI', alt: ['BI'], playable: true}
         ])
-        const existing = document.querySelector('#hand')
-        if (existing) existing.parentElement.removeChild(existing)
+        const existing = document.querySelectorAll('#pile,#hand')
+        existing.forEach(e => e.parentElement.removeChild(e))
 
         if (true) {
           document.querySelector('#uno').insertAdjacentHTML('beforeEnd', '<centered-cards id="pile"><card-pile top="I" draggable></card-pile><card-pile droppable></card-pile></centered-cards><player-hand nr="0" name="All Cards" id="hand" cards="[]" droppable></player-hand>')
@@ -138,9 +149,14 @@
       }
     </script>
   </head>
-  <body lang="de" onload="addHand('de-de')">
+  <body lang="de" onload="addHand('de-de')" class="black-white">
     <div id="uno">
     </div>
+    <select id="theme" onchange="setTheme(event)">
+      <option title="Black/White" selected value="black-white">⚫⚪</option>
+      <option title="Red/Blue Pill" value="red-blue-pill">🔴🔵</option>
+      <option title="Good/Evil" value="good-evil">🟤🟢</option>
+    </select>
     <select id="location" onchange="addHand(event.target.value)">
       <option title="Deutschland" value="de-de">🇩🇪</option>
       <option title="Österreich" value="de-at">🇦🇹</option>

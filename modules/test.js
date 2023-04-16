@@ -29,16 +29,16 @@ window.test = async function(cycles) {
   showTest()
 }
 
-function finish(event) {
+async function finish(event) {
   updateTestStats(event.detail)
-  loadTestResult()
+  await loadTestResult()
   showResult()
 }
 
 /**
  * Show the test panel and stop button, hide the menu
  */
-function showTest() {
+function showTest() {
   element('stop').onclick = hideTest
   element('stop').classList.remove('hidden')
   setTimeout(() => element('test').classList.remove('hidden'), 50)
@@ -48,11 +48,11 @@ function showTest() {
 /**
  * Hide the test panel and stop button
  */
-function hideTest() {
+async function hideTest() {
   element('stop').classList.add('hidden')
   element('test').classList.add('hidden')
   element('result').classList.add('hidden')
-  window.show('start')
+  await window.show('start')
 }
 
 /**
@@ -71,7 +71,7 @@ function initTestStats(cycles) {
 /**
  * update the stats for a test card table
  *
- * @param {{ likes: [], rejects: [] }} choices the candidate took
+ * @param {{ approves: [], rejects: [] }} choices the candidate took
  *
  * @return {Object} stats for the test questions
  */
@@ -83,8 +83,8 @@ function updateTestStats(choices) {
   const bycount = (a, b) => b[1] - a[1]
 
   stats.duration = Date.now() - stats.begin
-  const idiot = [...choices.likes.filter(idiotArgument), ...choices.rejects.filter(sheepArgument)]
-  const sheep = [...choices.likes.filter(sheepArgument), ...choices.rejects.filter(idiotArgument)]
+  const idiot = [...choices.approves.filter(idiotArgument), ...choices.rejects.filter(sheepArgument)]
+  const sheep = [...choices.approves.filter(sheepArgument), ...choices.rejects.filter(idiotArgument)]
   stats.idiot.count = idiot.length
   stats.idiot.attributes = Object.entries(
     idiot.map(topicOf).map(id => topics[id].idiotLabel).reduce(count, {})).sort(bycount)
@@ -123,16 +123,16 @@ async function loadTestResult() {
   result.querySelector('.result .sheep').classList.toggle('hidden',
     stats.idiot.count >= stats.sheep.count)
   result.querySelector('.result .none').classList.toggle('hidden',
-    stats.idiot.count != stats.sheep.count)
+    stats.idiot.count !== stats.sheep.count)
 
-  const select = labelSelect(stats.idiot.count < stats.sheep.count)
+  const select = labelSelect(stats.idiot.count > stats.sheep.count)
   result.querySelector('.labels').appendChild(select)
 }
 
 /**
  * Show the test result panel
  */
-function showResult() {
+function showResult() {
   element('result').classList.remove('hidden')
 }
 

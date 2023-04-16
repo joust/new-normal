@@ -6,23 +6,17 @@ FallacyCardTemplate.innerHTML = `
     }
 
     #fallacy-card {
-      --red: #f72d5d;
-      --blue: #2d60f6;
-      --lred: #f93b6b;
-      --lblue: #3b69f8;
-      --sidebar-width: 12%;
-      --watermark-size: 50%;
       position: relative;
       width: 100%;
       height: 100%;
       border: calc(0.1 * var(--cavg)) solid #aaa;
       border-radius: calc(2 * var(--cavg));
-      background: linear-gradient(30deg, var(--lblue) 0%, var(--blue) 100%);
+      background: var(--sheep-fallacy-background);
       user-select: none;
     }
 
     #fallacy-card.idiot {
-      background: linear-gradient(30deg, var(--lred) 0%, var(--red) 100%);
+      background: var(--idiot-fallacy-background);
     }
 
     #icon {
@@ -153,13 +147,16 @@ FallacyCardTemplate.innerHTML = `
       font-family: 'Open Sans', Helvetica, sans-serif;
       font-size: calc(2.5 * var(--cavg));
       text-align: center;
-      color: var(--blue);
       border-top-right-radius: calc(2 * var(--cavg));
-      background-color: lightgrey;
     }
 
     .idiot #card {
-      color: var(--red);
+      background-color: var(--idiot-background);
+      color: var(--idiot-color);
+    }
+    .sheep #card {
+      background-color: var(--sheep-background);
+      color: var(--sheep-color);
     }
 
     .mirrored #card {
@@ -213,7 +210,7 @@ class FallacyCard extends HTMLElement {
 
   static observedAttributes = ['mirrored']
 
-  element(id) { return this.shadowRoot.getElementById(id) }
+  element(id) { return this.shadowRoot.getElementById(id) }
 
   get idiot() {
     return this.card && this.card.includes('I')

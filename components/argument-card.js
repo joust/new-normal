@@ -8,14 +8,8 @@ argumentCardTemplate.innerHTML = `
     }
 
     #argument-card {
-      --neutral: #777; 
-      --red: #f72d5d;
-      --blue: #2d60f6;
-      --topic-height: 3%;
-      --sidebar-width: 12%;
-      --watermark-size: 50%;
       position: relative;
-      background: linear-gradient(30deg, #fdfdfd 0%, #fff 100%);
+      background: var(--neutral-background);
       font-family: 'Open Sans', Helvetica, 'NotoColorEmojiLimited';
       font-size: calc(4 * var(--cavg));
       border: calc(0.1 * var(--cavg)) solid #aaa;
@@ -25,11 +19,13 @@ argumentCardTemplate.innerHTML = `
       user-select: none;
     }
 
-    @media (prefers-color-scheme: dark) {
-      #argument-card {
-        background: linear-gradient(30deg, #5d5d5d 0%, #555 100%);
-        color: white;
-      }
+    #argument-card.idiot {
+      background: var(--idiot-argument-background);
+      color: var(--idiot-argument-color);
+    }
+    #argument-card.sheep {
+      background: var(--sheep-argument-background);
+      color: var(--sheep-argument-color);
     }
 
     #topic-icon {
@@ -49,10 +45,10 @@ argumentCardTemplate.innerHTML = `
     }
 
     .idiot #topic-icon {
-      color: var(--red);
+      color: var(--idiot-argument-title-color);
     }
     .sheep #topic-icon {
-      color: var(--blue);
+      color: var(--sheep-argument-title-color);
     }
 
     .mirrored #topic-icon {
@@ -71,10 +67,10 @@ argumentCardTemplate.innerHTML = `
     }
 
     .idiot #topic-name {
-      color: var(--red);
+      color: var(--idiot-argument-title-color);
     }
     .sheep #topic-name {
-      color: var(--blue);
+      color: var(--sheep-argument-title-color);
     }
 
     .mirrored #topic-name {
@@ -132,10 +128,10 @@ argumentCardTemplate.innerHTML = `
     }
 
     .idiot ::slotted(h2) {
-      color: var(--red);
+      color: var(--idiot-argument-title-color);
     }
     .sheep ::slotted(h2) {
-      color: var(--blue);
+      color: var(--sheep-argument-title-color);
     }
     
     ::slotted(h2)::before {
@@ -202,10 +198,12 @@ argumentCardTemplate.innerHTML = `
     }
 
     .idiot #card {
-      background-color: var(--red);
+      background-color: var(--idiot-background);
+      color: var(--idiot-color);
     }
     .sheep #card {
-      background-color: var(--blue);
+      background-color: var(--sheep-background);
+      color: var(--sheep-color);
     }
 
     .mirrored #card {
@@ -230,7 +228,7 @@ argumentCardTemplate.innerHTML = `
     }
 
     #wildcard:after {
-      content: '✱'
+      content: '✱';
     }
 
     #spellcheck {
@@ -248,7 +246,7 @@ argumentCardTemplate.innerHTML = `
     }
 
     #spellcheck:after {
-      content: '🚧'
+      content: '🚧';
     }
 
     .hidden {
@@ -276,7 +274,7 @@ class ArgumentCard extends HTMLElement {
 
   static observedAttributes = ['topic', 'neutral', 'topicId', 'card', 'wildcard', 'spellcheck', 'mirrored']
 
-  element(id) { return this.shadowRoot.getElementById(id) }
+  element(id) { return this.shadowRoot.getElementById(id) }
 
   get idiot() {
     return this.card && this.card.includes('I')
@@ -339,7 +337,7 @@ class ArgumentCard extends HTMLElement {
     let letters = 0
     while (letters < len) {
       const l = this.random(2, 12)
-      placeholder += `<span>${'____________'.substr(0, l)}</span> `
+      placeholder += `<span>${'____________'.substring(0, l)}</span> `
       letters += l+1
     }
     return placeholder

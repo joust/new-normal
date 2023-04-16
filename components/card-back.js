@@ -6,20 +6,16 @@ cardBackTemplate.innerHTML = `
     }
 
     #card-back {
-      --red: #f72d5d;
-      --blue: #2d60f6;
-      --lred: #f93b6b;
-      --lblue: #3b69f8;
       position: relative;
       width: 100%;
       height: 100%;
       border: calc(0.1 * var(--cavg)) solid #aaa;
       border-radius: calc(2 * var(--cavg));
-      background: linear-gradient(30deg, var(--lblue) 0%, var(--blue) 100%);
+      background: var(--sheep-card-background);
     }
     
     #card-back.idiot {
-      background: linear-gradient(30deg, var(--lred) 0%, var(--red) 100%);
+      background: var(--idiot-card-background);
     }
 
     #inner {
@@ -50,7 +46,7 @@ class CardBack extends HTMLElement {
   static observedAttributes = ['idiot']
   static virus = 'styles/images/virus.png'
 
-  element(id) { return this.shadowRoot.getElementById(id) }
+  element(id) { return this.shadowRoot.getElementById(id) }
 
   get idiot() {
     return this.hasAttribute('idiot')

@@ -8,13 +8,6 @@ appealToCardTemplate.innerHTML = `
     }
 
     #appeal-to-card {
-      --red: #f72d5d;
-      --blue: #2d60f6;
-      --lightblue: aliceblue;
-      --lightgrey: lightgrey;
-      --bold: black;
-      --sidebar-width: 12%;
-      --watermark-size: 50%;
       position: relative;
       width: 100%;
       height: 100%;
@@ -125,7 +118,7 @@ appealToCardTemplate.innerHTML = `
     }
 
     #phrase .to {
-      color: var(--blue);
+      color: var(--sheep-appeal-to-color);
       font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-size: calc(7 * var(--cavg));
       font-weight: 600;
@@ -133,7 +126,7 @@ appealToCardTemplate.innerHTML = `
     }
 
     .idiot #phrase .to {
-      color: var(--red);
+      color: var(--idiot-appeal-to-color);
     }
 
      #fallacy {
@@ -168,13 +161,16 @@ appealToCardTemplate.innerHTML = `
       font-family: 'Open Sans', Helvetica, sans-serif;
       font-size: calc(2.5 * var(--cavg));
       text-align: center;
-      color: white;
       border-top-right-radius: calc(2 * var(--cavg));
-      background-color: var(--blue);
     }
 
     .idiot #card {
-      background-color: var(--red);
+      background-color: var(--idiot-background);
+      color: var(--idiot-color);
+    }
+    .sheep #card {
+      background-color: var(--sheep-background);
+      color: var(--sheep-color);
     }
 
     .mirrored #card {
@@ -190,7 +186,7 @@ appealToCardTemplate.innerHTML = `
       font-size: calc(6 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
-      color: var(--blue);
+      color: var(--sheep-appeal-to-color);
       opacity: 0.4;
       padding-left: 2%;
       top: 100%;
@@ -206,7 +202,7 @@ appealToCardTemplate.innerHTML = `
     }
 
     .idiot #side-to {
-      color: var(--red);
+      color: var(--idiot-appeal-to-color);
     }
 
     .mirrored #side-to {
@@ -232,7 +228,7 @@ class AppealToCard extends HTMLElement {
 
   static observedAttributes = ['idiot', 'type', 'mirrored']
 
-  element(id) { return this.shadowRoot.getElementById(id) }
+  element(id) { return this.shadowRoot.getElementById(id) }
 
   get idiot() {
     return this.hasAttribute('idiot')

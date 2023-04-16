@@ -29,7 +29,7 @@ class EditableCard extends HTMLElement {
   static observedAttributes = ['card']
   static contentRootSelector = '#content'
 
-  element(id) { return this.shadowRoot.getElementById(id) }
+  element(id) { return this.shadowRoot.getElementById(id) }
 
   get card() {
     return this.getAttribute('card')

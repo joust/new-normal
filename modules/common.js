@@ -1,7 +1,7 @@
 /**
  * generates an archive.is mirror anchor node for the given node
  *
- * @param {HTMLElement} a the anchor node to mirror
+ * @param {HTMLAnchorElement} a the anchor node to mirror
  */
 export function mirrorNode(a) {
   const mirror = a.cloneNode(true)
@@ -45,12 +45,12 @@ export function elementWithKids(tag, kids = undefined, attrs = undefined) {
 
 /**
  * @param {string} html HTML string representing a single element
- * @return {ChildNode}
+ * @return {HTMLElement}
  */
 export function htmlToElement(html) {
   const template = document.createElement('template')
   template.innerHTML = html
-  return template.content.firstChild
+  return template.content.firstElementChild
 }
 
 export function element(id) {
@@ -63,7 +63,7 @@ export function elements(tag) {
 
 /**
  * select a unique random element from an array
- * side effect: The element is removed from from the array to achieve the uniqueness!
+ * side effect: The element is removed from the array to achieve the uniqueness!
  *
  * @param {Array} wordset - Array to choose a random element from
  * @return {any} The random element selected

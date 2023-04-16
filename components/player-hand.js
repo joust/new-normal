@@ -59,7 +59,7 @@ class PlayerHand extends HTMLElement {
 
   static observedAttributes = ['cards', 'nr', 'name', 'droppable']
 
-  element(id) { return this.shadowRoot.getElementById(id) }
+  element(id) { return this.shadowRoot.getElementById(id) }
 
   playable(index) {
     return this.cards[index].playable

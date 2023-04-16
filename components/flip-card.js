@@ -114,7 +114,7 @@ class FlipCard extends HTMLElement {
 
   static observedAttributes = ['mirrored']
 
-  element(id) { return this.shadowRoot.getElementById(id) }
+  element(id) { return this.shadowRoot.getElementById(id) }
 
   attributeChangedCallback() {
     this.updateMirrored()

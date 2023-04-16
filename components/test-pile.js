@@ -35,17 +35,17 @@ class TestPile extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
-    this.stats = { likes: [], rejects: [] }
+    this.stats = { approves: [], rejects: [] }
   }
 
   static observedAttributes = ['cards']
 
-  element(id) { return this.shadowRoot.getElementById(id) }
+  element(id) { return this.shadowRoot.getElementById(id) }
 
   elements(parent, tag) {
     return Array.from(parent.getElementsByTagName(tag))
   }
-  
+
   get cards() {
     const cards = this.getAttribute('cards')
     return cards ? cards.split(',') : []
@@ -78,7 +78,7 @@ class TestPile extends HTMLElement {
   choice(event) {
     const pile = this.element('pile')
     const card = event.target
-    if (event.detail.like) this.stats.likes.push(card.card); else this.stats.rejects.push(card.card)
+    if (event.detail.approve) this.stats.approves.push(card.card); else this.stats.rejects.push(card.card)
     setTimeout(() => pile.removeChild(card), 300)
     if (card.card === this.cards[0])
       this.dispatchEvent(new CustomEvent('finish', { detail: this.stats }))

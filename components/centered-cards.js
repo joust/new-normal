@@ -2,7 +2,6 @@ const centeredCardsTemplate = document.createElement('template')
 centeredCardsTemplate.innerHTML = `
   <style>
      :host {
-      --ratio: 0.71;
       display: inline-block;
     }
 
@@ -36,7 +35,7 @@ class CenteredCards extends HTMLElement {
       timer = setTimeout(() => f.apply(this, args), delay)
     }
   }
-  
+
   connectedCallback() {
     this.shadowRoot.appendChild(centeredCardsTemplate.content.cloneNode(true))
     const resizeObserver = new ResizeObserver(this.debounce(() => this.resize(), 0))

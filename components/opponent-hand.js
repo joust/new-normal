@@ -33,7 +33,7 @@ class OpponentHand extends HTMLElement {
 
   static observedAttributes = ['nr', 'name', 'cards']
 
-  element(id) { return this.shadowRoot.getElementById(id) }
+  element(id) { return this.shadowRoot.getElementById(id) }
 
   get nr() {
     return this.getAttribute('nr')

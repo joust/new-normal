@@ -8,31 +8,17 @@ discussCardTemplate.innerHTML = `
     }
 
     #discuss-card {
-      --red: #f72d5d;
-      --blue: #2d60f6;
-      --sidebar-width: 12%;
-      --watermark-size: 50%;
       position: relative;
       width: 100%;
       height: 100%;
       border: calc(0.1 * var(--cavg)) solid #aaa;
       border-radius: calc(2 * var(--cavg));
-      background: radial-gradient(
-        circle,
-        var(--blue) 0%,
-        var(--blue) 40%,
-        var(--red) 100%
-      );
+      background: var(--sheep-discuss-background);
       user-select: none;
     }
 
     #discuss-card.idiot {
-    background: radial-gradient(
-        circle,
-        var(--red) 0%,
-        var(--red) 40%,
-        var(--blue) 100%
-      );
+    background: var(--idiot-discuss-background);
     }
 
     #watermark {
@@ -91,12 +77,12 @@ discussCardTemplate.innerHTML = `
       text-align: center;
       margin-top: 0;
       margin-bottom: 0;
-      color: var(--blue);
+      color: var(--sheep-discuss-color);
       -webkit-text-stroke: calc(0.15 * var(--cavg)) white;
     }
 
     .idiot #topic-icon {
-      color: var(--red);
+      color: var(--idiot-discuss-color);
     }
 
     .mirrored #topic-icon {
@@ -110,7 +96,7 @@ discussCardTemplate.innerHTML = `
       font-size: calc(7 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
-      color: white;
+      color: var(--sheep-discuss-color);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -124,13 +110,17 @@ discussCardTemplate.innerHTML = `
       box-sizing: border-box;
     }
 
+    .idiot #phrase {
+      color: var(--idiot-discuss-color);
+    }
+
     #phrase b {
       -webkit-text-stroke: calc(0.15 * var(--cavg)) white;
-      color: var(--blue);
+      color: var(--sheep-discuss-topic-color);
     }
 
     .idiot #phrase b {
-      color: var(--red);
+      color: var(--idiot-discuss-topic-color);
     }
 
     .mirrored #phrase {
@@ -156,8 +146,7 @@ discussCardTemplate.innerHTML = `
       position: absolute;
       bottom: 0; 
       font-family: 'Open Sans', Helvetica, sans-serif;
-      padding: calc(5 * var(--cavg));
-      padding-bottom: calc(16 * var(--cavg));
+      padding: calc(5 * var(--cavg)) calc(5 * var(--cavg)) calc(16 * var(--cavg));
       font-size: calc(3 * var(--cavg));
       font-style: italic;
       color: white;
@@ -207,7 +196,7 @@ class DiscussCard extends HTMLElement {
 
   static observedAttributes = ['idiot', 'topicId', 'mirrored']
 
-  element(id) { return this.shadowRoot.getElementById(id) }
+  element(id) { return this.shadowRoot.getElementById(id) }
 
   get topicId() {
     return this.getAttribute('topicId')

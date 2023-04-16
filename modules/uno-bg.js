@@ -66,7 +66,7 @@ content = {
 */
 export function Uno(locale, content, host) {
   /**
-   * adds wildcard argument cards for topic of card to every players hand,
+   * adds wildcard argument cards for topic of card to every player's hand,
    * removing possible existing arguments of given topic
    * @param {Array<Array>} hands All hands.
    * @param {{idiot: Array, sheep: Array}} decks Both decks.
@@ -207,7 +207,7 @@ export function Uno(locale, content, host) {
   }
 
   /**
-   * draw an initial hand of size size from a given deck
+   * draw an initial hand of size from a given deck
    * side effect: will modify the given deck
    * @param {{idiot: Array, sheep: Array}} decks The decks.
    * @param {boolean} idiot if to use the idiot or sheep deck.
@@ -432,7 +432,7 @@ export function canBePlayedOn(top, card, idiot) {
     case 'A': // Appeal to
       return isOfType(card, !idiot) && isStrawman(top)
       || isOfType(card, idiot) &&
-        (!top || isArgument(top) || isAppealTo(top) || isFallacy(top) || isLabel(top) || isPause(top) || isBanish(top) || isCancel(top))
+        (!top || isArgument(top) || isAppealTo(top) || isFallacy(top) || isLabel(top) || isPause(top) || isBanish(top) || isCancel(top))
     case 'I': // Idiot argument
     case 'S': // Sheep argument
       return top && isStrawman(top) && (isArgument(card) || isAppealTo(card)) && isOfType(card, !idiot)
@@ -516,5 +516,5 @@ export function argumentOnly(id) {
 }
 
 export function allowedToPlay(top, idiot) {
-  return !top || top && (isOfType(top, !idiot) || isStrawman(top) || isFallacy(top) || isLabel(top) || isBanish(top) || isPause(top))
+  return !top || top && (isOfType(top, !idiot) || isStrawman(top) || isFallacy(top) || isLabel(top) || isBanish(top) || isPause(top))
 }

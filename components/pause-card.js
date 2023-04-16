@@ -6,12 +6,6 @@ pauseCardTemplate.innerHTML = `
     }
 
     #pause-card {
-      --red: #f72d5d;
-      --blue: #2d60f6;
-      --blue0: lightblue;
-      --blue1: cornflowerblue;
-      --sidebar-width: 12%;
-      --watermark-size: 50%;
       position: relative;
       width: 100%;
       height: 100%;
@@ -93,7 +87,7 @@ pauseCardTemplate.innerHTML = `
       font-size: calc(7 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
-      color: var(--blue);
+      color: var(--sheep-pause-color);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -108,7 +102,7 @@ pauseCardTemplate.innerHTML = `
     }
 
     .idiot #phrase {
-      color: var(--red);
+      color: var(--idiot-pause-color);
     }
 
     .mirrored #phrase {
@@ -136,7 +130,7 @@ pauseCardTemplate.innerHTML = `
       font-size: calc(6 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
-      color: var(--blue);
+      color: var(--sheep-pause-color);
       opacity: 0.4;
       padding-left: 2%;
       top: 100%;
@@ -148,7 +142,7 @@ pauseCardTemplate.innerHTML = `
     }
 
     .idiot #phrase {
-      color: var(--red);
+      color: var(--idiot-pause-color);
     }
 
     .mirrored #side-phrase {
@@ -173,7 +167,7 @@ class PauseCard extends HTMLElement {
 
   static observedAttributes = ['idiot', 'mirrored']
 
-  element(id) { return this.shadowRoot.getElementById(id) }
+  element(id) { return this.shadowRoot.getElementById(id) }
 
   get idiot() {
     return this.hasAttribute('idiot')

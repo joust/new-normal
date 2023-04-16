@@ -35,17 +35,6 @@ testCertificateTemplate.innerHTML = `
       background-repeat: no-repeat;
     }
 
-    #test-img-right {
-      right: 0;
-      background-image: url(styles/images/s.svg);
-      transform: scaleX(-1) translateX(-1.5em);
-    }
-
-    #test-img-left {
-      left: 0;
-      background-image: url(styles/images/i.svg);
-    }
-
     #logo {
       position: absolute;
       top: 0;
@@ -60,11 +49,11 @@ testCertificateTemplate.innerHTML = `
     }
 
     .red {
-      color: #f72d5d;
+      color: var(--idiot-background);
     }
 
     .blue {
-      color: #2d60f6;
+      color: var(--sheep-background);
     }
 
     #logo .virus {
@@ -113,10 +102,6 @@ testCertificateTemplate.innerHTML = `
   <div id="logo">
     <span class="red">New N</span><span class="jump virus" onclick="event.target.classList.toggle('jump')"></span><span class="blue">rmal</span>
   </div>
-  <div class="test-img" id="test-img-left">
-  </div>
-  <div class="test-img" id="test-img-right">
-  </div>
 `
 
 class TestCertificate extends HTMLElement {
@@ -125,7 +110,7 @@ class TestCertificate extends HTMLElement {
     this.attachShadow({ mode: 'open' })
   }
 
-  element(id) { return this.shadowRoot.getElementById(id) }
+  element(id) { return this.shadowRoot.getElementById(id) }
 
   static virus = 'styles/images/virus.png'
 

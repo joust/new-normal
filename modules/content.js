@@ -6,6 +6,16 @@ export const localDirs = [ 'de/de', 'de/ch', 'de/at', 'en/us', 'es/gb', 'pt/br']
 export let language, territory
 
 const path = 'content/pandemic'
+const themes = ['black-white', 'red-blue-pill', 'good-evil']
+
+export function setTheme(event) {
+  const theme = event.target.value
+  if (themes.includes(theme)) {
+    document.body.classList.remove(...themes)
+    document.body.classList.add(theme)
+  } else
+    console.error(`Unknown theme ${theme}`)
+}
 
 export function setLocale(locale) {
   if (locale) {
@@ -70,7 +80,7 @@ export function getArgument(id) {
 }
 
 export function getLabels(idiot) {
-  const filter = idiot ? 'a[id^=LI]' : 'a[id^=LS]'
+  const filter = idiot ? 'a[id^=LS]' : 'a[id^=LI]'
   return Array.from(localeBlock().querySelectorAll(`.labels > ${filter} h2`))
 }
 
@@ -253,9 +263,9 @@ export function extractTopics(content) {
 }
 
 /**
- * extract topics meta data
+ * extract topics metadata
  *
- * @return {Array} the extracted topics meta data
+ * @return {Array} the extracted topics metadata
  */
 export function getTopicsData() {
   const topics = getTopics()
@@ -274,7 +284,7 @@ export function getTopicsData() {
 
 /**
  * Fetch ids from given content file, optionally filter by substring.
- * @param {string} content The content.
+ * @param {HTMLElement} content The content.
  * @param {string} section The section name.
  * @param {string} filter An optional string filter.
  * @return {Array} The content ids
@@ -325,7 +335,7 @@ export function getMessage(key, fallback = '???') {
 /**
  * Generate label select
  * @param {boolean} idiot use idiot or sheep labels
- * @return {ChildNode} select HTML
+ * @return {HTMLSelectElement} select HTML
  */
 export function labelSelect(idiot) {
   const labels = getLabels(idiot).map(label => `<option>${label.innerHTML}</option>`)

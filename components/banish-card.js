@@ -6,31 +6,17 @@ banishCardTemplate.innerHTML = `
     }
 
     #banish-card {
-      --red: #f72d5d;
-      --blue: #2d60f6;
-      --sidebar-width: 12%;
-      --watermark-size: 50%;
       position: relative;
       width: 100%;
       height: 100%;
       border: calc(0.1 * var(--cavg)) solid #aaa;
       border-radius: calc(2 * var(--cavg));
-      background: radial-gradient(
-        circle,
-        #222 0%,
-        #222 50%,
-        var(--blue) 100%
-      );
+      background: var(--sheep-banish-background);
       user-select: none;
     }
 
     #banish-card.idiot {
-      background: radial-gradient(
-        circle,
-        #222 0%,
-        #222 50%,
-        var(--red) 100%
-      );
+      background: var(--idiot-banish-background);
     }
 
     #icon {
@@ -41,7 +27,6 @@ banishCardTemplate.innerHTML = `
       left: 0;
       font-size: calc(8 * var(--cavg));
       text-align: center;
-      color: white;
       opacity: .8;
     }
 
@@ -100,7 +85,7 @@ banishCardTemplate.innerHTML = `
 
     #phrase {
       position: absolute;
-      color: var(--blue);
+      color: var(--sheep-banish-color);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -115,7 +100,7 @@ banishCardTemplate.innerHTML = `
     }
 
     .idiot #phrase {
-      color: var(--red);
+      color: var(--idiot-banish-color);
     }
 
     .mirrored #phrase {
@@ -127,16 +112,15 @@ banishCardTemplate.innerHTML = `
       position: absolute;
       bottom: 0; 
       font-family: 'Open Sans', Helvetica, sans-serif;
-      padding: calc(5 * var(--cavg));
-      padding-bottom: calc(16 * var(--cavg));
+      padding: calc(5 * var(--cavg)) calc(5 * var(--cavg)) calc(16 * var(--cavg));
       font-size: calc(3 * var(--cavg));
       font-style: italic;
-      color: var(--blue);
+      color: var(--sheep-banish-color);
       opacity: 0.4;
     }
 
     .idiot #description {
-      color: var(--red);
+      color: var(--idiot-banish-color);
     }
 
     #phrase span.quoted {
@@ -227,7 +211,7 @@ class BanishCard extends HTMLElement {
     'pt-br': 'Banir do jogo todos os argumentos sobre o tema'
   }
 
-  element(id) { return this.shadowRoot.getElementById(id) }
+  element(id) { return this.shadowRoot.getElementById(id) }
 
   get idiot() {
     return this.hasAttribute('idiot')
@@ -235,10 +219,6 @@ class BanishCard extends HTMLElement {
 
   get phrase() {
     return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
-  }
-
-  get description() {
-    return this.querySelector('p') ? this.querySelector('p').innerHTML : ''
   }
 
   get mirrored() {
@@ -273,7 +253,7 @@ class BanishCard extends HTMLElement {
       root.classList.toggle('idiot', this.idiot)
       Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = this.phrase)
       const dkey = Object.keys(BanishCard.description).find(p => this.lang.startsWith(p)) || 'de'
-      this.element('description').innerHTML = this.description[dkey]
+      this.element('description').innerHTML = BanishCard.description[dkey]
     }
   }
 }

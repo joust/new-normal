@@ -54,6 +54,5 @@ async function verifyPermission(handle, rw) {
   const options = {}
   if (rw) options.mode = 'readwrite'
   if ((await handle.queryPermission(options)) === 'granted') return true
-  if ((await handle.requestPermission(options)) === 'granted') return true
-  return false
+  return (await handle.requestPermission(options)) === 'granted';
 }

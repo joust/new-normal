@@ -14,7 +14,6 @@
   height: 4vmax;
   font-size: 2vmax;
   font-family: 'HVD Crocodile', Helvetica, sans-serif;
-  color: white;
   width: calc(100% - 3vmax);
 }
 
@@ -28,13 +27,17 @@
   font-weight: 600;
   border: none;
   background: transparent;
-  color: #fff;
+  color: var(--sheep-color);
   outline: none;
   text-align: center;
   text-align-last: center;
   appearance: none;
   cursor: pointer;
   -webkit-appearance: none;
+}
+
+.idiot .title select {
+  color: var(--idiot-color);
 }
 
 .title select option {
@@ -162,11 +165,13 @@
 }
 
 .idiot .detail a[id] > span, .idiot .detail li span, .idiot .navigation span, .sheep .navigation span.counter {
-  background: #f72d5d;
+  background: var(--idiot-background);
+  color: var(--idiot-color);
 }
 
 .sheep .detail a[id] > span, .sheep .detail li   span, .sheep .navigation span, .idiot .navigation span.counter {
-  background: #2d60f6;
+  background: var(--sheep-background);
+  color: var(--sheep-color);
 }
 
 .detail a[id].excluded > span {
@@ -305,20 +310,12 @@
   background: #999;
 }
 
-.red {
-  color: #f72d5d;
-}
-
 .idiot .card {
-  background: #f72d5d;
-}
-
-.blue {
-  color: #2d60f6;
+  background: var(--idiot-card-background);
 }
 
 .sheep .card {
-  background: #2d60f6;
+  background: var(--sheep-card-background);
 }
 
 #bingo table {
@@ -345,16 +342,6 @@
 #bingo table td.set {
   background: transparent;
   color: white;
-}
-
-#bingo .done table td.idiot {
-  background: #f72d5d;
-  opacity: 0.7;
-}
-
-#bingo .done table td.sheep {
-  background: #2d60f6;
-  opacity: 0.7;
 }
 
 #bingo table td.center {

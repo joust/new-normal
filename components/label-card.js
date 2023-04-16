@@ -6,10 +6,6 @@ labelCardTemplate.innerHTML = `
     }
 
     #label-card {
-      --red: #f72d5d;
-      --blue: #2d60f6;
-      --sidebar-width: 12%;
-      --watermark-size: 50%;
       position: relative;
       width: 100%;
       height: 100%;
@@ -86,7 +82,7 @@ labelCardTemplate.innerHTML = `
 
     #label {
       position: absolute;
-      color: var(--blue);
+      color: var(--sheep-label-color);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -134,8 +130,7 @@ labelCardTemplate.innerHTML = `
       position: absolute;
       bottom: 0; 
       font-family: 'Open Sans', Helvetica, sans-serif;
-      padding: calc(5 * var(--cavg));
-      padding-bottom: calc(16 * var(--cavg));
+      padding: calc(5 * var(--cavg)) calc(5 * var(--cavg)) calc(16 * var(--cavg));
       font-size: calc(3 * var(--cavg));
       font-style: italic;
       color: white;
@@ -151,13 +146,16 @@ labelCardTemplate.innerHTML = `
       font-family: 'Open Sans', Helvetica, sans-serif;
       font-size: calc(2.5 * var(--cavg));
       text-align: center;
-      color: white;
       border-top-right-radius: calc(2 * var(--cavg));
-      background-color: var(--blue);
     }
 
     .idiot #card {
-      background-color: var(--red);
+      background-color: var(--idiot-background);
+      color: var(--idiot-color);
+    }
+    .sheep #card {
+      background-color: var(--sheep-background);
+      color: var(--sheep-color);
     }
 
     .mirrored #card {
@@ -173,7 +171,7 @@ labelCardTemplate.innerHTML = `
       font-size: calc(6 * var(--cavg));
       font-weight: 600;
       font-stretch: condensed;
-      color: var(--blue);
+      color: var(--sheep-label-color);
       opacity: 0.8;
       padding-left: 2%;
       top: 100%;
@@ -186,7 +184,7 @@ labelCardTemplate.innerHTML = `
     }
 
     #label-card.idiot #label, #label-card.idiot #side-label {
-      color: var(--red);
+      color: var(--idiot-label-color);
     }
 
     #side-label::after {
@@ -216,7 +214,7 @@ class LabelCard extends HTMLElement {
 
   static observedAttributes = ['idiot', 'mirrored']
 
-  element(id) { return this.shadowRoot.getElementById(id) }
+  element(id) { return this.shadowRoot.getElementById(id) }
 
   get idiot() {
     return this.hasAttribute('idiot')

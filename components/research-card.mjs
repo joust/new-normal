@@ -45,7 +45,7 @@ window.customElements.define('research-card', class ResearchCard extends BaseCar
     #phrase {
       position: absolute;
       font-family: 'HVD Crocodile', Helvetica, sans-serif;
-      font-size: calc(7 * var(--cavg));
+      font-size: calc((7cqw + 7cqh) / var(--avg));
       font-weight: 600;
       font-stretch: condensed;
       color: white;
@@ -58,7 +58,7 @@ window.customElements.define('research-card', class ResearchCard extends BaseCar
       height: 100%;
       -webkit-hyphens: auto;
       hyphens: auto;
-      padding: calc(7 * var(--cavg));
+      padding: calc((7cqw + 7cqh) / var(--avg));
       box-sizing: border-box;
     }
 

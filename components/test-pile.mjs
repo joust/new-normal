@@ -10,8 +10,8 @@ window.customElements.define('test-pile', class TestPile extends BaseComponent {
 
   get css() {
     return `
+    ${super.css}
     :host {
-      display: inline-block;
       position: relative;
     }
 

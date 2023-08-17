@@ -65,20 +65,20 @@ window.customElements.define('cancel-card', class CancelCard extends BaseCard {
 
     #fallacy {
       font-family: 'Open Sans', Helvetica, sans-serif;
-      font-size: calc(4 * var(--cavg));
+      font-size: calc((4cqw + 4cqh) / var(--avg));
       font-weight: 300;
       color: white;
     }
 
     #cancel-name {
       font-family: 'HVD Crocodile', Helvetica, sans-serif;
-      font-size: calc(7 * var(--cavg));
+      font-size: calc((7cqw + 7cqh) / var(--avg));
       font-weight: 600;
       font-stretch: condensed;
       max-width: 100%;
       display: inline-block;
-      padding-left: calc(7 * var(--cavg));
-      padding-right: calc(7 * var(--cavg));
+      padding-left: calc((7cqw + 7cqh) / var(--avg));
+      padding-right: calc((7cqw + 7cqh) / var(--avg));
       text-align: center;
     }
     

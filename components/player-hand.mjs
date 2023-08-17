@@ -84,6 +84,8 @@ window.customElements.define('player-hand', class PlayerHand extends BaseCompone
 
   connectedCallback() {
     super.connectedCallback()
+    const resizeObserver = new ResizeObserver(() => this.resize())
+    resizeObserver.observe(this)
     const hand = this.element('player-hand')
     hand.onpointerdown = e => this.start(e)
     hand.onpointermove = e => this.over(e)
@@ -151,7 +153,6 @@ window.customElements.define('player-hand', class PlayerHand extends BaseCompone
   }
 
   resize() {
-    super.resize()
     this.recalc()
   }
 

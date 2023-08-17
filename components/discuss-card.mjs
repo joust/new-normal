@@ -44,12 +44,12 @@ window.customElements.define('discuss-card', class DiscussCard extends BaseCard 
       font-family: 'HVD Crocodile', Helvetica, 'NotoColorEmojiLimited';
       font-weight: 600;
       font-stretch: condensed;
-      font-size: calc(8 * var(--cavg));
+      font-size: calc((8cqw + 8cqh) / var(--avg));
       text-align: center;
       margin-top: 0;
       margin-bottom: 0;
       color: var(--sheep-discuss-color);
-      -webkit-text-stroke: calc(0.15 * var(--cavg)) white;
+      -webkit-text-stroke: calc((0.15cqw + 0.15cqh) / var(--avg)) white;
     }
 
     .idiot #topic-icon {
@@ -64,7 +64,7 @@ window.customElements.define('discuss-card', class DiscussCard extends BaseCard 
     #phrase {
       position: absolute;
       font-family: 'HVD Crocodile', Helvetica, sans-serif;
-      font-size: calc(7 * var(--cavg));
+      font-size: calc((7cqw + 7cqh) / var(--avg));
       font-weight: 600;
       font-stretch: condensed;
       color: var(--sheep-discuss-color);
@@ -77,7 +77,7 @@ window.customElements.define('discuss-card', class DiscussCard extends BaseCard 
       height: 100%;
       -webkit-hyphens: auto;
       hyphens: auto;
-      padding: calc(7 * var(--cavg));
+      padding: calc((7cqw + 7cqh) / var(--avg));
       box-sizing: border-box;
     }
 
@@ -86,7 +86,7 @@ window.customElements.define('discuss-card', class DiscussCard extends BaseCard 
     }
 
     #phrase b {
-      -webkit-text-stroke: calc(0.15 * var(--cavg)) white;
+      -webkit-text-stroke: calc((0.15cqw + 0.15cqh) / var(--avg)) white;
       color: var(--sheep-discuss-topic-color);
     }
 

@@ -11,8 +11,8 @@ window.customElements.define('no-card', class NoCard extends BaseComponent {
       position: relative;
       width: 100%;
       height: 100%;
-      border: calc(0.1 * var(--cavg)) solid #aaa;
-      border-radius: calc(2 * var(--cavg));
+      border: calc((0.1cqw + 0.1cqh) / var(--avg)) solid #aaa;
+      border-radius: calc((2cqw + 2cqh) / var(--avg));
       background: white;
     }
 

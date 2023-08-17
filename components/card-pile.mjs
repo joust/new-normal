@@ -26,8 +26,8 @@ window.customElements.define('card-pile', class CardPile extends BaseComponent {
 
   get css() {
     return `
+    ${super.css}
     :host {
-      display: inline-block;
       position: relative;
     }
 

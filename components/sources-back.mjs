@@ -13,9 +13,9 @@ window.customElements.define('sources-back', class SourcesBack extends BaseCompo
       width: 100%;
       height: 100%;
       box-sizing: border-box;
-      padding: calc(4 * var(--cavg));
-      border: calc(0.1 * var(--cavg)) solid #aaa;
-      border-radius: calc(2 * var(--cavg));
+      padding: calc((4cqw + 4cqh) / var(--avg));
+      border: calc((0.1cqw + 0.1cqh) / var(--avg)) solid #aaa;
+      border-radius: calc((2cqw + 2cqh) / var(--avg));
       background: linear-gradient(30deg, #fdfdfd 0%, #fff 100%);
       color: grey;
       overflow: auto;
@@ -27,7 +27,7 @@ window.customElements.define('sources-back', class SourcesBack extends BaseCompo
 
     ::slotted(*) {
       font-family: 'Open Sans', Helvetica, sans-serif;
-      font-size: calc(3 * var(--cavg));
+      font-size: calc((3cqw + 3cqh) / var(--avg));
       text-align: justify;
       -webkit-hyphens: auto;
       hyphens: auto;
@@ -37,7 +37,7 @@ window.customElements.define('sources-back', class SourcesBack extends BaseCompo
       font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-weight: 600;
       font-stretch: condensed;
-      font-size: calc(7 * var(--cavg));
+      font-size: calc((7cqw + 7cqh) / var(--avg));
       text-align: left;
       margin-top: 0;
       margin-bottom: 0;

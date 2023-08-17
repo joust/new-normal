@@ -5,20 +5,17 @@ export class BaseComponent extends HTMLElement {
     const template = document.createElement('template')
     template.innerHTML = `<style>${this.css}</style>${this.html}`
     shadowRoot.appendChild(template.content)
-    const resizeObserver = new ResizeObserver(() => this.resize())
-    resizeObserver.observe(this)
   }
 
-  get css () { return '' }
+  get css () { return `
+    :host {
+      display: inline-block;
+      container-type: size;
+    }
+    `
+  }
 
   get html () { return '' }
-
-  resize() {
-    const cw = this.clientWidth/100, ch = this.clientHeight/100
-    this.style.setProperty('--cw', `${cw}px`)
-    this.style.setProperty('--ch', `${ch}px`)
-    this.style.setProperty('--cavg', `${(cw+ch)/1.6}px`)
-  }
 
   element (name) {
     return this.shadowRoot.getElementById(name)

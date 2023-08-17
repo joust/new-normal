@@ -5,8 +5,8 @@ window.customElements.define('flip-card', class FlipCard extends BaseComponent {
 
   get css() {
     return `  
+      ${super.css}
      :host {
-      display: inline-block;
       position: relative;
       overflow: visible;
     }
@@ -27,7 +27,7 @@ window.customElements.define('flip-card', class FlipCard extends BaseComponent {
       height: 7%;
       color: lightgrey;
       text-align: center;
-      font-size: calc(5 * var(--cavg));
+      font-size: calc((5cqw + 5cqh) / var(--avg));
       font-family: 'Open Sans', Helvetica, sans-serif;
     }
 

@@ -45,7 +45,7 @@ window.customElements.define('fallacy-card', class FallacyCard extends BaseCard 
     #phrase {
       position: absolute;
       font-family: 'HVD Crocodile', Helvetica, sans-serif;
-      font-size: calc(7 * var(--cavg));
+      font-size: calc((7cqw + 7cqh) / var(--avg));
       font-weight: 600;
       font-stretch: condensed;
       color: white;
@@ -66,14 +66,14 @@ window.customElements.define('fallacy-card', class FallacyCard extends BaseCard 
     }
 
     #phrase .phrase {
-      padding-left: calc(7 * var(--cavg));
-      padding-right: calc(7 * var(--cavg));
+      padding-left: calc((7cqw + 7cqh) / var(--avg));
+      padding-right: calc((7cqw + 7cqh) / var(--avg));
       text-align: center;
     }
 
     #fallacy {
       font-family: 'Open Sans', Helvetica, sans-serif;
-      font-size: calc(4 * var(--cavg));
+      font-size: calc((4cqw + 4cqh) / var(--avg));
       font-weight: 300;
     }
 

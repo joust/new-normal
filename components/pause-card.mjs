@@ -33,7 +33,7 @@ window.customElements.define('pause-card', class PauseCard extends BaseCard {
     #phrase {
       position: absolute;
       font-family: 'HVD Crocodile', Helvetica, sans-serif;
-      font-size: calc(7 * var(--cavg));
+      font-size: calc((7cqw + 7cqh) / var(--avg));
       font-weight: 600;
       font-stretch: condensed;
       color: var(--sheep-pause-color);
@@ -46,7 +46,7 @@ window.customElements.define('pause-card', class PauseCard extends BaseCard {
       height: 100%;
       -webkit-hyphens: auto;
       hyphens: auto;
-      padding: calc(7 * var(--cavg));
+      padding: calc((7cqw + 7cqh) / var(--avg));
       box-sizing: border-box;
     }
 

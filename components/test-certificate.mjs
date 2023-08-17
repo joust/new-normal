@@ -5,8 +5,8 @@ window.customElements.define('test-certificate', class TestCertificate extends B
 
   get css() {
     return `
+    ${super.css}
      :host {
-      display: inline-block;
       overflow: hidden;
     }
 
@@ -14,15 +14,15 @@ window.customElements.define('test-certificate', class TestCertificate extends B
       position: relative;
       width: 100%;
       height: 100%;
-      padding: calc(5.5 * var(--cavg));
+      padding: calc((5.5cqw + 5.5cqh) / var(--avg));
       background: var(--background);
       background-color: #f0f0f0;
       box-sizing: border-box;
     }
 
     #inner {
-      border: calc(0.5 * var(--cavg)) solid grey;
-      padding: calc(3 * var(--cavg));
+      border: calc((0.5cqw + 0.5cqh) / var(--avg)) solid grey;
+      padding: calc((3cqw + 3cqh) / var(--avg));
       width: 100%;
       height: 100%;
       background-color: white;
@@ -32,8 +32,8 @@ window.customElements.define('test-certificate', class TestCertificate extends B
     .test-img {
       position: absolute;
       bottom: 0;
-      width: calc(16 * var(--cavg));
-      height: calc(16 * var(--cavg));
+      width: calc((16cqw + 16cqh) / var(--avg));
+      height: calc((16cqw + 16cqh) / var(--avg));
       background-position: center;
       background-size: contain;
       background-repeat: no-repeat;
@@ -42,14 +42,14 @@ window.customElements.define('test-certificate', class TestCertificate extends B
     #logo {
       position: absolute;
       top: 0;
-      left: calc(50% - 27 * var(--cavg));
+      left: calc((50% - 27cqw + 50% - 27cqh) / var(--avg));
       font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-weight: 600;
       text-align: center;
       letter-spacing: -0.6vmax;
       font-size: 14vmin;
       background: linear-gradient(0deg, white 50%, transparent 50%);
-      padding-right: calc(0.5 * var(--cavg));
+      padding-right: calc((0.5cqw + 0.5cqh) / var(--avg));
     }
 
     .red {

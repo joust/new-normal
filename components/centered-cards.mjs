@@ -3,10 +3,7 @@ import {BaseComponent} from './base-component.mjs'
 window.customElements.define('centered-cards', class CenteredCards extends BaseComponent {
   get css() {
     return `
-     :host {
-      display: inline-block;
-    }
-
+    ${super.css}
     #centered {
       width: 100%;
       height: 100%;
@@ -18,7 +15,7 @@ window.customElements.define('centered-cards', class CenteredCards extends BaseC
 
     ::slotted(*) {
       height: 100%;
-      width: calc(var(--ratio) * 100 * var(--ch));
+      width: calc(var(--ratio) * 100cqh);
     }
   `
   }

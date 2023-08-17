@@ -47,8 +47,8 @@ window.customElements.define('game-card', class GameCard extends BaseComponent {
 
   get css() {
     return `
+    ${super.css}
     :host {
-      display: inline-block;
       overflow: hidden;
       position: relative;
     }
@@ -60,12 +60,12 @@ window.customElements.define('game-card', class GameCard extends BaseComponent {
 
     #previous, #next {
       position: absolute;
-      font-size: calc(6 * var(--cavg));
+      font-size: calc((6cqw + 6cqh) / var(--avg));
       color: lightgrey;
-      right: calc(50% - 5 * var(--cavg));
+      right: calc(50% - (5cqw + 5cqh) / var(--avg));
       cursor: pointer;
-      width: calc(10 * var(--cavg));
-      height: calc(10 * var(--cavg));
+      width: calc((10cqw + 10cqh) / var(--avg));
+      height: calc((10cqw + 10cqh) / var(--avg));
       text-align: center;
       border-radius: 50%;
       background-color: white;

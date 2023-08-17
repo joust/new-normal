@@ -3,16 +3,13 @@ import {BaseComponent} from './base-component.mjs'
 export class BaseCard extends BaseComponent {
   get css () {
     return `
-     :host {
-      display: inline-block;
-    }
-    
+    ${super.css}
     .card {
       position: relative;
       width: 100%;
       height: 100%;
-      border: calc(0.1 * var(--cavg)) solid #aaa;
-      border-radius: calc(2 * var(--cavg));
+      border: calc((0.1cqw + 0.1cqh) / var(--avg)) solid #aaa;
+      border-radius: calc((2cqw + 2cqh) / var(--avg));
       user-select: none;
     }    
     
@@ -30,7 +27,7 @@ export class BaseCard extends BaseComponent {
       height: calc(1.3 * var(--sidebar-width))
       top: 0;
       left: 0;
-      font-size: calc(8 * var(--cavg));
+      font-size: calc((8cqw + 8cqh) / var(--avg));
       text-align: center;
       color: white;
       opacity: .8;
@@ -48,15 +45,15 @@ export class BaseCard extends BaseComponent {
       padding: 0 2% 0 2%;
       height: 4%;
       font-family: 'Open Sans', Helvetica, sans-serif;
-      font-size: calc(2.5 * var(--cavg));
+      font-size: calc((2.5cqw + 2.5cqh) / var(--avg));
       text-align: center;
-      border-top-right-radius: calc(2 * var(--cavg));
+      border-top-right-radius: calc((2cqw + 2cqh) / var(--avg));
     }
 
     .mirrored #card {
       left: 0;
       right: auto;
-      border-top-left-radius: calc(2 * var(--cavg));
+      border-top-left-radius: calc((2cqw + 2cqh) / var(--avg));
       border-top-right-radius: 0;
     }
 
@@ -79,7 +76,7 @@ export class BaseCard extends BaseComponent {
     #new, #normal {
       font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-weight: 600;
-      font-size: calc(14 * var(--cavg));
+      font-size: calc((14cqw + 14cqh) / var(--avg));
       position: absolute;
       color: white;
       opacity: 0.15;
@@ -106,7 +103,7 @@ export class BaseCard extends BaseComponent {
     #side {
       position: absolute;
       font-family: 'HVD Crocodile', Helvetica, sans-serif;
-      font-size: calc(6 * var(--cavg));
+      font-size: calc((6cqw + 6cqh) / var(--avg));
       font-weight: 600;
       font-stretch: condensed;
       padding-left: 2%;
@@ -116,8 +113,8 @@ export class BaseCard extends BaseComponent {
       text-align: left;
       overflow: hidden;
       white-space: nowrap;
-      height: calc(15 * var(--cw));
-      width: calc(85 * var(--ch));
+      height: 15cqw;
+      width: 85cqh;
       transform: rotate(-90deg);
       transform-origin: top left;
       color: white;
@@ -132,8 +129,8 @@ export class BaseCard extends BaseComponent {
       position: absolute;
       bottom: 0; 
       font-family: 'Open Sans', Helvetica, sans-serif;
-      padding: calc(5 * var(--cavg)) calc(5 * var(--cavg)) calc(16 * var(--cavg));
-      font-size: calc(3 * var(--cavg));
+      padding: calc((5 * var(--cavg)) calc(5 * var(--cavg)) calc(16cqw + 5 * var(--cavg)) calc(5 * var(--cavg)) calc(16cqh) / var(--avg));
+      font-size: calc((3cqw + 3cqh) / var(--avg));
       font-style: italic;
       color: white;
       opacity: .4;

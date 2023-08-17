@@ -68,7 +68,7 @@ window.customElements.define('banish-card', class BanishCard extends BaseCard {
       height: 100%;
       -webkit-hyphens: auto;
       hyphens: auto;
-      padding: calc(7 * var(--cavg));
+      padding: calc((7cqw + 7cqh) / var(--avg));
       box-sizing: border-box;
     }
 
@@ -92,7 +92,7 @@ window.customElements.define('banish-card', class BanishCard extends BaseCard {
 
     #phrase span.quoted {
       font-family: 'HVD Crocodile', Helvetica, sans-serif;
-      font-size: calc(7 * var(--cavg));
+      font-size: calc((7cqw + 7cqh) / var(--avg));
       font-weight: 600;
       font-stretch: condensed;
       max-width: 100%;
@@ -101,7 +101,7 @@ window.customElements.define('banish-card', class BanishCard extends BaseCard {
     }
 
     #side {
-      -webkit-text-stroke: calc(0.15 * var(--cavg)) white;
+      -webkit-text-stroke: calc((0.15cqw + 0.15cqh) / var(--avg)) white;
     }
   `
   }

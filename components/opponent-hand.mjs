@@ -21,10 +21,7 @@ window.customElements.define('opponent-hand', class OpponentHand extends BaseCom
 
   get css() {
     return `
-     :host {
-      display: inline-block;
-    }
-
+    ${super.css}
     #opponent-hand {
       width: 100%;
       height: calc(100% - 4vh);
@@ -52,6 +49,8 @@ window.customElements.define('opponent-hand', class OpponentHand extends BaseCom
 
   connectedCallback() {
     super.connectedCallback()
+    const resizeObserver = new ResizeObserver(() => this.resize())
+    resizeObserver.observe(this)
     this.update()
   }
 
@@ -104,7 +103,6 @@ window.customElements.define('opponent-hand', class OpponentHand extends BaseCom
   }
 
   resize() {
-    super.resize()
     this.recalc()
   }
 

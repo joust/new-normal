@@ -50,7 +50,7 @@ window.customElements.define('argument-card', class ArgumentCard extends BaseCar
     #argument-card {
       background: var(--neutral-background);
       font-family: 'Open Sans', Helvetica, 'NotoColorEmojiLimited';
-      font-size: calc(4 * var(--cavg));
+      font-size: calc((4cqw + 4cqh) / var(--avg));
     }
 
     #argument-card.idiot {
@@ -71,7 +71,7 @@ window.customElements.define('argument-card', class ArgumentCard extends BaseCar
       font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-weight: 600;
       font-stretch: condensed;
-      font-size: calc(8 * var(--cavg));
+      font-size: calc((8cqw + 8cqh) / var(--avg));
       text-align: center;
       margin-top: 0;
       margin-bottom: 0;
@@ -95,7 +95,7 @@ window.customElements.define('argument-card', class ArgumentCard extends BaseCar
       font-weight: 300;
       height: var(--topic-height);
       top: 0;
-      left: calc(var(--sidebar-width) + 6 * var(--cavg));
+      left: calc((var(--sidebar-width) + 6cqw + var(--sidebar-width) + 6cqh) / var(--avg));
       right: 0;
       color: var(--neutral);
     }
@@ -108,7 +108,7 @@ window.customElements.define('argument-card', class ArgumentCard extends BaseCar
     }
 
     .mirrored #topic-name {
-      right: calc(var(--sidebar-width) + 6 * var(--cw));
+      right: calc(var(--sidebar-width) + 6cqw);
       left: 0;
       text-align: right;
     }
@@ -119,7 +119,7 @@ window.customElements.define('argument-card', class ArgumentCard extends BaseCar
       top: var(--topic-height);
       right: 0;
       bottom: 0;
-      padding: calc(2 * var(--cavg));
+      padding: calc((2cqw + 2cqh) / var(--avg));
       overflow: hidden;
     }
 
@@ -138,7 +138,7 @@ window.customElements.define('argument-card', class ArgumentCard extends BaseCar
       font-family: 'HVD Crocodile', Helvetica, sans-serif;
       font-weight: 600;
       font-stretch: condensed;
-      font-size: calc(7 * var(--cavg));
+      font-size: calc((7cqw + 7cqh) / var(--avg));
       text-align: left;
       margin-top: 0;
       margin-bottom: 0;
@@ -167,7 +167,7 @@ window.customElements.define('argument-card', class ArgumentCard extends BaseCar
     #content.empty #placeholder {
       display: block;
       text-align: justify;
-      font-size: calc(3 * var(--cavg));
+      font-size: calc((3cqw + 3cqh) / var(--avg));
       line-height: 1.8;
     }
 
@@ -200,7 +200,7 @@ window.customElements.define('argument-card', class ArgumentCard extends BaseCar
       position: absolute;
       right: 0;
       bottom: 0;
-      font-size: calc(40 * var(--cavg));
+      font-size: calc((40cqw + 40cqh) / var(--avg));
       color: grey;
       opacity: 0.4;
     }
@@ -220,7 +220,7 @@ window.customElements.define('argument-card', class ArgumentCard extends BaseCar
       top: 4%;
       width: 8%;
       height: 6%;
-      font-size: calc(5 * var(--cavg));
+      font-size: calc((5cqw + 5cqh) / var(--avg));
     }
 
     .mirrored #spellcheck {

@@ -27,8 +27,8 @@ window.customElements.define('test-card', class TestCard extends BaseComponent {
 
   get css() {
     return `
+    ${super.css}
    :host {
-      display: inline-block;
       overflow: visible;
       position: relative;
     }
@@ -37,7 +37,7 @@ window.customElements.define('test-card', class TestCard extends BaseComponent {
       position: absolute;
       width: 100%;
       height: 100%;
-      border-radius: calc(2 * var(--cavg));
+      border-radius: calc((2cqw + 2cqh) / var(--avg));
     }
 
     .reset {

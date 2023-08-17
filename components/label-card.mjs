@@ -59,20 +59,20 @@ window.customElements.define('label-card', class LabelCard extends BaseCard {
 
     #fallacy {
       font-family: 'Open Sans', Helvetica, sans-serif;
-      font-size: calc(4 * var(--cavg));
+      font-size: calc((4cqw + 4cqh) / var(--avg));
       font-weight: 300;
       color: white;
     }
 
     #label-name {
       font-family: 'HVD Crocodile', Helvetica, sans-serif;
-      font-size: calc(7 * var(--cavg));
+      font-size: calc((7cqw + 7cqh) / var(--avg));
       font-weight: 600;
       font-stretch: condensed;
       max-width: 100%;
       display: inline-block;
-      padding-left: calc(7 * var(--cavg));
-      padding-right: calc(7 * var(--cavg));
+      padding-left: calc((7cqw + 7cqh) / var(--avg));
+      padding-right: calc((7cqw + 7cqh) / var(--avg));
       text-align: center;
     }
 
@@ -96,7 +96,7 @@ window.customElements.define('label-card', class LabelCard extends BaseCard {
     .mirrored #card {
       left: 0;
       right: auto;
-      border-top-left-radius: calc(2 * var(--cavg));
+      border-top-left-radius: calc((2cqw + 2cqh) / var(--avg));
       border-top-right-radius: 0;
     }
 

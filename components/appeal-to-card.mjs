@@ -61,7 +61,7 @@ window.customElements.define('appeal-to-card', class AppealToCard extends BaseCa
     #phrase {
       position: absolute;
       font-family: 'Open Sans', Helvetica, sans-serif;
-      font-size: calc(4 * var(--cavg));
+      font-size: calc((4cqw + 4cqh) / var(--avg));
       display: flex;
       align-items: center;
       justify-content: center;
@@ -85,7 +85,7 @@ window.customElements.define('appeal-to-card', class AppealToCard extends BaseCa
     #phrase .to {
       color: var(--sheep-appeal-to-color);
       font-family: 'HVD Crocodile', Helvetica, sans-serif;
-      font-size: calc(7 * var(--cavg));
+      font-size: calc((7cqw + 7cqh) / var(--avg));
       font-weight: 600;
       font-stretch: condensed;
     }
@@ -96,7 +96,7 @@ window.customElements.define('appeal-to-card', class AppealToCard extends BaseCa
 
      #fallacy {
       font-family: 'Open Sans', Helvetica, sans-serif;
-      font-size: calc(4 * var(--cavg));
+      font-size: calc((4cqw + 4cqh) / var(--avg));
       font-weight: 300;
       max-width: 100%;
       color: #666;
@@ -105,8 +105,8 @@ window.customElements.define('appeal-to-card', class AppealToCard extends BaseCa
     }
 
     .quoted {
-      padding-left: calc(7 * var(--cavg));
-      padding-right: calc(7 * var(--cavg));
+      padding-left: calc((7cqw + 7cqh) / var(--avg));
+      padding-right: calc((7cqw + 7cqh) / var(--avg));
     }
 
     .idiot #card {

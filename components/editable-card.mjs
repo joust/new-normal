@@ -23,7 +23,6 @@ window.customElements.define('editable-card', class EditableCard extends BaseCom
   get css() {
     return `
    :host {
-    display: inline-block;
     overflow: hidden;
     position: relative;
   }

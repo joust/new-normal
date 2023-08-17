@@ -1,8 +1,6 @@
 import { shuffle, elementsFrom, randomElement } from './common.mjs'
-
-const { Client } = require('boardgame.io/client')
-const { Local } = require('boardgame.io/multiplayer')
-const { P2P } = require('@boardgame.io/p2p')
+import { Client, Local } from '../web_modules/boardgame.io.js'
+import { P2P } from '../web_modules/@boardgame.io/p2p.js'
 
 const INITIAL = 8
 const INITIAL_ARGS = 5

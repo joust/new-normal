@@ -1,10 +1,54 @@
 {
   "scripts": {
-    "bundle": "browserify -r boardgame.io/client -r boardgame.io/multiplayer -r boardgame.io/ai -r boardgame.io/debug -r @boardgame.io/p2p > libs/boardgame.js"
+    "standard": "standard ./{components,modules}/*.mjs",
+    "esinstall": "node esinstall.mjs",
+    "deploy": "scp -r ./{modules,web_modules,libs,icons,content,components,lib,images,components,styles,*.html} root@k.de:/srv/new-normal.app"
+  },
+  "eslintConfig": {
+    "parserOptions": {
+      "sourceType": "module",
+      "ecmaVersion": 2022
+    },
+    "env": {
+      "browser": true
+    },
+    "rules": {
+      "semi": "off",
+      "prefer-const": "error",
+      "no-multiple-empty-lines": [
+        "error",
+        {
+          "max": 1
+        }
+      ]
+    }
+  },
+  "standard": {
+    "globals": [
+      "FileReader",
+      "ResizeObserver",
+      "KeyboardEvent",
+      "Blob",
+      "HTMLElement",
+      "HTMLMediaElement",
+      "CustomEvent",
+      "Node",
+      "MutationObserver",
+      "File"
+    ],
+    "ignore": [
+      "web_modules",
+      "lib"
+    ]
   },
   "dependencies": {
     "@boardgame.io/p2p": "^0.4.3",
     "boardgame.io": "^0.50.2",
-    "browserify": "^17.0.0"
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "esinstall": "^1.1.7",
+    "eslint": "^8.34.0",
+    "standard": "^17.0.0"
   }
 }

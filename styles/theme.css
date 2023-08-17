@@ -1,7 +1,7 @@
 :root {
-  --cw: 10.24;
-  --ch: 7.68;
-  --cavg: 11.2;
+  --cw: 10.24px;
+  --ch: 7.68px;
+  --cavg: 11.2px;
   --ratio: 0.71;
   --sidebar-width: 12%;
   --watermark-size: 50%;

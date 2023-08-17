@@ -2,15 +2,15 @@
 <html>
   <script src="libs/boardgame.js"></script>
   <script src="libs/tinytest.js"></script>
-  <script src="modules/common.js" type="module"></script>
-  <script src="modules/content.js" type="module"></script>
-  <script src="modules/uno-bg.js" type="module"></script>
+  <script src="modules/common.mjs" type="module"></script>
+  <script src="modules/content.mjs" type="module"></script>
+  <script src="modules/uno-bg.mjs" type="module"></script>
   <script type="module">
-    import { loadContent, extractContent } from './modules/content.js'
-    import { Uno, isWildcard, hasTopic } from './modules/uno-bg.js'
-    
+    import { loadContent, extractContent } from './modules/content.mjs'
+    import { Uno, isWildcard, hasTopic } from './modules/uno-bg.mjs'
+
     const { Client } = require('boardgame.io/client')
-    
+
     window.run = async function() {
       await loadContent()
       const content = extractContent()
@@ -18,7 +18,7 @@
       // scenarios
       const easy = {
               locale: 'de-de',
-              host: '0', 
+              host: '0',
               decks: {
                 idiot: ['T1:I2', 'T1:I4'],
                 sheep: ['T1:S1', 'T1:S4', 'T1:S10', 'T2:S7', 'PS', 'T1:DS']
@@ -30,11 +30,11 @@
       const p4 = {
               ...easy,
               hands: [['T1:S4'], ['T1:I4'], ['T1:S5'], ['T1:I5']],
-              names: ['', '', '', ''] 
+              names: ['', '', '', '']
             }
       const wildcard = {
               locale: 'de-de',
-              host: '0', 
+              host: '0',
               decks: {
                 idiot: ['T1:I2', 'T1:I3', 'T2:I7', 'T1:I4'],
                 sheep: ['T1:S3', 'T1:S4', 'T1:S10', 'T2:S4', 'PS', 'T1:DS']
@@ -125,7 +125,7 @@
           assert(deck[deck.length-1]!==top)
           assert(G.hands[0].includes(top))
         },
-        
+
         'playing a discuss card should put a wildcard into every hand': () => {
           const game = { ...uno, setup: () => easy }
           const client = Client({ game })
@@ -171,7 +171,7 @@
             assert(ctx.currentPlayer==='2')
           })
         },
-       
+
         'playing a discuss card should put a wildcard and remove all others': () => {
           const game = { ...uno, setup: () => wildcard }
           const client = Client({ game })

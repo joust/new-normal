@@ -1,6 +1,6 @@
-import {BaseComponent} from './base-component.mjs'
+import {BaseCard} from './base-card.mjs'
 
-window.customElements.define('strawman-card', class StrawmanCard extends BaseComponent {
+window.customElements.define('strawman-card', class StrawmanCard extends BaseCard {
   static observedAttributes = ['idiot', 'mirrored']
 
   get idiot() {
@@ -25,66 +25,13 @@ window.customElements.define('strawman-card', class StrawmanCard extends BaseCom
 
   get css() {
     return `
-     :host {
-      display: inline-block;
-    }
-
+    ${super.css}
     #strawman-card {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      border: calc(0.1 * var(--cavg)) solid #aaa;
-      border-radius: calc(2 * var(--cavg));
       background: linear-gradient(30deg, var(--orange) 0%, var(--yellow) 100%);
-      user-select: none;
-    }
-
-    #icon {
-      position: absolute;
-      width: calc(1.3 * var(--sidebar-width));
-      height: calc(1.3 * var(--sidebar-width))
-      top: 0;
-      left: 0;
-      font-size: calc(8 * var(--cavg));
-      text-align: center;
-      color: white;
-      opacity: .8;
     }
 
     #icon:before {
       content: '🤔';
-    }
-
-    .mirrored #icon {
-      right: 0;
-      left: auto;
-    }
-
-    #new, #normal {
-      font-family: 'HVD Crocodile', Helvetica, sans-serif;
-      font-weight: 600;
-      font-size: calc(14 * var(--cavg));
-      position: absolute;
-      color: white;
-      opacity: 0.15;
-    }
-
-    #new {
-      left: var(--sidebar-width);
-      top: 0;
-    }
-
-    .mirrored #new {
-      left: 2%;
-    }
-
-    #normal {
-      bottom: 0;
-      right: 2%;
-    }
-
-    .mirrored #normal {
-      right: calc(2% + var(--sidebar-width));
     }
 
     #img {
@@ -126,15 +73,7 @@ window.customElements.define('strawman-card', class StrawmanCard extends BaseCom
     }
 
     #description {
-      position: absolute;
-      bottom: 0;
-      font-family: 'Open Sans', Helvetica, sans-serif;
-      padding: calc(5 * var(--cavg));
-      padding-bottom: calc(4 * var(--cavg));
-      font-size: calc(3 * var(--cavg));
-      font-style: italic;
       color: var(--sheep-strawman-color);
-      opacity: 0.4;
     }
 
     .idiot #description {
@@ -151,52 +90,23 @@ window.customElements.define('strawman-card', class StrawmanCard extends BaseCom
       text-align: center;
     }
 
-    .quoted::before {
-      content: open-quote;
-    }
-
-    .quoted::after {
-      content: close-quote;
-    }
-
-    #side-phrase {
-      position: absolute;
-      font-family: 'HVD Crocodile', Helvetica, sans-serif;
-      font-size: calc(6 * var(--cavg));
-      font-weight: 600;
-      font-stretch: condensed;
+    #side {
       color: var(--sheep-strawman-color);
-      opacity: 0.4;
-      padding-left: 2%;
-      top: 100%;
-      left: 0;
-      text-overflow: ellipsis;
-      text-align: left;
-      overflow: hidden;
-      white-space: nowrap;
-      height: calc(15 * var(--cw));
-      width: calc(85 * var(--ch));
-      transform: rotate(-90deg);
-      transform-origin: top left;
     }
 
-    .idiot #side-phrase {
+    .idiot #side {
       color: var(--idiot-strawman-color);
-    }
-
-    .mirrored #side-phrase {
-      left: calc(100% - var(--sidebar-width));
     }
   `
   }
 
   get html() {
     return `
-    <div id="strawman-card">
+    <div id="strawman-card" class="card">
       <div id="icon"></div>
       <div id="new">New</div>
       <div id="phrase"><img id="img" draggable="false" src="/components/images/strawman.png"><span id="fallacy"></span><span class="quoted"><span class="phrase"></span></span><span id="description"></span></div>
-      <div id="side-phrase"><span class="phrase"></span></div>
+      <div id="side"><span class="phrase"></span></div>
       <div id="normal">Normal</div>
     </div>
   `

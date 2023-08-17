@@ -1,7 +1,7 @@
 import {flagMapped} from './shared.mjs'
-import {BaseComponent} from './base-component.mjs'
+import {BaseCard} from './base-card.mjs'
 
-window.customElements.define('argument-card', class ArgumentCard extends BaseComponent {
+window.customElements.define('argument-card', class ArgumentCard extends BaseCard {
   static observedAttributes = ['topic', 'neutral', 'topicId', 'card', 'wildcard', 'spellcheck', 'mirrored']
 
   get idiot() {
@@ -46,20 +46,11 @@ window.customElements.define('argument-card', class ArgumentCard extends BaseCom
 
   get css () {
     return `
-     :host {
-      display: inline-block;
-    }
-
+    ${super.css}
     #argument-card {
-      position: relative;
       background: var(--neutral-background);
       font-family: 'Open Sans', Helvetica, 'NotoColorEmojiLimited';
       font-size: calc(4 * var(--cavg));
-      border: calc(0.1 * var(--cavg)) solid #aaa;
-      border-radius: calc(2 * var(--cavg));
-      width: 100%;
-      height: 100%;
-      user-select: none;
     }
 
     #argument-card.idiot {
@@ -120,22 +111,6 @@ window.customElements.define('argument-card', class ArgumentCard extends BaseCom
       right: calc(var(--sidebar-width) + 6 * var(--cw));
       left: 0;
       text-align: right;
-    }
-
-    #watermark {
-      position: absolute;
-      width: var(--watermark-size);
-      height: var(--watermark-size);
-      top: var(--topic-height);
-      right: 0;
-      opacity: 0.15;
-      background-image: url('/styles/images/virus.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-    }
-
-    .mirrored #watermark {
-      right: var(--sidebar-width);
     }
 
     #content {
@@ -203,40 +178,12 @@ window.customElements.define('argument-card', class ArgumentCard extends BaseCom
       display: inline;
     }
 
-    #side-title {
-      font-family: 'HVD Crocodile', Helvetica, sans-serif;
-      font-size: calc(6 * var(--cavg));
-      font-weight: 600;
-      font-stretch: condensed;
-      position: absolute;
+    #side {
       color: lightgrey;
-      padding-left: 2%;
-      top: 100%;
-      left: 0;
-      height: calc(15 * var(--cw));
-      width: calc(85 * var(--ch));
-      text-overflow: ellipsis;
-      text-align: left;
-      overflow: hidden;
-      white-space: nowrap;
-      transform: rotate(-90deg);
-      transform-origin: top left;
-    }
-
-    .mirrored #side-title {
-      left: calc(100% - var(--sidebar-width));
     }
 
     #card {
-      position: absolute;
-      right: 0;
-      top: 0;
-      padding: 0 2% 0 2%;
-      height: 4%;
-      font-size: calc(2.5 * var(--cavg));
-      text-align: center;
       color: white;
-      border-top-right-radius: calc(2 * var(--cavg));
       background-color: var(--neutral);
     }
 
@@ -247,13 +194,6 @@ window.customElements.define('argument-card', class ArgumentCard extends BaseCom
     .sheep #card {
       background-color: var(--sheep-background);
       color: var(--sheep-color);
-    }
-
-    .mirrored #card {
-      left: 0;
-      right: auto;
-      border-top-left-radius: calc(2 * var(--cavg));
-      border-top-right-radius: 0;
     }
 
     #wildcard {
@@ -301,12 +241,12 @@ window.customElements.define('argument-card', class ArgumentCard extends BaseCom
   get html ()
   {
     return `
-      <div id="argument-card">
+      <div id="argument-card" class="card">
         <div id="watermark"></div>
         <div id="topic-icon"></div>
         <div id="topic-name"></div>
         <div id="content"><slot></slot><p id="placeholder"></p></div>
-        <div id="side-title"></div>
+        <div id="side"></div>
         <div id="card"></div>
         <div id="spellcheck" class="hidden"></div>
         <div id="wildcard" class="hidden"></div>
@@ -357,7 +297,7 @@ window.customElements.define('argument-card', class ArgumentCard extends BaseCom
       this.element('placeholder').innerHTML = this.placeholder
       this.element('topic-icon').innerHTML = flagMapped(this.topicId ? this.topicId.substring(1) : '?')
       this.element('topic-name').innerHTML = this.topic
-      this.element('side-title').innerHTML = `${this.wildcard?'✱ ':''}${this.title}`
+      this.element('side').innerHTML = `${this.wildcard?'✱ ':''}${this.title}`
     }
   }
 })

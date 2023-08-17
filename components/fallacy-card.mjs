@@ -1,6 +1,6 @@
-import {BaseComponent} from './base-component.mjs'
+import {BaseCard} from './base-card.mjs'
 
-window.customElements.define('fallacy-card', class FallacyCard extends BaseComponent {
+window.customElements.define('fallacy-card', class FallacyCard extends BaseCard {
   static observedAttributes = ['mirrored']
 
   get idiot() {
@@ -29,86 +29,17 @@ window.customElements.define('fallacy-card', class FallacyCard extends BaseCompo
 
   get css() {
     return `
-     :host {
-      display: inline-block;
-    }
-
+    ${super.css}
     #fallacy-card {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      border: calc(0.1 * var(--cavg)) solid #aaa;
-      border-radius: calc(2 * var(--cavg));
       background: var(--sheep-fallacy-background);
-      user-select: none;
     }
 
     #fallacy-card.idiot {
       background: var(--idiot-fallacy-background);
     }
 
-    #icon {
-      position: absolute;
-      width: calc(1.3 * var(--sidebar-width));
-      height: calc(1.3 * var(--sidebar-width))
-      top: 0;
-      left: 0;
-      font-size: calc(8 * var(--cavg));
-      text-align: center;
-      color: white;
-      opacity: .8;
-    }
-
     #icon:before {
       content: '🚫';
-    }
-
-    .mirrored #icon {
-      right: 0;
-      left: auto;
-    }
-
-    #watermark {
-      position: absolute;
-      width: var(--watermark-size);
-      height: var(--watermark-size);
-      top: 4%;
-      right: 0;
-      opacity: 0.15;
-      background-image: url('/styles/images/virus.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-    }
-
-    .mirrored #watermark {
-      right: var(--sidebar-width);
-    }
-
-    #new, #normal {
-      font-family: 'HVD Crocodile', Helvetica, sans-serif;
-      font-weight: 600;
-      font-size: calc(14 * var(--cavg));
-      position: absolute;
-      color: white;
-      opacity: 0.15;
-    }
-
-    #new {
-      left: var(--sidebar-width);
-      top: 0;
-    }
-
-    .mirrored #new {
-      left: 2%;
-    }
-
-    #normal {
-      bottom: 0;
-      right: 2%;
-    }
-
-    .mirrored #normal {
-      right: calc(2% + var(--sidebar-width));
     }
 
     #phrase {
@@ -146,38 +77,6 @@ window.customElements.define('fallacy-card', class FallacyCard extends BaseCompo
       font-weight: 300;
     }
 
-    .quoted::before {
-      content: open-quote;
-    }
-
-    .quoted::after {
-      content: close-quote;
-    }
-
-    #description {
-      position: absolute;
-      bottom: 0;
-      font-family: 'Open Sans', Helvetica, sans-serif;
-      padding: calc(5 * var(--cavg));
-      padding-bottom: calc(16 * var(--cavg));
-      font-size: calc(3 * var(--cavg));
-      font-style: italic;
-      color: white;
-      opacity: 0.4;
-    }
-
-    #card {
-      position: absolute;
-      right: 0;
-      top: 0;
-      padding: 0 2% 0 2%;
-      height: 4%;
-      font-family: 'Open Sans', Helvetica, sans-serif;
-      font-size: calc(2.5 * var(--cavg));
-      text-align: center;
-      border-top-right-radius: calc(2 * var(--cavg));
-    }
-
     .idiot #card {
       background-color: var(--idiot-background);
       color: var(--idiot-color);
@@ -186,49 +85,17 @@ window.customElements.define('fallacy-card', class FallacyCard extends BaseCompo
       background-color: var(--sheep-background);
       color: var(--sheep-color);
     }
-
-    .mirrored #card {
-      left: 0;
-      right: auto;
-      border-top-left-radius: calc(2 * var(--cavg));
-      border-top-right-radius: 0;
-    }
-
-    #side-phrase {
-      position: absolute;
-      font-family: 'HVD Crocodile', Helvetica, sans-serif;
-      font-size: calc(6 * var(--cavg));
-      font-weight: 600;
-      font-stretch: condensed;
-      color: white;
-      opacity: 0.4;
-      padding-left: 2%;
-      top: 100%;
-      left: 0;
-      text-overflow: ellipsis;
-      text-align: left;
-      overflow: hidden;
-      white-space: nowrap;
-      height: calc(15 * var(--cw));
-      width: calc(85 * var(--ch));
-      transform: rotate(-90deg);
-      transform-origin: top left;
-    }
-
-    .mirrored #side-phrase {
-      left: calc(100% - var(--sidebar-width));
-    }
   `
   }
 
   get html () {
     return `
-    <div id="fallacy-card">
+    <div id="fallacy-card" class="card">
       <div id="icon"></div>
       <div id="watermark"></div>
       <div id="new">New</div>
       <div id="phrase"><span id="fallacy"></span><span class="quoted phrase"></span><span id="description"></span></div>
-      <div id="side-phrase"><span class="phrase"></span></div>
+      <div id="side"><span class="phrase"></span></div>
       <div id="normal">Normal</div>
       <div id="card"></div>
     </div>

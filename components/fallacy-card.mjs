@@ -1,33 +1,33 @@
-import {BaseCard} from './base-card.mjs'
+import { BaseCard } from './base-card.mjs'
 
 window.customElements.define('fallacy-card', class FallacyCard extends BaseCard {
   static observedAttributes = ['mirrored']
 
-  get idiot() {
+  get idiot () {
     return this.card && this.card.includes('I')
   }
 
-  get fallacy() {
+  get fallacy () {
     return this.querySelector('i') ? this.querySelector('i').innerHTML : ''
   }
 
-  get phrase() {
+  get phrase () {
     return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
   }
 
-  get description() {
+  get description () {
     return this.querySelector('p') ? this.querySelector('p').innerHTML : ''
   }
 
-  get card() {
+  get card () {
     return this.querySelector('a') ? this.querySelector('a').id : ''
   }
 
-  get mirrored() {
+  get mirrored () {
     return this.hasAttribute('mirrored')
   }
 
-  get css() {
+  get css () {
     return `
     ${super.css}
     #fallacy-card {
@@ -102,23 +102,23 @@ window.customElements.define('fallacy-card', class FallacyCard extends BaseCard 
   `
   }
 
-  attributeChangedCallback() {
+  attributeChangedCallback () {
     this.update()
   }
 
-  connectedCallback() {
+  connectedCallback () {
     super.connectedCallback()
     this.update()
   }
 
-  update() {
+  update () {
     if (this.shadowRoot && this.isConnected) {
       const root = this.element('fallacy-card')
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
       this.element('card').innerHTML = this.card
       this.element('fallacy').innerHTML = this.fallacy
-      Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = this.phrase)
+      Array.from(root.querySelectorAll('.phrase')).forEach(node => (node.innerHTML = this.phrase))
       this.element('description').innerHTML = this.description
     }
   }

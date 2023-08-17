@@ -1,46 +1,46 @@
-import {flagMapped} from './shared.mjs'
-import {BaseCard} from './base-card.mjs'
+import { flagMapped } from './shared.mjs'
+import { BaseCard } from './base-card.mjs'
 
 window.customElements.define('argument-card', class ArgumentCard extends BaseCard {
   static observedAttributes = ['topic', 'neutral', 'topicId', 'card', 'wildcard', 'spellcheck', 'mirrored']
 
-  get idiot() {
+  get idiot () {
     return this.card && this.card.includes('I')
   }
 
-  get topic() {
+  get topic () {
     return this.getAttribute('topic')
   }
 
-  get topicId() {
+  get topicId () {
     return this.getAttribute('topicId')
   }
 
-  get card() {
+  get card () {
     return this.getAttribute('card')
   }
 
-  get title() {
+  get title () {
     return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
   }
 
-  get content() {
+  get content () {
     return this.querySelector('p') ? this.querySelector('p').innerHTML : ''
   }
 
-  get wildcard() {
+  get wildcard () {
     return this.hasAttribute('wildcard')
   }
 
-  get neutral() {
+  get neutral () {
     return this.hasAttribute('neutral')
   }
 
-  get spellcheck() {
+  get spellcheck () {
     return this.hasAttribute('spellcheck')
   }
 
-  get mirrored() {
+  get mirrored () {
     return this.hasAttribute('mirrored')
   }
 
@@ -238,8 +238,7 @@ window.customElements.define('argument-card', class ArgumentCard extends BaseCar
   `
   }
 
-  get html ()
-  {
+  get html () {
     return `
       <div id="argument-card" class="card">
         <div id="watermark"></div>
@@ -254,36 +253,36 @@ window.customElements.define('argument-card', class ArgumentCard extends BaseCar
     `
   }
 
-  constructor() {
+  constructor () {
     super()
     this.placeholder = this.randomPlaceholder(400)
   }
 
-  attributeChangedCallback() {
+  attributeChangedCallback () {
     this.update()
   }
 
-  random(min, max) {
-    return min + Math.floor(Math.random()*(max-min+1))
+  random (min, max) {
+    return min + Math.floor(Math.random() * (max - min + 1))
   }
 
-  randomPlaceholder(len) {
+  randomPlaceholder (len) {
     let placeholder = ''
     let letters = 0
     while (letters < len) {
       const l = this.random(2, 12)
       placeholder += `<span>${'____________'.substring(0, l)}</span> `
-      letters += l+1
+      letters += l + 1
     }
     return placeholder
   }
 
-  connectedCallback() {
+  connectedCallback () {
     super.connectedCallback()
     this.update()
   }
 
-  update() {
+  update () {
     if (this.shadowRoot && this.isConnected) {
       const root = this.element('argument-card')
       root.classList.toggle('idiot', !this.neutral && this.idiot)
@@ -297,7 +296,7 @@ window.customElements.define('argument-card', class ArgumentCard extends BaseCar
       this.element('placeholder').innerHTML = this.placeholder
       this.element('topic-icon').innerHTML = flagMapped(this.topicId ? this.topicId.substring(1) : '?')
       this.element('topic-name').innerHTML = this.topic
-      this.element('side').innerHTML = `${this.wildcard?'✱ ':''}${this.title}`
+      this.element('side').innerHTML = `${this.wildcard ? '✱ ' : ''}${this.title}`
     }
   }
 })

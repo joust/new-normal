@@ -1,4 +1,4 @@
-import {BaseComponent} from './base-component.mjs'
+import { BaseComponent } from './base-component.mjs'
 
 export class BaseCard extends BaseComponent {
   get css () {

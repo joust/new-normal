@@ -1,26 +1,26 @@
-import {BaseComponent} from './base-component.mjs'
+import { BaseComponent } from './base-component.mjs'
 
 window.customElements.define('editable-card', class EditableCard extends BaseComponent {
   static observedAttributes = ['card']
   static contentRootSelector = '#content'
 
-  get card() {
+  get card () {
     return this.getAttribute('card')
   }
 
-  get hasTopic() {
+  get hasTopic () {
     return this.card.includes(':')
   }
 
-  get idiot() {
+  get idiot () {
     return this.card.includes('I')
   }
 
-  get topic() {
+  get topic () {
     return this.hasTopic ? this.card.split(':')[0] : ''
   }
 
-  get css() {
+  get css () {
     return `
    :host {
     overflow: hidden;
@@ -38,23 +38,23 @@ window.customElements.define('editable-card', class EditableCard extends BaseCom
 `
   }
 
-  get html() {
+  get html () {
     return `
       <div id="editable-card">
       </div>
     `
   }
 
-  attributeChangedCallback(name) {
-    if (name==='card') this.updateCard()
+  attributeChangedCallback (name) {
+    if (name === 'card') this.updateCard()
   }
 
-  connectedCallback() {
+  connectedCallback () {
     super.connectedCallback()
     this.updateCard()
   }
 
-  updateCard() {
+  updateCard () {
     if (this.shadowRoot && this.isConnected) {
       const parent = this.element('editable-card')
       const card = this.element('card')
@@ -64,44 +64,39 @@ window.customElements.define('editable-card', class EditableCard extends BaseCom
     }
   }
 
-  observe(element) {
+  observe (element) {
     const observer = new MutationObserver(mutations =>
       mutations.forEach(mutation =>
-        this.dispatchEvent(new CustomEvent('mutated', {detail: mutation})))
+        this.dispatchEvent(new CustomEvent('mutated', { detail: mutation })))
     )
     observer.observe(element, { subtree: true, characterData: true, characterDataOldValue: true })
   }
 
-  getMessage(key, fallback = '???') {
+  getMessage (key, fallback = '???') {
     const node = document.querySelector(`${EditableCard.contentRootSelector} > #${this.lang} .messages a.${key}`)
     return node ? node.innerHTML : fallback
   }
 
-  getContent(key, clazz = undefined) {
+  getContent (key, clazz = undefined) {
     clazz = this.getMessage(clazz ? `${key}.class.${clazz}` : `${key}.class`, null)
     const phrase = this.getMessage(`${key}.phrase`, null)
     const description = this.getMessage(`${key}.description`, null)
-    return (clazz ? `<i>${clazz}</i>` : '')
-          + (phrase ? `<h2>${phrase}</h2>` : '')
-          + (description ? `<p>${description}</p>` : '')
+    return (clazz ? `<i>${clazz}</i>` : '') +
+          (phrase ? `<h2>${phrase}</h2>` : '') +
+          (description ? `<p>${description}</p>` : '')
   }
 
-  setEditable(e, editable) {
-    if (editable)
-        e.setAttribute('contenteditable', 'plaintext-only')
-    else
-      e.removeAttribute('contenteditable')
+  setEditable (e, editable) {
+    if (editable) { e.setAttribute('contenteditable', 'plaintext-only') } else { e.removeAttribute('contenteditable') }
   }
 
-  makeEditable(content) {
-    if (content && content.querySelector('h2'))
-      this.setEditable(content.querySelector('h2'), true)
-    if (content && content.querySelector('p'))
-      this.setEditable(content.querySelector('p'), true)
+  makeEditable (content) {
+    if (content && content.querySelector('h2')) { this.setEditable(content.querySelector('h2'), true) }
+    if (content && content.querySelector('p')) { this.setEditable(content.querySelector('p'), true) }
     return content
   }
 
-  getCardElement() {
+  getCardElement () {
     if (!this.card || !this.card.length) return '<div></div>'
     const data = document.querySelector(`${EditableCard.contentRootSelector} > #${this.lang} *[id="${this.card}"]`)
     const clazz = data.classList.item(0) || ''
@@ -123,7 +118,7 @@ window.customElements.define('editable-card', class EditableCard extends BaseCom
       case 'P': return `<pause-card id="card" ${type}>${this.getContent(`pause.${side}`)}</pause-card>`
       case 'B': return `<banish-card id="card" ${type}>${this.getContent('banish')}</banish-card>`
       case 'I':
-      case 'S': return`<argument-card id="card" ${type} ${spellcheck} card="${this.card}">${content.innerHTML}</argument-card>`
+      case 'S': return `<argument-card id="card" ${type} ${spellcheck} card="${this.card}">${content.innerHTML}</argument-card>`
     }
   }
 })

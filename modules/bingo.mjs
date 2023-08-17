@@ -9,15 +9,14 @@ import { attitude, saveAttitude } from './main.mjs'
  * @param {boolean} one create an idiot card if true, otherwise a sheep card
  * @param {?boolean} two create a second card, idiot if true, sheep if false
  */
-window.bingo = async function(one, two) {
+window.bingo = async function (one, two) {
   await loadContent()
   await loadSources()
   loadCard('#wrapper-1', one)
   if (two !== undefined) {
     showWrapperTwo()
     loadCard('#wrapper-2', two)
-  } else
-    hideWrapperTwo()
+  } else { hideWrapperTwo() }
 
   showBingo()
 }
@@ -29,15 +28,14 @@ window.bingo = async function(one, two) {
  * @param {boolean} idiot load idiot content if true, otherwise sheep content
  * @param {boolean} update true if to update the card with a different locale
  */
-function loadCard(wrapper, idiot, update = false) {
+function loadCard (wrapper, idiot, update = false) {
   if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
   wrapper.querySelector('.content').innerHTML = getLocalized(idiot)
   addStatements(wrapper)
   wrapper.querySelector('.detail').onclick = event => handleClick(event)
   addIdTags(wrapper)
   addSources(wrapper)
-  if (attitude.friendly)
-    wrapper.querySelectorAll('i, .content button').forEach(e => e.remove())
+  if (attitude.friendly) { wrapper.querySelectorAll('i, .content button').forEach(e => e.remove()) }
 
   applyExclusions(wrapper)
   addCheckboxes(wrapper)
@@ -48,7 +46,7 @@ function loadCard(wrapper, idiot, update = false) {
   copyLogoToCard(wrapper, idiot)
 }
 
-function addStatements(wrapper) {
+function addStatements (wrapper) {
   const statement = getMessage('bingo.phrase.statement')
   const question = getMessage('bingo.phrase.question')
   wrapper.querySelectorAll('a[id] p').forEach(p => {
@@ -62,7 +60,7 @@ function addStatements(wrapper) {
  *
  * @param {HTMLElement} wrapper wrapper element to load the card into
  */
-function addIdTags(wrapper) {
+function addIdTags (wrapper) {
   wrapper.querySelectorAll('a[id]').forEach(a => {
     const idtag = elementWithKids('span', a.id)
     idtag.onclick = event => toggleDetails(wrapper, event, [a.id])
@@ -75,7 +73,7 @@ function addIdTags(wrapper) {
  *
  * @param {HTMLElement} wrapper wrapper element to load the card into
  */
-function addCheckboxes(wrapper) {
+function addCheckboxes (wrapper) {
   wrapper.querySelectorAll('a[id^=T]').forEach(a => {
     const checkbox = elementWithKids('input')
     checkbox.checked = !a.classList.contains('excluded')
@@ -91,7 +89,7 @@ function addCheckboxes(wrapper) {
  * @param {HTMLElement} wrapper wrapper element to load the card into
  * @param {boolean} idiot idiot content if true, otherwise sheep content
  */
-function copyLogoToCard(wrapper, idiot) {
+function copyLogoToCard (wrapper, idiot) {
   wrapper.querySelector('.content').prepend(
     document.querySelector('.logo').cloneNode(true))
   wrapper.querySelector('.logo select').value = `${language}-${territory}`
@@ -106,7 +104,7 @@ function copyLogoToCard(wrapper, idiot) {
  * @param {Array} topics list of topics
  * @param {boolean} idiot idiot content if true, otherwise sheep content
  */
-function prepareCard(wrapper, topics, idiot) {
+function prepareCard (wrapper, topics, idiot) {
   makeCard(wrapper, topics, 5, idiot)
   wrapper.classList.toggle('idiot', idiot)
   wrapper.classList.toggle('sheep', !idiot)
@@ -120,7 +118,7 @@ function prepareCard(wrapper, topics, idiot) {
  * @param {boolean} idiot if idiot card
  * @param {string} locale the new locale to switch to
  */
-async function update(wrapper, idiot, locale) {
+async function update (wrapper, idiot, locale) {
   setLocale(locale)
   const nav = wrapper.querySelector('.navigation')
   const ids = Array.from(nav.querySelectorAll('span')).map(span => span.innerHTML)
@@ -138,16 +136,13 @@ async function update(wrapper, idiot, locale) {
  * @param {HTMLElement} wrapper wrapper element to load the card into
  * @param {boolean} idiot idiot or sheep content
  */
-function prepareCardTitle(wrapper, idiot) {
+function prepareCardTitle (wrapper, idiot) {
   // prepare card title
   const title = wrapper.querySelector('.title')
   while (title.firstChild) title.removeChild(title.firstChild)
   const select = labelSelect(idiot)
   const options = Array.from(select.querySelectorAll('option'))
-  if (!attitude.fair && options.length)
-    randomElement(options).selected = true
-  else
-    select.value = ''
+  if (!attitude.fair && options.length) { randomElement(options).selected = true } else { select.value = '' }
   title.appendChild(select)
   const label = wrapper.querySelector('.detail label')
   if (label) {
@@ -160,23 +155,23 @@ function prepareCardTitle(wrapper, idiot) {
  * handle a click on the details window
  * @param {MouseEvent} event the click event
  */
-function handleClick(event) {
+function handleClick (event) {
   switch (event.target.tagName.toLowerCase()) {
     case 'span':
     case 'input':
     case 'select':
-      break;
+      break
     case 'q':
       showSources(event, false)
-      break;
+      break
     case 'a':
       if (event.target.classList.contains('correct')) break
       showSources(event)
-      break;
+      break
     case 'i':
     case 'p':
     case 'h2':
-      if (event.target.hasAttribute('contenteditable')) break;
+      if (event.target.hasAttribute('contenteditable')) break
       // fall thru
     default:
       showSources(event, false)
@@ -190,7 +185,7 @@ function handleClick(event) {
  * @param {string} topicId id of the topic to open
  * @param {string[]} args argument ids to show
  */
-function openDetails(event, topicId, args) {
+function openDetails (event, topicId, args) {
   const wrapper = event.target.closest('.card-wrapper')
   singleDetails(wrapper, topicId, args, args[0])
   flipOpen(event)
@@ -200,7 +195,7 @@ function openDetails(event, topicId, args) {
  * flip close the detail window, removing the CSS 'single' classes
  * @param {MouseEvent} event - the event that triggered the close action
  */
-function flipCloseDetails(event) {
+function flipCloseDetails (event) {
   flipClose(event)
   closeDetails(event.target.closest('.card-wrapper'))
 }
@@ -210,7 +205,7 @@ function flipCloseDetails(event) {
  * @param {HTMLElement|string} wrapper - the wrapper to close (string or element)
  * @param {boolean} flip - also flip the card
  */
-function closeDetails(wrapper, flip = false) {
+function closeDetails (wrapper, flip = false) {
   if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
   if (flip) close(wrapper)
   const detail = wrapper.querySelector('.detail')
@@ -223,7 +218,7 @@ function closeDetails(wrapper, flip = false) {
  * open other wrapper showing the counterarguments to current topic
  * @param {MouseEvent} event - the triggering event to show counterarguments
  */
-async function showCounterArguments(event) {
+async function showCounterArguments (event) {
   const wrapper = event.target.closest('.card-wrapper')
   const nav = wrapper.querySelector('.navigation')
   const idiot = !wrapper.classList.contains('idiot')
@@ -248,7 +243,7 @@ async function showCounterArguments(event) {
  *
  * @param {HTMLElement} detail content DOM node containing the arguments
  */
-function applyExclusions(detail) {
+function applyExclusions (detail) {
   attitude.exclusions.split(',').forEach(e =>
     detail.querySelector(`a[id="${e}"]`) && detail.querySelector(`a[id="${e}"]`).classList.add('excluded'))
 }
@@ -259,7 +254,7 @@ function applyExclusions(detail) {
  * @param {string} id id to toggle inside the exclusions list in attitude
  * @param {MouseEvent} event event that triggered the toggleExclusions
  */
-function toggleExclusions(id, event) {
+function toggleExclusions (id, event) {
   const exclude = !event.target.parentElement.classList.contains('excluded')
   event.target.parentElement.classList.toggle('excluded', exclude)
   const set = new Set(attitude.exclusions.split(','))
@@ -274,13 +269,12 @@ function toggleExclusions(id, event) {
  * @param {MouseEvent} event - event that triggered the toggleDetails
  * @param {string[]} ids - ids
  */
-function toggleDetails(wrapper, event, ids) {
+function toggleDetails (wrapper, event, ids) {
   const single = event.target.parentElement.classList.contains('single')
   if (single) {
     closeDetails(wrapper)
     wrapper.querySelector(`a[id=${ids[0]}]`).scrollIntoView()
-  } else
-    singleDetails(wrapper, null, ids)
+  } else { singleDetails(wrapper, null, ids) }
 }
 
 /**
@@ -291,7 +285,7 @@ function toggleDetails(wrapper, event, ids) {
  * @param {number} size - side length for the card to generate (e.g. 3, 5, 7...)
  * @param {boolean} idiot - idiot or sheep content
  */
-function makeCard(wrapper, topics, size, idiot) {
+function makeCard (wrapper, topics, size, idiot) {
   const div = wrapper.querySelector('.bingo')
   const center = idiot ? ['🤪', '👻'] : ['🐑', '😷']
   const rows = []
@@ -338,13 +332,13 @@ function makeCard(wrapper, topics, size, idiot) {
  *
  * @return {boolean} True if the card contains at least one full row
  */
-function checkCard(table, size) {
-  const base = Array.from({length: size}, (_, i) => i+1)
+function checkCard (table, size) {
+  const base = Array.from({ length: size }, (_, i) => i + 1)
   const allSet = nodes => nodes.reduce((set, node) => set && node.classList.contains('set'), true)
   const rows = base.map(n => Array.from(table.querySelectorAll(`tr:nth-of-type(${n}) td`)))
   const columns = base.map(n => Array.from(table.querySelectorAll(`td:nth-of-type(${n})`)))
   const diagonals = [
-    base.map(n => table.querySelector(`tr:nth-of-type(${n}) td:nth-of-type(${n})`)), base.map(n => table.querySelector(`tr:nth-of-type(${n}) td:nth-of-type(${size-n+1})`))
+    base.map(n => table.querySelector(`tr:nth-of-type(${n}) td:nth-of-type(${n})`)), base.map(n => table.querySelector(`tr:nth-of-type(${n}) td:nth-of-type(${size - n + 1})`))
   ]
   const complete = rows.concat(columns, diagonals).filter(allSet)
   table.querySelectorAll('td').forEach(node => node.classList.remove('complete'))
@@ -357,7 +351,7 @@ function checkCard(table, size) {
  *
  * @param {boolean} idiot whether to load the idiot or sheep arguments
  */
-function getLocalized(idiot) {
+function getLocalized (idiot) {
   const content = getLocalizedContent(idiot)
   return `<div lang="${language}" class="tr">${content}</div>`
 }
@@ -365,7 +359,7 @@ function getLocalized(idiot) {
 /**
  * Hide second card wrapper to play with only one
  */
-function hideWrapperTwo() {
+function hideWrapperTwo () {
   element('wrapper-2').classList.add('hidden')
   element('bingo').classList.add('one')
 }
@@ -373,7 +367,7 @@ function hideWrapperTwo() {
 /**
  * Show second card wrapper to play with two
  */
-function showWrapperTwo() {
+function showWrapperTwo () {
   element('wrapper-2').classList.remove('hidden')
   element('bingo').classList.remove('one')
 }
@@ -382,7 +376,7 @@ function showWrapperTwo() {
  * handle change of the search input text
  * @param {MouseEvent} event - the input event
  */
-window.search = function(event) {
+window.search = function (event) {
   const wrapper = event.target.closest('.card-wrapper')
   const input = event.target.value.toLowerCase()
   const args = Array.from(wrapper.querySelectorAll('a[id]'))
@@ -394,7 +388,7 @@ window.search = function(event) {
 /**
  * stop the game: flipping cards, hiding the # element and showing the #menu element
  */
-function stopBingo() {
+function stopBingo () {
   closeDetails('#wrapper-1', true)
   closeDetails('#wrapper-2', true)
 
@@ -405,7 +399,7 @@ function stopBingo() {
 /**
  * Show the game panel and stop button, hide the menu
  */
-function showBingo() {
+function showBingo () {
   element('theme').onchange = setTheme
   element('stop').onclick = stopBingo
   element('theme').classList.remove('hidden')
@@ -417,7 +411,7 @@ function showBingo() {
 /**
  * Hide the game panel and stop button
  */
-function hideBingo() {
+function hideBingo () {
   element('stop').classList.add('hidden')
   element('theme').classList.add('hidden')
   element('bingo').classList.add('hidden')
@@ -431,7 +425,7 @@ function hideBingo() {
  * @param {boolean} idiot - idiot or sheep
  * @return {string} the extracted arguments
  */
-function getArgumentsForTopic(topicId, idiot) {
+function getArgumentsForTopic (topicId, idiot) {
   const topic = getTopic(topicId)
   const argsIds = Array.from(topic.querySelectorAll(idiot ? 'a[id^=I]' : 'a[id^=S]')).map(a => a.id)
   return argsIds.map(argId => {
@@ -446,18 +440,18 @@ function getArgumentsForTopic(topicId, idiot) {
  *
  * @param {HTMLElement} detail content DOM node containing the arguments
  */
-function addSources(detail) {
+function addSources (detail) {
   const sources = getSources()
   Array.from(detail.querySelectorAll('a[id]')).forEach(a => {
     const links = sources.querySelectorAll(`a.${a.id}`)
-    links.forEach(link => link.target = '_blank')
+    links.forEach(link => (link.target = '_blank'))
     if (links.length > 0) {
       const q = elementWithKids('q', [
         a.querySelector('h2').cloneNode(true),
         elementWithKids('ul', Array.from(links).map(
-        s => elementWithKids('li', [
-          s.cloneNode(true), ' (', mirrorNode(s), ')'
-        ])))
+          s => elementWithKids('li', [
+            s.cloneNode(true), ' (', mirrorNode(s), ')'
+          ])))
       ])
       q.classList.add('hidden')
       a.nextElementSibling.appendChild(q)
@@ -471,13 +465,12 @@ function addSources(detail) {
  * @param {HTMLElement} wrapper the card wrapper
  * @param {string[]} ids list of ids to include in the permalink
  */
-function setPermalink(wrapper, ids) {
+function setPermalink (wrapper, ids) {
   const permalink = wrapper.querySelector('.permalink')
   if (ids) {
     permalink.classList.remove('hidden')
     permalink.href = `${window.location.origin}/#${ids.join('&')}`
-  } else
-    permalink.classList.add('hidden')
+  } else { permalink.classList.add('hidden') }
 }
 
 /**
@@ -485,7 +478,7 @@ function setPermalink(wrapper, ids) {
  *
  * @param {HTMLElement} wrapper wrapper element to load the card into
  */
-function addNavigationToCard(wrapper) {
+function addNavigationToCard (wrapper) {
   const navigation = elementWithKids('p')
   navigation.classList.add('navigation')
   wrapper.querySelector('.content').prepend(navigation)
@@ -500,7 +493,7 @@ function addNavigationToCard(wrapper) {
  * @param {string} selected the id to select
  * @param {boolean} bingo if to show a permalink and counter navigation
  */
-function setNavigation(wrapper, topicId, ids, selected, bingo) {
+function setNavigation (wrapper, topicId, ids, selected, bingo) {
   const content = wrapper.querySelector('.content')
   const navigation = elementWithKids('p', ids.flatMap(id => {
     const idtag = elementWithKids('span', id)
@@ -508,7 +501,7 @@ function setNavigation(wrapper, topicId, ids, selected, bingo) {
     if (id === selected) idtag.classList.add('selected')
     return ['\u00ad', idtag]
   }))
-  navigation.id = topicId ? topicId : 'nav'
+  navigation.id = topicId || 'nav'
   navigation.classList.add('navigation')
   if (bingo && topicId) {
     const countertag = elementWithKids('span', '►')
@@ -527,7 +520,7 @@ function setNavigation(wrapper, topicId, ids, selected, bingo) {
  * @param {string} selected id to select
  * @param {boolean} permalink if to show a permalink
  */
-function singleDetails(wrapper, topicId, ids, selected = undefined, permalink = true) {
+function singleDetails (wrapper, topicId, ids, selected = undefined, permalink = true) {
   if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
   selected = selected || ids[0]
   setNavigation(wrapper, topicId, ids, selected, permalink)
@@ -549,7 +542,7 @@ function singleDetails(wrapper, topicId, ids, selected = undefined, permalink = 
  * @param {MouseEvent} event the Event triggering the action
  * @param {boolean} show true if the sources should be made visible false otherwise
  */
-function showSources(event, show = true) {
+function showSources (event, show = true) {
   const wrapper = event.target.closest('.card-wrapper')
   wrapper.querySelectorAll('q').forEach(q => q.classList.toggle('hidden', !show))
 }
@@ -560,7 +553,7 @@ function showSources(event, show = true) {
  * @param {boolean} idiot true if idiot content
  * @param {HTMLElement} wrapper wrapper element of the card
  */
-function updateCard(wrapper, topics, idiot = undefined) {
+function updateCard (wrapper, topics, idiot = undefined) {
   wrapper.querySelectorAll('td[id]').forEach(td => {
     const topic = topics.find(t => t.id === td.id)
     if (topic) {
@@ -570,14 +563,13 @@ function updateCard(wrapper, topics, idiot = undefined) {
   })
 }
 
-
 /**
  * show idiot or sheep cards corresponding to the id(s) given in the hash
  *
  * @param {string[]} ids Array of ids of argument(s) to show
  * @return {boolean} true if success false otherwise
  */
-export async function displayHashAsCard(ids) {
+export async function displayHashAsCard (ids) {
   const idiot = ids.filter(v => v.startsWith('I'))
   const sheep = ids.filter(v => v.startsWith('S'))
   const wrapper1 = element('wrapper-1')
@@ -585,18 +577,17 @@ export async function displayHashAsCard(ids) {
   await loadContent()
   await loadSources()
   if (!idiot.length && !sheep.length) return false // nothing to evaluate
-    const one = idiot.length > 0
-    const two = (one ? sheep : idiot).length > 0 ? !one : undefined
-    await loadCard(wrapper1, one)
-    singleDetails(wrapper1, null, one ? idiot : sheep)
-    open(wrapper1)
-    if (two !== undefined) {
-      await loadCard(wrapper2, two)
-      singleDetails(wrapper2, null, two ? idiot : sheep)
-      open(wrapper2)
-      showWrapperTwo()
-    } else
-      hideWrapperTwo()
+  const one = idiot.length > 0
+  const two = (one ? sheep : idiot).length > 0 ? !one : undefined
+  await loadCard(wrapper1, one)
+  singleDetails(wrapper1, null, one ? idiot : sheep)
+  open(wrapper1)
+  if (two !== undefined) {
+    await loadCard(wrapper2, two)
+    singleDetails(wrapper2, null, two ? idiot : sheep)
+    open(wrapper2)
+    showWrapperTwo()
+  } else { hideWrapperTwo() }
   showBingo()
   return true
 }
@@ -606,11 +597,11 @@ export async function displayHashAsCard(ids) {
  *
  * @param {Event} event wrapper
  */
-export function handleCorrection(event) {
+export function handleCorrection (event) {
   const wrapper = event.target.closest('.card-wrapper')
   const lang = wrapper.querySelector('.location').value.split('-')[0] // ${lang}-${terr}
   const idiot = !wrapper.classList.contains('idiot')
-  const type = idiot? 'idiot' : 'sheep'
+  const type = idiot ? 'idiot' : 'sheep'
   const edited = wrapper.querySelector('.tr').innerHTML
   /*
   const base = patchFiles[lang][type].base
@@ -626,14 +617,11 @@ export function handleCorrection(event) {
  *
  * @param {HTMLElement} wrapper wrapper
  */
-window.toggleCorrectMode = function(wrapper) {
+window.toggleCorrectMode = function (wrapper) {
   if (typeof wrapper === 'string') wrapper = document.querySelector(wrapper)
   const currentMode = wrapper.querySelector('.correct').classList.contains('active')
   wrapper.querySelectorAll('a[id] p, a[id] h2').forEach(e => {
-    if (!currentMode)
-      e.setAttribute('contenteditable', 'plaintext-only')
-    else
-      e.removeAttribute('contenteditable')
+    if (!currentMode) { e.setAttribute('contenteditable', 'plaintext-only') } else { e.removeAttribute('contenteditable') }
     e.oninput = debounce(handleCorrection, 1000)
   })
   wrapper.querySelector('.correct').classList.toggle('active', !currentMode)

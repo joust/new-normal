@@ -1,4 +1,4 @@
-export function flagMapped(s) {
+export function flagMapped (s) {
   const flagMap = {
     de: '🇩🇪',
     at: '🇦🇹',

@@ -1,4 +1,4 @@
-/*const dmp = new diff_match_patch()
+/* const dmp = new diff_match_patch()
 
 function getDiff(base, edited) {
   return dmp.diff_main(base, edited)
@@ -12,4 +12,3 @@ function htmlFormatted(diff) {
   return dmp.diff_prettyHtml(diff)
 }
 */
-

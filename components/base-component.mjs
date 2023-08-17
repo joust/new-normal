@@ -7,7 +7,8 @@ export class BaseComponent extends HTMLElement {
     shadowRoot.appendChild(template.content)
   }
 
-  get css () { return `
+  get css () {
+    return `
     :host {
       display: inline-block;
       container-type: size;

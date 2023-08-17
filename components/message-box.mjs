@@ -185,13 +185,13 @@ window.customElements.define('message-box', class MessageBoxElement extends Base
         this.setInform(content, title)
         break
       case 'alert':
-        void this.setAlert(content, title)
+        this.setAlert(content, title)
         break
       case 'confirm':
-        void this.setConfirm(content, title)
+        this.setConfirm(content, title)
         break
       case 'prompt':
-        void this.setPrompt(content, title)
+        this.setPrompt(content, title)
         break
     }
   }
@@ -240,7 +240,7 @@ window.customElements.define('message-box', class MessageBoxElement extends Base
         tr: 'İptal'
       }
     }
-    return text[v] && text[v][lang] || v
+    return (text[v] && text[v][lang]) || v
   }
 
   /**

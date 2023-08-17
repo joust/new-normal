@@ -1,4 +1,4 @@
-import {BaseCard} from './base-card.mjs'
+import { BaseCard } from './base-card.mjs'
 
 window.customElements.define('banish-card', class BanishCard extends BaseCard {
   static observedAttributes = ['idiot', 'mirrored']
@@ -29,19 +29,19 @@ window.customElements.define('banish-card', class BanishCard extends BaseCard {
     'pt-br': 'Banir do jogo todos os argumentos sobre o tema'
   }
 
-  get idiot() {
+  get idiot () {
     return this.hasAttribute('idiot')
   }
 
-  get phrase() {
+  get phrase () {
     return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
   }
 
-  get mirrored() {
+  get mirrored () {
     return this.hasAttribute('mirrored')
   }
 
-  get css() {
+  get css () {
     return `
     ${super.css}
     #banish-card {
@@ -119,23 +119,23 @@ window.customElements.define('banish-card', class BanishCard extends BaseCard {
   `
   }
 
-  attributeChangedCallback() {
+  attributeChangedCallback () {
     this.update()
   }
 
-  connectedCallback() {
+  connectedCallback () {
     super.connectedCallback()
     const langObserver = new MutationObserver(() => this.update())
     langObserver.observe(document, { attributes: true, attributeFilter: ['lang'] })
     this.update()
   }
 
-  update() {
+  update () {
     if (this.shadowRoot && this.isConnected) {
       const root = this.element('banish-card')
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
-      Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = this.phrase)
+      Array.from(root.querySelectorAll('.phrase')).forEach(node => (node.innerHTML = this.phrase))
       const dkey = Object.keys(BanishCard.description).find(p => this.lang.startsWith(p)) || 'de'
       this.element('description').innerHTML = BanishCard.description[dkey]
     }

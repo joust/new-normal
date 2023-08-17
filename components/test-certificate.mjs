@@ -1,9 +1,9 @@
-import {BaseComponent} from './base-component.mjs'
+import { BaseComponent } from './base-component.mjs'
 
 window.customElements.define('test-certificate', class TestCertificate extends BaseComponent {
   static virus = 'styles/images/virus.png'
 
-  get css() {
+  get css () {
     return `
     ${super.css}
      :host {
@@ -100,7 +100,7 @@ window.customElements.define('test-certificate', class TestCertificate extends B
   `
   }
 
-  get html() {
+  get html () {
     return `
     <div id="test-certificate">
       <div id="inner">
@@ -113,16 +113,16 @@ window.customElements.define('test-certificate', class TestCertificate extends B
   `
   }
 
-  connectedCallback() {
+  connectedCallback () {
     super.connectedCallback()
     this.element('test-certificate').style.setProperty('--background', this.randomViruses())
   }
 
-  random(min, max) {
-    return min + Math.floor(Math.random()*(max-min+1))
+  random (min, max) {
+    return min + Math.floor(Math.random() * (max - min + 1))
   }
 
-  randomViruses() {
-    return Array(100).fill('').map(() => `url(${TestCertificate.virus}) ${this.random(-20,120)}% ${this.random(-20,120)}% / ${this.random(10,20)}% no-repeat`).join(',')
+  randomViruses () {
+    return Array(100).fill('').map(() => `url(${TestCertificate.virus}) ${this.random(-20, 120)}% ${this.random(-20, 120)}% / ${this.random(10, 20)}% no-repeat`).join(',')
   }
 })

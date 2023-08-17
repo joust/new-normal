@@ -1,7 +1,7 @@
-import {BaseComponent} from './base-component.mjs'
+import { BaseComponent } from './base-component.mjs'
 
 window.customElements.define('centered-cards', class CenteredCards extends BaseComponent {
-  get css() {
+  get css () {
     return `
     ${super.css}
     #centered {
@@ -20,7 +20,7 @@ window.customElements.define('centered-cards', class CenteredCards extends BaseC
   `
   }
 
-  get html() {
-    return `<div id="centered"><slot></slot></div>`
+  get html () {
+    return '<div id="centered"><slot></slot></div>'
   }
 })

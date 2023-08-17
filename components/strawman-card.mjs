@@ -1,29 +1,29 @@
-import {BaseCard} from './base-card.mjs'
+import { BaseCard } from './base-card.mjs'
 
 window.customElements.define('strawman-card', class StrawmanCard extends BaseCard {
   static observedAttributes = ['idiot', 'mirrored']
 
-  get idiot() {
+  get idiot () {
     return this.hasAttribute('idiot')
   }
 
-  get fallacy() {
+  get fallacy () {
     return this.querySelector('i') ? this.querySelector('i').innerHTML : ''
   }
 
-  get phrase() {
+  get phrase () {
     return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
   }
 
-  get description() {
+  get description () {
     return this.querySelector('p') ? this.querySelector('p').innerHTML : ''
   }
 
-  get mirrored() {
+  get mirrored () {
     return this.hasAttribute('mirrored')
   }
 
-  get css() {
+  get css () {
     return `
     ${super.css}
     #strawman-card {
@@ -100,7 +100,7 @@ window.customElements.define('strawman-card', class StrawmanCard extends BaseCar
   `
   }
 
-  get html() {
+  get html () {
     return `
     <div id="strawman-card" class="card">
       <div id="icon"></div>
@@ -112,23 +112,23 @@ window.customElements.define('strawman-card', class StrawmanCard extends BaseCar
   `
   }
 
-  attributeChangedCallback() {
+  attributeChangedCallback () {
     this.update()
   }
 
-  connectedCallback() {
+  connectedCallback () {
     super.connectedCallback()
     const langObserver = new MutationObserver(() => this.update())
     langObserver.observe(document, { attributes: true, attributeFilter: ['lang'] })
     this.update()
   }
 
-  update() {
+  update () {
     if (this.shadowRoot && this.isConnected) {
       const root = this.element('strawman-card')
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
-      Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = this.phrase)
+      Array.from(root.querySelectorAll('.phrase')).forEach(node => (node.innerHTML = this.phrase))
       this.element('description').innerHTML = this.description
     }
   }

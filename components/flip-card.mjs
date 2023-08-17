@@ -1,9 +1,9 @@
-import {BaseComponent} from './base-component.mjs'
+import { BaseComponent } from './base-component.mjs'
 
 window.customElements.define('flip-card', class FlipCard extends BaseComponent {
   static observedAttributes = ['mirrored']
 
-  get css() {
+  get css () {
     return `  
       ${super.css}
      :host {
@@ -100,7 +100,7 @@ window.customElements.define('flip-card', class FlipCard extends BaseComponent {
   `
   }
 
-  get html() {
+  get html () {
     return `
     <div id="wrapper">
       <div id="flip">
@@ -114,17 +114,17 @@ window.customElements.define('flip-card', class FlipCard extends BaseComponent {
   `
   }
 
-  attributeChangedCallback() {
+  attributeChangedCallback () {
     this.updateMirrored()
   }
 
-  connectedCallback() {
+  connectedCallback () {
     super.connectedCallback()
     this.element('front').ondblclick = event => { this.openRandom(event); event.stopPropagation() }
     this.element('back').onclick = event => { this.close(); event.stopPropagation() }
   }
 
-  updateMirrored() {
+  updateMirrored () {
     const slots = Array.from(this.querySelectorAll('[slot]'))
     slots.forEach(slot => slot.toggleAttribute('mirrored', this.mirrored))
     const open = this.element('open')
@@ -136,11 +136,11 @@ window.customElements.define('flip-card', class FlipCard extends BaseComponent {
    *
    * @param {MouseEvent} event event that triggered the open action
    */
-  clickOpen(event) {
+  clickOpen (event) {
     this.open(event.clientX, event.clientY)
   }
 
-  openRandom() {
+  openRandom () {
     const randomX = Math.random() * this.clientWidth
     const randomY = Math.random() * this.clientHeight
     this.open(randomX, randomY)
@@ -152,21 +152,21 @@ window.customElements.define('flip-card', class FlipCard extends BaseComponent {
    * @param {number} x mouse position x
    * @param {number} y mouse position y
    */
-  open(x = 0, y = 0) {
+  open (x = 0, y = 0) {
     const flip = this.element('flip')
-    const w = flip.offsetWidth, h = flip.offsetHeight
+    const w = flip.offsetWidth; const h = flip.offsetHeight
 
     const directions = [
-      { id: 'top', x: w/2, y: 0 },
-      { id: 'right', x: w, y: h/2 },
-      { id: 'bottom', x: w/2, y: h },
-      { id: 'left', x: 0, y: h/2 }
+      { id: 'top', x: w / 2, y: 0 },
+      { id: 'right', x: w, y: h / 2 },
+      { id: 'bottom', x: w / 2, y: h },
+      { id: 'left', x: 0, y: h / 2 }
     ]
 
     if (x || y) {
-      const mx = x - flip.offsetLeft, my = y - flip.offsetTop
+      const mx = x - flip.offsetLeft; const my = y - flip.offsetTop
       directions.sort((a, b) => {
-          return this.distance(mx, my, a.x, a.y) - this.distance(mx, my, b.x, b.y)
+        return this.distance(mx, my, a.x, a.y) - this.distance(mx, my, b.x, b.y)
       })
       flip.setAttribute('data-direction', directions.shift().id)
     } else {
@@ -181,7 +181,7 @@ window.customElements.define('flip-card', class FlipCard extends BaseComponent {
   /**
    * flip close
    */
-  close() {
+  close () {
     const flip = this.element('flip')
     flip.classList.remove('is-open')
   }
@@ -195,8 +195,8 @@ window.customElements.define('flip-card', class FlipCard extends BaseComponent {
    * @param {number} y2 y2 coordinate
    * @return {number} the calculated distance
    */
-  distance(x1, y1, x2, y2) {
-    const dx = x1-x2, dy = y1-y2
-    return Math.sqrt(dx*dx + dy*dy)
+  distance (x1, y1, x2, y2) {
+    const dx = x1 - x2; const dy = y1 - y2
+    return Math.sqrt(dx * dx + dy * dy)
   }
 })

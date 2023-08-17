@@ -1,34 +1,33 @@
-import {BaseCard} from './base-card.mjs'
+import { BaseCard } from './base-card.mjs'
 
 window.customElements.define('cancel-card', class CancelCard extends BaseCard {
-
   static observedAttributes = ['idiot', 'mirrored']
 
-  get idiot() {
+  get idiot () {
     return this.hasAttribute('idiot')
   }
 
-  get fallacy() {
+  get fallacy () {
     return this.querySelector('i') ? this.querySelector('i').innerHTML : ''
   }
 
-  get cancel() {
+  get cancel () {
     return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
   }
 
-  get description() {
+  get description () {
     return this.querySelector('p') ? this.querySelector('p').innerHTML : ''
   }
 
-  get mirrored() {
+  get mirrored () {
     return this.hasAttribute('mirrored')
   }
 
-  get card() {
+  get card () {
     return this.querySelector('a') ? this.querySelector('a').id : ''
   }
 
-  get css() {
+  get css () {
     return `
     ${super.css}
     #cancel-card {
@@ -93,7 +92,7 @@ window.customElements.define('cancel-card', class CancelCard extends BaseCard {
   `
   }
 
-  get html() {
+  get html () {
     return `
     <div id="cancel-card" class="card">
       <div id="icon"></div>
@@ -107,16 +106,16 @@ window.customElements.define('cancel-card', class CancelCard extends BaseCard {
   `
   }
 
-  attributeChangedCallback() {
+  attributeChangedCallback () {
     this.update()
   }
 
-  connectedCallback() {
+  connectedCallback () {
     super.connectedCallback()
     this.update()
   }
 
-  update() {
+  update () {
     if (this.shadowRoot && this.isConnected) {
       const root = this.element('cancel-card')
       root.classList.toggle('mirrored', this.mirrored)

@@ -1,30 +1,30 @@
-import {flagMapped} from './shared.mjs'
-import {BaseCard} from './base-card.mjs'
+import { flagMapped } from './shared.mjs'
+import { BaseCard } from './base-card.mjs'
 
 window.customElements.define('discuss-card', class DiscussCard extends BaseCard {
   static observedAttributes = ['idiot', 'topicId', 'mirrored']
 
-  get topicId() {
+  get topicId () {
     return this.getAttribute('topicId')
   }
 
-  get phrase() {
+  get phrase () {
     return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
   }
 
-  get description() {
+  get description () {
     return this.querySelector('p') ? this.querySelector('p').innerHTML : ''
   }
 
-  get idiot() {
+  get idiot () {
     return this.hasAttribute('idiot')
   }
 
-  get mirrored() {
+  get mirrored () {
     return this.hasAttribute('mirrored')
   }
 
-  get css() {
+  get css () {
     return `
     ${super.css}
     #discuss-card {
@@ -128,24 +128,24 @@ window.customElements.define('discuss-card', class DiscussCard extends BaseCard 
   `
   }
 
-  attributeChangedCallback() {
+  attributeChangedCallback () {
     this.update()
   }
 
-  connectedCallback() {
+  connectedCallback () {
     super.connectedCallback()
     const langObserver = new MutationObserver(() => this.update())
     langObserver.observe(document, { attributes: true, attributeFilter: ['lang'] })
     this.update()
   }
 
-  update() {
+  update () {
     if (this.shadowRoot && this.isConnected) {
       const root = this.element('discuss-card')
       this.element('topic-icon').innerHTML = flagMapped(this.topicId ? this.topicId.substring(1) : '')
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
-      Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = this.phrase)
+      Array.from(root.querySelectorAll('.phrase')).forEach(node => (node.innerHTML = this.phrase))
       this.element('description').innerHTML = this.description
     }
   }

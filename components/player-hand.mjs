@@ -1,27 +1,27 @@
-import {BaseComponent} from './base-component.mjs'
+import { BaseComponent } from './base-component.mjs'
 
 window.customElements.define('player-hand', class PlayerHand extends BaseComponent {
   static observedAttributes = ['cards', 'nr', 'name', 'droppable']
 
-  element(id) { return this.shadowRoot.getElementById(id) }
+  element (id) { return this.shadowRoot.getElementById(id) }
 
-  playable(index) {
+  playable (index) {
     return this.cards[index].playable
   }
 
-  get nr() {
+  get nr () {
     return this.getAttribute('nr')
   }
 
-  get name() {
+  get name () {
     return this.getAttribute('name')
   }
 
-  get droppable() {
+  get droppable () {
     return this.hasAttribute('droppable')
   }
 
-  get css() {
+  get css () {
     return `
      :host {
       display: inline-block;
@@ -68,21 +68,21 @@ window.customElements.define('player-hand', class PlayerHand extends BaseCompone
   `
   }
 
-  get html() {
+  get html () {
     return `
     <div id="player-hand"></div>
     <div id="player-name"></div>
   `
   }
 
-  constructor() {
+  constructor () {
     super()
     this.cards = []
     this.ownChildren = []
     this.revChildren = []
   }
 
-  connectedCallback() {
+  connectedCallback () {
     super.connectedCallback()
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
@@ -92,15 +92,15 @@ window.customElements.define('player-hand', class PlayerHand extends BaseCompone
     this.updateDroppable()
   }
 
-  attributeChangedCallback(name) {
+  attributeChangedCallback (name) {
     if (this.shadowRoot && this.isConnected) {
-      if (name==='cards') this.updateCards()
-      if (name==='name') this.updateName()
+      if (name === 'cards') this.updateCards()
+      if (name === 'name') this.updateName()
       this.updateLayout()
     }
   }
 
-  updateCards() {
+  updateCards () {
     // JSON array of id+alternative+playable elements in the format { id: '...', alt: ['...', '...'], playable: ...}
     const json = this.getAttribute('cards')
     this.cards = !json || !json.length ? [] : JSON.parse(json)
@@ -109,14 +109,14 @@ window.customElements.define('player-hand', class PlayerHand extends BaseCompone
     const alts = this.cards.map(element => element.alt || [element.card])
     const hand = this.element('player-hand')
     let elements = Array.from(hand.querySelectorAll('game-card'))
-    for (let index=0; index < Math.max(cards.length, elements.length); index++) {
+    for (let index = 0; index < Math.max(cards.length, elements.length); index++) {
       if (index < Math.min(cards.length, elements.length)) {
         elements[index].setAttribute('alternatives', alts[index].join(','))
         elements[index].setAttribute('card', cards[index])
       } else if (index < cards.length) {
         this.addCard(hand, cards[index], alts[index].join(','))
         elements = Array.from(hand.querySelectorAll('game-card'))
-        this.addDragListeners(elements[elements.length-1])
+        this.addDragListeners(elements[elements.length - 1])
       } else {
         elements[index].parentElement.removeChild(elements[index])
       }
@@ -126,42 +126,42 @@ window.customElements.define('player-hand', class PlayerHand extends BaseCompone
     this.revChildren = [...this.ownChildren].reverse()
   }
 
-  addCard(hand, card, alternatives) {
+  addCard (hand, card, alternatives) {
     hand.insertAdjacentHTML('beforeend', `<game-card card="${card}" alternatives="${alternatives}"></game-card>`)
   }
 
-  updateName() {
+  updateName () {
     this.element('player-name').innerHTML = this.name ? this.name : '?'
   }
 
-  columns(len, top) {
-    if (top<0) top = 0
-    const cw = this.clientWidth, ch = this.clientHeight, ratio = 0.71
-    const cardw = ch * ratio, rest = cw - cardw
-    const cardw8 = (cardw/8)*100/cw
-    const restw8 = Math.min(cardw/8, rest/(len-1))*100/cw
+  columns (len, top) {
+    if (top < 0) top = 0
+    const cw = this.clientWidth; const ch = this.clientHeight; const ratio = 0.71
+    const cardw = ch * ratio; const rest = cw - cardw
+    const cardw8 = (cardw / 8) * 100 / cw
+    const restw8 = Math.min(cardw / 8, rest / (len - 1)) * 100 / cw
     const card = Array(8).fill(cardw8)
     const before = Array(top).fill(restw8)
-    const after = Array(Math.max(0, len-top-1)).fill(restw8)
+    const after = Array(Math.max(0, len - top - 1)).fill(restw8)
     return [...before, ...card, ...after].map(c => `${c}%`).join(' ')
   }
 
-  recalc() {
+  recalc () {
     const topIndex = this.ownChildren.findIndex(child => child.hasAttribute('top'))
     const columns = this.columns(this.ownChildren.length, topIndex)
     this.element('player-hand').style.gridTemplateColumns = `1fr ${columns} 1fr`
   }
 
-  resize() {
+  resize () {
     this.recalc()
   }
 
-  updateLayout() {
-    let z = this.revChildren.length, after = false
+  updateLayout () {
+    let z = this.revChildren.length; let after = false
     this.revChildren.forEach((child, index) => {
       child.style.gridRow = '1'
-      child.style.gridColumn = `${index+2}/span 8`
-      child.style.zIndex = ''+z
+      child.style.gridColumn = `${index + 2}/span 8`
+      child.style.zIndex = '' + z
       child.toggleAttribute('mirrored', after)
       const idx = this.ownChildren.indexOf(child)
       this.toggleDraggable(child, this.playable(idx))
@@ -171,17 +171,16 @@ window.customElements.define('player-hand', class PlayerHand extends BaseCompone
     this.recalc()
   }
 
-  start(event) {
-    if (event.target.hasPointerCapture(event.pointerId))
-      event.target.releasePointerCapture(event.pointerId)
+  start (event) {
+    if (event.target.hasPointerCapture(event.pointerId)) { event.target.releasePointerCapture(event.pointerId) }
     this.over(event)
   }
 
-  over(event) {
-    event.target && event.target.id!=='player-hand' && this.show(event.target)
+  over (event) {
+    event.target && event.target.id !== 'player-hand' && this.show(event.target)
   }
 
-  updateDroppable() {
+  updateDroppable () {
     const hand = this.element('player-hand')
     if (this.droppable && hand) {
       hand.addEventListener('dragenter', event => this.dragenter(event))
@@ -191,58 +190,56 @@ window.customElements.define('player-hand', class PlayerHand extends BaseCompone
     }
   }
 
-  dragenter(event) {
+  dragenter (event) {
     this.element('player-hand').classList.add('dropping')
     event.preventDefault()
   }
 
-  dragleave(event) {
+  dragleave (event) {
     this.element('player-hand').classList.remove('dropping')
     event.preventDefault()
   }
 
-  dragover(event) {
+  dragover (event) {
     event.preventDefault()
   }
 
-  drop(event) {
+  drop (event) {
     const detail = JSON.parse(event.dataTransfer.getData('text/plain'))
-    this.dispatchEvent(new CustomEvent('dropped', {detail}))
+    this.dispatchEvent(new CustomEvent('dropped', { detail }))
     this.element('player-hand').classList.remove('dropping')
     event.stopPropagation()
     event.preventDefault()
   }
 
-  addDragListeners(child) {
+  addDragListeners (child) {
     child.addEventListener('dragstart', event => this.dragstart(event))
     child.addEventListener('dragend', event => this.dragend(event))
   }
 
-  toggleDraggable(child, draggable) {
+  toggleDraggable (child, draggable) {
     child.classList.toggle('playable', draggable)
     child.setAttribute('draggable', draggable)
   }
 
-  dragstart(event) {
+  dragstart (event) {
     const index = this.ownChildren.indexOf(event.target)
     const card = event.target.getAttribute('alt') || event.target.getAttribute('card')
     if (card && this.playable(index)) {
       event.target.classList.add('dragged')
-      event.dataTransfer.setData('text/plain', JSON.stringify({card, index}))
+      event.dataTransfer.setData('text/plain', JSON.stringify({ card, index }))
       event.dataTransfer.setData('url', `https://new-normal.app#${card}`)
-    } else
-      event.preventDefault()
+    } else { event.preventDefault() }
   }
 
-  dragend(event) {
+  dragend (event) {
     event.target.classList.remove('dragged')
     event.preventDefault()
   }
 
-  show(element) {
+  show (element) {
     if (!element.hasAttribute('top') && element.parentElement) {
-      for (const node of element.parentElement.children)
-        node.toggleAttribute('top', node === element)
+      for (const node of element.parentElement.children) { node.toggleAttribute('top', node === element) }
     }
     this.updateLayout()
   }

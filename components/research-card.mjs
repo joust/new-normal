@@ -1,25 +1,25 @@
-import {BaseCard} from './base-card.mjs'
+import { BaseCard } from './base-card.mjs'
 
 window.customElements.define('research-card', class ResearchCard extends BaseCard {
   static observedAttributes = ['idiot', 'mirrored']
 
-  get idiot() {
+  get idiot () {
     return this.hasAttribute('idiot')
   }
 
-  get phrase() {
+  get phrase () {
     return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
   }
 
-  get description() {
+  get description () {
     return this.querySelector('p') ? this.querySelector('p').innerHTML : ''
   }
 
-  get mirrored() {
+  get mirrored () {
     return this.hasAttribute('mirrored')
   }
 
-  attributeChangedCallback() {
+  attributeChangedCallback () {
     this.update()
   }
 
@@ -83,7 +83,7 @@ window.customElements.define('research-card', class ResearchCard extends BaseCar
   `
   }
 
-  get html() {
+  get html () {
     return `
     <div id="research-card" class="card">
       <div id="icon"></div>
@@ -96,18 +96,18 @@ window.customElements.define('research-card', class ResearchCard extends BaseCar
   `
   }
 
-  connectedCallback() {
+  connectedCallback () {
     super.connectedCallback()
     this.element('side').innerHTML = this.element('phrase').innerHTML // copy phrases
     this.update()
   }
 
-  update() {
+  update () {
     if (this.shadowRoot && this.isConnected) {
       const root = this.element('research-card')
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
-      Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = this.phrase)
+      Array.from(root.querySelectorAll('.phrase')).forEach(node => (node.innerHTML = this.phrase))
       this.element('description').innerHTML = this.description
     }
   }

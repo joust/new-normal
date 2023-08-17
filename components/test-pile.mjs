@@ -1,14 +1,14 @@
-import {BaseComponent} from './base-component.mjs'
+import { BaseComponent } from './base-component.mjs'
 
 window.customElements.define('test-pile', class TestPile extends BaseComponent {
   static observedAttributes = ['cards']
 
-  get cards() {
+  get cards () {
     const cards = this.getAttribute('cards')
     return cards ? cards.split(',') : []
   }
 
-  get css() {
+  get css () {
     return `
     ${super.css}
     :host {
@@ -39,31 +39,31 @@ window.customElements.define('test-pile', class TestPile extends BaseComponent {
   `
   }
 
-  get html() {
+  get html () {
     return `
     <div id="pile"></div>
   `
   }
 
-  constructor() {
+  constructor () {
     super()
     this.stats = { approves: [], rejects: [] }
   }
 
-  attributeChangedCallback(name) {
+  attributeChangedCallback (name) {
     this.updateCards()
   }
 
-  elements(parent, tag) {
+  elements (parent, tag) {
     return Array.from(parent.getElementsByTagName(tag))
   }
 
-  connectedCallback() {
+  connectedCallback () {
     super.connectedCallback()
     this.updateCards()
   }
 
-  updateCards() {
+  updateCards () {
     if (this.shadowRoot && this.isConnected) {
       const pile = this.element('pile')
       this.elements(pile, 'test-card').forEach(element => element.parentElement.removeChild(element))
@@ -72,16 +72,15 @@ window.customElements.define('test-pile', class TestPile extends BaseComponent {
     }
   }
 
-  getElement(card) {
+  getElement (card) {
     return `<test-card card="${card}"></test-card>`
   }
 
-  choice(event) {
+  choice (event) {
     const pile = this.element('pile')
     const card = event.target
     if (event.detail.approve) this.stats.approves.push(card.card); else this.stats.rejects.push(card.card)
     setTimeout(() => pile.removeChild(card), 300)
-    if (card.card === this.cards[0])
-      this.dispatchEvent(new CustomEvent('finish', { detail: this.stats }))
+    if (card.card === this.cards[0]) { this.dispatchEvent(new CustomEvent('finish', { detail: this.stats })) }
   }
 })

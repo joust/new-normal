@@ -3,7 +3,7 @@
  *
  * @param {HTMLAnchorElement} a the anchor node to mirror
  */
-export function mirrorNode(a) {
+export function mirrorNode (a) {
   const mirror = a.cloneNode(true)
   mirror.href = `https://archive.is/${a.href}`
   mirror.firstChild.textContent = 'Mirror'
@@ -15,7 +15,7 @@ export function mirrorNode(a) {
  *
  * @return {string[]} an 2-entry-array with the browser language and territory
  */
-export function browserLocale() {
+export function browserLocale () {
   let [language, territory] = navigator.language.split('-')
   territory = territory ? territory.toLowerCase() : language
   return [language, territory]
@@ -30,7 +30,7 @@ export function browserLocale() {
  * @param {Object} attrs - optional attributes to set
  * @return {HTMLElement} The created element
  */
-export function elementWithKids(tag, kids = undefined, attrs = undefined) {
+export function elementWithKids (tag, kids = undefined, attrs = undefined) {
   const node = document.createElement(tag)
   if (attrs) for (const attr in attrs) node.setAttribute(attr, attrs[attr])
   if (kids) {
@@ -47,17 +47,17 @@ export function elementWithKids(tag, kids = undefined, attrs = undefined) {
  * @param {string} html HTML string representing a single element
  * @return {HTMLElement}
  */
-export function htmlToElement(html) {
+export function htmlToElement (html) {
   const template = document.createElement('template')
   template.innerHTML = html
   return template.content.firstElementChild
 }
 
-export function element(id) {
+export function element (id) {
   return document.getElementById(id)
 }
 
-export function elements(tag) {
+export function elements (tag) {
   return Array.from(document.getElementsByTagName(tag))
 }
 
@@ -68,7 +68,7 @@ export function elements(tag) {
  * @param {Array} wordset - Array to choose a random element from
  * @return {any} The random element selected
  */
-export function uniqueWord(wordset) {
+export function uniqueWord (wordset) {
   const index = Math.floor((Math.random() * wordset.length))
   return wordset.splice(index, 1)[0]
 }
@@ -80,8 +80,8 @@ export function uniqueWord(wordset) {
  * @param {number} start - Element to start with (default 0)
  * @return {any} The random element selected
  */
-export function randomElement(array, start = 0) {
-  return array[start + Math.floor((Math.random() * (array.length-start)))]
+export function randomElement (array, start = 0) {
+  return array[start + Math.floor((Math.random() * (array.length - start)))]
 }
 
 /**
@@ -89,7 +89,7 @@ export function randomElement(array, start = 0) {
  * @param {Array} array An array containing the items.
  * @return {Array} the shuffled array
  */
-export function shuffle(array) {
+export function shuffle (array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]]
@@ -104,7 +104,7 @@ export function shuffle(array) {
  * @param {Array} list the list to select from.
  * @return {any} The selected elements
  */
-export function elementsFrom(n, list) {
+export function elementsFrom (n, list) {
   const selection = []
   if (!list.length) return selection
   while (n >= list.length) {
@@ -118,12 +118,11 @@ export function elementsFrom(n, list) {
 
 /** Apply safari fix to force flex relayout on given div
  */
-export function safariFix(div) {
+export function safariFix (div) {
   div.parentElement.style.display = 'none'
   div.parentElement.offsetHeight
   div.parentElement.style.display = ''
 }
-
 
 /**
  * fetch a file from server, suppressing all errors, showing a spinner
@@ -131,9 +130,9 @@ export function safariFix(div) {
  * @param {string} url - the url to fetch
  * @return {Promise<string>} the files content or '' on error
  */
-export function fetchSilent(url) {
+export function fetchSilent (url) {
   element('loader').classList.remove('hidden')
-  return fetchSilentNoSpinner(url).finally(() =>  element('loader').classList.add('hidden'))
+  return fetchSilentNoSpinner(url).finally(() => element('loader').classList.add('hidden'))
 }
 
 /**
@@ -142,11 +141,11 @@ export function fetchSilent(url) {
  * @param {string} url - the url to fetch
  * @return {Promise<string>} the files content or '' on error
  */
-export function fetchSilentNoSpinner(url) {
+export function fetchSilentNoSpinner (url) {
   return fetch(url).then(async response => response.status >= 400 && response.status < 600 ? '' : await response.text()).catch(() => '')
 }
 
-export function debounce(callback, wait) {
+export function debounce (callback, wait) {
   let timeoutId = null
   return (...args) => {
     window.clearTimeout(timeoutId)

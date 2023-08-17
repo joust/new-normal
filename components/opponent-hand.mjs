@@ -1,25 +1,25 @@
-import {BaseComponent} from './base-component.mjs'
+import { BaseComponent } from './base-component.mjs'
 
 window.customElements.define('opponent-hand', class OpponentHand extends BaseComponent {
   static observedAttributes = ['nr', 'name', 'cards']
 
-  get nr() {
+  get nr () {
     return this.getAttribute('nr')
   }
 
-  get name() {
+  get name () {
     return this.getAttribute('name')
   }
 
-  get cards() {
+  get cards () {
     return parseInt(this.getAttribute('cards'))
   }
 
-  get idiot() {
-    return !!(this.nr%2)
+  get idiot () {
+    return !!(this.nr % 2)
   }
 
-  get css() {
+  get css () {
     return `
     ${super.css}
     #opponent-hand {
@@ -40,21 +40,21 @@ window.customElements.define('opponent-hand', class OpponentHand extends BaseCom
   `
   }
 
-  get html() {
+  get html () {
     return `
     <div id="opponent-hand"></div>
     <div id="opponent-name"></div>
   `
   }
 
-  connectedCallback() {
+  connectedCallback () {
     super.connectedCallback()
     const resizeObserver = new ResizeObserver(() => this.resize())
     resizeObserver.observe(this)
     this.update()
   }
 
-  attributeChangedCallback() {
+  attributeChangedCallback () {
     if (this.shadowRoot && this.isConnected) {
       this.updateCards()
       this.updateName()
@@ -63,15 +63,15 @@ window.customElements.define('opponent-hand', class OpponentHand extends BaseCom
     this.style.cursor = this.name ? 'not-allowed' : 'pointer'
   }
 
-  updateCards() {
+  updateCards () {
     const hand = this.element('opponent-hand')
     const type = this.idiot ? 'idiot' : ''
     let elements = Array.from(hand.querySelectorAll('card-back'))
-    for (let index=0; index < Math.max(this.cards, elements.length); index++) {
+    for (let index = 0; index < Math.max(this.cards, elements.length); index++) {
       if (index < Math.min(this.cards, elements.length)) {
         elements[index].toggleAttribute('idiot', this.idiot)
       } else if (index < this.cards) {
-        hand.insertAdjacentHTML('beforeend', `<card-back ${type}></card-back>`);
+        hand.insertAdjacentHTML('beforeend', `<card-back ${type}></card-back>`)
         elements = Array.from(hand.querySelectorAll('card-back'))
       } else {
         elements[index].parentElement.removeChild(elements[index])
@@ -79,38 +79,38 @@ window.customElements.define('opponent-hand', class OpponentHand extends BaseCom
     }
   }
 
-  updateName() {
+  updateName () {
     this.element('opponent-name').innerHTML = this.name ? this.name : '?'
   }
 
-  ownChildren() {
+  ownChildren () {
     return Array.from(this.element('opponent-hand').querySelectorAll('card-back'))
   }
 
-  columns(len) {
-    const cw = this.clientWidth, ch = this.element('opponent-hand').clientHeight, ratio = 0.71
-    const cardw = ch * ratio, rest = cw - cardw
-    const cardw8 = (cardw/8)*100/cw
-    const restw8 = Math.min(cardw/8, rest/(len-1))*100/cw
+  columns (len) {
+    const cw = this.clientWidth; const ch = this.element('opponent-hand').clientHeight; const ratio = 0.71
+    const cardw = ch * ratio; const rest = cw - cardw
+    const cardw8 = (cardw / 8) * 100 / cw
+    const restw8 = Math.min(cardw / 8, rest / (len - 1)) * 100 / cw
     const card = Array(8).fill(cardw8)
-    const before = Array(len > 0 ? len-1 : 0).fill(restw8)
+    const before = Array(len > 0 ? len - 1 : 0).fill(restw8)
     return [...before, ...card].map(c => `${c}%`).join(' ')
   }
 
-  recalc() {
+  recalc () {
     const columns = this.columns(this.cards)
     this.element('opponent-hand').style.gridTemplateColumns = `1fr ${columns} 1fr`
   }
 
-  resize() {
+  resize () {
     this.recalc()
   }
 
-  update() {
+  update () {
     const visible = this.ownChildren()
     visible.forEach((child, index) => {
       child.style.gridRow = '1'
-      child.style.gridColumn = `${index+2}/span 8`
+      child.style.gridColumn = `${index + 2}/span 8`
     })
     this.recalc()
   }

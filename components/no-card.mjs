@@ -1,7 +1,7 @@
-import {BaseComponent} from './base-component.mjs'
+import { BaseComponent } from './base-component.mjs'
 
 window.customElements.define('no-card', class NoCard extends BaseComponent {
-  get css() {
+  get css () {
     return `
      :host {
       display: inline-block;
@@ -24,7 +24,7 @@ window.customElements.define('no-card', class NoCard extends BaseComponent {
   `
   }
 
-  get html() {
-    return `<div id="no-card"></div>`
+  get html () {
+    return '<div id="no-card"></div>'
   }
 })

@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "standard": "standard ./{components,modules}/*.mjs",
+    "standard": "standard --fix ./{components,modules}/*.mjs",
     "esinstall": "node esinstall.mjs",
     "deploy": "scp -r ./{modules,web_modules,libs,icons,content,components,lib,images,components,styles,*.html} root@k.de:/srv/new-normal.app"
   },

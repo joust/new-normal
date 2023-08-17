@@ -1,25 +1,25 @@
-import {BaseCard} from './base-card.mjs'
+import { BaseCard } from './base-card.mjs'
 
 window.customElements.define('pause-card', class PauseCard extends BaseCard {
   static observedAttributes = ['idiot', 'mirrored']
 
-  get idiot() {
+  get idiot () {
     return this.hasAttribute('idiot')
   }
 
-  get phrase() {
+  get phrase () {
     return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
   }
 
-  get description() {
+  get description () {
     return this.querySelector('p') ? this.querySelector('p').innerHTML : ''
   }
 
-  get mirrored() {
+  get mirrored () {
     return this.hasAttribute('mirrored')
   }
 
-  get css() {
+  get css () {
     return `
     ${super.css}
     #pause-card {
@@ -83,7 +83,7 @@ window.customElements.define('pause-card', class PauseCard extends BaseCard {
   `
   }
 
-  get html() {
+  get html () {
     return `
     <div id="pause-card" class="card">
       <div id="icon"></div>
@@ -96,11 +96,11 @@ window.customElements.define('pause-card', class PauseCard extends BaseCard {
   `
   }
 
-  attributeChangedCallback() {
+  attributeChangedCallback () {
     this.update()
   }
 
-  connectedCallback() {
+  connectedCallback () {
     super.connectedCallback()
     this.element('side').innerHTML = this.element('phrase').innerHTML // copy phrases
     const langObserver = new MutationObserver(() => this.update())
@@ -108,12 +108,12 @@ window.customElements.define('pause-card', class PauseCard extends BaseCard {
     this.update()
   }
 
-  update() {
+  update () {
     if (this.shadowRoot && this.isConnected) {
       const root = this.element('pause-card')
       root.classList.toggle('mirrored', this.mirrored)
       root.classList.toggle('idiot', this.idiot)
-      Array.from(root.querySelectorAll('.phrase')).forEach(node => node.innerHTML = this.phrase)
+      Array.from(root.querySelectorAll('.phrase')).forEach(node => (node.innerHTML = this.phrase))
     }
   }
 })

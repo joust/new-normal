@@ -1,4 +1,4 @@
-import {BaseComponent} from './base-component.mjs'
+import { BaseComponent } from './base-component.mjs'
 
 const ALTERNATIVES_STEP = 300
 
@@ -6,46 +6,46 @@ window.customElements.define('game-card', class GameCard extends BaseComponent {
   static observedAttributes = ['card', 'alt', 'alternatives', 'mirrored']
   static contentRootSelector = '#content'
 
-  get card() {
+  get card () {
     return this.getAttribute('card')
   }
 
-  get alt() {
+  get alt () {
     return this.getAttribute('alt')
   }
 
-  set alt(alt) {
+  set alt (alt) {
     if (this.getAttribute('alt') !== alt) this.setAttribute('alt', alt)
   }
 
-  get idOnly() {
+  get idOnly () {
     const card = this.alt || this.card
     return (this.hasTopic ? card.split(':')[1] : card).replace('*', '')
   }
 
-  get isWildcard() {
+  get isWildcard () {
     return this.card.endsWith('*')
   }
 
-  get hasTopic() {
+  get hasTopic () {
     const card = this.alt || this.card
     return card.includes(':')
   }
 
-  get idiot() {
+  get idiot () {
     return this.card.includes('I')
   }
 
-  get topic() {
-    const card  = this.alt || this.card
+  get topic () {
+    const card = this.alt || this.card
     return this.hasTopic ? card.split(':')[0] : ''
   }
 
-  get mirrored() {
+  get mirrored () {
     return this.hasAttribute('mirrored')
   }
 
-  get css() {
+  get css () {
     return `
     ${super.css}
     :host {
@@ -91,28 +91,28 @@ window.customElements.define('game-card', class GameCard extends BaseComponent {
   `
   }
 
-  get html() {
+  get html () {
     return `
     <button id="previous">▲</button>
     <button id="next">▼</button>
   `
   }
 
-  constructor() {
+  constructor () {
     super()
     this.alternatives = []
     this.altIndex = 0
   }
 
-  attributeChangedCallback(name) {
+  attributeChangedCallback (name) {
     if (this.shadowRoot && this.isConnected) {
-      if (name==='card' || name==='alt') this.updateCard()
-      if (name==='mirrored') this.updateMirrored()
-      if (name==='alternatives') this.updateAlternatives()
+      if (name === 'card' || name === 'alt') this.updateCard()
+      if (name === 'mirrored') this.updateMirrored()
+      if (name === 'alternatives') this.updateAlternatives()
     }
   }
 
-  connectedCallback() {
+  connectedCallback () {
     super.connectedCallback()
     this.element('previous').insertAdjacentHTML('beforebegin', this.getCardElement())
 
@@ -122,16 +122,16 @@ window.customElements.define('game-card', class GameCard extends BaseComponent {
     this.updateAlternatives()
   }
 
-  updateAltIndex(delta) {
+  updateAltIndex (delta) {
     this.altIndex += delta / ALTERNATIVES_STEP
     if (this.altIndex < 0) this.altIndex += this.alternatives.length
     if (this.altIndex >= this.alternatives.length) this.altIndex -= this.alternatives.length
     const index = Math.floor(this.altIndex)
 
-    this.alt = this.alternatives[index]+(this.isWildcard?'*':'')
+    this.alt = this.alternatives[index] + (this.isWildcard ? '*' : '')
   }
 
-  updateCard() {
+  updateCard () {
     if (this.shadowRoot && this.isConnected) {
       const card = this.element('card')
       card.insertAdjacentHTML('beforebegin', this.getCardElement())
@@ -140,23 +140,23 @@ window.customElements.define('game-card', class GameCard extends BaseComponent {
     if (!this.alternatives.length) this.alternatives = [this.card]
   }
 
-  updateMirrored() {
+  updateMirrored () {
     if (this.shadowRoot && this.isConnected) {
       const card = this.element('card')
       card.toggleAttribute('mirrored', this.mirrored)
     }
   }
 
-  updateAlternatives() {
+  updateAlternatives () {
     this.alternatives = this.hasAttribute('alternatives') ? this.getAttribute('alternatives').split(',') : [this.card]
 
     const card = this.alt || this.card
     this.altIndex = this.alternatives.indexOf(card.replace('*', ''))
-    if (this.altIndex<0) { this.alt = this.alternatives[0]; this.altIndex = 0; }
+    if (this.altIndex < 0) { this.alt = this.alternatives[0]; this.altIndex = 0 }
     const previous = this.element('previous')
     const next = this.element('next')
-    if (previous) previous.classList.toggle('hidden', this.alternatives.length<=1)
-    if (next) next.classList.toggle('hidden', this.alternatives.length<=1)
+    if (previous) previous.classList.toggle('hidden', this.alternatives.length <= 1)
+    if (next) next.classList.toggle('hidden', this.alternatives.length <= 1)
   }
 
   /**
@@ -164,24 +164,24 @@ window.customElements.define('game-card', class GameCard extends BaseComponent {
    *
    * @param {HTMLElement} a the anchor node to mirror
    */
-   mirrorNode(a) {
+  mirrorNode (a) {
     const mirror = a.cloneNode(true)
     mirror.href = `https://archive.is/${a.href}`
     mirror.firstChild.textContent = 'Mirror'
     return mirror
   }
 
-  getSourcesHTML(id) {
+  getSourcesHTML (id) {
     const sources = document.querySelector(`${GameCard.contentRootSelector} > .sources`)
     if (sources) {
       const links = Array.from(sources.querySelectorAll(`a.${id}`))
       if (links.length > 0) {
         const q = this.elementWithKids('q', [
-  //        a.querySelector('h2').cloneNode(true),
+          //        a.querySelector('h2').cloneNode(true),
           this.elementWithKids('ul', links.map(
-          s => this.elementWithKids('li', [
-            s.cloneNode(true), ' (', this.mirrorNode(s), ')'
-          ])))
+            s => this.elementWithKids('li', [
+              s.cloneNode(true), ' (', this.mirrorNode(s), ')'
+            ])))
         ])
         return q.outerHTML
       }
@@ -189,7 +189,7 @@ window.customElements.define('game-card', class GameCard extends BaseComponent {
     return undefined
   }
 
-  elementWithKids(tag, kids = undefined) {
+  elementWithKids (tag, kids = undefined) {
     const node = document.createElement(tag)
     if (kids) {
       if (!(kids instanceof Array)) kids = [kids]
@@ -201,31 +201,30 @@ window.customElements.define('game-card', class GameCard extends BaseComponent {
     return node
   }
 
-  getMessage(key, fallback = '???') {
+  getMessage (key, fallback = '???') {
     const node = document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} .messages a.${key}`)
     return node ? node.innerHTML : fallback
   }
 
-  getContent(key, clazz = undefined) {
+  getContent (key, clazz = undefined) {
     clazz = this.getMessage(clazz ? `${key}.class.${clazz}` : `${key}.class`, null)
     const phrase = this.getMessage(`${key}.phrase`, null)
     const description = this.getMessage(`${key}.description`, null)
-    return (clazz ? `<i>${clazz}</i>` : '')
-          + (phrase ? `<h2>${phrase}</h2>` : '')
-          + (description ? `<p>${description}</p>` : '')
+    return (clazz ? `<i>${clazz}</i>` : '') +
+          (phrase ? `<h2>${phrase}</h2>` : '') +
+          (description ? `<p>${description}</p>` : '')
   }
 
-  cardWithSources(id, title, front) {
+  cardWithSources (id, title, front) {
     const sources = this.getSourcesHTML(id)
     if (sources) {
       const back = `<sources-back slot="back"><h2>${title}</h2>${sources}</sources-back>`
       front = front.replace(' ', ' slot="front" ')
       return `<flip-card id="card">${front}${back}</flip-card>`
-    } else
-      return front.replace(' ', ' id="card" ')
+    } else { return front.replace(' ', ' id="card" ') }
   }
 
-  getCardElement() {
+  getCardElement () {
     const data = document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} a[id="${this.idOnly}"]`)
     const clazz = data ? data.classList.item(0) || '' : ''
     const title = data ? data.querySelector('h2') ? data.querySelector('h2').innerHTML : data.title : '???'
@@ -235,22 +234,21 @@ window.customElements.define('game-card', class GameCard extends BaseComponent {
     const wildcard = this.isWildcard ? 'wildcard' : ''
     const spellcheck = data && data.hasAttribute('spellcheck') ? 'spellcheck ' : ''
     switch (this.idOnly[0]) {
-      case 'C': return `<cancel-card id="card" ${type} ${mirrored} card="${this.card}">${data ?data.outerHTML : ''}${this.getContent('cancel')}</cancel-card>`
-      case 'L': return `<label-card id="card" ${type} ${mirrored} card="${this.card}">${data ?data.outerHTML : ''}${this.getContent('label')}</label-card>`
+      case 'C': return `<cancel-card id="card" ${type} ${mirrored} card="${this.card}">${data ? data.outerHTML : ''}${this.getContent('cancel')}</cancel-card>`
+      case 'L': return `<label-card id="card" ${type} ${mirrored} card="${this.card}">${data ? data.outerHTML : ''}${this.getContent('label')}</label-card>`
       case 'A': return this.cardWithSources(this.idOnly, title, `<appeal-to-card ${type} ${mirrored} card="${this.card}">${data ? data.outerHTML : ''}${this.getContent('appeal-to', clazz)}</appeal-to-card>`)
-      case 'F': return `<fallacy-card id="card" ${type} ${mirrored} card="${this.card}">${data ?data.outerHTML : ''}${this.getContent('fallacy', clazz)}</fallacy-card>`
+      case 'F': return `<fallacy-card id="card" ${type} ${mirrored} card="${this.card}">${data ? data.outerHTML : ''}${this.getContent('fallacy', clazz)}</fallacy-card>`
       case 'N': return `<strawman-card id="card" ${type} ${mirrored}>${this.getContent('strawman')}</strawman-card>`
       case 'R': return `<research-card id="card" ${type} ${mirrored}>${this.getContent(`research.${side}`)}</research-card>`
       case 'P': return `<pause-card id="card" ${type} ${mirrored}>${this.getContent(`pause.${side}`)}</pause-card>`
       case 'B': return `<banish-card id="card" ${type} ${mirrored}>${this.getContent('banish')}</banish-card>`
-      default: // argument id and discuss id will have a topic
+      default: { // argument id and discuss id will have a topic
         const topicData = this.topic && document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} > .topics > section[id="${this.topic}"]`)
         const topicTitle = topicData ? topicData.title : ''
-        if (this.idOnly.startsWith('D'))
-          return `<discuss-card id="card" ${type} ${mirrored} topicId="${this.topic}">${this.getContent('discuss').replace('TOPIC', `<b>${topicTitle}</b>`)}</discuss-card>`
-        else {
+        if (this.idOnly.startsWith('D')) { return `<discuss-card id="card" ${type} ${mirrored} topicId="${this.topic}">${this.getContent('discuss').replace('TOPIC', `<b>${topicTitle}</b>`)}</discuss-card>` } else {
           return this.cardWithSources(this.idOnly, title, `<argument-card ${type} ${mirrored} ${wildcard} ${spellcheck} card="${this.idOnly}" topicId="${this.topic}" topic="${topicTitle}">${data.innerHTML}</argument-card>`)
         }
+      }
     }
   }
 })

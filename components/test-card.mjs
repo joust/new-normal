@@ -1,31 +1,31 @@
 // idea from: https://codepen.io/suez/pen/MaeVBy
-import {BaseComponent} from './base-component.mjs'
+import { BaseComponent } from './base-component.mjs'
 
 window.customElements.define('test-card', class TestCard extends BaseComponent {
   static observedAttributes = ['card']
   static contentRootSelector = '#content'
 
-  get card() {
+  get card () {
     return this.getAttribute('card')
   }
 
-  get idOnly() {
+  get idOnly () {
     return (this.hasTopic ? this.card.split(':')[1] : this.card)
   }
 
-  get hasTopic() {
+  get hasTopic () {
     return this.card.includes(':')
   }
 
-  get idiot() {
+  get idiot () {
     return this.card.includes('I')
   }
 
-  get topic() {
+  get topic () {
     return this.hasTopic ? this.card.split(':')[0] : ''
   }
 
-  get css() {
+  get css () {
     return `
     ${super.css}
    :host {
@@ -113,31 +113,31 @@ window.customElements.define('test-card', class TestCard extends BaseComponent {
     `
   }
 
-  get html() {
+  get html () {
     return `
       <div id="approve"></div>
       <div id="reject"></div>
     `
   }
 
-  constructor() {
+  constructor () {
     super()
     this.pullDeltaX = 0
     this.animating = false
     this.decisionVal = 150
   }
 
-  attributeChangedCallback() {
+  attributeChangedCallback () {
     this.updateCard()
   }
 
-  connectedCallback() {
+  connectedCallback () {
     super.connectedCallback()
     this.element('approve').insertAdjacentHTML('beforebegin', this.getCardElement())
 
     this.onmousedown = this.ontouchstart = e => {
       if (this.animating) return
-      const startX =  e.pageX || e.originalEvent.touches[0].pageX
+      const startX = e.pageX || e.originalEvent.touches[0].pageX
 
       this.onmousemove = this.ontouchmove = e => {
         const x = e.pageX || e.originalEvent.touches[0].pageX
@@ -154,7 +154,7 @@ window.customElements.define('test-card', class TestCard extends BaseComponent {
     }
   }
 
-  updateCard() {
+  updateCard () {
     if (this.shadowRoot && this.isConnected) {
       const card = this.element('card')
       card.insertAdjacentHTML('afterend', this.getCardElement())
@@ -167,39 +167,38 @@ window.customElements.define('test-card', class TestCard extends BaseComponent {
    *
    * @param {HTMLElement} a the anchor node to mirror
    */
-   mirrorNode(a) {
+  mirrorNode (a) {
     const mirror = a.cloneNode(true)
     mirror.href = `https://archive.is/${a.href}`
     mirror.firstChild.textContent = 'Mirror'
     return mirror
   }
 
-  getSourcesHTML(id) {
+  getSourcesHTML (id) {
     const sources = document.querySelector(`${TestCard.contentRootSelector} > .sources`)
     const links = Array.from(sources.querySelectorAll(`a.${id}`))
     if (links.length > 0) {
       const q = this.elementWithKids('q', [
         this.elementWithKids('ul', links.map(
-        s => this.elementWithKids('li', [
-          s.cloneNode(true), ' (', this.mirrorNode(s), ')'
-        ])))
+          s => this.elementWithKids('li', [
+            s.cloneNode(true), ' (', this.mirrorNode(s), ')'
+          ])))
       ])
       return q.outerHTML
     }
     return undefined
   }
 
-  cardWithSources(id, title, front) {
+  cardWithSources (id, title, front) {
     const sources = this.getSourcesHTML(id)
     if (sources) {
       const back = `<sources-back slot="back"><h2>${title}</h2>${sources}</sources-back>`
       front = front.replace(' ', ' slot="front" ')
       return `<flip-card id="card">${front}${back}</flip-card>`
-    } else
-      return front.replace(' ', ' id="card" ')
+    } else { return front.replace(' ', ' id="card" ') }
   }
 
-  elementWithKids(tag, kids = undefined) {
+  elementWithKids (tag, kids = undefined) {
     const node = document.createElement(tag)
     if (kids) {
       if (!(kids instanceof Array)) kids = [kids]
@@ -211,7 +210,7 @@ window.customElements.define('test-card', class TestCard extends BaseComponent {
     return node
   }
 
-  getCardElement() {
+  getCardElement () {
     const data = document.querySelector(`${TestCard.contentRootSelector} > #${this.lang} a[id="${this.idOnly}"]`) || ''
     const title = data ? data.querySelector('h2').innerHTML : ''
     const topicData = this.topic && document.querySelector(`${TestCard.contentRootSelector} > #${this.lang} > .topics > section[id="${this.topic}"]`)
@@ -219,7 +218,7 @@ window.customElements.define('test-card', class TestCard extends BaseComponent {
     return this.cardWithSources(this.idOnly, title, `<argument-card neutral card="${this.idOnly}" topicId="${this.topic}" topic="${topic}">${data ? data.innerHTML : ''}</argument-card>`)
   }
 
-  pullChange() {
+  pullChange () {
     this.animating = true
     this.element('card').style.transform = `translateX(${this.pullDeltaX}px)`
     this.element('reject').style.transform = `translateX(${this.pullDeltaX}px)`
@@ -228,11 +227,11 @@ window.customElements.define('test-card', class TestCard extends BaseComponent {
     const opacity = this.pullDeltaX / 180
     const rejectOpacity = (opacity >= 0) ? 0 : Math.abs(opacity)
     const approveOpacity = (opacity <= 0) ? 0 : opacity
-    this.element('reject').style.opacity = ''+rejectOpacity
-    this.element('approve').style.opacity = ''+approveOpacity
+    this.element('reject').style.opacity = '' + rejectOpacity
+    this.element('approve').style.opacity = '' + approveOpacity
   }
 
-  release() {
+  release () {
     if (this.pullDeltaX >= this.decisionVal) {
       this.element('card').classList.add('to-right')
       this.element('approve').classList.add('to-right')

@@ -1,9 +1,9 @@
 let root
-export async function initHDD() {
+export async function initHDD () {
   root = await window.showDirectoryPicker()
 }
 
-export async function fetchHDD(path) {
+export async function fetchHDD (path) {
   try {
     const handle = await pathToHandle(path)
     return handle ? await load(handle) : ''
@@ -13,7 +13,7 @@ export async function fetchHDD(path) {
   }
 }
 
-export async function saveHDD(path, content) {
+export async function saveHDD (path, content) {
   try {
     const handle = await pathToHandle(path)
     return handle ? await save(handle, content) : ''
@@ -23,7 +23,7 @@ export async function saveHDD(path, content) {
 }
 
 // handle with write access
-async function pathToHandle(path) {
+async function pathToHandle (path) {
   const dirs = path.split('/')
   const file = dirs.pop()
   let dir = root
@@ -32,27 +32,25 @@ async function pathToHandle(path) {
   return (await verifyPermission(handle, true)) ? handle : undefined
 }
 
-async function load(handle) {
+async function load (handle) {
   if (await verifyPermission(handle)) {
     const file = await handle.getFile()
     return await file.text()
-  } else
-    return null
+  } else { return null }
 }
 
-async function save(handle, content) {
+async function save (handle, content) {
   if (await verifyPermission(handle, true)) {
     console.log(`saving ${content.length} bytes to '${handle.name}'`)
     const writable = await handle.createWritable()
     await writable.write(content)
     await writable.close()
-  } else
-    console.log(`no permission to write to file '${handle.name}'`)
+  } else { console.log(`no permission to write to file '${handle.name}'`) }
 }
 
-async function verifyPermission(handle, rw) {
+async function verifyPermission (handle, rw) {
   const options = {}
   if (rw) options.mode = 'readwrite'
   if ((await handle.queryPermission(options)) === 'granted') return true
-  return (await handle.requestPermission(options)) === 'granted';
+  return (await handle.requestPermission(options)) === 'granted'
 }

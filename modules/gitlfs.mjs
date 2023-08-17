@@ -10,7 +10,7 @@ const dir = '/new-normal' // dir checked out from git
 const author = { name: 'joust' } // needed for pull
 
 let fs, pfs
-export async function initLFS() {
+export async function initLFS () {
   // fs = new LightningFS('fs', { wipe: true })
   fs = new LightningFS('fs')
   pfs = fs.promises
@@ -31,7 +31,7 @@ export async function initLFS() {
   )
 }
 
-export async function fetchLFS(path) {
+export async function fetchLFS (path) {
   try {
     return await pfs.readFile(`${dir}/${path}`)
   } catch (e) {
@@ -40,7 +40,7 @@ export async function fetchLFS(path) {
   }
 }
 
-export async function saveLFS(path, content) {
+export async function saveLFS (path, content) {
   try {
     await pfs.writeFile(`${dir}/${path}`, content)
   } catch (e) {

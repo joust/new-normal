@@ -1,7 +1,7 @@
-import {BaseComponent} from './base-component.mjs'
+import { BaseComponent } from './base-component.mjs'
 
 window.customElements.define('sources-back', class SourcesBack extends BaseComponent {
-  get css() {
+  get css () {
     return `
     :host {
       display: inline-block;
@@ -55,11 +55,11 @@ window.customElements.define('sources-back', class SourcesBack extends BaseCompo
   }
 
   get html () {
-    return `<div id="sources-back"><slot></slot></div>`
+    return '<div id="sources-back"><slot></slot></div>'
   }
 
-  connectedCallback() {
+  connectedCallback () {
     super.connectedCallback()
-    Array.from(this.querySelectorAll('a')).forEach(a => a.onclick = event => event.stopPropagation())
+    Array.from(this.querySelectorAll('a')).forEach(a => (a.onclick = event => event.stopPropagation()))
   }
 })

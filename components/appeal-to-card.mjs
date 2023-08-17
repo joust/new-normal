@@ -1,42 +1,42 @@
-import {flagMapped} from './shared.mjs'
-import {BaseCard} from './base-card.mjs'
+import { flagMapped } from './shared.mjs'
+import { BaseCard } from './base-card.mjs'
 
 window.customElements.define('appeal-to-card', class AppealToCard extends BaseCard {
   static observedAttributes = ['idiot', 'type', 'mirrored']
 
-  get idiot() {
+  get idiot () {
     return this.hasAttribute('idiot')
   }
 
-  get type() {
+  get type () {
     return this.getAttribute('type')
   }
 
-  get card() {
+  get card () {
     return this.querySelector('a') ? this.querySelector('a').getAttribute('id') : ''
   }
 
-  get fallacy() {
+  get fallacy () {
     return this.querySelector('i') ? this.querySelector('i').innerHTML : ''
   }
 
-  get img() {
+  get img () {
     return this.querySelector('a') ? this.querySelector('a').getAttribute('href') : ''
   }
 
-  get to() {
+  get to () {
     return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
   }
 
-  get phrase() {
+  get phrase () {
     return this.querySelector('p') ? this.querySelector('p').innerHTML : ''
   }
 
-  get mirrored() {
+  get mirrored () {
     return this.hasAttribute('mirrored')
   }
 
-  get css() {
+  get css () {
     return `
     ${super.css}
     #appeal-to-card {
@@ -128,7 +128,7 @@ window.customElements.define('appeal-to-card', class AppealToCard extends BaseCa
   `
   }
 
-  get html() {
+  get html () {
     return `
     <div id="appeal-to-card" class="card">
       <div id="icon"></div>
@@ -142,16 +142,16 @@ window.customElements.define('appeal-to-card', class AppealToCard extends BaseCa
   `
   }
 
-  attributeChangedCallback() {
+  attributeChangedCallback () {
     this.update()
   }
 
-  connectedCallback() {
+  connectedCallback () {
     super.connectedCallback()
     this.update()
   }
 
-  update() {
+  update () {
     if (this.shadowRoot && this.isConnected) {
       const root = this.element('appeal-to-card')
       root.classList.toggle('mirrored', this.mirrored)
@@ -160,7 +160,7 @@ window.customElements.define('appeal-to-card', class AppealToCard extends BaseCa
       this.element('fallacy').innerHTML = this.fallacy
       this.element('img').classList.toggle('hidden', !this.img || !this.img.length)
       this.element('img').setAttribute('src', `/content/images/${this.img}`)
-      Array.from(root.querySelectorAll('.to')).forEach(node => node.innerHTML = this.to)
+      Array.from(root.querySelectorAll('.to')).forEach(node => (node.innerHTML = this.to))
       root.querySelector('.phrase').innerHTML = this.phrase
     }
   }

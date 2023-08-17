@@ -1,33 +1,33 @@
-import {BaseCard} from './base-card.mjs'
+import { BaseCard } from './base-card.mjs'
 
 window.customElements.define('label-card', class LabelCard extends BaseCard {
   static observedAttributes = ['idiot', 'mirrored']
 
-  get idiot() {
+  get idiot () {
     return this.hasAttribute('idiot')
   }
 
-  get label() {
+  get label () {
     return this.querySelector('h2') ? this.querySelector('h2').innerHTML : ''
   }
 
-  get fallacy() {
+  get fallacy () {
     return this.querySelector('i') ? this.querySelector('i').innerHTML : ''
   }
 
-  get description() {
+  get description () {
     return this.querySelector('p') ? this.querySelector('p').innerHTML : ''
   }
 
-  get mirrored() {
+  get mirrored () {
     return this.hasAttribute('mirrored')
   }
 
-  get card() {
+  get card () {
     return this.querySelector('a') ? this.querySelector('a').id : ''
   }
 
-  get css() {
+  get css () {
     return `
     ${super.css}
     #label-card {
@@ -119,7 +119,7 @@ window.customElements.define('label-card', class LabelCard extends BaseCard {
     `
   }
 
-  get html() {
+  get html () {
     return `
     <div id="label-card" class="card">
       <div id="icon"></div>
@@ -133,16 +133,16 @@ window.customElements.define('label-card', class LabelCard extends BaseCard {
   `
   }
 
-  attributeChangedCallback() {
+  attributeChangedCallback () {
     this.update()
   }
 
-  connectedCallback() {
+  connectedCallback () {
     super.connectedCallback()
     this.update()
   }
 
-  update() {
+  update () {
     if (this.shadowRoot && this.isConnected) {
       const root = this.element('label-card')
       root.classList.toggle('mirrored', this.mirrored)

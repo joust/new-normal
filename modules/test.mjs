@@ -7,17 +7,17 @@ let stats // test stats
 /**
  * create one idiot and one sheep and start the test with one of them visible
  */
-window.test = async function(cycles) {
+window.test = async function (cycles) {
   initTestStats(cycles)
   await loadSources()
   await loadContent()
   const content = extractContent()
   shuffle(content.idiot.args)
   shuffle(content.sheep.args)
-  const idiotArgs = Math.random()>=0.5 ? Math.floor(cycles/2) : Math.ceil(cycles/2)
+  const idiotArgs = Math.random() >= 0.5 ? Math.floor(cycles / 2) : Math.ceil(cycles / 2)
   const testCards = [
     ...elementsFrom(idiotArgs, content.idiot.args),
-    ...elementsFrom(cycles-idiotArgs, content.sheep.args)
+    ...elementsFrom(cycles - idiotArgs, content.sheep.args)
   ]
   shuffle(testCards)
   document.getElementById('test').insertAdjacentHTML('afterbegin', `
@@ -29,7 +29,7 @@ window.test = async function(cycles) {
   showTest()
 }
 
-async function finish(event) {
+async function finish (event) {
   updateTestStats(event.detail)
   await loadTestResult()
   showResult()
@@ -38,7 +38,7 @@ async function finish(event) {
 /**
  * Show the test panel and stop button, hide the menu
  */
-function showTest() {
+function showTest () {
   element('stop').onclick = hideTest
   element('stop').classList.remove('hidden')
   setTimeout(() => element('test').classList.remove('hidden'), 50)
@@ -48,7 +48,7 @@ function showTest() {
 /**
  * Hide the test panel and stop button
  */
-async function hideTest() {
+async function hideTest () {
   element('stop').classList.add('hidden')
   element('test').classList.add('hidden')
   element('result').classList.add('hidden')
@@ -58,7 +58,7 @@ async function hideTest() {
 /**
  * init the stats for a test card table
  */
-function initTestStats(cycles) {
+function initTestStats (cycles) {
   stats = {
     begin: Date.now(),
     duration: 0,
@@ -75,7 +75,7 @@ function initTestStats(cycles) {
  *
  * @return {Object} stats for the test questions
  */
-function updateTestStats(choices) {
+function updateTestStats (choices) {
   const topics = getTopicsData().reduce((map, topic) => { map[topic.id] = topic; return map }, {})
   const idiotArgument = id => id.includes('I')
   const sheepArgument = id => id.includes('S')
@@ -96,7 +96,7 @@ function updateTestStats(choices) {
 /**
  * load and fill test result template
  */
-async function loadTestResult() {
+async function loadTestResult () {
   const start = new Date(stats.begin)
   const locale = `${language}-${territory}`
   const template = await fetchSilent(`content/pandemic/${language}/result.html`)
@@ -105,17 +105,16 @@ async function loadTestResult() {
   result.innerHTML = `<test-certificate>${template}</test-certificate>`
   result.querySelector('.date-time').innerHTML = `Berlin, ${start.toLocaleDateString(locale)} ${start.toLocaleTimeString(locale)}`
   result.querySelector('.cycles').innerHTML = stats.cycles
-  result.querySelector('.duration').innerHTML = `${Math.round(stats.duration/1000)}s`
+  result.querySelector('.duration').innerHTML = `${Math.round(stats.duration / 1000)}s`
   for (const type of ['idiot', 'sheep']) {
     const info = stats[type]
     const attributes = info.attributes.map(e => `${e[0]}: ${e[1]}`).join('<br>')
     const row = result.querySelector(`table tbody tr.${type}`)
     row.childNodes[1].innerHTML = info.count
     row.childNodes[2].innerHTML = `${Math.round(info.count * 100 / stats.cycles)} %`
-    row.childNodes[3].innerHTML = info.count >= stats.cycles/2 ? attributes : ''
+    row.childNodes[3].innerHTML = info.count >= stats.cycles / 2 ? attributes : ''
 
-    if (info.attributes.length)
-      result.querySelector(`.result .${type} .attribute`).innerHTML = info.attributes[0][0]
+    if (info.attributes.length) { result.querySelector(`.result .${type} .attribute`).innerHTML = info.attributes[0][0] }
   }
 
   result.querySelector('.result .idiot').classList.toggle('hidden',
@@ -132,17 +131,16 @@ async function loadTestResult() {
 /**
  * Show the test result panel
  */
-function showResult() {
+function showResult () {
   element('result').classList.remove('hidden')
 }
 
 /**
  * Hide the test result panel
  */
-function hideResult() {
+function hideResult () {
   element('result').classList.add('hidden')
 }
-
 
 /**
  * show game cards in a test, corresponding to the id(s) given in the hash
@@ -150,7 +148,7 @@ function hideResult() {
  * @param {string[]} ids with comma separated ids of argument(s) to show
  * @return {boolean} true if success false otherwise
  */
-export async function displayHashAsTest(ids) {
+export async function displayHashAsTest (ids) {
   const cards = ids.filter(card => isArgument(card))
   if (cards.length) {
     initTestStats(cards.length)

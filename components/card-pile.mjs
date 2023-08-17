@@ -1,30 +1,30 @@
-import {BaseComponent} from './base-component.mjs'
+import { BaseComponent } from './base-component.mjs'
 
 window.customElements.define('card-pile', class CardPile extends BaseComponent {
   // no top given means empty stack, top given as 'I' or 'S' means facing down pile with idiot or sheep card-back
   static observedAttributes = ['top', 'mirrored', 'draggable', 'droppable']
 
-  get top() {
+  get top () {
     return this.getAttribute('top')
   }
 
-  get idiot() {
+  get idiot () {
     return this.top.includes('I')
   }
 
-  get mirrored() {
+  get mirrored () {
     return this.hasAttribute('mirrored')
   }
 
-  get draggable() {
+  get draggable () {
     return this.hasAttribute('draggable')
   }
 
-  get droppable() {
+  get droppable () {
     return this.hasAttribute('droppable')
   }
 
-  get css() {
+  get css () {
     return `
     ${super.css}
     :host {
@@ -57,22 +57,22 @@ window.customElements.define('card-pile', class CardPile extends BaseComponent {
   `
   }
 
-  get html() {
+  get html () {
     return `${this.getTopElement()}<no-card id="second"></no-card><no-card id="third"></no-card>`
   }
 
-  attributeChangedCallback(name) {
-    if (name==='top') this.updateTop()
-    if (name==='mirrored') this.updateMirrored()
+  attributeChangedCallback (name) {
+    if (name === 'top') this.updateTop()
+    if (name === 'mirrored') this.updateMirrored()
   }
 
-  connectedCallback() {
+  connectedCallback () {
     super.connectedCallback()
     this.updateDraggable()
     this.updateDroppable()
   }
 
-  updateTop() {
+  updateTop () {
     if (this.shadowRoot && this.isConnected) {
       const card = this.shadowRoot.querySelector('no-card, card-back, game-card') // select top element
       card.insertAdjacentHTML('beforebegin', this.getTopElement())
@@ -81,14 +81,14 @@ window.customElements.define('card-pile', class CardPile extends BaseComponent {
     }
   }
 
-  updateMirrored() {
+  updateMirrored () {
     if (this.shadowRoot && this.isConnected) {
       const card = this.querySelector('game-card')
       if (card) card.toggleAttribute('mirrored', this.mirrored)
     }
   }
 
-  updateDraggable() {
+  updateDraggable () {
     const card = this.shadowRoot.querySelector('card-back, game-card')
     if (this.draggable && card) {
       card.setAttribute('draggable', 'true')
@@ -97,15 +97,15 @@ window.customElements.define('card-pile', class CardPile extends BaseComponent {
     }
   }
 
-  dragstart(event) {
-    event.dataTransfer.setData('text/plain', JSON.stringify({draw: true}))
+  dragstart (event) {
+    event.dataTransfer.setData('text/plain', JSON.stringify({ draw: true }))
   }
 
-  dragend(event) {
+  dragend (event) {
     event.preventDefault()
   }
 
-  updateDroppable() {
+  updateDroppable () {
     if (this.droppable) {
       this.addEventListener('dragenter', event => this.dragenter(event))
       this.addEventListener('dragleave', event => this.dragleave(event))
@@ -114,33 +114,33 @@ window.customElements.define('card-pile', class CardPile extends BaseComponent {
     }
   }
 
-  dragenter(event) {
+  dragenter (event) {
     const card = this.shadowRoot.querySelector('no-card, card-back, game-card')
     if (card) card.classList.add('dropping')
     event.preventDefault()
   }
 
-  dragleave(event) {
+  dragleave (event) {
     const card = this.shadowRoot.querySelector('no-card, card-back, game-card')
     if (card) card.classList.remove('dropping')
     event.preventDefault()
   }
 
-  dragover(event) {
+  dragover (event) {
     event.preventDefault()
   }
 
-  drop(event) {
+  drop (event) {
     const detail = JSON.parse(event.dataTransfer.getData('text/plain'))
     console.log('drop!', detail)
-    this.dispatchEvent(new CustomEvent('dropped', {detail}))
+    this.dispatchEvent(new CustomEvent('dropped', { detail }))
     const card = this.shadowRoot.querySelector('no-card, card-back, game-card')
     if (card) card.classList.remove('dropping')
     event.stopPropagation()
     event.preventDefault()
   }
 
-  getTopElement() {
+  getTopElement () {
     const mirrored = this.mirrored ? 'mirrored' : ''
     switch (this.top) {
       case null:

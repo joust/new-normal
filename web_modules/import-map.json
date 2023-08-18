@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "@boardgame.io/p2p": "./@boardgame.io/p2p.js",
+    "boardgame.io": "./boardgame.io.js"
+  }
+}

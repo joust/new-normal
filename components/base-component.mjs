@@ -1,10 +1,8 @@
 export class BaseComponent extends HTMLElement {
   connectedCallback () {
     this.lang = document.body.lang
-    const shadowRoot = this.attachShadow({ mode: 'open' })
-    const template = document.createElement('template')
-    template.innerHTML = `<style>${this.css}</style>${this.html}`
-    shadowRoot.appendChild(template.content)
+    this.attachShadow({ mode: 'open' })
+    this.shadowRoot.innerHTML = `<style>${this.css}</style>${this.html}`
   }
 
   get css () {

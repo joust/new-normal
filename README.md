@@ -1,5 +1,5 @@
 <h1>New Normal</h1>
-<center><img src="https://github.com/joust/new-normal/raw/master/styles/images/new-normal.jpg"></center>
+<center><img alt="new normal" src="https://github.com/joust/new-normal/raw/master/styles/images/new-normal.jpg"></center>
 <p>
 This browser app is a playground build around a huge collection of arguments used during Corona related discussions. The imaginary two sides are (technically) referred to as <b>Idiots</b> and <b>Sheep</b>. The three usages currently implemented are:
 <ul>
@@ -7,10 +7,10 @@ This browser app is a playground build around a huge collection of arguments use
   <li>A <b>Buzzword BINGO game</b>, played with arguments used in a discussion. Use it to have more fun in either your own discussions on the topic or that of others.</li>
   <li>A <b>Corona TEST</b>, which allows you to find out which "side" you are on. Choose your "cycles" and after that number of Tinder like swipe left/right decisions on arguments presented you know if you're an <b>Idiot</b> or a <b>Sheep</b>.</li>
 </ul>
-</p><p>
+<p>
 Aside from making sound fun of an imaginary either/or division that many people think is real these days, this little app has big things in store: It wants to build bridges, create awareness and knowledge. It is for people who really want to deal with the arguments of the other side of the discourse. It wants to make sure that people approach each other again. It wants to be a valuable source and enable an open and well-founded exchange about this ubiquitous topic.
 </p><p>
-Technically its a plain HTML/CSS/ES6 PWA app. The app is inter&shy;nationa&shy;lized and localized and contains a common core of universal, language inde&shy;pen&shy;dent argu&shy;ments and sets of argu&shy;ments only used and under&shy;stood locally.
+Technically it's a plain HTML/CSS/ES6 PWA. The app is inter&shy;nationa&shy;lized and localized and contains a common core of universal, language inde&shy;pen&shy;dent argu&shy;ments and sets of argu&shy;ments only used and under&shy;stood locally.
 </p>
 <h1>Content</h1>
 <h2>Menus and Arguments</h2>
@@ -170,13 +170,13 @@ The contents of this app - like our reality - are in con&shy;stant flux. New arg
 And finally these nerds who invented this internet.</p>
 <p>Font: <a target="_blank" href="https://www.hvdfonts.com/fonts/hvd-crocodile">HVD Crocodile</a>
 </p><p>
-Flip Effect: <a taget="_blank" href="https://lab.hakim.se/flipside">Flipside</a>
+Flip Effect: <a target="_blank" href="https://lab.hakim.se/flipside">Flipside</a>
 </p><p>
 Pyro Effect: <a target="_blank" href="https://jsfiddle.net/elin/7m3bL">Eddie Lin</a>
 </p><p>
 Jumping Virus Effect: Kuba Koischwitz 🐿️
 </p><p>
-<img width="100" style="float:left" src="https://github.com/joust/new-normal/raw/master/styles/images/berlin.png">PROUDLY MADE IN BERLIN CHARLOTTENBURG.
+<img width="100" alt="berlin" style="float:left" src="https://github.com/joust/new-normal/raw/master/styles/images/berlin.png">PROUDLY MADE IN BERLIN CHARLOTTENBURG.
 </p>
 
 <h1>License</h1>

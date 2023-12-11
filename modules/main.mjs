@@ -35,7 +35,7 @@ document.addEventListener('dblclick', event => {
 window.load = function (locale) {
   loadAttitude()
   setLocale(locale)
-  if (!window.location.hash || !displayHash(window.location.hash.substring(1))) { if (attitude.hasty) window.show('start'); else runIntro() }
+  window.show('start')
 }
 
 /**
@@ -44,10 +44,9 @@ window.load = function (locale) {
  * @param {string} page name of the page to load
  */
 window.show = async function (page) {
-  document.querySelector('.logo').style.display = page === 'intro' ? 'none' : 'block'
   element('menu').classList.add('hidden')
   if (page === 'uno') await loadContent()
-  const content = (page === 'intro') ? await getPage(page) : (await getPage(page)).replace('NN_YEAR', `<b>${getNNYear()}</b>`)
+  const content = await getPage(page)
   document.querySelector('#menu .content').innerHTML = content
   document.querySelector('#menu .content').setAttribute('class', `content ${page}`)
   element('menu').scrollTop = 0
@@ -56,48 +55,10 @@ window.show = async function (page) {
 }
 
 /**
- * run intro by a timed display of its frames. can be skipped with skipIntro()
- */
-let timer = null
-async function runIntro () {
-  await show('intro')
-  element('menu').classList.add('intro-mod')
-  let frame = document.querySelector('#menu .frame')
-  const nextFrame = () => {
-    frame.classList.toggle('show')
-    frame = frame.nextElementSibling
-    if (frame) {
-      frame.classList.toggle('show')
-      timer = setTimeout(nextFrame, 60 * frame.textContent.length)
-    } else {
-      timer = null
-      element('menu').classList.remove('intro-mod')
-      show('start')
-    }
-  }
-  frame.classList.toggle('show')
-  timer = setTimeout(nextFrame, 60 * frame.textContent.length)
-}
-
-/**
- * skip intro by stopping its timer and show the start menu
- */
-window.skipIntro = function () {
-  if (timer) clearTimeout(timer)
-  saveAttitude('hasty', true)
-  element('menu').classList.remove('intro-mod')
-  show('start')
-}
-
-/**
  * stop the pyro effect by setting CSS 'hidden' class
  */
 window.stopPyro = function () {
   element('pyro').classList.add('hidden')
-}
-
-function getNNYear () {
-  return Math.ceil((Date.now() - new Date(2020, 2, 20).getTime()) / (365 * 24 * 60 * 60 * 1000))
 }
 
 /**

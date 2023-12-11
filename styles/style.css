@@ -106,10 +106,6 @@ q::after {
   margin-top: 100%;
 }
 
-#menu.intro-mod {
-  overflow-y: hidden;
-}
-
 #menu table {
   margin-left: auto;
   margin-right: auto;
@@ -198,10 +194,6 @@ q::after {
 
 .location option {
   font-family: 'Open Sans', Helvetica, sans-serif;
-}
-
-#menu .intro-mod {
-  cursor: pointer;
 }
 
 .skip {
@@ -309,11 +301,6 @@ button.hidden, q.hidden:after, a.hidden, span.hidden {
   max-height: calc(100% - 20vmin);
 }
 
-#menu.intro-mod .content {
-  padding-top: 0;
-  max-height: 100%;
-}
-
 #menu .content a {
   color: #aaa;
 }
@@ -323,13 +310,6 @@ button.hidden, q.hidden:after, a.hidden, span.hidden {
   width: auto;
   float: left;
   margin-right: 3vmin;
-}
-
-#menu .content .intro img {
-  display: block;
-  width: 70%;
-  height: auto;
-  float: none;
 }
 
 #stop, #theme, .reload, .permalink, .correct {

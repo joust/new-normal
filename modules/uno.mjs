@@ -1,6 +1,16 @@
 import { prompt } from '../components/message-box.mjs'
-import { element, elements } from './common.mjs'
-import { language, territory, locales, setTheme, loadSources, loadContent, extractContent, getMessage } from './content.mjs'
+import { element, elements, randomElement } from './common.mjs'
+import {
+  language,
+  territory,
+  locales,
+  setTheme,
+  loadSources,
+  loadContent,
+  extractContent,
+  getMessage,
+  getLabels
+} from './content.mjs'
 import { startLocal, startClient, getAlternatives, canBePlayedOn, isIdiot, allowedToPlay, allPossibleMoves, isArgument, isWildcard, isFallacy } from './uno-bg.mjs'
 
 function setupTable () {
@@ -119,8 +129,13 @@ window.unoWithBots = async function (bots) {
   // extractUnassigned()
   const locale = `${language}-${territory}`
   const clients = await startLocal(locale, content, numPlayers, playerID)
-  botPlayerIds.forEach(botID => addOpponentHand(botID, `CPU${botID}`))
-  botPlayerIds.forEach(botID => clients[playerID].moves.setName(botID, `CPU${botID}`))
+  const labels = [false, true].map(idiot => getLabels(idiot).map(label => label.innerHTML))
+  botPlayerIds.forEach(botID => {
+    const idiot = parseInt(botID) % 2
+    const name = randomElement(labels[idiot])
+    addOpponentHand(botID, name)
+    clients[playerID].moves.setName(botID, name)
+  })
   clients[playerID].moves.setName(playerID, 'Me')
   activateDrag(clients[playerID])
   clients[playerID].subscribe(state => updateTable(clients[playerID], state))

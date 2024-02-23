@@ -5,8 +5,7 @@ window.customElements.define('message-box', class MessageBoxElement extends Base
   get css () {
     const padding = '1em'
     return `
-      .msg-box-modal {
-        font-family: 'HVD Crocodile';
+      .modal {
         font-size: 2em;
         font-weight: 300;
         width: 100%;
@@ -20,7 +19,7 @@ window.customElements.define('message-box', class MessageBoxElement extends Base
         left: 0;
       }
   
-      .msg-box-dialog {
+      .dialog {
         width: calc(100% - 2em);
         max-width: 40vw;
         overflow: hidden;
@@ -30,7 +29,7 @@ window.customElements.define('message-box', class MessageBoxElement extends Base
         animation: show 265ms cubic-bezier(0.18, 0.89, 0.32, 1.28)
       }
   
-      .msg-box-dialog.hide {
+      .dialog.hide {
         opacity: 0;
         animation: hide 265ms ease-in;
       }
@@ -57,31 +56,31 @@ window.customElements.define('message-box', class MessageBoxElement extends Base
         }
       }
   
-      .msg-box-dialog-header {
+      .header {
         color: inherit;
         background-color: rgba(0, 0, 0, 0.05);
         padding: ${padding};
         border-bottom: solid 1px rgba(0, 0, 0, 0.15);
       }
   
-      .msg-box-dialog-body {
+      .body {
         color: inherit;
         padding: ${padding};
       }
   
-      .msg-box-dialog-body > p {
+      .body > p {
         color: inherit;
         padding: 0;
         margin: 0;
       }
   
-      .msg-box-dialog-footer {
+      .footer {
         color: inherit;
         display: flex;
         justify-content: stretch;
       }
   
-      .msg-box-dialog-button {
+      .button {
         color: inherit;
         font-family: inherit;
         font-size: inherit;
@@ -95,15 +94,15 @@ window.customElements.define('message-box', class MessageBoxElement extends Base
         transition: background-color 225ms ease-out;
       }
   
-      .msg-box-dialog-button:focus {
+      .button:focus {
         background-color: rgba(0, 0, 0, 0.05);
       }
   
-      .msg-box-dialog-button:active {
+      .button:active {
         background-color: rgba(0, 0, 0, 0.15);
       }
   
-      .msg-box-dialog-textbox {
+      .textbox {
         color: inherit;
         font-family: inherit;
         font-size: inherit;
@@ -118,32 +117,32 @@ window.customElements.define('message-box', class MessageBoxElement extends Base
         transition: box-shadow 125ms ease-out, border 125ms ease-out;
       }
   
-      .msg-box-dialog-textbox:focus {
+      .textbox:focus {
         border: solid 1px rgba(13, 134, 255, 0.8);
         box-shadow: 0 0 0.1em 0.2em rgba(13, 134, 255, 0.5);
       }
   
       @media (prefers-color-scheme: dark) {
-        .msg-box-modal {
+        .modal {
           background-color: rgba(31, 31, 31, 0.5);
         }
   
-        .msg-box-dialog {
+        .dialog {
           color: #f2f2f2;
           background-color: #464646;
         }
   
-        .msg-box-dialog-textbox {
+        .textbox {
           background-color: #2f2f2f;
         }
       }
   
       @media (prefers-color-scheme: light) {
-        .msg-box-modal {
+        .modal {
           background-color: rgba(221, 221, 221, 0.5);
         }
   
-        .msg-box-dialog {
+        .dialog {
           color: #101010;
           background-color: #ffffff;
         }
@@ -152,13 +151,13 @@ window.customElements.define('message-box', class MessageBoxElement extends Base
 
   get html () {
     return `
-      <div class="msg-box-modal">
-        <div class="msg-box-dialog">
-          <div class="msg-box-dialog-header"></div>
-          <div class="msg-box-dialog-body">
+      <div class="modal">
+        <div class="dialog">
+          <div class="header"></div>
+          <div class="body">
             <p></p>
           </div>
-          <div class="msg-box-dialog-footer">
+          <div class="footer">
           </div>
         </div>
       </div>`
@@ -182,16 +181,19 @@ window.customElements.define('message-box', class MessageBoxElement extends Base
     }
     switch (type) {
       case 'inform':
-        this.setInform(content, title)
+        this.setInform(content, title).then()
+        break
+      case 'progress':
+        this.setProgress(content, title).then()
         break
       case 'alert':
-        this.setAlert(content, title)
+        this.setAlert(content, title).then()
         break
       case 'confirm':
-        this.setConfirm(content, title)
+        this.setConfirm(content, title).then()
         break
       case 'prompt':
-        this.setPrompt(content, title)
+        this.setPrompt(content, title).then()
         break
     }
   }
@@ -200,13 +202,13 @@ window.customElements.define('message-box', class MessageBoxElement extends Base
    * Put the title and the content of the dialog box.
    */
   setupDialog (content, title) {
-    const dialogHeaderElm = this.shadowRoot.querySelector('.msg-box-dialog-header')
-    const dialogBodyElm = this.shadowRoot.querySelector('.msg-box-dialog-body > p')
-    dialogBodyElm.innerHTML = content
+    const header = this.shadowRoot.querySelector('.header')
+    const body = this.shadowRoot.querySelector('.body > p')
+    body.innerHTML = content
     if (title === null) {
-      dialogHeaderElm.remove()
+      header.remove()
     } else {
-      dialogHeaderElm.innerHTML = title
+      header.innerHTML = title
     }
   }
 
@@ -214,13 +216,24 @@ window.customElements.define('message-box', class MessageBoxElement extends Base
    * Execute 'animationend' event of the dialog, then dispose
    */
   disposeDialog () {
-    const dialogElm = this.shadowRoot.querySelector('.msg-box-dialog')
-    dialogElm.classList.add('hide')
-    dialogElm.addEventListener('animationend', (evt) => {
-      if (evt.animationName === 'hide') {
+    const dialog = this.shadowRoot.querySelector('.dialog')
+    dialog.classList.add('hide')
+    dialog.addEventListener('animationend', event => {
+      if (event.animationName === 'hide') {
         this.remove()
       }
     })
+  }
+
+  /* Only for progress dialogs */
+  progress (value, max) {
+    const progress = this.shadowRoot.querySelector('progress')
+    console.log(value, max)
+    if (progress) {
+      console.log('setting values')
+      progress.max = max
+      progress.value = value
+    }
   }
 
   t (v) {
@@ -233,7 +246,6 @@ window.customElements.define('message-box', class MessageBoxElement extends Base
         es: 'Cancelar',
         it: 'Annulla',
         pt: 'Cancelar',
-        'pt-br': 'Cancelar',
         pl: 'Anuluj',
         ru: 'Отмена',
         nl: 'Annuleren',
@@ -248,6 +260,20 @@ window.customElements.define('message-box', class MessageBoxElement extends Base
    */
   setInform (content, title, promise) {
     this.setupDialog(content, title)
+    if (!promise) {
+      promise = new Promise(resolve => setTimeout(() => resolve(), 2000))
+    } // show for 2s
+    return promise.then(() => this.disposeDialog())
+  }
+
+  /**
+   * Creates the progress dialog element which closes when the given promise is resolved/rejected
+   */
+  setProgress (content, title, promise) {
+    this.setupDialog(content, title)
+    const body = this.shadowRoot.querySelector('.body')
+    const progress = document.createElement('progress')
+    body.append(progress)
     if (promise) return promise.then(() => this.disposeDialog())
     return Promise.resolve()
   }
@@ -257,14 +283,14 @@ window.customElements.define('message-box', class MessageBoxElement extends Base
    */
   setAlert (content, title) {
     this.setupDialog(content, title)
-    const dialogFooterElm = this.shadowRoot.querySelector('.msg-box-dialog-footer')
-    const dialogConfirmBtn = document.createElement('button')
-    dialogConfirmBtn.classList.add('msg-box-dialog-button')
-    dialogConfirmBtn.innerText = 'OK'
-    dialogFooterElm.append(dialogConfirmBtn)
-    dialogConfirmBtn.focus()
-    return new Promise((resolve) => {
-      dialogConfirmBtn.addEventListener('click', () => {
+    const footer = this.shadowRoot.querySelector('.footer')
+    const confirm = document.createElement('button')
+    confirm.classList.add('button')
+    confirm.innerText = 'OK'
+    footer.append(confirm)
+    confirm.focus()
+    return new Promise(resolve => {
+      confirm.addEventListener('click', () => {
         this.disposeDialog()
         resolve(true)
       })
@@ -276,21 +302,21 @@ window.customElements.define('message-box', class MessageBoxElement extends Base
    */
   setConfirm (content, title) {
     this.setupDialog(content, title)
-    const dialogFooterElm = this.shadowRoot.querySelector('.msg-box-dialog-footer')
-    const dialogCancelBtn = document.createElement('button')
-    const dialogConfirmBtn = document.createElement('button')
-    dialogCancelBtn.classList.add('msg-box-dialog-button')
-    dialogCancelBtn.innerText = this.t('Cancel')
-    dialogConfirmBtn.classList.add('msg-box-dialog-button')
-    dialogConfirmBtn.innerText = 'OK'
-    dialogFooterElm.append(dialogCancelBtn, dialogConfirmBtn)
-    dialogCancelBtn.focus()
-    return new Promise((resolve) => {
-      dialogCancelBtn.addEventListener('click', () => {
+    const footer = this.shadowRoot.querySelector('.footer')
+    const cancel = document.createElement('button')
+    const confirm = document.createElement('button')
+    cancel.classList.add('button')
+    cancel.innerText = this.t('Cancel')
+    confirm.classList.add('button')
+    confirm.innerText = 'OK'
+    footer.append(cancel, confirm)
+    cancel.focus()
+    return new Promise(resolve => {
+      cancel.addEventListener('click', () => {
         this.disposeDialog()
         resolve(false)
       })
-      dialogConfirmBtn.addEventListener('click', () => {
+      confirm.addEventListener('click', () => {
         this.disposeDialog()
         resolve(true)
       })
@@ -303,63 +329,72 @@ window.customElements.define('message-box', class MessageBoxElement extends Base
   setPrompt (content, title) {
     this.setupDialog(content, title)
     // Create Textbox and put into the dialog body.
-    const dialogBodyElm = this.shadowRoot.querySelector('.msg-box-dialog-body')
-    const dialogMessageTextBoxContainer = document.createElement('p')
-    const dialogMessageTextBox = document.createElement('input')
-    dialogMessageTextBox.classList.add('msg-box-dialog-textbox')
-    dialogMessageTextBox.type = 'text'
-    dialogMessageTextBoxContainer.append(dialogMessageTextBox)
-    dialogBodyElm.append(dialogMessageTextBoxContainer)
+    const body = this.shadowRoot.querySelector('.body')
+    const p = document.createElement('p')
+    const input = document.createElement('input')
+    input.classList.add('textbox')
+    input.type = 'text'
+    input.value = ''
+    p.append(input)
+    body.append(p)
     // Create buttons, and put into the dialog footer.
-    const dialogFooterElm = this.shadowRoot.querySelector('.msg-box-dialog-footer')
-    const dialogCancelBtn = document.createElement('button')
-    const dialogConfirmBtn = document.createElement('button')
-    dialogCancelBtn.classList.add('msg-box-dialog-button')
-    dialogCancelBtn.innerText = this.t('Cancel')
-    dialogConfirmBtn.classList.add('msg-box-dialog-button')
-    dialogConfirmBtn.innerText = 'OK'
-    dialogFooterElm.append(dialogCancelBtn, dialogConfirmBtn)
-    dialogMessageTextBox.focus()
+    const footer = this.shadowRoot.querySelector('.footer')
+    const cancel = document.createElement('button')
+    const confirm = document.createElement('button')
+    cancel.classList.add('button')
+    cancel.innerText = this.t('Cancel')
+    confirm.classList.add('button')
+    confirm.innerText = 'OK'
+    footer.append(cancel, confirm)
+    input.focus()
     // Prompt message textbox KeyPress event
-    dialogMessageTextBox.addEventListener('keypress', (evt) => {
-      if (evt.key === 'Enter') {
+    input.addEventListener('keypress', event => {
+      if (event.key === 'Enter') {
         // If Enter key has been pressed
-        dialogConfirmBtn.click()
+        confirm.click()
       }
     })
-    return new Promise((resolve) => {
-      dialogCancelBtn.addEventListener('click', () => {
+    return new Promise(resolve => {
+      cancel.addEventListener('click', () => {
         this.disposeDialog()
         resolve(null)
       })
-      dialogConfirmBtn.addEventListener('click', () => {
+      confirm.addEventListener('click', () => {
+        console.log(input.value)
         this.disposeDialog()
-        resolve(dialogMessageTextBox.value)
+        resolve(input.value)
       })
     })
   }
 })
 
 export function inform (content, title = null, promise = null) {
-  const dialogBox = document.createElement('message-box')
-  document.body.appendChild(dialogBox)
-  return dialogBox.setInform(content, title, promise)
+  const box = document.createElement('message-box')
+  document.body.appendChild(box)
+  return box.setInform(content, title, promise)
+}
+
+export function progress (content, title = null, promise = null) {
+  const box = document.createElement('message-box')
+  document.body.appendChild(box)
+  box.setProgress(content, title, promise)
+  return box
 }
 
 export function alert (content, title = null) {
-  const dialogBox = document.createElement('message-box')
-  document.body.appendChild(dialogBox)
-  return dialogBox.setAlert(content, title)
+  const box = document.createElement('message-box')
+  document.body.appendChild(box)
+  return box.setAlert(content, title)
 }
 
 export function confirm (content, title = null) {
-  const dialogBox = document.createElement('message-box')
-  document.body.appendChild(dialogBox)
-  return dialogBox.setConfirm(content, title)
+  const box = document.createElement('message-box')
+  document.body.appendChild(box)
+  return box.setConfirm(content, title)
 }
 
 export function prompt (content, title = null) {
-  const dialogBox = document.createElement('message-box')
-  document.body.appendChild(dialogBox)
-  return dialogBox.setPrompt(content, title)
+  const box = document.createElement('message-box')
+  document.body.appendChild(box)
+  return box.setPrompt(content, title)
 }

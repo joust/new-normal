@@ -115,6 +115,32 @@ class TopicManager extends HTMLElement {
           margin: 0.5rem 0;
           border-radius: 4px;
           cursor: move;
+          display: flex;
+          flex-direction: column;
+        }
+        .argument h4 {
+          margin: 0;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .argument-details {
+          margin-top: 0.5rem;
+          color: #666;
+          cursor: text;
+          flex: 1;
+        }
+        .argument-details-input {
+          width: 100%;
+          margin-top: 0.5rem;
+          padding: 0.5rem;
+          border: 1px solid #dee2e6;
+          border-radius: 4px;
+          font-family: inherit;
+          min-height: 80px;
+          resize: vertical;
+          background: white;
+          flex: 1;
         }
         .argument.assigned {
           opacity: 0.6;
@@ -125,12 +151,6 @@ class TopicManager extends HTMLElement {
         }
         .argument.dragging {
           opacity: 0.5;
-        }
-        .argument h4 {
-          margin: 0;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
         }
         .argument-controls {
           display: flex;
@@ -449,6 +469,12 @@ class TopicManager extends HTMLElement {
           background: #007bff;
           color: white;
         }
+        .dialog-buttons .primary.delete {
+          background: #dc3545;
+        }
+        .dialog-buttons .primary.delete:hover {
+          background: #c82333;
+        }
       </style>
       <div class="container">
         <div class="topic-section">
@@ -504,6 +530,19 @@ class TopicManager extends HTMLElement {
             <div class="dialog-buttons">
               <button class="secondary" id="cancelSheepDialog">Cancel</button>
               <button class="primary" id="submitSheepDialog">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="confirmDialog" class="dialog-backdrop" style="display: none;">
+        <div class="dialog">
+          <h3>Confirm Delete</h3>
+          <div class="dialog-form">
+            <p id="confirmMessage"></p>
+            <div class="dialog-buttons">
+              <button class="secondary" id="cancelConfirmDialog">Cancel</button>
+              <button class="primary delete" id="confirmDeleteButton">Delete</button>
             </div>
           </div>
         </div>
@@ -746,6 +785,8 @@ class TopicManager extends HTMLElement {
         } else {
           argEl.appendChild(textarea);
         }
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
         textarea.focus();
 
         const saveDetails = () => {
@@ -755,6 +796,10 @@ class TopicManager extends HTMLElement {
         };
 
         textarea.addEventListener('blur', saveDetails);
+        textarea.addEventListener('input', () => {
+          textarea.style.height = 'auto';
+          textarea.style.height = textarea.scrollHeight + 'px';
+        });
       };
 
       if (detailsP) {
@@ -987,20 +1032,27 @@ class TopicManager extends HTMLElement {
         });
       });
 
-      // Add click handler for accordion toggle
-      const header = topicEl.querySelector('.topic-header');
-      header.addEventListener('click', () => {
-        const isOpen = !topicEl.classList.contains('closed');
-        // Close all topics first
-        topicsList.querySelectorAll('.topic').forEach(t => {
-          t.classList.add('closed');
-        });
-        // Then open this one if it was closed
-        if (isOpen) {
-          topicEl.classList.add('closed');
-        } else {
-          topicEl.classList.remove('closed');
+      // Add click handler for topic toggle
+      const topicHeader = topicEl.querySelector('.topic-header');
+      topicHeader.addEventListener('click', (e) => {
+        // Don't toggle if clicking delete button or editing title
+        if (e.target.closest('.delete-topic-btn') || e.target.closest('.topic-text')) {
+          return;
         }
+        topicEl.classList.toggle('closed');
+      });
+
+      // Add delete button handler
+      const deleteBtn = topicEl.querySelector('.delete-topic-btn');
+      deleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent topic toggle
+        this.showConfirmDialog(
+          `Are you sure you want to delete topic "${topic.title}"?`,
+          () => {
+            this.topics.delete(id);
+            this.renderTopics();
+          }
+        );
       });
 
       // Add textarea change listeners
@@ -1030,15 +1082,6 @@ class TopicManager extends HTMLElement {
 
       // Update argument lists
       this.updateTopicArguments(topic, idiotZone, sheepZone);
-
-      // Add delete topic button handler
-      const deleteTopicBtn = topicEl.querySelector('.delete-topic-btn');
-      deleteTopicBtn.addEventListener('click', () => {
-        this.showConfirmDialog(`Are you sure you want to delete the topic "${topic.title}" and all its associated arguments?`, () => {
-          this.topics.delete(id);
-          this.renderTopics();
-        });
-      });
 
       topicsList.appendChild(topicEl);
     }
@@ -1304,33 +1347,39 @@ class TopicManager extends HTMLElement {
   }
 
   showConfirmDialog(message, onConfirm) {
-    const overlay = document.createElement('div');
-    overlay.className = 'dialog-overlay';
-    
-    const dialog = document.createElement('div');
-    dialog.className = 'confirm-dialog';
-    dialog.innerHTML = `
-      <h3>Confirm Action</h3>
-      <p>${message}</p>
-      <div class="confirm-dialog-buttons">
-        <button class="cancel-btn">Cancel</button>
-        <button class="confirm-btn">Delete</button>
-      </div>
-    `;
+    const dialog = this.shadowRoot.getElementById('confirmDialog');
+    const messageEl = this.shadowRoot.getElementById('confirmMessage');
+    const confirmBtn = this.shadowRoot.getElementById('confirmDeleteButton');
+    const cancelBtn = this.shadowRoot.getElementById('cancelConfirmDialog');
+
+    messageEl.textContent = message;
+    dialog.style.display = 'flex';
 
     const closeDialog = () => {
-      this.shadowRoot.removeChild(overlay);
-      this.shadowRoot.removeChild(dialog);
+      dialog.style.display = 'none';
+      confirmBtn.removeEventListener('click', handleConfirm);
+      cancelBtn.removeEventListener('click', handleCancel);
+      dialog.removeEventListener('click', handleOutsideClick);
     };
 
-    dialog.querySelector('.cancel-btn').addEventListener('click', closeDialog);
-    dialog.querySelector('.confirm-btn').addEventListener('click', () => {
+    const handleConfirm = () => {
       onConfirm();
       closeDialog();
-    });
+    };
 
-    this.shadowRoot.appendChild(overlay);
-    this.shadowRoot.appendChild(dialog);
+    const handleCancel = () => {
+      closeDialog();
+    };
+
+    const handleOutsideClick = (e) => {
+      if (e.target === dialog) {
+        closeDialog();
+      }
+    };
+
+    confirmBtn.addEventListener('click', handleConfirm);
+    cancelBtn.addEventListener('click', handleCancel);
+    dialog.addEventListener('click', handleOutsideClick);
   }
 }
 

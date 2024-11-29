@@ -243,8 +243,19 @@ class TopicManager extends HTMLElement {
         }
         .topic-header-main {
           display: flex;
-          justify-content: space-between;
           align-items: center;
+          gap: 0.5rem;
+          padding: 0.5rem;
+        }
+        .topic-id {
+          font-family: monospace;
+          padding: 0.2rem 0.4rem;
+          border-radius: 3px;
+          background: #f8f9fa;
+          font-size: 0.9em;
+          color: #495057;
+          border: 1px solid #dee2e6;
+          order: -1;
         }
         .topic-header:hover {
           background: #e9ecef;
@@ -918,11 +929,11 @@ class TopicManager extends HTMLElement {
       topicEl.innerHTML = `
         <div class="topic-header">
           <div class="topic-header-main">
+            <span class="topic-id">${id}</span>
             <h3 class="topic-title">
               <span class="topic-toggle"></span>
               <span class="topic-text">${topic.title}</span>
             </h3>
-            <span class="topic-id">${id}</span>
             <button class="delete-topic-btn" title="Delete topic">&times;</button>
           </div>
           <div class="topic-compact-args">

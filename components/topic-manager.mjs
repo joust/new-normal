@@ -16,9 +16,11 @@ class TopicManager extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>
         :host {
-          display: block;
-          height: 100%;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+          display: flex;
+          flex-direction: column;
+          height: 100vh;
+          padding: 1rem;
+          gap: 1rem;
         }
         * {
           box-sizing: border-box;
@@ -33,13 +35,16 @@ class TopicManager extends HTMLElement {
           border-radius: 4px;
           font: inherit;
         }
+        .json-controls {
+          display: flex;
+          gap: 0.5rem;
+        }
         .container {
           display: grid;
           grid-template-columns: minmax(300px, 2fr) 3fr 3fr;
           gap: 2rem;
-          padding: 1rem;
-          height: 100vh;
-          box-sizing: border-box;
+          flex: 1;
+          min-height: 0;
         }
         .topic-section {
           display: flex;
@@ -475,7 +480,41 @@ class TopicManager extends HTMLElement {
         .dialog-buttons .primary.delete:hover {
           background: #c82333;
         }
+        .json-controls {
+          display: flex;
+          gap: 0.5rem;
+          margin-bottom: 1rem;
+        }
+        .json-button {
+          padding: 0.5rem 1rem;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.9em;
+          color: white;
+          transition: background-color 0.2s;
+        }
+        .json-button.import {
+          background: #007bff;
+        }
+        .json-button.import:hover {
+          background: #0056b3;
+        }
+        .json-button.export {
+          background: #28a745;
+        }
+        .json-button.export:hover {
+          background: #218838;
+        }
       </style>
+      <div class="json-controls">
+        <input type="file" id="jsonFileInput" accept=".json" style="display: none;">
+        <button class="json-button import" id="importButton">📥 Import JSON</button>
+        <button class="json-button export" id="exportButton">📤 Export JSON</button>
+      </div>
       <div class="container">
         <div class="topic-section">
           <div class="section-header">
@@ -623,6 +662,36 @@ class TopicManager extends HTMLElement {
       if (e.key === 'Enter') {
         this.addTopic();
       }
+    });
+
+    // Setup JSON import/export
+    const importButton = this.shadowRoot.getElementById('importButton');
+    const exportButton = this.shadowRoot.getElementById('exportButton');
+    const fileInput = this.shadowRoot.getElementById('jsonFileInput');
+
+    importButton.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const data = JSON.parse(e.target.result);
+            this.loadFromJson(data);
+          } catch (error) {
+            console.error('Error loading JSON:', error);
+            alert('Invalid JSON file format');
+          }
+        };
+        reader.readAsText(file);
+      }
+    });
+
+    exportButton.addEventListener('click', () => {
+      this.exportToJson();
     });
   }
 
@@ -1380,6 +1449,67 @@ class TopicManager extends HTMLElement {
     confirmBtn.addEventListener('click', handleConfirm);
     cancelBtn.addEventListener('click', handleCancel);
     dialog.addEventListener('click', handleOutsideClick);
+  }
+
+  loadFromJson(data) {
+    try {
+      // Clear existing data
+      this.topics.clear();
+      this.idiotArguments.clear();
+      this.sheepArguments.clear();
+
+      // Load topics
+      if (data.topics) {
+        for (const [id, topic] of Object.entries(data.topics)) {
+          this.topics.set(id, {
+            ...topic,
+            arguments: new Set(topic.arguments)
+          });
+        }
+      }
+
+      // Load arguments
+      if (data.idiotArguments) {
+        data.idiotArguments.forEach(arg => this.idiotArguments.add(arg));
+      }
+      if (data.sheepArguments) {
+        data.sheepArguments.forEach(arg => this.sheepArguments.add(arg));
+      }
+
+      // Refresh view
+      this.renderTopics();
+      this.renderArguments('idiot');
+      this.renderArguments('sheep');
+    } catch (error) {
+      console.error('Error loading JSON data:', error);
+      alert('Error loading JSON data');
+    }
+  }
+
+  exportToJson() {
+    const data = {
+      topics: Object.fromEntries(
+        Array.from(this.topics.entries()).map(([id, topic]) => [
+          id,
+          {
+            ...topic,
+            arguments: Array.from(topic.arguments)
+          }
+        ])
+      ),
+      idiotArguments: Array.from(this.idiotArguments),
+      sheepArguments: Array.from(this.sheepArguments)
+    };
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'topics-export.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 }
 

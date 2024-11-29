@@ -379,6 +379,65 @@ class TopicManager extends HTMLElement {
         .section-header input {
           flex: 1;
         }
+        .dialog-backdrop {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.5);
+          display: none;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+        }
+        .dialog {
+          background: white;
+          padding: 1.5rem;
+          border-radius: 8px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          max-width: 400px;
+          width: 90%;
+        }
+        .dialog h3 {
+          margin: 0 0 1rem 0;
+        }
+        .dialog-form {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+        .dialog-form input,
+        .dialog-form textarea {
+          width: 100%;
+          padding: 0.5rem;
+          border: 1px solid #dee2e6;
+          border-radius: 4px;
+          font-family: inherit;
+        }
+        .dialog-form textarea {
+          min-height: 100px;
+          resize: vertical;
+        }
+        .dialog-buttons {
+          display: flex;
+          justify-content: flex-end;
+          gap: 0.5rem;
+        }
+        .dialog-buttons button {
+          padding: 0.5rem 1rem;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+        .dialog-buttons .secondary {
+          background: #6c757d;
+          color: white;
+        }
+        .dialog-buttons .primary {
+          background: #007bff;
+          color: white;
+        }
       </style>
       <div class="container">
         <div class="topic-section">
@@ -796,16 +855,33 @@ class TopicManager extends HTMLElement {
 
   hideDialog(dialogId) {
     const dialog = this.shadowRoot.getElementById(dialogId);
-    const type = dialogId.replace('Dialog', '');
-    const dialogTitle = dialog.querySelector('h3');
-    const submitBtn = this.shadowRoot.getElementById(`submit${type.charAt(0).toUpperCase() + type.slice(1)}Dialog`);
-
     dialog.style.display = 'none';
-    this._editingArgument = null;
+  }
+
+  showIdiotDialog() {
+    const dialog = this.shadowRoot.getElementById('idiotDialog');
+    const titleInput = this.shadowRoot.getElementById('idiotTitle');
+    const detailsInput = this.shadowRoot.getElementById('idiotDetails');
     
-    // Reset dialog and button text
-    dialogTitle.textContent = `Add ${type.charAt(0).toUpperCase() + type.slice(1)} Argument`;
-    submitBtn.textContent = 'Add';
+    // Reset form
+    titleInput.value = '';
+    detailsInput.value = '';
+    
+    dialog.style.display = 'flex';
+    titleInput.focus();
+  }
+
+  showSheepDialog() {
+    const dialog = this.shadowRoot.getElementById('sheepDialog');
+    const titleInput = this.shadowRoot.getElementById('sheepTitle');
+    const detailsInput = this.shadowRoot.getElementById('sheepDetails');
+    
+    // Reset form
+    titleInput.value = '';
+    detailsInput.value = '';
+    
+    dialog.style.display = 'flex';
+    titleInput.focus();
   }
 
   renderTopics() {
@@ -1041,9 +1117,9 @@ class TopicManager extends HTMLElement {
     const title = input.value.trim();
     if (!title) return;
 
-    const topicId = 'T' + (this.topics.size + 1);
-    this.topics.set(topicId, {
-      id: topicId,
+    const id = 'T' + (this.topics.size + 1);
+    this.topics.set(id, {
+      id,
       title,
       arguments: new Set(),
       idiotSummary: '',
@@ -1194,16 +1270,6 @@ class TopicManager extends HTMLElement {
     badgeContainer.innerHTML = assignments.map(topic => 
       `<span class="topic-badge" title="${topic.title}">${topic.id}</span>`
     ).join('');
-  }
-
-  showIdiotDialog() {
-    const dialog = this.shadowRoot.getElementById('idiotDialog');
-    dialog.style.display = 'flex';
-  }
-
-  showSheepDialog() {
-    const dialog = this.shadowRoot.getElementById('sheepDialog');
-    dialog.style.display = 'flex';
   }
 
   deleteArgument(id, type) {

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width">
+    <meta name="google" content="notranslate">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <title>New Normal - Topic Manager</title>
+    <link rel="stylesheet" href="styles/opensans.css">
+    <link rel="stylesheet" href="styles/crocodile.css">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        topic-manager {
+            display: block;
+            height: 100%;
+        }
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: #f0f2f5;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .red { color: #dc3545; }
+        .blue { color: #007bff; }
+    </style>
+</head>
+<body class="notranslate" translate="no">
+    <div class="header">
+        <div class="logo">
+            <span class="red">New</span>&nbsp;<span class="blue">Normal</span>
+        </div>
+        <h1>Topic Manager</h1>
+    </div>
+    <topic-manager></topic-manager>
+    <script type="module">
+        import './components/topic-manager.mjs';
+
+        // Wait for component to be ready
+        customElements.whenDefined('topic-manager').then(() => {
+            console.log('Component defined');
+            const manager = document.querySelector('topic-manager');
+            console.log('Manager element:', manager);
+
+            // Example data
+            const topics = [
+                {
+                    id: 'T1',
+                    title: 'Mask Effectiveness',
+                    arguments: ['I1', 'S1'],
+                    idiotSummary: 'Masks restrict breathing',
+                    sheepSummary: 'Masks prevent virus spread'
+                },
+                {
+                    id: 'T2',
+                    title: 'Natural Immunity',
+                    arguments: ['I2', 'S2'],
+                    idiotSummary: 'Natural immunity is better',
+                    sheepSummary: 'Vaccines enhance immunity'
+                }
+            ];
+
+            const idiotArguments = [
+                {
+                    id: 'I1',
+                    title: 'Masks Restrict Oxygen',
+                    details: 'CO2 builds up inside the mask',
+                    type: 'idiot'
+                },
+                {
+                    id: 'I2',
+                    title: 'Natural Immunity is Better',
+                    details: 'Our bodies know best',
+                    type: 'idiot'
+                }
+            ];
+
+            const sheepArguments = [
+                {
+                    id: 'S1',
+                    title: 'Studies Show Effectiveness',
+                    details: 'Multiple studies confirm masks work',
+                    type: 'sheep'
+                },
+                {
+                    id: 'S2',
+                    title: 'Healthcare Workers Use Them',
+                    details: 'Medical professionals rely on masks',
+                    type: 'sheep'
+                }
+            ];
+
+            // Load all data at once
+            console.log('Loading data into manager');
+            manager.loadData(topics, idiotArguments, sheepArguments);
+
+            // Listen for changes
+            manager.addEventListener('assignment-changed', (e) => {
+                console.log('Assignment changed:', e.detail);
+            });
+
+            manager.addEventListener('summary-changed', (e) => {
+                console.log('Summary changed:', e.detail);
+            });
+        });
+    </script>
+</body>
+</html>

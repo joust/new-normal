@@ -45,73 +45,24 @@
     <script type="module">
         import './components/topic-manager.mjs';
 
-        // Wait for component to be ready
-        customElements.whenDefined('topic-manager').then(() => {
-            console.log('Component defined');
-            const manager = document.querySelector('topic-manager');
-            console.log('Manager element:', manager);
-
-            // Example data
-            const topics = [
-                {
-                    id: 'T1',
-                    title: 'Mask Effectiveness',
-                    arguments: ['I1', 'S1'],
-                    idiotSummary: 'Masks restrict breathing',
-                    sheepSummary: 'Masks prevent virus spread'
-                },
-                {
-                    id: 'T2',
-                    title: 'Natural Immunity',
-                    arguments: ['I2', 'S2'],
-                    idiotSummary: 'Natural immunity is better',
-                    sheepSummary: 'Vaccines enhance immunity'
+        async function loadData() {
+            try {
+                const response = await fetch('/content/pandemic/data.json');
+                const data = await response.json();
+                
+                const manager = document.querySelector('topic-manager');
+                if (manager) {
+                    manager.loadData(data);
+                } else {
+                    console.error('Topic manager element not found');
                 }
-            ];
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
 
-            const idiotArguments = [
-                {
-                    id: 'I1',
-                    title: 'Masks Restrict Oxygen',
-                    details: 'CO2 builds up inside the mask',
-                    type: 'idiot'
-                },
-                {
-                    id: 'I2',
-                    title: 'Natural Immunity is Better',
-                    details: 'Our bodies know best',
-                    type: 'idiot'
-                }
-            ];
-
-            const sheepArguments = [
-                {
-                    id: 'S1',
-                    title: 'Studies Show Effectiveness',
-                    details: 'Multiple studies confirm masks work',
-                    type: 'sheep'
-                },
-                {
-                    id: 'S2',
-                    title: 'Healthcare Workers Use Them',
-                    details: 'Medical professionals rely on masks',
-                    type: 'sheep'
-                }
-            ];
-
-            // Load all data at once
-            console.log('Loading data into manager');
-            manager.loadData(topics, idiotArguments, sheepArguments);
-
-            // Listen for changes
-            manager.addEventListener('assignment-changed', (e) => {
-                console.log('Assignment changed:', e.detail);
-            });
-
-            manager.addEventListener('summary-changed', (e) => {
-                console.log('Summary changed:', e.detail);
-            });
-        });
+        // Load data when the page loads
+        window.addEventListener('load', loadData);
     </script>
 </body>
 </html>

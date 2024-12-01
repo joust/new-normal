@@ -1355,8 +1355,8 @@ class TopicManager extends HTMLElement {
   }
 
   // Method to load all data at once
-  loadData(topics, idiotArgs, sheepArgs) {
-    console.log('Loading data:', { topics, idiotArgs, sheepArgs });
+  loadData(data) {
+    console.log('Loading data:', data);
     
     // Reset existing data
     this.topics.clear();
@@ -1364,17 +1364,33 @@ class TopicManager extends HTMLElement {
     this.sheepArguments.clear();
 
     // Load topics
-    topics.forEach(topic => {
+    data.topics.forEach(topic => {
       this.topics.set(topic.id, {
         ...topic,
-        arguments: new Set(Array.isArray(topic.arguments) ? topic.arguments : Array.from(topic.arguments))
+        arguments: new Set(topic.arguments)
       });
     });
     console.log('Topics loaded:', this.topics);
 
     // Load arguments
-    idiotArgs.forEach(arg => this.idiotArguments.add(arg));
-    sheepArgs.forEach(arg => this.sheepArguments.add(arg));
+    data.arguments.idiot.forEach(arg => {
+      this.idiotArguments.add({
+        id: arg.id,
+        title: arg.title,
+        details: arg.details,
+        type: 'idiot'
+      });
+    });
+    
+    data.arguments.sheep.forEach(arg => {
+      this.sheepArguments.add({
+        id: arg.id,
+        title: arg.title,
+        details: arg.details,
+        type: 'sheep'
+      });
+    });
+    
     console.log('Arguments loaded:', {
       idiot: this.idiotArguments,
       sheep: this.sheepArguments
@@ -1469,11 +1485,13 @@ class TopicManager extends HTMLElement {
       }
 
       // Load arguments
-      if (data.idiotArguments) {
-        data.idiotArguments.forEach(arg => this.idiotArguments.add(arg));
-      }
-      if (data.sheepArguments) {
-        data.sheepArguments.forEach(arg => this.sheepArguments.add(arg));
+      if (data.arguments) {
+        if (data.arguments.idiot) {
+          data.arguments.idiot.forEach(arg => this.idiotArguments.add(arg));
+        }
+        if (data.arguments.sheep) {
+          data.arguments.sheep.forEach(arg => this.sheepArguments.add(arg));
+        }
       }
 
       // Refresh view
@@ -1497,8 +1515,10 @@ class TopicManager extends HTMLElement {
           }
         ])
       ),
-      idiotArguments: Array.from(this.idiotArguments),
-      sheepArguments: Array.from(this.sheepArguments)
+      arguments: {
+        idiot: Array.from(this.idiotArguments),
+        sheep: Array.from(this.sheepArguments)
+      }
     };
 
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });

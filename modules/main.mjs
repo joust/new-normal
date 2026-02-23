@@ -55,13 +55,6 @@ window.show = async function (page) {
 }
 
 /**
- * stop the pyro effect by setting CSS 'hidden' class
- */
-window.stopPyro = function () {
-  element('pyro').classList.add('hidden')
-}
-
-/**
  * transfer the current attitude to the attitude page for editing
  */
 export function initAttitude () {
@@ -88,6 +81,10 @@ export function loadAttitude () {
     }
   }
 }
+
+document.querySelector('.location')?.addEventListener('locale-change', event => {
+  window.load(event.detail.locale)
+})
 
 function displayHash (hash) {
   const first = hash.toLowerCase().split('&')[0]

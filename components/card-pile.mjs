@@ -1,6 +1,6 @@
 import { BaseComponent } from './base-component.mjs'
 
-window.customElements.define('card-pile', class CardPile extends BaseComponent {
+export class CardPile extends BaseComponent {
   // no top given means empty stack, top given as 'I' or 'S' means facing down pile with idiot or sheep card-back
   static observedAttributes = ['top', 'mirrored', 'draggable', 'droppable']
 
@@ -152,4 +152,4 @@ window.customElements.define('card-pile', class CardPile extends BaseComponent {
       default: return `<game-card ${mirrored} card="${this.top}"></game-card>`
     }
   }
-})
+}

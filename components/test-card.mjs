@@ -1,7 +1,7 @@
 // idea from: https://codepen.io/suez/pen/MaeVBy
 import { BaseComponent } from './base-component.mjs'
 
-window.customElements.define('test-card', class TestCard extends BaseComponent {
+export class TestCard extends BaseComponent {
   static observedAttributes = ['card']
   static contentRootSelector = '#content'
 
@@ -270,4 +270,4 @@ window.customElements.define('test-card', class TestCard extends BaseComponent {
       this.animating = false
     }, 300)
   }
-})
+}

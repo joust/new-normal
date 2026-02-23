@@ -1,6 +1,6 @@
 import { BaseComponent } from './base-component.mjs'
 
-window.customElements.define('opponent-hand', class OpponentHand extends BaseComponent {
+export class OpponentHand extends BaseComponent {
   static observedAttributes = ['nr', 'name', 'cards']
 
   get nr () {
@@ -114,4 +114,4 @@ window.customElements.define('opponent-hand', class OpponentHand extends BaseCom
     })
     this.recalc()
   }
-})
+}

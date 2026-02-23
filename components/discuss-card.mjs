@@ -1,7 +1,7 @@
 import { flagMapped } from './shared.mjs'
 import { BaseCard } from './base-card.mjs'
 
-window.customElements.define('discuss-card', class DiscussCard extends BaseCard {
+export class DiscussCard extends BaseCard {
   static observedAttributes = ['idiot', 'topicId', 'mirrored']
 
   get topicId () {
@@ -149,4 +149,4 @@ window.customElements.define('discuss-card', class DiscussCard extends BaseCard 
       this.element('description').innerHTML = this.description
     }
   }
-})
+}

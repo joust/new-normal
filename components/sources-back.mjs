@@ -1,6 +1,6 @@
 import { BaseComponent } from './base-component.mjs'
 
-window.customElements.define('sources-back', class SourcesBack extends BaseComponent {
+export class SourcesBack extends BaseComponent {
   get css () {
     return `
     :host {
@@ -62,4 +62,4 @@ window.customElements.define('sources-back', class SourcesBack extends BaseCompo
     super.connectedCallback()
     Array.from(this.querySelectorAll('a')).forEach(a => (a.onclick = event => event.stopPropagation()))
   }
-})
+}

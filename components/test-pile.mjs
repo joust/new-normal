@@ -1,6 +1,6 @@
 import { BaseComponent } from './base-component.mjs'
 
-window.customElements.define('test-pile', class TestPile extends BaseComponent {
+export class TestPile extends BaseComponent {
   static observedAttributes = ['cards']
 
   get cards () {
@@ -83,4 +83,4 @@ window.customElements.define('test-pile', class TestPile extends BaseComponent {
     setTimeout(() => pile.removeChild(card), 300)
     if (card.card === this.cards[0]) { this.dispatchEvent(new CustomEvent('finish', { detail: this.stats })) }
   }
-})
+}

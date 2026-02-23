@@ -2,7 +2,7 @@ import { BaseComponent } from './base-component.mjs'
 
 const ALTERNATIVES_STEP = 300
 
-window.customElements.define('game-card', class GameCard extends BaseComponent {
+export class GameCard extends BaseComponent {
   static observedAttributes = ['card', 'alt', 'alternatives', 'mirrored']
   static contentRootSelector = '#content'
 
@@ -251,4 +251,4 @@ window.customElements.define('game-card', class GameCard extends BaseComponent {
       }
     }
   }
-})
+}

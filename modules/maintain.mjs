@@ -747,3 +747,7 @@ export function fallacyClassSelect (selected) {
   })
   return `<select onchange="setFallacyClass(event)">${classes}</select>`
 }
+
+document.querySelector('.location')?.addEventListener('locale-change', event => {
+  window.switchLocale(event.detail.locale)
+})

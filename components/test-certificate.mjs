@@ -1,6 +1,6 @@
 import { BaseComponent } from './base-component.mjs'
 
-window.customElements.define('test-certificate', class TestCertificate extends BaseComponent {
+export class TestCertificate extends BaseComponent {
   static virus = 'styles/images/virus.png'
 
   get css () {
@@ -125,4 +125,4 @@ window.customElements.define('test-certificate', class TestCertificate extends B
   randomViruses () {
     return Array(100).fill('').map(() => `url(${TestCertificate.virus}) ${this.random(-20, 120)}% ${this.random(-20, 120)}% / ${this.random(10, 20)}% no-repeat`).join(',')
   }
-})
+}

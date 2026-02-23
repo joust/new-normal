@@ -1,6 +1,6 @@
 import { BaseComponent } from './base-component.mjs'
 
-window.customElements.define('editable-card', class EditableCard extends BaseComponent {
+export class EditableCard extends BaseComponent {
   static observedAttributes = ['card']
   static contentRootSelector = '#content'
 
@@ -121,4 +121,4 @@ window.customElements.define('editable-card', class EditableCard extends BaseCom
       case 'S': return `<argument-card id="card" ${type} ${spellcheck} card="${this.card}">${content.innerHTML}</argument-card>`
     }
   }
-})
+}

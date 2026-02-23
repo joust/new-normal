@@ -1,7 +1,7 @@
 import { flagMapped } from './shared.mjs'
 import { BaseCard } from './base-card.mjs'
 
-window.customElements.define('appeal-to-card', class AppealToCard extends BaseCard {
+export class AppealToCard extends BaseCard {
   static observedAttributes = ['idiot', 'type', 'mirrored']
 
   get idiot () {
@@ -164,4 +164,4 @@ window.customElements.define('appeal-to-card', class AppealToCard extends BaseCa
       root.querySelector('.phrase').innerHTML = this.phrase
     }
   }
-})
+}

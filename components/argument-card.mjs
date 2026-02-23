@@ -1,7 +1,7 @@
 import { flagMapped } from './shared.mjs'
 import { BaseCard } from './base-card.mjs'
 
-window.customElements.define('argument-card', class ArgumentCard extends BaseCard {
+export class ArgumentCard extends BaseCard {
   static observedAttributes = ['topic', 'neutral', 'topicId', 'card', 'wildcard', 'spellcheck', 'mirrored']
 
   get idiot () {
@@ -299,4 +299,4 @@ window.customElements.define('argument-card', class ArgumentCard extends BaseCar
       this.element('side').innerHTML = `${this.wildcard ? '✱ ' : ''}${this.title}`
     }
   }
-})
+}

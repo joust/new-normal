@@ -1,5 +1,6 @@
 Uno
 
+* Fix the secure relay server wss://
 * implement winning policy and turn order for > 2 players, when single players can run out of cards without the game ending
 * implement touchmove for hand & card shuffle (vertical & horizontal)
 * add random first player (currently the host always makes the first move)
@@ -8,10 +9,6 @@ Uno
 * implement bot players in multiplayer game (which take the free seats)
 * implement flash up messages without buttons like "Everythings ready, lets go!", "Finding your connection", "Choose your seat!"
 * Random bot names taken from Appeal to cards
-
-Bingo
-
-* implement bingo-card component
 
 General
 

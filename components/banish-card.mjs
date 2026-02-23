@@ -1,6 +1,6 @@
 import { BaseCard } from './base-card.mjs'
 
-window.customElements.define('banish-card', class BanishCard extends BaseCard {
+export class BanishCard extends BaseCard {
   static observedAttributes = ['idiot', 'mirrored']
 
   static phrase = {
@@ -140,4 +140,4 @@ window.customElements.define('banish-card', class BanishCard extends BaseCard {
       this.element('description').innerHTML = BanishCard.description[dkey]
     }
   }
-})
+}

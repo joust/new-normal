@@ -11,113 +11,18 @@
     <script src="https://unpkg.com/@isomorphic-git/lightning-fs"></script>
     <script src="https://unpkg.com/isomorphic-git"></script>
     <script src="libs/table-sort.js"></script>
-    <script src="components/editable-card.mjs" type="module"></script>
-    <script src="components/argument-card.mjs" type="module"></script>
-    <script src="components/message-box.mjs" type="module"></script>
-    <script src="components/no-card.mjs" type="module"></script>
-    <script src="components/card-pile.mjs" type="module"></script>
-    <script src="components/card-back.mjs" type="module"></script>
-    <script src="components/label-card.mjs" type="module"></script>
-    <script src="components/cancel-card.mjs" type="module"></script>
-    <script src="components/fallacy-card.mjs" type="module"></script>
-    <script src="components/strawman-card.mjs" type="module"></script>
-    <script src="components/appeal-to-card.mjs" type="module"></script>
-    <script src="components/research-card.mjs" type="module"></script>
-    <script src="components/discuss-card.mjs" type="module"></script>
-    <script src="components/pause-card.mjs" type="module"></script>
-    <script src="components/banish-card.mjs" type="module"></script>
-    <script src="components/flip-card.mjs" type="module"></script>
-    <script src="components/sources-back.mjs" type="module"></script>
-    <script src="components/centered-cards.mjs" type="module"></script>
-    <script src="modules/content.mjs" type="module"></script>
-    <script src="modules/common.mjs" type="module"></script>
-    <script src="modules/filesystem.mjs" type="module"></script>
-    <script src="modules/maintain.mjs" type="module"></script>
+    <script type="module">
+      import { defineElements } from './define.mjs'
+      import './modules/maintain.mjs'
+      defineElements()
+    </script>
   </head>
   <body class="notranslate" translate="no">
     <div id="navigation" class="radio-tabs">
       <button id="stop">&#x274c;</button>
       <input id="_connect" type="radio" name="type" class="radio-tab" value="connect" onclick="navigateMaintain(event)" checked>
       <label for="_connect">🛠️</label>
-      <select class="location" onchange="switchLocale(event.target.value)">
-        <option title="Deutschland" value="de-de">🇩🇪 Deutschland</option>
-        <option title="Österreich" value="de-at">🇦🇹 Österreich</option>
-        <option title="Schweiz" value="de-ch">🇨🇭 Schweiz</option>
-        <option title="Svizzera" value="it-ch">🇨🇭 Svizzera</option>
-        <option title="Suisse" value="fr-ch">🇨🇭 Suisse</option>
-        <option title="Danmark" value="da-da">🇩🇰 Danmark</option>
-        <option title="Liechtenstein" value="de-li">🇱🇮 Liechtenstein</option>
-        <option title="Italia" value="it-it">🇮🇹 Italia</option>
-        <option title="Italien" value="de-it">🇮🇹 Italien</option>
-        <option title="San Marino" value="it-sm">🇸🇲 San Marino</option>
-        <option title="Città del Vaticano" value="it-va">🇻🇦 Città del Vaticano</option>
-        <option title="United States" value="en-us">🇺🇸 United States</option>
-        <option title="United Kingdom" value="en-gb">🇬🇧 United Kingdom</option>
-        <option title="Australia" value="en-au">🇦🇺 Australia</option>
-        <option title="New Zealand" value="en-nz">🇳🇿 New Zealand</option>
-        <option title="Canada" value="en-ca">🇨🇦 Canada</option>
-        <option title="Canada" value="fr-ca">🇨🇦 Canada</option>
-        <option title="Polska" value="pl-pl">🇵🇱 Polska</option>
-        <option title="Antigua and Barbuda" value="en-ag">🇦🇬 Antigua and Barbuda</option>
-        <option title="The Bahamas" value="en-bs">🇧🇸 The Bahamas</option>
-        <option title="Barbados" value="en-bb">🇧🇧 Barbados</option>
-        <option title="Belize" value="en-bz">🇧🇿  Belize</option>
-        <option title="Dominica" value="en-dm">🇩🇲 Dominica</option>
-        <option title="Grenada" value="en-gd">🇬🇩 Grenada</option>
-        <option title="Guyana" value="en-gy">🇬🇾 Guyana</option>
-        <option title="Ireland" value="en-ie">🇮🇪 Ireland</option>
-        <option title="Jamaica" value="en-jm">🇯🇲 Jamaica</option>
-        <option title="Malta" value="en-mt">🇲🇹 Malta</option>
-        <option title="St Kitts and Nevis" value="en-kn">🇰🇳 St Kitts and Nevis</option>
-        <option title="St Lucia" value="en-lc">🇱🇨 St Lucia</option>
-        <option title="St Vincent and the Grenadines" value="en-vc">🇻🇨 St Vincent and the Grenadines</option>
-        <option title="Trinidad and Tobago" value="en-tt">🇹🇹 Trinidad and Tobago</option>
-        <option title="España" value="es-es">🇪🇸 España</option>
-        <option title="Cuba" value="es-cu">🇨🇺 Cuba</option>
-        <option title="Perú" value="es-pe">🇵🇪 Perú</option>
-        <option title="Chile" value="es-cl">🇨🇱 Chile</option>
-        <option title="México" value="es-mx">🇲🇽 México</option>
-        <option title="Puerto Rico" value="es-pr">🇵🇷 Puerto Rico</option>
-        <option title="Argentina" value="es-ar">🇦🇷 Argentina</option>
-        <option title="Bolivia" value="es-bo">🇧🇴 Bolivia</option>
-        <option title="Colombia" value="es-co">🇨🇴 Colombia</option>
-        <option title="Costa Rica" value="es-cr">🇨🇷 Costa Rica</option>
-        <option title="República Dominicana" value="es-do">🇩🇴 República Dominicana</option>
-        <option title="Ecuador" value="es-ec">🇪🇨 Ecuador</option>
-        <option title="El Salvador" value="es-sv">🇸🇻 El Salvador</option>
-        <option title="Guinea Ecuatorial" value="es-gq">🇬🇶 Guinea Ecuatorial</option>
-        <option title="Guatemala" value="es-gt">🇬🇹 Guatemala</option>
-        <option title="Honduras" value="es-hn">🇭🇳 Honduras</option>
-        <option title="Nicaragua" value="es-ni">🇳🇮 Nicaragua</option>
-        <option title="Panama" value="es-pa">🇵🇦 Panama</option>
-        <option title="Paraguay" value="es-py">🇵🇾 Paraguay</option>
-        <option title="Uruguay" value="es-uy">🇺🇾 Uruguay</option>
-        <option title="Venezuela" value="es-ve">🇻🇪 Venezuela</option>
-        <option title="Portugual" value="pt-pt">🇵🇹 Portugual</option>
-        <option title="Brasil" value="pt-br">🇧🇷 Brasil</option>
-        <option title="Angola" value="pt-ao">🇦🇴 Angola</option>
-        <option title="Moçambique" value="pt-mz">🇲🇿 Moçambique</option>
-        <option title="Guiné-Bissau" value="pt-gw">🇬🇼 Guiné-Bissau</option>
-        <option title="São Tomé &amp; Príncipe" value="pt-st">🇸🇹 São Tomé &amp; Príncipe</option>
-        <option title="Cabo Verde" value="pt-cv">🇨🇻 Cabo Verde</option>
-        <option title="France" value="fr-fr">🇫🇷 France</option>
-        <option title="Nederlands" value="nl-nl">🇳🇱 Nederlands</option>
-        <option title="België" value="nl-be">🇧🇪 België</option>
-        <option title="Belgien" value="de-be">🇧🇪 Belgien</option>
-        <option title="Belgique" value="fr-be">🇧🇪 Belgique</option>
-        <option title="Congo" value="fr-cd">🇨🇩 Congo</option>
-        <option title="Congo" value="fr-cg">🇨🇬 Congo</option>
-        <option title="Côte d’Ivoire" value="fr-ko">🇨🇮 Côte d’Ivoire</option>
-        <option title="Madagascar" value="fr-ko">🇲🇬 Madagascar</option>
-        <option title="Cameroun" value="fr-cm">🇨🇲 Cameroun</option>
-        <option title="Cameroon" value="en-cm">🇨🇲 Cameroon</option>
-        <option title="Burkina Faso" value="fr-bf">🇧🇫 Burkina Faso</option>
-        <option title="Niger" value="fr-ne">🇳🇪 Niger</option>
-        <option title="Mali" value="fr-ml">🇲🇱 Mali</option>
-        <option title="Sénégal" value="fr-sn">🇸🇳 Sénégal</option>
-        <option title="Haïti" value="fr-ht">🇭🇹 Haïti</option>
-        <option title="Benin" value="fr-bj">🇧🇯 Benin</option>
-      </select>
+      <locale-selector class="location" languages="de,it,fr,da,en,pl,es,pt,nl"></locale-selector>
       <select class="normality" onchange="loadMaintain(undefined, event.target.value)">
         <option title="Pandemic" value="p">🦠 Pandemic</option>
         <option title="Climate" value="c" disabled>🌎 Climate</option>

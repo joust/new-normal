@@ -1,6 +1,6 @@
 import { BaseCard } from './base-card.mjs'
 
-window.customElements.define('pause-card', class PauseCard extends BaseCard {
+export class PauseCard extends BaseCard {
   static observedAttributes = ['idiot', 'mirrored']
 
   get idiot () {
@@ -116,4 +116,4 @@ window.customElements.define('pause-card', class PauseCard extends BaseCard {
       Array.from(root.querySelectorAll('.phrase')).forEach(node => (node.innerHTML = this.phrase))
     }
   }
-})
+}

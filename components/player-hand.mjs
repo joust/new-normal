@@ -1,6 +1,6 @@
 import { BaseComponent } from './base-component.mjs'
 
-window.customElements.define('player-hand', class PlayerHand extends BaseComponent {
+export class PlayerHand extends BaseComponent {
   static observedAttributes = ['cards', 'nr', 'name', 'droppable']
 
   element (id) { return this.shadowRoot.getElementById(id) }
@@ -243,4 +243,4 @@ window.customElements.define('player-hand', class PlayerHand extends BaseCompone
     }
     this.updateLayout()
   }
-})
+}

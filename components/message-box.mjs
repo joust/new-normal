@@ -1,7 +1,7 @@
 // Message Box web component (based on a pen by https://codepen.io/takaneichinose)
 import { BaseComponent } from './base-component.mjs'
 
-window.customElements.define('message-box', class MessageBoxElement extends BaseComponent {
+export class MessageBoxElement extends BaseComponent {
   get css () {
     const padding = '1em'
     return `
@@ -366,7 +366,7 @@ window.customElements.define('message-box', class MessageBoxElement extends Base
       })
     })
   }
-})
+}
 
 export function inform (content, title = null, promise = null) {
   const box = document.createElement('message-box')

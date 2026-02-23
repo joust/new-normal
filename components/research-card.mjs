@@ -1,6 +1,6 @@
 import { BaseCard } from './base-card.mjs'
 
-window.customElements.define('research-card', class ResearchCard extends BaseCard {
+export class ResearchCard extends BaseCard {
   static observedAttributes = ['idiot', 'mirrored']
 
   get idiot () {
@@ -111,4 +111,4 @@ window.customElements.define('research-card', class ResearchCard extends BaseCar
       this.element('description').innerHTML = this.description
     }
   }
-})
+}

@@ -1,6 +1,6 @@
 import { BaseComponent } from './base-component.mjs'
 
-window.customElements.define('card-back', class CardBack extends BaseComponent {
+export class CardBack extends BaseComponent {
   static observedAttributes = ['idiot']
   static virus = 'styles/images/virus.png'
 
@@ -69,4 +69,4 @@ window.customElements.define('card-back', class CardBack extends BaseComponent {
       this.element('card-back').classList.toggle('idiot', this.idiot)
     }
   }
-})
+}

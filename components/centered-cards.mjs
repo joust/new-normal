@@ -1,6 +1,6 @@
 import { BaseComponent } from './base-component.mjs'
 
-window.customElements.define('centered-cards', class CenteredCards extends BaseComponent {
+export class CenteredCards extends BaseComponent {
   get css () {
     return `
     ${super.css}
@@ -23,4 +23,4 @@ window.customElements.define('centered-cards', class CenteredCards extends BaseC
   get html () {
     return '<div id="centered"><slot></slot></div>'
   }
-})
+}

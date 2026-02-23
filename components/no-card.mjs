@@ -1,6 +1,6 @@
 import { BaseComponent } from './base-component.mjs'
 
-window.customElements.define('no-card', class NoCard extends BaseComponent {
+export class NoCard extends BaseComponent {
   get css () {
     return `
      :host {
@@ -27,4 +27,4 @@ window.customElements.define('no-card', class NoCard extends BaseComponent {
   get html () {
     return '<div id="no-card"></div>'
   }
-})
+}

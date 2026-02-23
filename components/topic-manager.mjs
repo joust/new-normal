@@ -1,4 +1,4 @@
-class TopicManager extends HTMLElement {
+export class TopicManager extends HTMLElement {
   constructor() {
     super();
     this.topics = new Map();
@@ -41,10 +41,12 @@ class TopicManager extends HTMLElement {
         }
         .container {
           display: grid;
-          grid-template-columns: minmax(300px, 2fr) 3fr 3fr;
+          grid-template-columns: minmax(300px, 1fr) 1fr 1fr;
           gap: 2rem;
           flex: 1;
+          height: 75%;
           min-height: 0;
+          overflow: hidden; /* Prevent container from scrolling */
         }
         .topic-section {
           display: flex;
@@ -56,12 +58,19 @@ class TopicManager extends HTMLElement {
         .topic-section #topicsList {
           flex: 1;
           overflow-y: auto;
+          min-height: 0; /* Allow flex container to shrink */
+          padding: 0.5rem;
+          border: 1px solid #dee2e6;
+          border-radius: 4px;
+          background: white;
         }
         .arguments-section {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 2rem;
           grid-column: 2 / -1;
+          overflow: hidden;
+          height: 100%;
         }
         .idiot-arguments,
         .sheep-arguments {
@@ -78,6 +87,7 @@ class TopicManager extends HTMLElement {
           border-radius: 4px;
           padding: 1rem;
           background: white;
+          min-height: 0; /* Allow flex container to shrink */
         }
         .toolbar {
           display: flex;
@@ -273,12 +283,12 @@ class TopicManager extends HTMLElement {
           padding: 0.5rem;
         }
         .topic-id {
-          font-family: monospace;
+          font-size: 0.8em;
+          color: #495057;
+          background: #f8f9fa;
           padding: 0.2rem 0.4rem;
           border-radius: 3px;
-          background: #f8f9fa;
-          font-size: 0.9em;
-          color: #495057;
+          font-family: monospace;
           border: 1px solid #dee2e6;
           order: -1;
         }
@@ -407,6 +417,7 @@ class TopicManager extends HTMLElement {
           gap: 0.5rem;
           align-items: center;
           margin-bottom: 1rem;
+          flex-shrink: 0; /* Prevent header from shrinking */
         }
         .section-header h2 {
           margin: 0;
@@ -600,7 +611,7 @@ class TopicManager extends HTMLElement {
     // Add argument buttons
     const addIdiotBtn = this.shadowRoot.getElementById('addIdiotButton');
     const addSheepBtn = this.shadowRoot.getElementById('addSheepButton');
-    
+
     addIdiotBtn.addEventListener('click', () => this.showIdiotDialog());
     addSheepBtn.addEventListener('click', () => this.showSheepDialog());
 
@@ -724,11 +735,11 @@ class TopicManager extends HTMLElement {
       e.preventDefault();
       e.stopPropagation();
       element.classList.remove('drag-over');
-      
+
       const draggedId = this.draggedElement?.dataset.id;
       const draggedType = this.draggedElement?.dataset.type;
       const topicId = element.dataset.topicId;
-      
+
       if (draggedId && draggedType === type && topicId) {
         this.assignArgumentToTopic(draggedId, topicId);
       }
@@ -752,11 +763,11 @@ class TopicManager extends HTMLElement {
       e.preventDefault();
       e.stopPropagation();
       element.classList.remove('drag-over');
-      
+
       const draggedId = this.draggedElement?.dataset.id;
       const draggedType = this.draggedElement?.dataset.type;
       const topicId = element.dataset.id;
-      
+
       if (draggedId && draggedType && topicId) {
         this.assignArgumentToTopic(draggedId, topicId);
       }
@@ -848,7 +859,7 @@ class TopicManager extends HTMLElement {
         const textarea = document.createElement('textarea');
         textarea.className = 'argument-details-input';
         textarea.value = arg.details || '';
-        
+
         if (detailsP) {
           detailsP.replaceWith(textarea);
         } else {
@@ -987,11 +998,11 @@ class TopicManager extends HTMLElement {
     const dialog = this.shadowRoot.getElementById('idiotDialog');
     const titleInput = this.shadowRoot.getElementById('idiotTitle');
     const detailsInput = this.shadowRoot.getElementById('idiotDetails');
-    
+
     // Reset form
     titleInput.value = '';
     detailsInput.value = '';
-    
+
     dialog.style.display = 'flex';
     titleInput.focus();
   }
@@ -1000,11 +1011,11 @@ class TopicManager extends HTMLElement {
     const dialog = this.shadowRoot.getElementById('sheepDialog');
     const titleInput = this.shadowRoot.getElementById('sheepTitle');
     const detailsInput = this.shadowRoot.getElementById('sheepDetails');
-    
+
     // Reset form
     titleInput.value = '';
     detailsInput.value = '';
-    
+
     dialog.style.display = 'flex';
     titleInput.focus();
   }
@@ -1031,7 +1042,7 @@ class TopicManager extends HTMLElement {
       const topicEl = document.createElement('div');
       topicEl.className = 'topic';
       topicEl.dataset.id = id;
-      
+
       // Restore open state
       if (!openTopics.has(id)) {
         topicEl.classList.add('closed');
@@ -1039,7 +1050,7 @@ class TopicManager extends HTMLElement {
 
       // Add drop zone behavior to the entire topic element
       this.addTopicDropZone(topicEl);
-      
+
       topicEl.innerHTML = `
         <div class="topic-header">
           <div class="topic-header-main">
@@ -1182,7 +1193,7 @@ class TopicManager extends HTMLElement {
     const idiotArgs = Array.from(topic.arguments)
       .filter(id => id.startsWith('I'))
       .sort((a, b) => a.localeCompare(b));
-      
+
     const sheepArgs = Array.from(topic.arguments)
       .filter(id => id.startsWith('S'))
       .sort((a, b) => a.localeCompare(b));
@@ -1263,7 +1274,7 @@ class TopicManager extends HTMLElement {
     const prefix = type === 'idiot' ? 'I' : 'S';
     const collection = type === 'idiot' ? this.idiotArguments : this.sheepArguments;
     const argumentId = prefix + (collection.size + 1);
-    
+
     collection.add({
       id: argumentId,
       title,
@@ -1283,7 +1294,7 @@ class TopicManager extends HTMLElement {
     // Add to topic if not already there
     if (!topic.arguments.has(argumentId)) {
       topic.arguments.add(argumentId);
-      
+
       // Re-render to update visual state
       const type = argumentId.startsWith('I') ? 'idiot' : 'sheep';
       this.renderArguments(type);
@@ -1307,7 +1318,7 @@ class TopicManager extends HTMLElement {
         topic.arguments.delete(id);
         this.renderTopics();
         this.renderArguments(type); // Re-render to update visual state
-        
+
         this.dispatchEvent(new CustomEvent('assignment-changed', {
           detail: { argumentId: id, topicId, action: 'removed' }
         }));
@@ -1357,7 +1368,7 @@ class TopicManager extends HTMLElement {
   // Method to load all data at once
   loadData(data) {
     console.log('Loading data:', data);
-    
+
     // Reset existing data
     this.topics.clear();
     this.idiotArguments.clear();
@@ -1381,7 +1392,7 @@ class TopicManager extends HTMLElement {
         type: 'idiot'
       });
     });
-    
+
     data.arguments.sheep.forEach(arg => {
       this.sheepArguments.add({
         id: arg.id,
@@ -1390,7 +1401,7 @@ class TopicManager extends HTMLElement {
         type: 'sheep'
       });
     });
-    
+
     console.log('Arguments loaded:', {
       idiot: this.idiotArguments,
       sheep: this.sheepArguments
@@ -1406,7 +1417,7 @@ class TopicManager extends HTMLElement {
 
   updateArgumentBadges(argId, badgeContainer) {
     const assignments = this.getArgumentAssignments(argId);
-    badgeContainer.innerHTML = assignments.map(topic => 
+    badgeContainer.innerHTML = assignments.map(topic =>
       `<span class="topic-badge" title="${topic.title}">${topic.id}</span>`
     ).join('');
   }
@@ -1532,5 +1543,3 @@ class TopicManager extends HTMLElement {
     URL.revokeObjectURL(url);
   }
 }
-
-customElements.define('topic-manager', TopicManager);

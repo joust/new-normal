@@ -2,7 +2,8 @@
   "scripts": {
     "standard": "standard --fix ./{components,modules}/*.mjs",
     "esinstall": "node esinstall.mjs",
-    "deploy": "scp -r ./{modules,web_modules,libs,content,components,components,styles,*.html} root@k.de:/srv/new-normal.app"
+    "deploy": "scp -r ./{modules,web_modules,libs,content,components,styles,*.mjs,manifest.webmanifest,*.html} root@k.de:/srv/new-normal.app",
+    "sync": "rsync -az --no-perms --no-owner --no-group --progress --exclude node_modules --exclude .git --exclude 'package*.json' modules web_modules libs content components styles *.mjs manifest.webmanifest *.html root@k.de:/srv/new-normal.app"
   },
   "eslintConfig": {
     "parserOptions": {

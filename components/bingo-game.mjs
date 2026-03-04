@@ -185,7 +185,7 @@ export class BingoGame extends BaseComponent {
 
     if (!targetCard) {
       targetCard = this._cards.find(c => c !== sourceCard)
-      if (!targetCard) {
+      if (!targetCard && this._cards.length < 2) {
         targetCard = this.createCard(idiot)
         this.shadowRoot.appendChild(targetCard)
         this.initCard(targetCard)
@@ -193,6 +193,7 @@ export class BingoGame extends BaseComponent {
         this.classList.remove('one')
         this._cards.forEach(c => c.removeAttribute('one'))
       }
+      if (!targetCard) return
     }
 
     const topic = this._topics.find(t => t.id === topicId)
@@ -203,11 +204,7 @@ export class BingoGame extends BaseComponent {
   }
 
   cleanup () {
-    if (this._cards) {
-      this._cards.forEach(card => {
-        if (card.parentElement) card.parentElement.removeChild(card)
-      })
-    }
+    this.shadowRoot.querySelectorAll('bingo-card').forEach(card => card.remove())
     this._cards = []
   }
 }

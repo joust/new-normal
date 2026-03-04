@@ -273,6 +273,9 @@ export function getTopicsData () {
     sheepLabel: topic.dataset.sheepLabel,
     idiotTitle: topic.dataset.idiotTitle,
     sheepTitle: topic.dataset.sheepTitle,
+    idiotClaim: topic.dataset.idiotClaim,
+    sheepClaim: topic.dataset.sheepClaim,
+    cluster: topic.dataset.cluster,
     title: topic.title
   })
   )

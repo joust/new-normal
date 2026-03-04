@@ -244,7 +244,8 @@ export class GameCard extends BaseComponent {
       case 'B': return `<banish-card id="card" ${type} ${mirrored}>${this.getContent('banish')}</banish-card>`
       default: { // argument id and discuss id will have a topic
         const topicData = this.topic && document.querySelector(`${GameCard.contentRootSelector} > #${this.lang} > .topics > section[id="${this.topic}"]`)
-        const topicTitle = topicData ? topicData.title : ''
+        const topicClaim = topicData ? (this.idiot ? topicData.dataset.idiotClaim : topicData.dataset.sheepClaim) : ''
+        const topicTitle = topicClaim || (topicData ? topicData.title : '')
         if (this.idOnly.startsWith('D')) { return `<discuss-card id="card" ${type} ${mirrored} topicId="${this.topic}">${this.getContent('discuss').replace('TOPIC', `<b>${topicTitle}</b>`)}</discuss-card>` } else {
           return this.cardWithSources(this.idOnly, title, `<argument-card ${type} ${mirrored} ${wildcard} ${spellcheck} card="${this.idOnly}" topicId="${this.topic}" topic="${topicTitle}">${data.innerHTML}</argument-card>`)
         }

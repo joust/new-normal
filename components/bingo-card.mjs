@@ -118,7 +118,15 @@ export class BingoCard extends BaseComponent {
       background: rgba(255, 255, 255, 0.6);
       text-align: center;
       cursor: pointer;
-      padding: 0.5vmax;
+      padding: 0.3vmax;
+      overflow: hidden;
+      position: relative;
+    }
+
+    td fitted-text {
+      display: flex;
+      width: 100%;
+      height: 100%;
     }
 
     td.set {
@@ -256,7 +264,9 @@ export class BingoCard extends BaseComponent {
         } else {
           const topic = this.uniqueTopic(topics)
           td.id = topic.id
-          td.textContent = idiot ? topic.idiotTitle : topic.sheepTitle
+          const fitted = document.createElement('fitted-text')
+          fitted.textContent = (idiot ? topic.idiotClaim : topic.sheepClaim) || (idiot ? topic.idiotTitle : topic.sheepTitle)
+          td.appendChild(fitted)
           td.title = this.getArgumentsForTopic(topic.id)
 
           td.onclick = event => {
@@ -346,7 +356,14 @@ export class BingoCard extends BaseComponent {
     this.shadowRoot.querySelectorAll('td[id]').forEach(td => {
       const topic = this._topics.find(t => t.id === td.id)
       if (topic) {
-        td.textContent = this.idiot ? topic.idiotTitle : topic.sheepTitle
+        const text = (this.idiot ? topic.idiotClaim : topic.sheepClaim) || (this.idiot ? topic.idiotTitle : topic.sheepTitle)
+        let fitted = td.querySelector('fitted-text')
+        if (!fitted) {
+          fitted = document.createElement('fitted-text')
+          td.textContent = ''
+          td.appendChild(fitted)
+        }
+        fitted.textContent = text
         td.title = this.getArgumentsForTopic(topic.id)
       }
     })

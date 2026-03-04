@@ -11,6 +11,7 @@ import { CenteredCards } from './components/centered-cards.mjs'
 import { DiscussCard } from './components/discuss-card.mjs'
 import { EditableCard } from './components/editable-card.mjs'
 import { FallacyCard } from './components/fallacy-card.mjs'
+import { FittedText } from './components/fitted-text.mjs'
 import { FlipArea } from './components/flip-area.mjs'
 import { FlipCard } from './components/flip-card.mjs'
 import { GameCard } from './components/game-card.mjs'
@@ -47,6 +48,7 @@ export function defineElements () {
     ['discuss-card', DiscussCard],
     ['editable-card', EditableCard],
     ['fallacy-card', FallacyCard],
+    ['fitted-text', FittedText],
     ['flip-area', FlipArea],
     ['flip-card', FlipCard],
     ['game-card', GameCard],
